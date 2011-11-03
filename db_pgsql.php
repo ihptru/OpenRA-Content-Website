@@ -16,10 +16,6 @@
             {
                 die("Could not connect: " . pg_last_error());
             }
-            else
-            {
-				echo "connected";
-			}
 		}
 		
 		public static function is_connected()
