@@ -1,25 +1,30 @@
 <?PHP
-	$con = null; //PostgreSQL connection
 
 	class db
 	{
+		public static $con = null; //PostgreSQL connection
+		
 		public static function connect()
 		{
-			$host = "localhost";
-            $username = "oramod";
-            $password = "iequeiR6";
-            $database = "oramod";
+			define("DB_HOST","localhost");
+            define("DB_USERNAME","oramod");
+            define("DB_PASSWORD","iequeiR6");
+            define("DB_DATABASE","oramod");
             
-            $con = pg_connect("host=".$host." port=5432 dbname=".$database." user=".$username." password=".$password);
-            if(!$con)
+            db::$con = pg_connect("host=".DB_HOST." port=5432 dbname=".DB_DATABASE." user=".DB_USERNAME." password=".DB_PASSWORD);
+            if(!db::$con)
             {
                 die("Could not connect: " . pg_last_error());
             }
+            else
+            {
+				echo "connected";
+			}
 		}
 		
 		public static function is_connected()
         {
-            return ($con != null);
+            return (db::$con != null);
         }
         
         public static function setup()
@@ -29,7 +34,7 @@
                                           nick VARCHAR NOT NULL,
                                           email VARCHAR NOT NULL,
                                           register_date TIMESTAMP NOT NULL);";
-            db_pgsql::executeQuery($query);
+            db::executeQuery($query);
             
             $query = "CREATE TABLE maps (uid serial PRIMARY KEY NOT NULL,
                                          title VARCHAR NOT NULL,
@@ -43,31 +48,31 @@
                                          minimap VARCHAR NOT NULL,
                                          user_id INTEGER NOT NULL,
                                          posted TIMESTAMP NOT NULL);";
-            db_pgsql::executeQuery($query);
+            db::executeQuery($query);
             
             $query = "CREATE TABLE news (uid serial PRIMARY KEY NOT NULL,
                                          title VARCHAR NOT NULL,
                                          content VARCHAR NOT NULL,
                                          user_id VARCHAR NOT NULL,
                                          posted TIMESTAMP NOT NULL);";
-            db_pgsql::executeQuery($query);
+            db::executeQuery($query);
 
             $query = "CREATE TABLE units (uid serial PRIMARY KEY NOT NULL,
                                           title VARCHAR NOT NULL,
                                           description VARCHAR NOT NULL,
                                           user_id VARCHAR NOT NULL,
                                           posted TIMESTAMP NOT NULL);";
-            db_pgsql::executeQuery($query);
+            db::executeQuery($query);
             
             $query = "CREATE TABLE guide (uid serial PRIMARY KEY NOT NULL,
                                           title VARCHAR NOT NULL,
                                           html_content VARCHAR NOT NULL,
                                           user_id VARCHAR NOT NULL,
                                           posted TIMESTAMP NOT NULL);";
-            db_pgsql::executeQuery($query);
+            db::executeQuery($query);
         }
         
-        private static executeQuery($q)
+        private static function executeQuery($q)
         {
             $result = pg_query($q);
             if (!$result) {
@@ -86,29 +91,29 @@
 							WHERE schemaname='public' AND tablename = '$tablename';
                             ");
             
-            return pg_get_result($res, 0) == 1;
+            return pg_fetch_result($res, 0) == 1;
         }
 
         public static function check()
         {
             $allSystemsGo = true;
-            if(!table_exists("users"))
+            if(!db::table_exists("users"))
                 $allSystemsGo = false;
-            if(!table_exists("maps"))
+            if(!db::table_exists("maps"))
                 $allSystemsGo = false;
-            if(!table_exists("news"))
+            if(!db::table_exists("news"))
                 $allSystemsGo = false;
-            if(!table_exists("units"))
+            if(!db::table_exists("units"))
                 $allSystemsGo = false;
-            if(!table_exists("guide"))
+            if(!db::table_exists("guide"))
                 $allSystemsGo = false;
             return $allSystemsGo;
         }
         
         public static function disconnect()
         {
-            pg_close($con);
-            $con = null;
+            pg_close(db::$con);
+            db::$con = null;
         }
 	}
 
