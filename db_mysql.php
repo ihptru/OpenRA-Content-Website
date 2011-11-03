@@ -31,7 +31,41 @@
                                           email VARCHAR NOT NULL,
                                           register_date DATE NOT NULL);";
             db_mysql::executeQuery($query);
+            
+            $query = "CREATE TABLE maps (uid PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                                         title VARCHAR NOT NULL,
+                                         description VARCHAR NOT NULL,
+                                         author VARCHAR NOT NULL,
+                                         type VARCHAR NOT NULL,
+                                         players INTEGER NOT NULL,
+                                         width INTEGER NOT NULL,
+                                         height INTEGER NOT NULL,
+                                         tileset VARCHAR NOT NULL,
+                                         minimap VARCHAR NOT NULL,
+                                         user_id INTEGER NOT NULL,
+                                         posted DATE NOT NULL);";
+            db_mysql::executeQuery($query);
+            
+            $query = "CREATE TABLE news (uid PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                                         title VARCHAR NOT NULL,
+                                         content VARCHAR NOT NULL,
+                                         user_id VARCHAR NOT NULL,
+                                         posted DATE NOT NULL);";
+            db_mysql::executeQuery($query);
 
+            $query = "CREATE TABLE units (uid PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                                          title VARCHAR NOT NULL,
+                                          description VARCHAR NOT NULL,
+                                          user_id VARCHAR NOT NULL,
+                                          posted DATE NOT NULL);";
+            db_mysql::executeQuery($query);
+            
+            $query = "CREATE TABLE guide (uid PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                                          title VARCHAR NOT NULL,
+                                          html_content VARCHAR NOT NULL,
+                                          user_id VARCHAR NOT NULL,
+                                          posted DATE NOT NULL);";
+            db_mysql::executeQuery($query);
         }
         
         private static executeQuery($q)
@@ -62,6 +96,14 @@
         {
             $allSystemsGo = true;
             if(!table_exists("users"))
+                $allSystemsGo = false;
+            if(!table_exists("maps"))
+                $allSystemsGo = false;
+            if(!table_exists("news"))
+                $allSystemsGo = false;
+            if(!table_exists("units"))
+                $allSystemsGo = false;
+            if(!table_exists("guide"))
                 $allSystemsGo = false;
             return $allSystemsGo;
         }
