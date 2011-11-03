@@ -1,38 +1,37 @@
 <?PHP
-    $con = null; //MySQL connection
-    
-    class db
-    {
-        public static function connect()
-        {
-            $host = "localhost";
+	$con = null; //PostgreSQL connection
+
+	class db
+	{
+		public static function connect()
+		{
+			$host = "localhost";
             $username = "oramod";
             $password = "iequeiR6";
             $database = "oramod";
             
-            $con = mysql_connect($host,$username,$password);
+            $con = pg_connect("host=".$host." port=5432 dbname=".$database." user=".$username." password=".$password);
             if(!$con)
             {
-                die("Could not connect: " . mysql_error());
+                die("Could not connect: " . pg_last_error());
             }
-            mysql_select_db($database, $con);
-        }
-        
-        public static function is_connected()
+		}
+		
+		public static function is_connected()
         {
             return ($con != null);
         }
         
         public static function setup()
         {
-            $query = "CREATE TABLE users (uid PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE users (uid serial PRIMARY KEY NOT NULL,
                                           pass VARCHAR NOT NULL,
                                           nick VARCHAR NOT NULL,
                                           email VARCHAR NOT NULL,
-                                          register_date DATE NOT NULL);";
-            db_mysql::executeQuery($query);
+                                          register_date TIMESTAMP NOT NULL);";
+            db_pgsql::executeQuery($query);
             
-            $query = "CREATE TABLE maps (uid PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE maps (uid serial PRIMARY KEY NOT NULL,
                                          title VARCHAR NOT NULL,
                                          description VARCHAR NOT NULL,
                                          author VARCHAR NOT NULL,
@@ -43,36 +42,36 @@
                                          tileset VARCHAR NOT NULL,
                                          minimap VARCHAR NOT NULL,
                                          user_id INTEGER NOT NULL,
-                                         posted DATE NOT NULL);";
-            db_mysql::executeQuery($query);
+                                         posted TIMESTAMP NOT NULL);";
+            db_pgsql::executeQuery($query);
             
-            $query = "CREATE TABLE news (uid PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE news (uid serial PRIMARY KEY NOT NULL,
                                          title VARCHAR NOT NULL,
                                          content VARCHAR NOT NULL,
                                          user_id VARCHAR NOT NULL,
-                                         posted DATE NOT NULL);";
-            db_mysql::executeQuery($query);
+                                         posted TIMESTAMP NOT NULL);";
+            db_pgsql::executeQuery($query);
 
-            $query = "CREATE TABLE units (uid PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE units (uid serial PRIMARY KEY NOT NULL,
                                           title VARCHAR NOT NULL,
                                           description VARCHAR NOT NULL,
                                           user_id VARCHAR NOT NULL,
-                                          posted DATE NOT NULL);";
-            db_mysql::executeQuery($query);
+                                          posted TIMESTAMP NOT NULL);";
+            db_pgsql::executeQuery($query);
             
-            $query = "CREATE TABLE guide (uid PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE guide (uid serial PRIMARY KEY NOT NULL,
                                           title VARCHAR NOT NULL,
                                           html_content VARCHAR NOT NULL,
                                           user_id VARCHAR NOT NULL,
-                                          posted DATE NOT NULL);";
-            db_mysql::executeQuery($query);
+                                          posted TIMESTAMP NOT NULL);";
+            db_pgsql::executeQuery($query);
         }
         
         private static executeQuery($q)
         {
-            $result = mysql_query($q);
+            $result = pg_query($q);
             if (!$result) {
-                $message  = 'Invalid query: ' . mysql_error() . "\n";
+                $message  = 'Invalid query: ' . pg_last_error() . "\n";
                 $message .= 'Whole query: ' . $q;
                 die($message);
             }
@@ -81,14 +80,13 @@
         
         private static function table_exists($tablename) 
         {
-            $res = mysql_query("
-                               SELECT COUNT(*) AS count 
-                               FROM information_schema.tables 
-                               WHERE table_schema = '$database' 
-                               AND table_name = '$tablename'
-                               ");
+            $res = pg_query("
+							SELECT count(*) AS count
+							FROM pg_tables
+							WHERE schemaname='public' AND tablename = '$tablename';
+                            ");
             
-            return mysql_result($res, 0) == 1;
+            return pg_get_result($res, 0) == 1;
         }
 
         public static function check()
@@ -109,8 +107,9 @@
         
         public static function disconnect()
         {
-            mysql_close($con);
+            pg_close($con);
             $con = null;
         }
-    }
+	}
+
 ?>
