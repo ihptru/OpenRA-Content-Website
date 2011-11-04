@@ -35,7 +35,7 @@
             
             $query = "CREATE TABLE maps (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                          title VARCHAR(80) NOT NULL,
-                                         description VARCHAR(80) NOT NULL,
+                                         description VARCHAR(500) NOT NULL,
                                          author VARCHAR(80) NOT NULL,
                                          type VARCHAR(80) NOT NULL,
                                          players INTEGER NOT NULL,
@@ -47,25 +47,42 @@
                                          posted DATE NOT NULL);";
             db::executeQuery($query);
             
-            $query = "CREATE TABLE news (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-                                         title VARCHAR(80) NOT NULL,
-                                         content VARCHAR(80) NOT NULL,
-                                         user_id VARCHAR(80) NOT NULL,
-                                         posted DATE NOT NULL);";
+            //Used on front page
+            $query = "CREATE TABLE articles (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                                            title VARCHAR(80) NOT NULL,
+                                            content VARCHAR(500) NOT NULL,
+                                            user_id INTEGER NOT NULL,
+                                            posted DATE NOT NULL);";
             db::executeQuery($query);
 
             $query = "CREATE TABLE units (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                           title VARCHAR(80) NOT NULL,
-                                          description VARCHAR(80) NOT NULL,
-                                          user_id VARCHAR(80) NOT NULL,
+                                          description VARCHAR(500) NOT NULL,
+                                          user_id INTEGER NOT NULL,
                                           posted DATE NOT NULL);";
             db::executeQuery($query);
             
-            $query = "CREATE TABLE guide (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE guides (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                           title VARCHAR(80) NOT NULL,
-                                          html_content VARCHAR(80) NOT NULL,
-                                          user_id VARCHAR(80) NOT NULL,
+                                          html_content VARCHAR(500) NOT NULL,
+                                          user_id INTEGER NOT NULL,
                                           posted DATE NOT NULL);";
+            db::executeQuery($query);
+            
+            //Special table for just featured 
+            $query = "CREATE TABLE featured (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                                             table VARCHAR(80) NOT NULL,
+                                             id INTEGER NOT NULL,
+                                             posted DATE NOT NULL);";
+            db::executeQuery($query);
+            
+            //Comments made by users on articles
+            $query = "CREATE TABLE comments (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                                             title VARCHAR(80) NOT NULL,
+                                             content VARCHAR(500) NOT NULL,
+                                             user_id INTEGER NOT NULL,
+                                             article_id INTEGER NOT NULL,
+                                             posted DATE NOT NULL);";
             db::executeQuery($query);
         }
         
@@ -103,7 +120,9 @@
                 $allSystemsGo = false;
             if(!db::table_exists("units"))
                 $allSystemsGo = false;
-            if(!db::table_exists("guide"))
+            if(!db::table_exists("guides"))
+                $allSystemsGo = false;
+            if(!db::table_exists("featured"))
                 $allSystemsGo = false;
             return $allSystemsGo;
         }
