@@ -1,10 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
+<?PHP
+    include "settings.php";
+    include "content.php";
+?>
 <head>
 
-<title>Jungleland</title>
+<title><?PHP echo $setting_website_name; ?></title>
 
 <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="author" content="Erwin Aligam - styleshout.com" />
@@ -19,7 +22,6 @@
 </head>
 
 <body>
-
 <!-- wrap -->
 <div id="wrap">
 
@@ -28,17 +30,14 @@
 	
 		<a name="top"></a>
 		
-		<h1 id="logo-text"><a href="index.html" title="">jungleland</a></h1>		
-		<p id="slogan">Just Another Styleshout CSS Template... </p>					
+		<h1 id="logo-text"><a href="index.html" title=""><?PHP echo $setting_website_name; ?></a></h1>		
+		<p id="slogan"><?PHP echo $setting_website_slowgun; ?></p>					
 		
 		<div  id="nav">
 			<ul>
-				<li id="current"><a href="index.html">Home</a></li>
-				<li><a href="style.html">Style Demo</a></li>
-				<li><a href="blog.html">Blog</a></li>
-				<li><a href="archives.html">Archives</a></li>
-				<li><a href="index.html">Support</a></li>
-				<li><a href="index.html">About</a></li>		
+                <?PHP
+                    content::createMenu();
+                ?>
 			</ul>		
 		</div>		
 		
@@ -58,41 +57,9 @@
 	<!-- featured -->		
 	<div id="featured">			
 	
-		<div id="featured-block" class="clear">
-			
-			<div id="featured-ribbon"></div>	
-				
-			<a name="TemplateInfo"></a>
-			
-			<div class="image-block">
-              <a href="index.html" title=""><img src="images/img-featured.jpg" alt="featured" width="350px" height="250px"/></a>
-         </div>			
-			
-			<div class="text-block">
-			
-				<h2><a href="index.html">Read me first</a></h2>
-			
-				<p class="post-info">Posted by <a href="index.html">erwin</a> | Filed under <a href="index.html">templates</a>, <a href="index.html">internet</a></p>
-				
-				<p><strong>JungleLand 1.0</strong> is a free, W3C-compliant, CSS-based website template
-				by <a href="http://www.styleshout.com/">styleshout.com</a>. This work is 
-				distributed under the <a rel="license" href="http://creativecommons.org/licenses/by/2.5/">
-				Creative Commons Attribution 2.5  License</a>, which means that you are free to 
-				use and modify it for any purpose. All I ask is that you give me credit for the design by including a <strong>link back</strong> to
-				<a href="http://www.styleshout.com/">my website</a>.
-                </p>
-
-                <p>
-                You can find more of my free template designs at <a href="http://www.styleshout.com/">my website</a>.
-				For premium commercial designs, you can check out
-                <a href="http://themeforest.net?ref=ealigam" title="Site Templates">Themeforest.net</a>.
-				</p>
-				
-				<p><a href="index.html" class="more-link">Read More</a></p>
-								
-			</div>
-		
-		</div>		
+		<?PHP
+            //content::createFeaturedItems();
+        ?>		
 	
 	<!-- /featured -->
 	</div>
