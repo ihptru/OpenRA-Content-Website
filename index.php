@@ -108,14 +108,9 @@
 				<h3>Image Gallery </h3>
 
 				<p class="thumbs">
-					<a href="index.html"><img src="images/thumb.jpg" width="40" height="40" alt="thumbnail" /></a>
-					<a href="index.html"><img src="images/thumb.jpg" width="40" height="40" alt="thumbnail" /></a>
-					<a href="index.html"><img src="images/thumb.jpg" width="40" height="40" alt="thumbnail" /></a>
-					<a href="index.html"><img src="images/thumb.jpg" width="40" height="40" alt="thumbnail" /></a>
-					<a href="index.html"><img src="images/thumb.jpg" width="40" height="40" alt="thumbnail" /></a>
-					<a href="index.html"><img src="images/thumb.jpg" width="40" height="40" alt="thumbnail" /></a>	
-					<a href="index.html"><img src="images/thumb.jpg" width="40" height="40" alt="thumbnail" /></a>
-					<a href="index.html"><img src="images/thumb.jpg" width="40" height="40" alt="thumbnail" /></a>				
+                    <?PHP 
+                        //db::createImageGallery($result)
+                    ?>
 				</p>					
 				
 			<!-- /sidebar -->				

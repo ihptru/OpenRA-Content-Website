@@ -14,6 +14,34 @@
             echo "<li><a href='index.html'>About</a></li>";
         }
         
+        //Create image gallery items based on result
+        public static function createImageGallery($result)
+        {
+            $content = "";
+            while ($row = mysql_fetch_assoc($result))
+            {
+                $imagePath = "";
+                
+                $table = mysql_tablename($result, $row); //not sure at all if this works (not tested)
+                switch($table)
+                {
+                        //Set title, image
+                    case "maps":
+                        $imagePath = $row["minimap"];
+                        break;
+                    case "units":
+                        $imagePath = "";
+                        break;
+                    case "guide":
+                        $imagePath = "";
+                        break;
+                }
+                
+                $content .= "<a href='index.html'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
+            }
+            return $content;
+        }
+        
         //Create article items based on result (only accept articles)
         public static function createArticleItems($result)
         {
