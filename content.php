@@ -1,4 +1,6 @@
 <?PHP
+    include_once "db_mysql.php",
+    
     class content
     {
         public static function createMenu()
@@ -12,24 +14,76 @@
             echo "<li><a href='index.html'>About</a></li>";
         }
         
+        //Create article items based on result (only accept articles)
+        public static function createArticleItems($result)
+        {
+            $counter = 0;
+            $content = "";
+            
+            while ($row = mysql_fetch_assoc($result))
+            {
+                $title = $row["title"];
+                $text = $row["content"];
+                $imagePath = $row["image"];
+                $date = $row["posted"];
+                $comments = 0;
+                
+                //Calculates number of comments for that article
+                $res = db::executeQuery("SELECT COUNT(uid) FROM comments WHERE article_id = " . $row["uid"]);
+                $comments = mysql_fetch_row($res);
+                
+                $counter++;
+                if($counter == 1)
+                {
+                    $content .= "<div class='block odd'>";
+                    $counter = -1;
+                }
+                else
+                {
+                    $content .= "<div class='block even'>";
+                    $content .= "<div class='fix'></div>";
+                }
+                
+                if($imagePath.length() > 0)
+                    $content .= "<a title='' href='index.html'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
+                
+                $content .= "<div class='blk-top'>";
+                $content .= "<h4><a href='index.html'>" . $title . "</a></h4>";
+                $content .= "<p><span class='datetime'>" . $date . "</span><a href='index.html' class='comment'>" . $comments . " Comments</a></p>";
+                $content .= "</div>";
+                
+                $content .= "<div class='blk-content'>";
+                $content .= "<p>" . $text . "</p>";			
+                $content .= "<p><a class='more' href='index.html'>continue reading &raquo;</a></p>"; 
+                //index.html need to be fixed (should be link to article)
+                $content .= "</div>";
+                $content .= "</div>";
+            }
+            if($counter != 0)
+                $content .= "<div class='fix'></div>";
+            return $content;
+        }
+        
         //Creates featured items based on result
         public static function createFeaturedItems($result)
         {
             $content = "";
-
             while ($row = mysql_fetch_assoc($result))
             {
-                //These should be set for each item
                 $title = "";
                 $subtitle = "";
                 $text = "";
                 $imagePath = "";
                 
-                $table = mysql_tablename($result, $row); //not sure at all if this works
+                $table = mysql_tablename($result, $row); //not sure at all if this works (not tested)
                 if($table == "featured")
                 {
-                    $table = $row["table"]; //need a table named 'featured' with these columns: table, id, posted
-                    $row = ""; //Set row to that item (table + id)
+                    //Get row for featured post
+                    // Why have a featured table when you can use maps/units/guides/.. ?
+                    // Answer: In featured you can combine different elements if you wish (maps and units)
+                    $table = $row["table"];
+                    $res = db::executeQuery("SELECT * FROM " . $table . " WHERE uid = " . $row["id"]);
+                    $row = mysql_fetch_array($result);
                 }
                 switch($table)
                 {
@@ -55,7 +109,7 @@
                 }
                 //Should get these from db
                 $content .= "<div id='featured-block' class='clear'>";
-                $content .= "<div id='featured-ribbon'></div>	";
+                $content .= "<div id='featured-ribbon'></div>";//<< Maybe have different ribbons? ex: featured, editors choice, peoples choice,...
                 $content .= "<a name='TemplateInfo'></a>";
                 
                 if($imagePath.length() > 0)

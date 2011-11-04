@@ -51,6 +51,7 @@
             $query = "CREATE TABLE articles (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                             title VARCHAR(80) NOT NULL,
                                             content VARCHAR(500) NOT NULL,
+                                            image VARCHAR(500) NOT NULL,
                                             user_id INTEGER NOT NULL,
                                             posted DATE NOT NULL);";
             db::executeQuery($query);
