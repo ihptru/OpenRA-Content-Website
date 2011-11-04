@@ -24,6 +24,16 @@
             return (db::$con != null);
         }
         
+        public static function nextRowFromQuery($result)
+        {
+            return mysql_fetch_assoc($result);
+        }
+        
+        public static function getTableNameFrom($result, $row)
+        {
+            return mysql_tablename($result, $row);
+        }
+        
         public static function setup()
         {
             $query = "CREATE TABLE users (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,

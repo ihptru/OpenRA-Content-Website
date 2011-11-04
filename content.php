@@ -18,11 +18,11 @@
         public static function createImageGallery($result)
         {
             $content = "";
-            while ($row = mysql_fetch_assoc($result))
+            while ($row = db::nextRowFromQuery($result))
             {
                 $imagePath = "";
                 
-                $table = mysql_tablename($result, $row); //not sure at all if this works (not tested)
+                $table = db::getTableNameFrom($result, $row); //not sure at all if this works (not tested)
                 switch($table)
                 {
                         //Set title, image
@@ -48,7 +48,7 @@
             $counter = 0;
             $content = "";
             
-            while ($row = mysql_fetch_assoc($result))
+            while ($row = db::nextRowFromQuery($result))
             {
                 $title = $row["title"];
                 $text = $row["content"];
@@ -58,7 +58,7 @@
                 
                 //Calculates number of comments for that article
                 $res = db::executeQuery("SELECT COUNT(uid) FROM comments WHERE article_id = " . $row["uid"]);
-                $comments = mysql_fetch_row($res);
+                $comments = db::nextRowFromQuery($res);
                 
                 $counter++;
                 if($counter == 1)
@@ -96,14 +96,14 @@
         public static function createFeaturedItems($result)
         {
             $content = "";
-            while ($row = mysql_fetch_assoc($result))
+            while ($row = db::nextRowFromQuery($result))
             {
                 $title = "";
                 $subtitle = "";
                 $text = "";
                 $imagePath = "";
                 
-                $table = mysql_tablename($result, $row); //not sure at all if this works (not tested)
+                $table = db::getTableNameFrom($result, $row); //not sure at all if this works (not tested)
                 if($table == "featured")
                 {
                     //Get row for featured post
@@ -111,7 +111,7 @@
                     // Answer: In featured you can combine different elements if you wish (maps and units)
                     $table = $row["table"];
                     $res = db::executeQuery("SELECT * FROM " . $table . " WHERE uid = " . $row["id"]);
-                    $row = mysql_fetch_array($result);
+                    $row = db::nextRowFromQuery($result);
                 }
                 switch($table)
                 {
