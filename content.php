@@ -1,5 +1,5 @@
 <?PHP
-    include_once "db_mysql.php",
+    include_once "db_mysql.php";
     
     class content
     {
@@ -22,7 +22,7 @@
             {
                 $imagePath = "";
                 
-                $table = db::getTableNameFrom($result, $row); //not sure at all if this works (not tested)
+                $table = db::getTableNameFrom($row); //not sure at all if this works (not tested)
                 switch($table)
                 {
                         //Set title, image
@@ -72,7 +72,7 @@
                     $content .= "<div class='fix'></div>";
                 }
                 
-                if($imagePath.length() > 0)
+                if(strlen($imagePath) > 0)
                     $content .= "<a title='' href='index.html'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
                 
                 $content .= "<div class='blk-top'>";
@@ -93,7 +93,7 @@
         }
         
         //Creates featured items based on result
-        public static function createFeaturedItems($result)
+        public static function createFeaturedItems($result, $table = "featured")
         {
             $content = "";
             while ($row = db::nextRowFromQuery($result))
@@ -103,13 +103,13 @@
                 $text = "";
                 $imagePath = "";
                 
-                $table = db::getTableNameFrom($result, $row); //not sure at all if this works (not tested)
+                //$table = db::getTableNameFrom($row); //not sure at all if this works (not tested)
                 if($table == "featured")
                 {
                     //Get row for featured post
                     // Why have a featured table when you can use maps/units/guides/.. ?
                     // Answer: In featured you can combine different elements if you wish (maps and units)
-                    $table = $row["table"];
+                    $table = $row["table_name"];
                     $res = db::executeQuery("SELECT * FROM " . $table . " WHERE uid = " . $row["id"]);
                     $row = db::nextRowFromQuery($result);
                 }
@@ -140,7 +140,7 @@
                 $content .= "<div id='featured-ribbon'></div>";//<< Maybe have different ribbons? ex: featured, editors choice, peoples choice,...
                 $content .= "<a name='TemplateInfo'></a>";
                 
-                if($imagePath.length() > 0)
+                if(strlen($imagePath) > 0)
                 {
                     $content .= "<div class='image-block'>";
                     $content .= "<a href='index.html' title=''><img src='" . $imagePath . "' alt='featured' width='350px' height='250px'/></a>";

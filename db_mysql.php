@@ -7,8 +7,8 @@
         public static function connect()
         {
             define("DB_HOST","localhost");
-            define("DB_USERNAME","oramod");
-            define("DB_PASSWORD","iequeiR6");
+            define("DB_USERNAME","root");
+            define("DB_PASSWORD","");
             define("DB_DATABASE","oramod");
             
             db::$con = mysql_connect(DB_HOST,DB_USERNAME,DB_PASSWORD);
@@ -29,9 +29,9 @@
             return mysql_fetch_assoc($result);
         }
         
-        public static function getTableNameFrom($result, $row)
+        public static function getTableNameFrom($row)
         {
-            return mysql_tablename($result, $row);
+            return "maps";//mysql_tablename($row);
         }
         
         public static function setup()
@@ -86,7 +86,7 @@
             
             //Special table for just featured 
             $query = "CREATE TABLE featured (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-                                             table VARCHAR(80) NOT NULL,
+                                             table_name VARCHAR(80) NOT NULL,
                                              id INTEGER NOT NULL,
                                              posted DATE NOT NULL);";
             db::executeQuery($query);
@@ -101,7 +101,7 @@
             db::executeQuery($query);
         }
         
-        private static function executeQuery($q)
+        public static function executeQuery($q)
         {
             $result = mysql_query($q);
             if (!$result) {

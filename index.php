@@ -3,9 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <?PHP
-    include "settings.php";
-    include "db_pgsql.php";
-    //include "content.php";
+    include_once "settings.php";
+    include_once "db_mysql.php";
+    include_once "content.php";
+	
+	//Create DB If you don't have it setup
+	db::connect();
+	//db::setup();
 ?>
 <head>
 
@@ -25,7 +29,7 @@
 
 <body>
 <?PHP
-
+/*
 if(isset($_POST['login']) && isset($_POST['pass']))
 {
 	$login=$_POST['login'];
@@ -62,8 +66,7 @@ else
 			<input type=\"submit\" value=\"sign in\">
 			</form>";
 }
-
-
+*/
 ?>
 <!-- wrap -->
 <div id="wrap">
@@ -76,7 +79,7 @@ else
 		<div  id="nav">
 			<ul>
                 <?PHP
-                    //content::createMenu();
+                    content::createMenu();
                 ?>
 			</ul>		
 		</div>		
@@ -98,7 +101,8 @@ else
 	<div id="featured">			
 	
 		<?PHP
-            //content::createFeaturedItems($result);
+			$res = db::executeQuery("SELECT * FROM maps");
+            echo content::createFeaturedItems($res,"maps");
         ?>		
 	
 	<!-- /featured -->
