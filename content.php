@@ -30,7 +30,7 @@
                         $imagePath = $row["minimap"];
                         break;
                     case "units":
-                        $imagePath = "";
+                        $imagePath = $row["preview_image"];
                         break;
                     case "guide":
                         $imagePath = "";
@@ -126,7 +126,7 @@
                         $title = $row["title"];
                         $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
                         $text = "";
-                        $imagePath = "";
+                        $imagePath = $row["preview_image"];
                         break;
                     case "guide":
                         $title = $row["title"];

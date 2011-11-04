@@ -30,6 +30,7 @@
                                           pass VARCHAR(80) NOT NULL,
                                           nick VARCHAR(80) NOT NULL,
                                           email VARCHAR(80) NOT NULL,
+                                          avatar VARCHAR(500) NOT NULL,
                                           register_date DATE NOT NULL);";
             db::executeQuery($query);
             
@@ -49,23 +50,26 @@
             
             //Used on front page
             $query = "CREATE TABLE articles (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-                                            title VARCHAR(80) NOT NULL,
-                                            content VARCHAR(500) NOT NULL,
-                                            image VARCHAR(500) NOT NULL,
-                                            user_id INTEGER NOT NULL,
-                                            posted DATE NOT NULL);";
+                                             title VARCHAR(80) NOT NULL,
+                                             content VARCHAR(500) NOT NULL,
+                                             image VARCHAR(500) NOT NULL,
+                                             user_id INTEGER NOT NULL,
+                                             posted DATE NOT NULL);";
             db::executeQuery($query);
 
             $query = "CREATE TABLE units (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                           title VARCHAR(80) NOT NULL,
                                           description VARCHAR(500) NOT NULL,
+                                          preview_image VARCHAR(500) NOT NULL,
                                           user_id INTEGER NOT NULL,
                                           posted DATE NOT NULL);";
             db::executeQuery($query);
             
+            //guide_type (modding, mapping, pixel art, utilities,..) each should have different images
             $query = "CREATE TABLE guides (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                           title VARCHAR(80) NOT NULL,
                                           html_content VARCHAR(500) NOT NULL,
+                                          guide_type VARCHAR(500) NOT NULL,
                                           user_id INTEGER NOT NULL,
                                           posted DATE NOT NULL);";
             db::executeQuery($query);
@@ -124,6 +128,8 @@
             if(!db::table_exists("guides"))
                 $allSystemsGo = false;
             if(!db::table_exists("featured"))
+                $allSystemsGo = false;
+            if(!db::table_exists("comments"))
                 $allSystemsGo = false;
             return $allSystemsGo;
         }
