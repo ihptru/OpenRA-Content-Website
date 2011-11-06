@@ -1,95 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
 <?PHP
 	include_once("hub.php");
     include_once("content.php");
+
+content::head();
 ?>
-<head>
 
-<title><?PHP echo $lang['website_name']; ?></title>
-
-<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="author" content="Erwin Aligam - styleshout.com" />
-<meta name="description" content="Site Description Here" />
-<meta name="keywords" content="openra" />
-<meta name="robots" content="index, follow, noarchive" />
-<meta name="googlebot" content="noarchive" />
-
-<link rel="stylesheet" type="text/css" media="screen" href="css/screen.css" />
-<!--[if IE 6]><link rel="stylesheet" type="text/css" href="css/ie6.css" media="screen" /><![endif]-->
-
-</head>
-
-<body>
-<?PHP
-/*
-if(isset($_POST['login']) && isset($_POST['pass']))
-{
-	$login=$_POST['login'];
-	$pass=md5($_POST['pass']);
-	$dbconn = pg_connect("host=localhost dbname=oramod user=oramod password=iequeiR6");
-	$sql="SELECT * FROM users WHERE login='".$login."'";
-	$result = pg_query($sql) or die(pg_last_error());
-	while ($sign = pg_fetch_array($result))
-	{
-		$passtwo=$sign['pass'];
-		$user_id=$sign['uid'];
-	}
-	if($pass==$passtwo)
-	{
-		echo "successfuL";
-		$_SESSION['user_id']=$user_id;
-	}
-	else
-	{
-		echo "no sucessfull";
-	}
-}	
-
-if(isset($_SESSION['user_id']))
-{
-	echo "LOGGED IN!!!";
-}
-else
-{
-		echo "<form method=\"POST\" action=\"\">
-			Login: <input type=\"text\" name=\"login\">
-			Password: <input type=\"password\" name=\"pass\">
-			<input type=\"submit\" value=\"sign in\">
-			</form>";
-}
-*/
-?>
 <!-- wrap -->
 <div id="wrap">
-	<!-- header -->
-	<div id="header">			
-		<a name="top"></a>
-		<h1 id="logo-text"><a href="index.html" title=""><?PHP echo $lang['website_name'] ?></a></h1>		
-		<p id="slogan"><?PHP echo $lang['website_slowgun']; ?></p>					
-		
-		<div  id="nav">
-			<ul>
-                <?PHP
-                    content::createMenu();
-                ?>
-			</ul>		
-		</div>		
-		
-		<p id="rss-feed"><a href="index.html" class="feed">Grab the RSS FEEd</a></p>	
-		
-		<form id="quick-search" action="index.html" method="get" >
-			<p>
-			<label for="qsearch">Search:</label>
-			<input class="tbox" id="qsearch" type="text" name="qsearch" value="Search..." title="Start typing and hit ENTER" />
-			<input class="btn" alt="Search" type="image" name="searchsubmit" title="Search" src="images/search.png" />
-			</p>
-		</form>	
-						
-	<!-- /header -->					
-	</div>
+
+	<?PHP
+	content::body_head();
+	?>
 	
 	<!-- featured -->		
 	<div id="featured">			
@@ -174,7 +95,7 @@ else
 					}
 					else
 					{
-						echo "<form method=\"POST\" action=\"\">";
+						echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
 						echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
 						echo "Registration";
 						echo "</b></td></tr><tr><td>";
