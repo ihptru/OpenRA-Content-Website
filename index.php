@@ -31,82 +31,9 @@ content::head();
 			<!-- main -->
 			<div id="main">
 				<?PHP
-				if (isset($_GET['register']))
+				if (isset($_GET['register']) and (!user::online()))
 				{
-					if(isset($_GET['key']))
-					{
-						$dbconn = pg_connect("host=localhost dbname=oramod user=oramod password=iequeiR6");
-						$sql_key="SELECT key FROM preusers WHERE key='".$_GET['key']."'";
-						if(pg_numrows(pg_query($sql_key))==0)
-						{
-							echo "Activation Link error";
-							pg_close($dbconn);
-						}
-						else
-						{
-							$dbconn = pg_connect("host=localhost dbname=oramod user=oramod password=iequeiR6");
-							$sql_frompreuser = "SELECT * FROM preusers WHERE key='".$_GET['key']."'";
-							$result_frompreuser = pg_query($sql_frompreuser) or die(pg_last_error());
-							while ($info = pg_fetch_array($result_frompreuser))
-							{
-								$email=$info['email'];
-								$pass=$info['pass'];
-								$login=$info['login'];
-								$date=$info['register_date'];
-							}
-							$sql_user = "INSERT INTO users
-								(email,pass,login,register_date)
-								VALUES
-								('".$email."','".$pass."','".$login."','".$date."');
-								DELETE FROM preusers WHERE key='".$_GET['key']."'";
-							pg_query($sql_user) or die(pg_last_error());
-							pg_close($dbconn);
-							echo "$login : account activated";
-						}	
-
-					}
-					elseif(isset($_POST['act']))
-					{
-						if(!empty($_POST['login']) && !empty($_POST['pass']) && !empty($_POST['email'])) 
-						{
-							$dbconn = pg_connect("host=localhost dbname=oramod user=oramod password=iequeiR6");
-							$sql_mail="SELECT email FROM users WHERE email='".$_POST['email']."'";
-							if(pg_numrows(pg_query($sql_mail))==0)
-							{
-								$sql_preuser = "INSERT INTO preusers
-								(email,pass,login,key)
-								VALUES
-								('".$_POST['email']."','".md5($_POST['pass'])."','".$_POST['login']."','".md5($_POST['email'])."');";
-								pg_query($sql_preuser);
-								pg_close($dbconn);
-								mail($_POST['email'], "Registration complete", "Activate: http://oramod.lv-vl.net/index.php?register=true&key=".md5($_POST['email'])."",
-								"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
-								echo "Please Activate Your account";
-							}
-							else
-							{
-								echo "someone already uses this email"; 
-							}
-						}
-						else
-						{
-							echo "something not filled";
-						}
-					}
-					else
-					{
-						echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
-						echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
-						echo "Registration";
-						echo "</b></td></tr><tr><td>";
-						echo "Login</td><td><input type=\"text\" name=\"login\"></td></tr><tr><td>";
-						echo "Password</td><td><input type=\"text\" name=\"pass\"></td></tr><tr><td>";
-						echo "E-mail</td><td><input type=\"text\" name=\"email\"></td></tr><tr><td>";
-						echo "<input type=\"hidden\" name=\"act\">";
-						echo "<input type=\"hidden\" name=\"register\">";
-						echo "<input type=\"submit\" value=\"Confirm\">
-						</td></tr></table></form>";
-					}
+					user::register_actions();
 				}
 				else
 				{

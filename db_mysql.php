@@ -31,15 +31,23 @@
         
         public static function setup()
         {
-            $query = "CREATE TABLE users (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			$query = "CREATE TABLE IF NOT EXISTS activation (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+												pass VARCHAR(80) NOT NULL,
+												login VARCHAR(80) NOT NULL,
+												email VARCHAR(80) NOT NULL,
+												register_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+												hash VARCHAR(500) NOT NULL);";
+			db::executeQuery($query);
+			
+            $query = "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                           pass VARCHAR(80) NOT NULL,
-                                          nick VARCHAR(80) NOT NULL,
+                                          login VARCHAR(80) NOT NULL,
                                           email VARCHAR(80) NOT NULL,
-                                          avatar VARCHAR(500) NOT NULL,
-                                          register_date DATE NOT NULL);";
+                                          avatar VARCHAR(500) NOT NULL DEFAULT 'None',
+                                          register_date TIMESTAMP NOT NULL);";
             db::executeQuery($query);
             
-            $query = "CREATE TABLE maps (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE IF NOT EXISTS maps (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                          title VARCHAR(80) NOT NULL,
                                          description VARCHAR(500) NOT NULL,
                                          author VARCHAR(80) NOT NULL,
@@ -50,49 +58,49 @@
                                          tileset VARCHAR(80) NOT NULL,
                                          minimap VARCHAR(80) NOT NULL,
                                          user_id INTEGER NOT NULL,
-                                         posted DATE NOT NULL);";
+                                         posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
             //Used on front page
-            $query = "CREATE TABLE articles (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE IF NOT EXISTS articles (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                              title VARCHAR(80) NOT NULL,
                                              content VARCHAR(500) NOT NULL,
                                              image VARCHAR(500) NOT NULL,
                                              user_id INTEGER NOT NULL,
-                                             posted DATE NOT NULL);";
+                                             posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
 
-            $query = "CREATE TABLE units (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE IF NOT EXISTS units (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                           title VARCHAR(80) NOT NULL,
                                           description VARCHAR(500) NOT NULL,
                                           preview_image VARCHAR(500) NOT NULL,
                                           user_id INTEGER NOT NULL,
-                                          posted DATE NOT NULL);";
+                                          posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
             //guide_type (modding, mapping, pixel art, utilities,..) each should have different images
-            $query = "CREATE TABLE guides (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE IF NOT EXISTS guides (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                           title VARCHAR(80) NOT NULL,
                                           html_content VARCHAR(500) NOT NULL,
                                           guide_type VARCHAR(500) NOT NULL,
                                           user_id INTEGER NOT NULL,
-                                          posted DATE NOT NULL);";
+                                          posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
             //Special table for just featured 
-            $query = "CREATE TABLE featured (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE IF NOT EXISTS featured (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                              table_name VARCHAR(80) NOT NULL,
                                              id INTEGER NOT NULL,
-                                             posted DATE NOT NULL);";
+                                             posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
             //Comments made by users on articles
-            $query = "CREATE TABLE comments (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE IF NOT EXISTS comments (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
                                              title VARCHAR(80) NOT NULL,
                                              content VARCHAR(500) NOT NULL,
                                              user_id INTEGER NOT NULL,
                                              article_id INTEGER NOT NULL,
-                                             posted DATE NOT NULL);";
+                                             posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
         }
         
@@ -107,6 +115,16 @@
             return $result;
         }
         
+        public static function fetch_array($result)
+        {
+			return mysql_fetch_array($result);
+		}
+		
+		public static function num_rows($result)
+		{
+			return mysql_num_rows($result);
+		}
+		
         private static function table_exists($tablename) 
         {
             $res = mysql_query("
@@ -122,11 +140,13 @@
         public static function check()
         {
             $allSystemsGo = true;
+            if(!db::table_exists("activation"))
+                $allSystemsGo = false;
             if(!db::table_exists("users"))
                 $allSystemsGo = false;
             if(!db::table_exists("maps"))
                 $allSystemsGo = false;
-            if(!db::table_exists("news"))
+            if(!db::table_exists("articles"))
                 $allSystemsGo = false;
             if(!db::table_exists("units"))
                 $allSystemsGo = false;

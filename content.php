@@ -12,26 +12,30 @@
 		
 		public static function body_head()
 		{
-			echo "<div id='header'>		
+			user::check_logout();
+			user::login();
+			echo "<div id='header'>
 					<a name='top'></a>
 					<h1 id='logo-text'><a href='/' title=''>".lang::$lang['website_name']."</a></h1>		
-					<p id='slogan'>".lang::$lang['website_slowgun']."</p>					
+					<p id='slogan'>".lang::$lang['website_slowgun']."</p>
 
 					<div id='nav'>
 						<ul>";
 							content::createMenu();
 			echo "		</ul>		
-					</div>		
+					</div>";
+					if (!user::online())
+					{
+						echo "<div id='login_form'>";
+						content::login_form();
+						echo "</div>
 
-					<div id='login_form'>";
-					content::login_form();
-					echo "</div>
-					
-					<div id=\"register_link\">
-						<a href=\"index.php?register=true\">register</a>
-					</div>
-					
-					<form id='quick-search' action='index.php' method='GET' >
+						<div id=\"register_link\">
+							<a href=\"index.php?register\">register</a>
+						</div>";
+					}
+
+					echo "<form id='quick-search' action='index.php' method='GET' >
 						<p>
 						<label for='qsearch'>Search:</label>
 						<input class='tbox' id='qsearch' type='text' name='qsearch' value='Search...' title='Start typing and hit ENTER' />
@@ -43,42 +47,12 @@
 		
 		public static function login_form()
 		{
-			if(isset($_POST['login']) && isset($_POST['pass']))
-			{
-				$login=$_POST['login'];
-				$pass=md5($_POST['pass']);
-				$dbconn = pg_connect("host=localhost dbname=oramod user=oramod password=iequeiR6");
-				$sql="SELECT uid,pass FROM users WHERE login='".$login."'";
-				$result = pg_query($sql) or die(pg_last_error());
-				while ($sign = pg_fetch_array($result))
-				{
-					$passtwo=$sign['pass'];
-					$user_id=$sign['uid'];
-				}
-				if($pass==$passtwo)
-				{
-					echo "successfuL";
-					$_SESSION['user_id']=$user_id;
-				}
-				else
-				{
-					echo "no sucessfull";
-				}
-			}
-
-			if(isset($_SESSION['user_id']))
-			{
-				echo "LOGGED IN!!!";
-			}
-			else
-			{
-				echo "<form method=\"POST\" action=\"\">
-					".lang::$lang['login'].": <input type=\"text\" name=\"login\">
-					".lang::$lang['password'].": <input type=\"password\" name=\"pass\">
-					<input type=\"submit\" value=\"".lang::$lang['sign in']."\">
-					<br>
-					</form>";
-			}
+			echo "<form method=\"POST\" action=\"\">
+				".lang::$lang['login'].": <input type=\"text\" name=\"login\">
+				".lang::$lang['password'].": <input type=\"password\" name=\"pass\">
+				<input type=\"submit\" value=\"".lang::$lang['sign in']."\">
+				<br>
+				</form>";
 		}
 		
         public static function createMenu()
@@ -88,6 +62,12 @@
             echo "<li><a href='style.html'>Style Demo</a></li>";
             echo "<li><a href='blog.html'>Blog</a></li>";
             echo "<li><a href='archives.html'>Archives</a></li>";
+            
+            if (user::online())
+            {
+				echo "<li style='float:right;'><a href='index.php?logout'>Logout</a></li>";
+				echo "<li style='float:right;'><a href='profile'>Profile</a></li>";
+			}
         }
         
         //Create image gallery items based on result
