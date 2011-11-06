@@ -14,6 +14,15 @@ elseif ( $use_db == 'pgsql' )
 }
 ################################################
 
+############# prepare database #################
+db::connect();
+if (!db::check())
+{
+	db::clear();
+	db::setup();
+}
+################################################
+
 ########## check and set language ##############
 if(isset($_COOKIE['language']))
 {

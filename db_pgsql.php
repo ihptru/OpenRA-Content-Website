@@ -6,11 +6,6 @@
 		
 		public static function connect()
 		{
-			define("DB_HOST","localhost");
-            define("DB_USERNAME","oramod");
-            define("DB_PASSWORD","iequeiR6");
-            define("DB_DATABASE","oramod");
-            
             db::$con = pg_connect("host=".DB_HOST." port=5432 dbname=".DB_DATABASE." user=".DB_USERNAME." password=".DB_PASSWORD);
             if(!db::$con)
             {

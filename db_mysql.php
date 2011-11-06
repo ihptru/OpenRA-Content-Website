@@ -6,11 +6,6 @@
 		
         public static function connect()
         {
-            define("DB_HOST","localhost");
-            define("DB_USERNAME","oramod");
-            define("DB_PASSWORD","iequeiR6");
-            define("DB_DATABASE","oramod");
-            
             db::$con = mysql_connect(DB_HOST,DB_USERNAME,DB_PASSWORD);
             if(!db::$con)
             {
@@ -31,7 +26,7 @@
         
         public static function getTableNameFrom($row)
         {
-            return "maps";//mysql_tablename($row);
+            return "maps";	//mysql_tablename($row);
         }
         
         public static function setup()
@@ -149,6 +144,20 @@
             mysql_close(db::$con);
             db::$con = null;
         }
+        
+        // execute if connected
+        public static function clear()
+        {
+			$query = "DROP DATABASE ".DB_DATABASE.";
+			";
+			db::executeQuery($query);
+			
+			$query = "CREATE DATABASE ".DB_DATABASE.";
+			";
+			db::executeQuery($query);
+			
+			mysql_select_db(DB_DATABASE, db::$con);
+		}
     }
 ?>
 

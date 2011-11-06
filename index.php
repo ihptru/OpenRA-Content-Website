@@ -5,10 +5,6 @@
 <?PHP
 	include_once("hub.php");
     include_once("content.php");
-	
-	//Create DB If you don't have it setup
-	db::connect();
-	//db::setup();
 ?>
 <head>
 
