@@ -7,8 +7,8 @@
         public static function connect()
         {
             define("DB_HOST","localhost");
-            define("DB_USERNAME","root");
-            define("DB_PASSWORD","");
+            define("DB_USERNAME","oramod");
+            define("DB_PASSWORD","iequeiR6");
             define("DB_DATABASE","oramod");
             
             db::$con = mysql_connect(DB_HOST,DB_USERNAME,DB_PASSWORD);

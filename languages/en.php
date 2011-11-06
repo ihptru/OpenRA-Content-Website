@@ -1,7 +1,8 @@
-<?php
+<?PHP
 
 $lang = array(
-		'test' => "message",
+		'website_name' => "OpenRA - Website",
+		'website_slowgun' => "Brings your content",
 );
 
 ?>

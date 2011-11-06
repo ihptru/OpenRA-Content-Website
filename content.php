@@ -1,6 +1,5 @@
 <?PHP
-    include_once "db_mysql.php";
-    
+ 
     class content
     {
         public static function createMenu()

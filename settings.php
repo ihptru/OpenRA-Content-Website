@@ -1,4 +1,3 @@
 <?PHP
-    $setting_website_name = "OpenRA - Website";
-    $setting_website_slowgun = "Brings your content";
+    $use_db = "mysql";	//mysql or pgsql
 ?>

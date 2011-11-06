@@ -3,9 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <?PHP
-    include_once "settings.php";
-    include_once "db_mysql.php";
-    include_once "content.php";
+	include_once("hub.php");
+    include_once("content.php");
 	
 	//Create DB If you don't have it setup
 	db::connect();
@@ -13,7 +12,7 @@
 ?>
 <head>
 
-<title><?PHP echo $setting_website_name; ?></title>
+<title><?PHP echo $lang['website_name']; ?></title>
 
 <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="author" content="Erwin Aligam - styleshout.com" />
@@ -45,7 +44,6 @@ if(isset($_POST['login']) && isset($_POST['pass']))
 	if($pass==$passtwo)
 	{
 		echo "successfuL";
-		session_start();
 		$_SESSION['user_id']=$user_id;
 	}
 	else
@@ -73,8 +71,8 @@ else
 	<!-- header -->
 	<div id="header">			
 		<a name="top"></a>
-		<h1 id="logo-text"><a href="index.html" title=""><?PHP echo $setting_website_name; ?></a></h1>		
-		<p id="slogan"><?PHP echo $setting_website_slowgun; ?></p>					
+		<h1 id="logo-text"><a href="index.html" title=""><?PHP echo $lang['website_name'] ?></a></h1>		
+		<p id="slogan"><?PHP echo $lang['website_slowgun']; ?></p>					
 		
 		<div  id="nav">
 			<ul>
