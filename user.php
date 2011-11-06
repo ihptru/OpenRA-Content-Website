@@ -82,7 +82,7 @@ class user
 		}
 		elseif(isset($_POST['act']))
 		{
-			if(!empty($_POST['login']) && !empty($_POST['pass']) && !empty($_POST['email'])) 
+			if(!empty($_POST['rlogin']) && !empty($_POST['rpass']) && !empty($_POST['email'])) 
 			{
 				$query = "SELECT email FROM users WHERE email = '".$_POST['email']."'";
 				if (db::num_rows(db::executeQuery($query)) == 0)
@@ -91,7 +91,7 @@ class user
 							(email,pass,login,hash)
 							VALUES
 							(
-							'".$_POST['email']."','".md5($_POST['pass'])."','".$_POST['login']."','".md5($_POST['email'])."'
+							'".$_POST['email']."','".md5($_POST['rpass'])."','".$_POST['rlogin']."','".md5($_POST['email'])."'
 							);";
 					db::executeQuery($query);
 					mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://oramod.lv-vl.net/index.php?register&key=".md5($_POST['email'])."",
@@ -121,8 +121,8 @@ class user
 		echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
 		echo "Registration";
 		echo "</b></td></tr><tr><td>";
-		echo "Login</td><td><input type=\"text\" name=\"login\"></td></tr><tr><td>";
-		echo "Password</td><td><input type=\"password\" name=\"pass\"></td></tr><tr><td>";
+		echo "Login</td><td><input type=\"text\" name=\"rlogin\"></td></tr><tr><td>";
+		echo "Password</td><td><input type=\"password\" name=\"rpass\"></td></tr><tr><td>";
 		echo "E-mail</td><td><input type=\"text\" name=\"email\"></td></tr><tr><td>";
 		
 		echo "<input type=\"hidden\" name=\"act\">";
