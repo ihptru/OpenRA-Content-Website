@@ -109,29 +109,13 @@ class user
 			else
 			{
 				echo lang::$lang['empty fields']."<br><br>";
-				user::register_form();
+				content::create_register_form();
 			}
 		}
 		else
 		{
-			user::register_form();
+			content::create_register_form();
 		}
-	}
-	
-	public static function register_form()
-	{
-		echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
-		echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
-		echo "Registration";
-		echo "</b></td></tr><tr><td>";
-		echo "Login</td><td><input type=\"text\" name=\"rlogin\"></td></tr><tr><td>";
-		echo "Password</td><td><input type=\"password\" name=\"rpass\"></td></tr><tr><td>";
-		echo "E-mail</td><td><input type=\"text\" name=\"email\"></td></tr><tr><td>";
-		
-		echo "<input type=\"hidden\" name=\"act\">";
-		
-		echo "<input type=\"submit\" value=\"Confirm\">
-		</td></tr></table></form>";
 	}
 }
 

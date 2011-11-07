@@ -59,7 +59,7 @@
         {
             //Should get these from db (dynamic)
             echo "<li id='current'><a href='/'>Home</a></li>";
-            echo "<li><a href='style.html'>Style Demo</a></li>";
+            echo "<li><a href=''>Style Demo</a></li>";
             echo "<li><a href='blog.html'>Blog</a></li>";
             echo "<li><a href='archives.html'>Archives</a></li>";
             
@@ -69,6 +69,22 @@
 				echo "<li style='float:right;'><a href='profile'>Profile</a></li>";
 			}
         }
+        
+        public static function create_register_form()
+        {
+			echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
+			echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
+			echo "Registration";
+			echo "</b></td></tr><tr><td>";
+			echo "Login</td><td><input type=\"text\" name=\"rlogin\"></td></tr><tr><td>";
+			echo "Password</td><td><input type=\"password\" name=\"rpass\"></td></tr><tr><td>";
+			echo "E-mail</td><td><input type=\"text\" name=\"email\"></td></tr><tr><td>";
+		
+			echo "<input type=\"hidden\" name=\"act\">";
+		
+			echo "<input type=\"submit\" value=\"Confirm\">
+			</td></tr></table></form>";
+		}
         
         //Create image gallery items based on result
         public static function createImageGallery($result)
