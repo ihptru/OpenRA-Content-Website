@@ -17,34 +17,37 @@ class user
 			if (user::online())
 			{
 				unset($_SESSION['user_id']);
-				header("Location: {$_SERVER['HTTP_REFERER']}");
+				header("Location: /");
 			}
 		}
 	}
 	
 	public static function login()
 	{
-		if(isset($_POST['login']) && isset($_POST['pass']))
+		if (isset($_POST['login']) && isset($_POST['pass']))
 		{
-			$login = $_POST['login'];
-			$pass = md5($_POST['pass']);
-			$db_pass = '';
-			$query = "SELECT uid,pass FROM users WHERE login = '".$login."'";
-			$result = db::executeQuery($query);
-			while ($db_data = db::fetch_array($result))
-			{
-				$db_pass = $db_data['pass'];
-				$user_id = $db_data['uid'];
+			if (!empty($_POST['login']) && !empty($_POST['pass']))
+			{ 
+				$login = $_POST['login'];
+				$pass = md5($_POST['pass']);
+				$db_pass = '';
+				$query = "SELECT uid,pass FROM users WHERE login = '".$login."'";
+				$result = db::executeQuery($query);
+				if (db::num_rows($result) == 0)
+				{
+					return;
+				}
+				while ($db_data = db::fetch_array($result))
+				{
+					$db_pass = $db_data['pass'];
+					$user_id = $db_data['uid'];
+				}
+				if( $pass == $db_pass )		//hashes match
+				{
+					$_SESSION['user_id'] = $user_id;	//start session
+					header("Location: /");
+				}
 			}
-			if( $pass == $db_pass )		//hashes match
-			{
-				$_SESSION['user_id'] = $user_id;	//start session
-				header("Location: {$_SERVER['HTTP_REFERER']}");
-			}
-			//else
-			//{
-			//	echo " <script type=\"text/javascript\">alert(\"Password incorrect!\");</script>";
-			//}
 		}
 	}
 	
@@ -52,7 +55,7 @@ class user
 	{
 		if(isset($_GET['key']))
 		{
-			$query = "SELECT * FROM activation WHERE hash = '".$_GET['key']."'";
+			$query = "SELECT hash FROM activation WHERE hash = '".$_GET['key']."'";
 			if (db::num_rows(db::executeQuery($query)) == 0)
 			{
 				echo lang::$lang['activation error'];
