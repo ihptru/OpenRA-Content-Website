@@ -81,29 +81,53 @@ class user
 				$query = "DELETE FROM activation WHERE hash = '".$_GET['key']."'";
 				db::executeQuery($query);
 				echo "$login: ".lang::$lang['activated'];
+				
+				user::prepare_account($login);
 			}
 		}
 		elseif(isset($_POST['act']))
 		{
-			if(!empty($_POST['rlogin']) && !empty($_POST['rpass']) && !empty($_POST['email'])) 
+			if(!empty($_POST['rlogin']) && !empty($_POST['rpass']) && !empty($_POST['verpass']) && !empty($_POST['email'])) 
 			{
-				$query = "SELECT email FROM users WHERE email = '".$_POST['email']."'";
-				if (db::num_rows(db::executeQuery($query)) == 0)
+				if ($_POST['rpass'] == $_POST['verpass'])
 				{
-					$query = "INSERT INTO activation
-							(email,pass,login,hash)
-							VALUES
-							(
-							'".$_POST['email']."','".md5($_POST['rpass'])."','".$_POST['rlogin']."','".md5($_POST['email'])."'
-							);";
-					db::executeQuery($query);
-					mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://oramod.lv-vl.net/index.php?register&key=".md5($_POST['email'])."",
-					"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
-					echo lang::$lang['ask to activate'];
+					$query = "SELECT email FROM users WHERE email = '".$_POST['email']."'";
+					if (db::num_rows(db::executeQuery($query)) == 0)
+					{
+						$query = "SELECT login FROM users WHERE login = '".$_POST['rlogin']."'";
+						if (db::num_rows(db::executeQuery($query)) == 0)
+						{
+							if ( strpos($_POST['email'], '@') )
+							{
+								$query = "INSERT INTO activation
+										(email,pass,login,hash)
+										VALUES
+										(
+										'".$_POST['email']."','".md5($_POST['rpass'])."','".$_POST['rlogin']."','".md5($_POST['email'])."'
+										);";
+								db::executeQuery($query);
+								mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://oramod.lv-vl.net/index.php?register&key=".md5($_POST['email'])."",
+								"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
+								echo lang::$lang['ask to activate'];
+							}
+							else
+							{
+								echo lang::$lang['email error'];
+							}
+						}
+						else
+						{
+							echo lang::$lang['user exists'];
+						}
+					}
+					else
+					{
+						echo lang::$lang['email in use']; 
+					}
 				}
 				else
 				{
-					echo lang::$lang['email in use']; 
+					echo lang::$lang['password not match']; 
 				}
 			}
 			else
@@ -116,6 +140,15 @@ class user
 		{
 			content::create_register_form();
 		}
+	}
+	
+	public static function prepare_account($username)
+	{
+		$path = WEBSITE_PATH . "users/" . $username;
+		mkdir($path);
+		mkdir($path . "/maps");
+		chmod($path . "/maps", 0777);
+		
 	}
 }
 

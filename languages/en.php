@@ -15,6 +15,9 @@ class lang
 			'register complete' => "Registration complete",
 			'activate' => "Activate",
 			'ask to activate' => "Please Activate Your account",
+			'user exists' => "Account with this username already exists",
+			'password not match' => "Passwords do not match",
+			'email error' => "Email format error",
 	);
 }
 

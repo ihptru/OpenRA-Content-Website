@@ -78,6 +78,7 @@
 			echo "</b></td></tr><tr><td>";
 			echo "Login</td><td><input type=\"text\" name=\"rlogin\"></td></tr><tr><td>";
 			echo "Password</td><td><input type=\"password\" name=\"rpass\"></td></tr><tr><td>";
+			echo "Re-enter password:</td><td><input type=\"password\" name=\"verpass\"></td></tr><tr><td>";
 			echo "E-mail</td><td><input type=\"text\" name=\"email\"></td></tr><tr><td>";
 		
 			echo "<input type=\"hidden\" name=\"act\">";
