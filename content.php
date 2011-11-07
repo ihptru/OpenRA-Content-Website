@@ -216,4 +216,19 @@
             return $content;
         }
     }
+    
+    class profile
+    {
+		public static function upload_map()
+		{
+			echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
+				<label>Choose a map file(.oramap) to upload: <input type=\"file\" name=\"oramap_f\" /></label>
+				<br />
+				<input type=\"submit\" name=\"submit\" value=\"Upload\" />
+				</form>
+				";
+			$uploaded = upload::upload_oramap("/home/oramod/www/", "ihptru", "oramap_f");
+			echo $uploaded;
+		}
+	}
 ?>

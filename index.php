@@ -39,6 +39,10 @@ content::head();
 				{
 					echo "<h3>Recent Articles</h3>";
 				}
+				if (user::online())
+				{
+					profile::upload_map();
+				}
                     //content::createArticleItems($result);
                 ?>
 			<!-- /main -->	

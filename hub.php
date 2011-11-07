@@ -5,6 +5,8 @@ include_once "settings.php";
 
 include_once "user.php";
 
+include_once "functions.php";
+
 ############## database class ##################
 if ( $use_db == 'mysql' )
 {

@@ -4,7 +4,7 @@ class upload
 {
 	public static function upload_oramap($website_path, $username, $form_input_name)
 	{
-		if($_FILES[$input_name]["name"])
+		if(isset($_FILES[$form_input_name]["name"]))
 		{
 			$filename = $_FILES[$form_input_name]["name"];
 			$source = $_FILES[$form_input_name]["tmp_name"];
@@ -30,6 +30,7 @@ class upload
                 {	
 					$path = $website_path . "users/" . $username . "/maps/" . $name[0];
 					mkdir($path);
+					chmod($path, 0777);
 					$target_path = $path . "/" . $filename;
 					if(move_uploaded_file($source, $target_path))
 					{
