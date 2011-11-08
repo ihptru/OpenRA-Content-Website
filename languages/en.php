@@ -18,6 +18,7 @@ class lang
 			'user exists' => "Account with this username already exists",
 			'password not match' => "Passwords do not match",
 			'email error' => "Email format error",
+            'copyright' => "No rights reserved. Site created by Holloweye and ihptru."
 	);
 }
 

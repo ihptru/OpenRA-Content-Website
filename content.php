@@ -390,6 +390,132 @@
             }
             return $content;
         }
+        
+        public static function create_footer()
+        {
+            $content = "";
+            
+            $content .= '<div id="footer-outer" class="clear"><div id="footer-wrap">';
+            
+            $content .= '<div class="col-a">';
+            
+			$content .= '<h3>Contact Info</h3>';
+			
+			$content .= '<p>';
+            
+            if(in_array("contact_phone",lang::$lang) && strlen(lang::$lang["contact_phone"]) > 0)
+            {
+                $content .= '<strong>Phone: </strong>' . lang::$lang["contact_phone"] . '<br/>';
+            }
+            if(in_array("contact_fax",lang::$lang) && strlen(lang::$lang["contact_fax"]) > 0)
+            {
+                $content .= '<strong>Fax: </strong>' . lang::$lang["contact_fax"];
+            }
+			$content .= '</p>';
+			
+            if(in_array("contact_address",lang::$lang) && strlen(lang::$lang["contact_address"]) > 0)
+            {
+                $content .= '<p><strong>Address: </strong>' . lang::$lang["contact_address"] . '</p>';
+            }
+            if(in_array("contact_email",lang::$lang) && strlen(lang::$lang["contact_email"]) > 0)
+            {
+                $content .= '<p><strong>E-mail: </strong>' . lang::$lang["contact_email"] . '</p>';
+            }
+			//$content .= '<p>Want more info - go to our <a href="#">contact page</a></p>	';		
+			
+            /*
+			$content .= '<h3>Follow Us</h3>';
+			$content .= '<div class="footer-list">';
+            $content .= '<ul>';
+            $content .= '<li><a href="index.html" class="rssfeed">RSS Feed</a></li>';
+            $content .= '<li><a href="index.html" class="email">Email</a></li>';
+            $content .= '<li><a href="index.html" class="twitter">Twitter</a></li>';								
+            $content .= '</ul>';
+			$content .= '</div>';
+            */
+            
+            $content .= '</div>';
+            
+            /*
+            $content .= '<div class="col-a">';		
+
+			$content .= '<h3>Site Links</h3>';
+			$content .= '<div class="footer-list">';
+            $content .= '<ul>';
+            $content .= '<li><a href="index.html">Home</a></li>';
+            $content .= '<li><a href="index.html">Style Demo</a></li>';
+            $content .= '<li><a href="index.html">Blog</a></li>';
+            $content .= '<li><a href="index.html">Archive</a></li>';
+            $content .= '<li><a href="index.html">About</a></li>';
+            $content .= '<li><a href="index.html">Template Info</a></li>';	
+            $content .= '<li><a href="index.html">Site Map</a></li>';					
+            $content .= '</ul>';
+			$content .= '</div>';
+
+            $content .= '</div>';
+            
+            $content .= '<div class="col-a">';
+            
+			$content .= '<h3>Web Resource</h3>';
+			
+			$content .= '<p>Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu
+			posuere nunc justo tempus leo. </p>';
+			
+			$content .= '<div class="footer-list">';
+            $content .= '<ul>';
+            $content .= '<li><a href="http://themeforest.net?ref=ealigam" title="Site Templates">ThemeForest</a></li>';
+            $content .= '<li><a href="http://www.4templates.com/?go=228858961" title="Website Templates">4Templates</a></li>';
+            $content .= '<li><a href="http://store.templatemonster.com?aff=ealigam" title="Web Templates">TemplateMonster</a></li>';
+            $content .= '<li><a href="http://graphicriver.net?ref=ealigam" title="Stock Graphics">GraphicRiver</a></li>';
+            $content .= '<li><a href="http://www.dreamhost.com/r.cgi?287326" title="Web Hosting">Dreamhost</a></li>';
+            $content .= '</ul>';
+			$content .= '</div>';			
+            
+            $content .= '</div>';		
+            
+            $content .= '<div class="col-b">';
+            
+			$content .= '<h3>About</h3>';			
+			
+			$content .= '<p>';
+			$content .= '<a href="index.html"><img src="images/gravatar.jpg" width="40" height="40" alt="firefox" class="float-left" /></a>';
+			$content .= 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. 
+			Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu 
+			posuere nunc justo tempus leo. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. 
+			Cras id urna. <a href="index.html">Learn more...</a>';
+			$content .= '</p>';	
+			
+            $content .= '</div>';
+             
+             */
+            
+            $content .= '<div class="fix"></div>';
+            
+            $content .= '<!-- footer-bottom -->';
+            $content .= '<div id="footer-bottom">';
+            
+			$content .= '<div class="bottom-left">';
+            if(in_array("copyright",lang::$lang) && strlen(lang::$lang["copyright"]) > 0)
+            {
+                $content .= '<p>' . lang::$lang["copyright"] . '</p>';
+            }
+			$content .= '</div>';
+            
+			$content .= '<div class="bottom-right">';
+            $content .= '<p>';
+            $content .= '<a href="index.html">Home</a> |';
+            $content .= '<strong><a href="#top" class="back-to-top">Back to Top</a></strong>';						
+            $content .= '</p>';
+			$content .= '</div>';
+            
+            $content .= '<!-- /footer-bottom -->';		
+            $content .= '</div>';
+            
+            $content .= '<!-- /footer-outer -->	';	
+            $content .= '</div></div>';
+            
+            return $content;
+        }
     }
     
     class profile
