@@ -99,7 +99,8 @@
                                              title VARCHAR(80) NOT NULL,
                                              content VARCHAR(500) NOT NULL,
                                              user_id INTEGER NOT NULL,
-                                             article_id INTEGER NOT NULL,
+                                             table_id INTEGER NOT NULL,
+                                             table_name INTEGER NOT NULL,
                                              posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
         }

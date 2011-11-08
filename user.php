@@ -9,6 +9,11 @@ class user
 			return True;
 		}
 	}
+    
+    public static function uid()
+    {
+        return $_SESSION['user_id'];
+    }
 	
 	public static function check_logout()
 	{

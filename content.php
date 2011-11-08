@@ -183,7 +183,7 @@
                     // Answer: In featured you can combine different elements if you wish (maps and units)
                     $table = $row["table_name"];
                     $res = db::executeQuery("SELECT * FROM " . $table . " WHERE uid = " . $row["id"]);
-                    $row = db::nextRowFromQuery($result);
+                    $row = db::nextRowFromQuery($res);
                 }
                 switch($table)
                 {
@@ -315,6 +315,79 @@
                 $content .= "<tr><td><img src='" . $imagePath . "'></td><td>" . $title . "</br>" . $subtitle . "</br>" . $text . "</td></tr>";
             }
             $content .= "</table>";
+            return $content;
+        }
+        
+        public static function create_comment_section($result)
+        {
+            $counter = 0;
+            $content = "";
+            
+            $comments = mysql_num_rows($result);
+            $content .= "<h3 id='comments'>" . $comments . " Responses</h3>";
+            $content .= "<ol class='commentlist'>";
+            
+            
+            while ($comment = db::nextRowFromQuery($result))
+            {
+                $counter++;
+                $res = db::executeQuery("SELECT * FROM users WHERE uid = " . $comment["id"]);
+                $author = db::nextRowFromQuery($res);
+            
+                if($counter > 0)
+                {
+                    $content .= "<li class='depth-1'>";
+                    $counter = -1;
+                }
+                else
+                    $content .= "<li class='thread-alt depth-1'>";
+                
+                $content .= "<div class='comment-info'>";			
+                $content .= "<img alt='' src='" . $autor["avatar"] . "' class='avatar' height='40' width='40' />";
+                $content .= "<cite>";
+                $content .= "<a href='index.html'>" . $autor["login"] . "</a> Says: <br />"; //index.html?? << need correct page
+                $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
+                $content .= "</cite>";
+                $content .= "</div>";
+                
+                $content .= "<div class='comment-text'>";
+                $content .= "<p>" . $comment["content"] . "</p>";
+                $content .= "<div class='reply'>";
+                $content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
+                $content .= "</div>";
+                $content .= "</div>";
+                
+                $content .= "</li>";
+            }
+            
+            $content .= "</ol>";
+            
+            return $content;
+        }
+        
+        public static function create_comment_respond($table_name,$table_id)
+        {
+            $content = "";
+            if(user::online())
+            {
+                $content .= "<div id='respond'>";
+                $content .= "<h3>Leave a Reply</h3>";			
+                $content .= "<form action='index.html' method='post' id='commentform'>"; // index.html ?? (Need a page to take form data and put into comments table)
+                $content .= "<p>";
+                $content .= "<label for='message'>Your Message</label><br />";
+                $content .= "<textarea id='message' name='message' rows='10' cols='20' tabindex='4'></textarea>";
+                $content .= "</p>";
+                $content .= "<p class='no-border'>";
+                $content .= "<input class='button' type='submit' value='Submit Comment' tabindex='5'/>";      		
+                $content .= "</p>";
+                
+                $content .= "<input type='hidden' name='user_id' value='" . user::uid() . "'>";
+                $content .= "<input type='hidden' name='table_name' value='" . $table_name . "'>";
+                $content .= "<input type='hidden' name='table_id' value='" . $table_id . "'>";
+                
+                $content .= "</form>";
+                $content .= "</div>";
+            }
             return $content;
         }
     }
