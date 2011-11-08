@@ -1,5 +1,4 @@
 <?PHP
- 
     class content
     {
         public static function head()
@@ -230,6 +229,92 @@
                 $content .= "</div>";
             }
             
+            return $content;
+        }
+        
+        public static function create_grid($result, $table = "maps")
+        {
+            $columns = 3;
+            $counter = 0;
+            
+            $content = "<table>";
+            while ($row = db::nextRowFromQuery($result))
+            {
+                $title = "";
+                $image = "";
+                
+                switch($table)
+                {
+                        //Set title, image
+                    case "maps":
+                        $title = $row["title"];
+                        $imagePath = $row["minimap"];
+                        break;
+                    case "units":
+                        $title = $row["title"];
+                        $imagePath = $row["preview_image"];
+                        break;
+                    case "guide":
+                        $title = $row["title"];
+                        $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
+                        break;
+                }
+                
+                if($counter == 0)
+                    $content .= "<tr>";
+                
+                $content .= "<td><img src='" . $imagePath . "'>" . $title . "</td>";
+                
+                if($counter > 2)
+                {
+                    $content .= "</tr>";
+                    $counter = -1;
+                }
+                $counter++;
+            }
+            if($counter <= 2)
+                $content .= "</tr>";
+            $content .= "</table>";
+            return $content;
+        }
+        
+        public static function create_list($result, $table)
+        {
+            $content = "<table>";
+            while ($row = db::nextRowFromQuery($result))
+            {
+                $title = "";
+                $image = "";
+                $subtitle = "";
+                $text = "";
+                
+                switch($table)
+                {
+                        //Set title, image
+                    case "maps":
+                        $title = $row["title"];
+                        $imagePath = $row["minimap"];
+                        $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
+                        $text = $row["description"];
+                        break;
+                    case "units":
+                        $title = $row["title"];
+                        $imagePath = $row["preview_image"];
+                        $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
+                        $text = "";
+                        break;
+                    case "guide":
+                        $title = $row["title"];
+                        $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
+                        $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
+                        $text = "";
+                        break;
+                }
+                
+                //TODO: Text should truncate if too large
+                $content .= "<tr><td><img src='" . $imagePath . "'></td><td>" . $title . "</br>" . $subtitle . "</br>" . $text . "</td></tr>";
+            }
+            $content .= "</table>";
             return $content;
         }
     }
