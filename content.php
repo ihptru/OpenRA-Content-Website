@@ -6,6 +6,34 @@
 			echo "<html><head><title>";
 			echo lang::$lang['website_name'];
 			echo "</title>";
+            
+            //include highslide (image viewer)
+            echo "<script type='text/javascript' src='highslide/highslide-with-gallery.js'></script>";
+            echo "<link rel='stylesheet' type='text/css' href='highslide/highslide.css' />";
+            echo "<script type='text/javascript'>";
+            echo "hs.graphicsDir = '../highslide/graphics/';";
+            echo "hs.align = 'center';";
+            echo "hs.transitions = ['expand', 'crossfade'];";
+            echo "hs.outlineType = 'glossy-dark';";
+            echo "hs.wrapperClassName = 'dark';";
+            echo "hs.fadeInOut = true;";
+            
+            // Add the controlbar
+            echo "if (hs.addSlideshow) hs.addSlideshow({";
+                //slideshowGroup: 'group1',
+                echo "interval: 5000,";
+                echo "repeat: false,";
+                echo "useControls: true,";
+                echo "fixedControls: 'fit',";
+                echo "overlayOptions: {";
+                    echo "opacity: .6,";
+                    echo "position: 'bottom center',";
+                    echo "hideOnMouseOut: true";
+                echo "}";
+            echo "});";
+            echo "</script>";
+            
+            
 			echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" /></head>";
 		}
 		
@@ -391,6 +419,30 @@
                 $content .= "</form>";
                 $content .= "</div>";
             }
+            return $content;
+        }
+        
+        //Accept image table
+        public static function create_highslide_gallery($result)
+        {
+            $content = "<div class='highslide-gallery'>";
+            
+            while ($img = db::nextRowFromQuery($result))
+            {
+            
+                $content .= "<a href='" . $img['path'] . "' class='highslide' onclick='return hs.expand(this)'>";
+                $content .= "<img src='" . $img['path_thumb'] . "' alt='Highslide JS'";
+                $content .= "title='Click to enlarge' />";
+                $content .= "</a>";
+                if($img['description'].length > 0)
+                {
+                    $content .= "<div class='highslide-caption'>";
+                    $content .= $img['description'];
+                    $content .= "</div>";
+                }
+            }
+            
+            $content .= "</div";
             return $content;
         }
         

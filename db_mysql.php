@@ -115,6 +115,12 @@
 											email VARCHAR(80) NOT NULL,
 											hash VARCHAR(500) NOT NULL);";
 			db::executeQuery($query);
+            
+            $query = "CREATE TABLE IF NOT EXISTS image (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            path VARCHAR(500) NOT NULL,
+            path_thumb VARCHAR(500) NOT NULL,
+            description VARCHAR(500) NOT NULL);";
+			db::executeQuery($query);
         }
         
         public static function executeQuery($q)
@@ -171,6 +177,8 @@
                 $allSystemsGo = false;
             if(!db::table_exists("recover"))
 				$allSystemsGo = false;
+            if(!db::table_exists("image"))
+                $allSystemsGo = false;
             return $allSystemsGo;
         }
         
