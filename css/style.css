@@ -809,3 +809,8 @@ p.thumbs {
 	height:0; 
 	content: " "; 
 }
+
+.lang {
+	font-size:10;
+	text-align:center;
+}

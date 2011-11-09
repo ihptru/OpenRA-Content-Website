@@ -54,6 +54,11 @@ if(isset($_GET['lang']))
 		setcookie("language", "de", time()+3600*24*360, "/");
 		header("Location: {$_SERVER['HTTP_REFERER']}");
 	}
+	else
+	{
+		setcookie("language", "en", time()+3600*24*360, "/");
+		header("Location: {$_SERVER['HTTP_REFERER']}");
+	}
 }
 
 require_once("languages/".USER_LANGUAGE.".php");

@@ -566,7 +566,7 @@
             
 			$content .= '<div class="bottom-right">';
             $content .= '<p>';
-            $content .= '<a href="index.html">Home</a> |';
+            $content .= '<a href="/">Home</a> |';
             $content .= '<strong><a href="#top" class="back-to-top">Back to Top</a></strong>';						
             $content .= '</p>';
 			$content .= '</div>';
@@ -576,6 +576,12 @@
             
             $content .= '<!-- /footer-outer -->	';	
             $content .= '</div></div>';
+            $content .= '<div class="lang">
+						<a href="index.php?lang=en">English</a>
+						<a href="index.php?lang=ru">Русский</a>
+						<a href="index.php?lang=de">Deutsch</a>
+						</div>
+						';
             
             return $content;
         }

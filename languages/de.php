@@ -1,6 +1,8 @@
-<?php
+<?PHP
 
-$lang = array(
+class lang
+{
+	public static $lang = array(
 	'website_name' => "OpenRA - Webseite",
 	'website_slowgun' => "Brings your content",
 	'login' => "Login",
@@ -21,6 +23,7 @@ $lang = array(
 	'recover nouser' => "Der Benutzer wurde nicht gefunden",
 	'nothing to activate' => "Nichts mehr zum Aktivieren da",
 	'password updated' => "Passwort wurde Aktualisiert",
-);
+	);
+}
 
 ?>

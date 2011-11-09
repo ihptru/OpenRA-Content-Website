@@ -94,7 +94,7 @@ content::head();
 
 	<!-- footer-outer -->	
 	<?PHP
-            content::create_footer();
+            echo content::create_footer();
     ?>
 
 <!-- /footer -->
