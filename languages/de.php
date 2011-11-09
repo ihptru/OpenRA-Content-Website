@@ -22,7 +22,7 @@ class lang
 	'already requested' => "Eine Anfrage mit diesen Registrierungsdaten wurde bereits gesendet",
 	'recover nouser' => "Der Benutzer wurde nicht gefunden",
 	'nothing to activate' => "Nichts mehr zum Aktivieren da",
-	'password updated' => "Passwort wurde Aktualisiert",
+	'password updated' => "Passwort wurde aktualisiert",
 	);
 }
 
