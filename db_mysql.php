@@ -29,6 +29,12 @@
             return "maps";	//mysql_tablename($row);
         }
         
+        public static function clearOldRecords()
+        {
+            $query = "DELETE FROM activation WHERE register_date < (CURRENT_TIMESTAMP-2629743)"; //one month
+            db::executeQuery($query);
+        }
+        
         public static function setup()
         {
 			$query = "CREATE TABLE IF NOT EXISTS activation (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
