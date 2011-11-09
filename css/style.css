@@ -276,9 +276,17 @@ input.button {
 #register_link {
 	font-size: 11px;
 	position: absolute;
-	top: 17px; right: -72px;
+	top: 15px; right: -72px;
 	background: #070605;
-	padding: 5px 15px 5px 15px;
+	padding: 0px 15px 0px 15px;
+	text-decoration:underline;
+}
+#recover_link {
+	font-size: 11px;
+	position: absolute;
+	top: 33px; right: -72px;
+	background: #070605;
+	padding: 0px 15px 0px 15px;
 	text-decoration:underline;
 }
 

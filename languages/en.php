@@ -20,6 +20,9 @@ class lang
 			'email error' => "Email format error",
             'copyright' => "No rights reserved. Site created by Holloweye and ihptru.",
             'already requested' => "Already requested registration with such data",
+            'recover nouser' => "User with such data not found",
+            'nothing to activate' => "Nothing to activate",
+            'password updated' => "Password updated",
 	);
 }
 

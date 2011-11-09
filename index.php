@@ -35,13 +35,22 @@ content::head();
 				{
 					user::register_actions();
 				}
+				elseif (isset($_GET['recover']) and (!user::online()))
+				{
+					echo "<a href='index.php?recover&recover_pass'>Recover Password</a><br>";
+					echo "<a href='index.php?recover&recover_user'>Recover Username</a><br>";
+					user::recover();
+				}
+				elseif (isset($_GET['profile']))
+				{
+					if (user::online())
+					{
+						profile::upload_map();
+					}	
+				}
 				else
 				{
 					echo "<h3>Recent Articles</h3>";
-				}
-				if (user::online())
-				{
-					profile::upload_map();
 				}
                     //content::createArticleItems($result);
                 ?>

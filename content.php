@@ -31,6 +31,9 @@
 
 						<div id=\"register_link\">
 							<a href=\"index.php?register\">register</a>
+						</div>
+						<div id=\"recover_link\">
+							<a href=\"index.php?recover\">recover</a>
 						</div>";
 					}
 

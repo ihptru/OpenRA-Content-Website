@@ -171,6 +171,110 @@ class user
 		mkdir($path);
 		mkdir($path . "/maps");
 	}
+	
+	public static function recover()
+	{
+		if (isset($_GET['recover_pass']))
+		{
+			echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
+			echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
+			echo "Recover";
+			echo "</b></td></tr><tr><td>";
+			echo "Login</td><td><input type=\"text\" name=\"rpass_login\"></td></tr><tr><td>";
+			echo "E-mail</td><td><input type=\"text\" name=\"rpass_email\"></td></tr><tr><td>";
+			echo "<input type=\"submit\" value=\"Confirm\">
+			</td></tr></table></form>";
+		}
+		elseif(isset($_GET['recover_user']))
+		{
+			echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
+			echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
+			echo "Recover";
+			echo "</b></td></tr><tr><td>";
+			echo "Password</td><td><input type=\"password\" name=\"ruser_pass\"></td></tr><tr><td>";
+			echo "E-mail</td><td><input type=\"text\" name=\"ruser_email\"></td></tr><tr><td>";
+			echo "<input type=\"submit\" value=\"Confirm\">
+			</td></tr></table></form>";
+		}
+		
+		if (isset($_POST['rpass_login']) && isset($_POST['rpass_email']))
+		{
+			$query = "SELECT login,email FROM users WHERE login = '".$_POST['rpass_login']."' AND email = '".$_POST['rpass_email']."'";
+			if (db::num_rows(db::executeQuery($query)) == 0)
+			{
+				echo lang::$lang['recover nouser'];
+				return;
+			}
+			$query = "INSERT INTO recover
+					(login,email,hash)
+					VALUES
+					(
+					'".$_POST['rpass_login']."','".$_POST['rpass_email']."','".md5($_POST['rpass_email'])."'
+					)";
+			db::executeQuery($query);
+			mail($_POST['rpass_email'], "recover password", "recover password: http://oramod.lv-vl.net/index.php?recover&recover_link=".md5($_POST['rpass_email'])."",
+									"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
+		}
+		elseif (isset($_POST['ruser_pass']) && isset($_POST['ruser_email']))
+		{
+			$query = "SELECT pass,email FROM users WHERE pass = '".md5($_POST['ruser_pass'])."' AND email = '".$_POST['ruser_email']."'";
+			if (db::num_rows(db::executeQuery($query)) == 0)
+			{
+				echo lang::$lang['recover nouser'];
+				return;
+			}
+			$query = "SELECT login FROM users WHERE pass = '".md5($_POST['ruser_pass'])."' AND email = '".$_POST['ruser_email']."'";
+			$result = db::executeQuery($query);
+			while ($db_data = db::fetch_array($result))
+			{
+				$user = $db_data['login'];
+			}
+			mail($_POST['ruser_email'], "recover username", "You username: ".$user,
+									"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
+			header("Location: /");
+		}
+		
+		if (isset($_GET['recover_link']))
+		{
+			$hash = $_GET['recover_link'];
+			$query = "SELECT hash FROM recover WHERE hash = '".$hash."'";
+			if (db::num_rows(db::executeQuery($query)) == 0)
+			{
+				echo lang::$lang['nothing to activate'];
+				return;
+			}
+			$query = "SELECT login FROM recover WHERE hash = '".$hash."'";
+			$result = db::executeQuery($query);
+			while ($db_data = db::fetch_array($result))
+			{
+				$user = $db_data['login'];
+			}
+			echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
+			echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
+			echo "Enter new password:";
+			echo "</b></td></tr><tr><td>";
+			echo "Password</td><td><input type=\"password\" name=\"rpass_new\"></td></tr><tr><td>";
+			echo "Re-enter Password</td><td><input type=\"password\" name=\"rpass_new_check\"></td></tr><tr><td>";
+			echo "<input type=\"submit\" value=\"Confirm\">
+			</td></tr></table></form>";
+			if (isset($_POST['rpass_new']) && isset($_POST['rpass_new_check']))
+			{
+				if ($_POST['rpass_new'] == $_POST['rpass_new_check'])
+				{
+					$password = md5($_POST['rpass_new']);
+					$query = "UPDATE users
+								SET pass = '".$password."'
+								WHERE login = '".$user."'";
+					db::executeQuery($query);
+					echo lang::$lang['password updated'];
+				}
+				else
+				{
+					echo lang::$lang['password not match'];
+				}
+			}
+		}
+	}
 }
 
 ?>

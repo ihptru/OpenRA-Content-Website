@@ -103,6 +103,12 @@
                                              table_name INTEGER NOT NULL,
                                              posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
+            
+            $query = "CREATE TABLE IF NOT EXISTS recover (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+											login VARCHAR(80) NOT NULL,
+											email VARCHAR(80) NOT NULL,
+											hash VARCHAR(500) NOT NULL);";
+			db::executeQuery($query);
         }
         
         public static function executeQuery($q)
@@ -157,6 +163,8 @@
                 $allSystemsGo = false;
             if(!db::table_exists("comments"))
                 $allSystemsGo = false;
+            if(!db::table_exists("recover"))
+				$allSystemsGo = false;
             return $allSystemsGo;
         }
         
