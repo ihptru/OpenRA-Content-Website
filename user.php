@@ -152,8 +152,6 @@ class user
 		$path = WEBSITE_PATH . "users/" . $username;
 		mkdir($path);
 		mkdir($path . "/maps");
-		chmod($path . "/maps", 0777);
-		
 	}
 }
 

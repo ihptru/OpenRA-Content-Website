@@ -121,6 +121,13 @@ td {
 /* end - table */
 
 /* form elements */
+#form_class {
+	margin: 10px 20px 10px 20px; 
+	padding: 15px 25px 25px 25px; 
+	border: 1px solid #251a14;
+	background-color: #130d0a;
+}
+
 #register_form {
 	margin: 10px 20px 10px 20px; 
 	padding: 15px 25px 25px 25px; 

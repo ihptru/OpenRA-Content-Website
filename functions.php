@@ -29,12 +29,14 @@ class upload
                 if (strtolower($name[1]) == 'oramap')
                 {	
 					$path = $website_path . "users/" . $username . "/maps/" . $name[0];
+					if (is_dir($path))
+					{
+						return 'exists';
+					}
 					mkdir($path);
-					chmod($path, 0777);
 					$target_path = $path . "/" . $filename;
 					if(move_uploaded_file($source, $target_path))
 					{
-						unlink($target_path);
 						return $target_path;
 					}
 					else
