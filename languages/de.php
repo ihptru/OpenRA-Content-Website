@@ -15,7 +15,7 @@ class lang
 	'register complete' => "Registrierung ist komplett",
 	'activate' => "Aktiviert",
 	'ask to activate' => "Bitte aktiviere zuerst deinen Account",
-	'user exists' => "Benutzername ist bereits in verwendung",
+	'user exists' => "Benutzername ist bereits in Verwendung",
 	'password not match' => "Die Passwörter stimmen nicht überein",
 	'email error' => "Die Emailadresse ist inkorrekt",
 	'copyright' => "Keine Rechte vorbehalten. Die Seite wurde erstellt von Holloweye, Hammster and ihptru.",
