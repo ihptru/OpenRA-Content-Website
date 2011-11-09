@@ -32,6 +32,7 @@
         public static function clearOldRecords()
         {
             $query = "DELETE FROM activation WHERE register_date < (CURRENT_TIMESTAMP-2629743)"; //one month
+            $query = "DELETE FROM recover WHERE date_time < (CURRENT_TIMESTAMP-2629743)";
             db::executeQuery($query);
         }
         
@@ -113,7 +114,8 @@
             $query = "CREATE TABLE IF NOT EXISTS recover (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 											login VARCHAR(80) NOT NULL,
 											email VARCHAR(80) NOT NULL,
-											hash VARCHAR(500) NOT NULL);";
+											hash VARCHAR(500) NOT NULL,
+											date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
 			db::executeQuery($query);
             
             $query = "CREATE TABLE IF NOT EXISTS image (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,

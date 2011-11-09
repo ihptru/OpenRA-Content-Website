@@ -205,6 +205,12 @@ class user
 				echo lang::$lang['recover nouser'];
 				return;
 			}
+			$query = "SELECT login FROM recover WHERE login = '".$_POST['rpass_login']."'";
+			if (db::num_rows(db::executeQuery($query)) != 0)
+			{
+				echo lang::$lang['recover requested'];
+				return;
+			}
 			$query = "INSERT INTO recover
 					(login,email,hash)
 					VALUES
@@ -265,6 +271,8 @@ class user
 					$query = "UPDATE users
 								SET pass = '".$password."'
 								WHERE login = '".$user."'";
+					db::executeQuery($query);
+					$query = "DELETE FROM recover WHERE login = '".$user."'";
 					db::executeQuery($query);
 					echo lang::$lang['password updated'];
 				}

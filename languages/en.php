@@ -23,6 +23,7 @@ class lang
             'recover nouser' => "User with such data not found",
             'nothing to activate' => "Nothing to activate",
             'password updated' => "Password updated",
+            'recover requested' => "You've already requested password update",
 	);
 }
 
