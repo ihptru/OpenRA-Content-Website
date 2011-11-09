@@ -58,4 +58,19 @@ class upload
 	}
 }
 
+class pages
+{
+	public static function current($page, $request)
+	{
+		if ($page == $request)
+		{
+			return 'current';
+		}
+		else
+		{
+			return '';
+		}
+	}
+}
+
 ?>

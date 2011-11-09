@@ -22,7 +22,6 @@ elseif ( $use_db == 'pgsql' )
 db::connect();
 if (!db::check())
 {
-	db::clear();
 	db::setup();
 }
 ################################################

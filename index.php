@@ -48,6 +48,10 @@ content::head();
 						profile::upload_map();
 					}	
 				}
+				elseif (isset($_GET['p']))
+				{
+					//content::page($_GET['p'])
+				}
 				else
 				{
 					echo "<h3>Recent Articles</h3>";

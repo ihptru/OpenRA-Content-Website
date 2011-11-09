@@ -87,16 +87,24 @@
 		
         public static function createMenu()
         {
-            //Should get these from db (dynamic)
-            echo "<li id='current'><a href='/'>Home</a></li>";
-            echo "<li><a href=''>Style Demo</a></li>";
-            echo "<li><a href='blog.html'>Blog</a></li>";
-            echo "<li><a href='archives.html'>Archives</a></li>";
+            if (isset($_GET['p']))
+            {
+				$request = $_GET['p'];
+			}
+			else
+			{
+				$request = "";
+			}
+            echo "<li id='"; echo pages::current('', $request); echo"'><a href='/'>Home</a></li>";
+            echo "<li id='"; echo pages::current('maps', $request); echo"'><a href='index.php?p=maps'>Maps</a></li>";
+            echo "<li id='"; echo pages::current('units', $request); echo"'><a href='index.php?p=units'>Units</a></li>";
+            echo "<li id='"; echo pages::current('guides', $request); echo"'><a href='index.php?p=guides'>Guides</a></li>";
+            echo "<li id='"; echo pages::current('about', $request); echo"'><a href='index.php?p=about'>About</a></li>";
             
             if (user::online())
             {
-				echo "<li style='float:right;'><a href='index.php?logout'>Logout</a></li>";
-				echo "<li style='float:right;'><a href='profile'>Profile</a></li>";
+				echo "<li style='float:right;' id='"; echo pages::current('logout', $request); echo"'><a href='index.php?logout'>Logout</a></li>";
+				echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='index.php?profile'>Profile</a></li>";
 			}
         }
         

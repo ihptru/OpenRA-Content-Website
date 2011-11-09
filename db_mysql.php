@@ -117,9 +117,9 @@
 			db::executeQuery($query);
             
             $query = "CREATE TABLE IF NOT EXISTS image (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-            path VARCHAR(500) NOT NULL,
-            path_thumb VARCHAR(500) NOT NULL,
-            description VARCHAR(500) NOT NULL);";
+											path VARCHAR(500) NOT NULL,
+											path_thumb VARCHAR(500) NOT NULL,
+											description VARCHAR(500) NOT NULL);";
 			db::executeQuery($query);
         }
         
@@ -187,19 +187,5 @@
             mysql_close(db::$con);
             db::$con = null;
         }
-        
-        // execute if connected
-        public static function clear()
-        {
-			$query = "DROP DATABASE ".DB_DATABASE.";
-			";
-			db::executeQuery($query);
-			
-			$query = "CREATE DATABASE ".DB_DATABASE.";
-			";
-			db::executeQuery($query);
-			
-			mysql_select_db(DB_DATABASE, db::$con);
-		}
     }
 ?>
