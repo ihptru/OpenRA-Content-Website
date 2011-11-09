@@ -1,0 +1,3 @@
+users/*
+!.gitignore	
+.DS_Store

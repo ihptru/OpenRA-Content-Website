@@ -104,16 +104,34 @@ class user
 						{
 							if ( strpos($_POST['email'], '@') )
 							{
-								$query = "INSERT INTO activation
-										(email,pass,login,hash)
-										VALUES
-										(
-										'".$_POST['email']."','".md5($_POST['rpass'])."','".$_POST['rlogin']."','".md5($_POST['email'])."'
-										);";
-								db::executeQuery($query);
-								mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://oramod.lv-vl.net/index.php?register&key=".md5($_POST['email'])."",
-								"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
-								echo lang::$lang['ask to activate'];
+								$already_requested = false;
+								$query = "SELECT login FROM activation WHERE login = '".$_POST['rlogin']."'";
+								if (db::num_rows(db::executeQuery($query)) != 0)
+								{
+									$already_requested = true;
+								}
+								$query = "SELECT email FROM activation WHERE email = '".$_POST['email']."'";
+								if (db::num_rows(db::executeQuery($query)) != 0)
+								{
+									$already_requested = true;
+								}
+								if ($already_requested == false)
+								{
+									$query = "INSERT INTO activation
+											(email,pass,login,hash)
+											VALUES
+											(
+											'".$_POST['email']."','".md5($_POST['rpass'])."','".$_POST['rlogin']."','".md5($_POST['email'])."'
+											);";
+									db::executeQuery($query);
+									mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://oramod.lv-vl.net/index.php?register&key=".md5($_POST['email'])."",
+									"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
+									echo lang::$lang['ask to activate'];
+								}
+								else
+								{
+									echo lang::$lang['already requested'];
+								}
 							}
 							else
 							{
