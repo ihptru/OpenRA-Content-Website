@@ -65,6 +65,7 @@
                                          tileset VARCHAR(80) NOT NULL,
                                          minimap VARCHAR(80) NOT NULL,
                                          user_id INTEGER NOT NULL,
+                                         screenshot_group_id INTEGER NOT NULL,
                                          posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
@@ -82,6 +83,7 @@
                                           description VARCHAR(500) NOT NULL,
                                           preview_image VARCHAR(500) NOT NULL,
                                           user_id INTEGER NOT NULL,
+                                          screenshot_group_id INTEGER NOT NULL,
                                           posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
@@ -122,6 +124,11 @@
 											path VARCHAR(500) NOT NULL,
 											path_thumb VARCHAR(500) NOT NULL,
 											description VARCHAR(500) NOT NULL);";
+			db::executeQuery($query);
+            
+            $query = "CREATE TABLE IF NOT EXISTS screenshot_group (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                                                                   group_id INTEGER NOT NULL,
+                                                                   image_id INTEGER NOT NULL);";
 			db::executeQuery($query);
         }
         
@@ -180,6 +187,8 @@
             if(!db::table_exists("recover"))
 				$allSystemsGo = false;
             if(!db::table_exists("image"))
+                $allSystemsGo = false;
+            if(!db::table_exists("screenshot_group"))
                 $allSystemsGo = false;
             return $allSystemsGo;
         }
