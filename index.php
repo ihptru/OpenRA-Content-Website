@@ -41,12 +41,15 @@ content::head();
 					echo "<a href='index.php?recover&recover_user'>Recover Username</a><br>";
 					user::recover();
 				}
-				elseif (isset($_GET['profile']))
+				elseif (isset($_GET['p']))
 				{
-					if (user::online())
+					if ($_GET['p'] == "profile")
 					{
-						profile::upload_map();
-					}	
+						if (user::online())
+						{
+							profile::upload_map();
+						}
+					}
 				}
 				elseif (isset($_GET['p']))
 				{

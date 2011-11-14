@@ -19,7 +19,7 @@
             echo "hs.fadeInOut = true;";
             
             //include multi upload file support
-            echo "<script src='multi_upload/multifile_compressed.js'></script>";
+            echo "<script src='multi_upload/multifile_compressed.js'>";
             
             // Add the controlbar
             echo "if (hs.addSlideshow) hs.addSlideshow({";
@@ -107,7 +107,7 @@
             if (user::online())
             {
 				echo "<li style='float:right;' id='"; echo pages::current('logout', $request); echo"'><a href='index.php?logout'>Logout</a></li>";
-				echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='index.php?profile'>Profile</a></li>";
+				echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='index.php?p=profile'>Profile</a></li>";
 			}
         }
         
