@@ -18,6 +18,9 @@
             echo "hs.wrapperClassName = 'dark';";
             echo "hs.fadeInOut = true;";
             
+            //include multi upload file support
+            echo "<script src='multi_upload/multifile_compressed.js'></script>";
+            
             // Add the controlbar
             echo "if (hs.addSlideshow) hs.addSlideshow({";
                 //slideshowGroup: 'group1',
@@ -595,8 +598,17 @@
 				<label>Choose a map file(.oramap) to upload: <input type=\"file\" name=\"oramap_f\" /></label>
 				<br />
 				<input type=\"submit\" name=\"submit\" value=\"Upload\" />
+            
+                <input id='my_file_element' type='file' name='file_1' >
 				</form>
+            
+                <div id='files_list'></div>
+                <script>
+                    var multi_selector = new MultiSelector( document.getElementById( 'files_list' ), 5 );
+                    multi_selector.addElement( document.getElementById( 'my_file_element' ) );
+                </script>
 				";
+            
 			$uploaded = upload::upload_oramap("/home/oramod/www/", "ihptru", "oramap_f");
 			echo $uploaded;
 		}
