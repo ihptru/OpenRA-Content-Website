@@ -1,6 +1,5 @@
 import sys;
 import zipfile;
-import yaml;
 import string;
 import struct;
 import io;
@@ -17,8 +16,13 @@ for arg in sys.argv:
 			path = arg
 if path == "":
 	print "Error: Need path to map"
+        exit()
 if file == "":
 	print "Error: Need name of map"
+	exit()
+if not os.path.isfile(path + file):
+        print "Error: File dose not exist"
+        exit()
 yamlData = "";
 bin = "";
 
@@ -174,7 +178,7 @@ class terrType:
 		self.g = g
 		self.b = b
 
-# string templates
+# storing templates
 class template:
 	id = -1
 	list = []
