@@ -4,12 +4,13 @@ import string;
 import struct;
 import io;
 import bmp;
+import os;
 
 # Check if path exist
 path = ""
 file = ""
 for arg in sys.argv:
-	if not arg == "ml.py":
+	if not arg[len(arg)-5:] == "ml.py":
 		if not path == "":
 			file = arg
 		if path == "":
@@ -20,6 +21,7 @@ if path == "":
 if file == "":
 	print "Error: Need name of map"
 	exit()
+print "Path: " + path + file
 if not os.path.isfile(path + file):
         print "Error: File dose not exist"
         exit()
@@ -199,7 +201,8 @@ tempID = -1
 tempList = []
 
 # load template file and the data
-file = open(MapMod+"/"+MapTileset+".yaml")
+
+file = open(os.path.realpath(os.path.dirname(sys.argv[0]))+os.sep+MapMod+os.sep+MapTileset+".yaml")
 while 1:
 	line = file.readline()
 	if not line:
