@@ -7,14 +7,25 @@ import bmp;
 import os;
 
 # Check if path exist
+# Takes 2 or more arguments sperate them with ?
 path = ""
 file = ""
+getPath = 1
 for arg in sys.argv:
 	if not arg[len(arg)-5:] == "ml.py":
-		if not path == "":
-			file = arg
-		if path == "":
-			path = arg
+                if not arg == "?":
+                        if getPath == 0:
+                                if len(file) > 0:
+                                        file = file + " " + arg
+                                if len(file) == 0:
+                                        file = arg
+                        if getPath == 1:
+                                if len(path) > 0:
+                                        path = path + " " + arg
+                                if len(path) == 0:
+                                        path = arg
+		if arg == "?":
+                        getPath = 0
 if path == "":
 	print "Error: Need path to map"
         exit()
@@ -48,6 +59,7 @@ MapTitle = "";
 MapAuthor = "";
 MapTileset = "";
 MapType = "";
+MapBounds = "";
 
 # 1 byte
 def Bytes2Int1(data):
@@ -62,19 +74,19 @@ def Bytes2Int4(data):
     return struct.unpack('B', data[0])[0] + struct.unpack('B', data[1])[0] + struct.unpack('B', data[2])[0] + struct.unpack('B', data[3])[0]
 
 # Removes all blankspaces in the begning
-def strFixer(str):
+def strFixer(s):
 	f = 0;
 	st = "";
-	for c in str:
+	for c in s:
 		if not c == " " or f == 1:
 			f = 1;
 			st = st + c;
 	return st;
 	
-def tabFixer(str):
+def tabFixer(s):
 	f = 0;
 	st = "";
-	for c in str:
+	for c in s:
 		if not c == '\t' or f == 1:
 			f = 1;
 			st = st + c;
@@ -100,6 +112,18 @@ for line in string.split(yamlData, '\n'):
 		MapTileset = strFixer(line[8:]);
 	if line[0:4] == "Type":
 		MapType = strFixer(line[5:]);
+	if line[0:6] == "Bounds":
+                MapBounds = strFixer(line[7:]);
+
+#Take map bounds
+MapBounds = strFixer(MapBounds)
+Left = int(MapBounds[0:MapBounds.find(",")]);
+MapBounds = MapBounds[MapBounds.find(",")+1:];
+Top = int(MapBounds[0:MapBounds.find(",")]);
+MapBounds = MapBounds[MapBounds.find(",")+1:];
+Right = int(MapBounds[0:MapBounds.find(",")]);
+MapBounds = MapBounds[MapBounds.find(",")+1:];
+Bottom = int(MapBounds);
 
 #Generate info file
 print "Creating info file..."
@@ -158,8 +182,6 @@ for i in range(width):
 			index = (i % 4 + ( j % 4 ) * 4)
 		tilesTile[i][j] = tile
 		tilesIndex[i][j] = index
-		#print "tile: " + str(tile) #Shows that it loads tile correctly
-		#print "index: " + str(index) #Shows that it loads indexs correctly
 		# get all different types
 		f = 0
 		for z in range(len(t)):
@@ -169,7 +191,7 @@ for i in range(width):
 			t.append(tile)
 	
 # storing terrain types
-class terrType:
+class terrainType:
 	type = ""
 	r = 0
 	g = 0
@@ -187,6 +209,13 @@ class template:
 	def __init__(self,id,list):
 		self.id = id
 		self.list = list
+
+class templateItem:
+        id = -1
+        type = ""
+        def __init__(self,id,type):
+                self.id = id
+                self.type = type
 
 #Setup
 terrTypes = []
@@ -214,43 +243,47 @@ while 1:
 	if line[0:11] == "TerrainType":
 		tempType = line[12:(len(line)-2)]
 	if line[0:5] == "Color":
-		str = strFixer(line[6:]);
-		strR = str[0:str.find(",")];
+		s = strFixer(line[6:]);
+		strR = s[0:s.find(",")];
 		tempR = int(strR)
-		str = strFixer(str[str.find(",")+1:])
-		strG = str[0:str.find(",")]
+		s = strFixer(s[s.find(",")+1:])
+		strG = s[0:s.find(",")]
 		tempG = int(strG)
-		str = strFixer(str[str.find(",")+1:])
-		strB = str;
-		tempB = int(str)
-		terrTypes.append( terrType(tempType,tempR,tempG,tempB) )
+		s = strFixer(s[s.find(",")+1:])
+		strB = s;
+		tempB = int(s)
+		terrTypes.append( terrainType(tempType,tempR,tempG,tempB) )
 	if line[0:8] == "Template":
 		if len(tempList) > 0:
 			templates.append(template(tempID,tempList))
 			tempList = []
 		tempID = line[9:(len(line)-2)]
 	if ((line[0:1] == "0") or (line[0:1] == "1") or (line[0:1] == "2") or (line[0:1] == "3") or (line[0:1] == "4") or (line[0:1] == "5") or (line[0:1] == "6") or (line[0:1] == "7") or (line[0:1] == "8") or (line[0:1] == "9")):
-		tempList.append(strFixer(line[line.find(":")+1:len(line)-1]))
+		tempList.append( templateItem(int(line[0:line.find(":")]) , strFixer(line[line.find(":")+1:len(line)-1])) )
 
 # still one to fix
 if len(tempList) > 0:
 	templates.append(template(tempID,tempList))
 
 #Draw map
-img = bmp.BitMap(width,height);
-for x in range(width):
-	for y in range(height):
+img = bmp.BitMap(Right,Bottom);
+for x in range(Left,Right+Left):
+	for y in range(Top,Bottom+Top):
 		color = bmp.Color(0,0,0);
 		d = 0
-		if tilesTile[x][y] > 255:
+		if tilesTile[x][y] == 510:
 			tilesTile[x][y] = 255 #Change 510 to clear (should probably never happen hint: byte size 255 function in .net line:130)
 		for i in range(len(templates)):
 			if int(templates[i].id) == tilesTile[x][y]:
 				index = tilesIndex[x][y]
-				if index > len(templates[i].list)-1:
-					index = len(templates[i].list)-1
-					#Something is wrong out of bounds (we save it though for now)
-				c = templates[i].list[index];
+				c = ""
+				for j in range(len(templates[i].list)):
+                                        if templates[i].list[j].id == index:
+                                                c = templates[i].list[j].type
+                                                break;
+                                if c == "":
+                                        c = c = templates[i].list[0].type
+                                        # accually error but we save it for now
 				for j in range(len(terrTypes)):
 					if terrTypes[j].type == c:
 						color = bmp.Color(terrTypes[j].r,terrTypes[j].g,terrTypes[j].b)
@@ -259,6 +292,6 @@ for x in range(width):
 				if d == 1:
 					break;
 		img.setPenColor(color);
-		img.plotPoint(x,y);
+		img.plotPoint(x-Left,y-Top);
 
 img.saveFile(path + "minimap.bmp");
