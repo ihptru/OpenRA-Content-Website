@@ -165,6 +165,9 @@ height = Bytes2Int2(b.read(2));
 tilesTile = init2Dlist(width,height)
 tilesIndex = init2Dlist(width,height)
 
+resTile = init2Dlist(width,height)
+resIndex = init2Dlist(width,height)
+
 for i in range(width):
 	l = []
 	for j in range(height):
@@ -189,7 +192,24 @@ for i in range(width):
 				f = 1
 		if f == 0:
 			t.append(tile)
-	
+
+# get res data from map
+for i in range(width):
+	for j in range(height):
+		tile = Bytes2Int1(b.read(1))
+		index = Bytes2Int1(b.read(1))
+		if index == 255:
+			index = (i % 4 + ( j % 4 ) * 4)
+		resTile[i][j] = tile
+		resIndex[i][j] = index
+		# get all different types
+		f = 0
+		for z in range(len(t)):
+			if t[z] == tile:
+				f = 1
+		if f == 0:
+			t.append(tile)
+
 # storing terrain types
 class terrainType:
 	type = ""
@@ -265,6 +285,45 @@ while 1:
 if len(tempList) > 0:
 	templates.append(template(tempID,tempList))
 
+class resourceType:
+	type = 0
+	terrType = ""
+	def __init__(self,type,terrType):
+		self.terrType = terrType
+		self.type = type
+
+resTypes = []
+
+tempType = ""
+tempTerrType = ""
+file = open(os.path.realpath(os.path.dirname(sys.argv[0]))+os.sep+MapMod+os.sep+"system.yaml")
+while 1:
+	line = file.readline()
+	if not line:
+		break
+	line = tabFixer(line)
+	line = strFixer(line)
+	line = tabFixer(line)
+	line = strFixer(line)
+	if line[0:12] == "ResourceType":
+		if not line[0:13] == "ResourceType@":
+			if not tempType == "":
+				if tempTerrType == "":
+					tempTerrType = "Ore"
+				resTypes.append( resourceType(int(tempType),tempTerrType) )
+				print "resType: " + tempType + " terrType: " + tempTerrType
+				tempTerrType = ""
+			tempType = strFixer(line[line.find(":")+1:])
+	if line[0:11] == "TerrainType":
+		if strFixer(line[12:]).find(" ") < 0:
+			tempTerrType = strFixer(line[12:])
+#One left to fix probably
+if not tempType == "":
+	if tempTerrType == "":
+		tempTerrType = "Ore"
+	resTypes.append( resourceType(int(tempType),tempTerrType ) )
+	print "resType: " + tempType + " terrType: " + tempTerrType
+
 #Draw map
 img = bmp.BitMap(Right,Bottom);
 for x in range(Left,Right+Left):
@@ -278,12 +337,12 @@ for x in range(Left,Right+Left):
 				index = tilesIndex[x][y]
 				c = ""
 				for j in range(len(templates[i].list)):
-                                        if templates[i].list[j].id == index:
-                                                c = templates[i].list[j].type
-                                                break;
-                                if c == "":
-                                        c = c = templates[i].list[0].type
-                                        # accually error but we save it for now
+					if templates[i].list[j].id == index:
+						c = templates[i].list[j].type
+						break;
+				if c == "":
+					c = c = templates[i].list[0].type
+					# accually error but we save it for now
 				for j in range(len(terrTypes)):
 					if terrTypes[j].type == c:
 						color = bmp.Color(terrTypes[j].r,terrTypes[j].g,terrTypes[j].b)
@@ -291,6 +350,16 @@ for x in range(Left,Right+Left):
 						break;
 				if d == 1:
 					break;
+		d = 0
+		for i in range(len(resTypes)):
+			if resTypes[i].type == resTile[x][y]:
+				for j in range(len(terrTypes)):
+					if terrTypes[j].type == resTypes[i].terrType:
+						color = bmp.Color(terrTypes[j].r,terrTypes[j].g,terrTypes[j].b)
+						d = 1
+						break;
+			if d == 1:
+				break
 		img.setPenColor(color);
 		img.plotPoint(x-Left,y-Top);
 
