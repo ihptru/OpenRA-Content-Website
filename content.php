@@ -610,7 +610,8 @@
                 </script>
 				";
             
-			$uploaded = upload::upload_oramap(user::username());
+            $username = user::username();
+			$uploaded = upload::upload_oramap($username);
 			if ($uploaded != "")
 			{
 				if ($uploaded == "exists")
@@ -620,6 +621,9 @@
 				else
 				{
 					echo "Uploaded map: " . $uploaded;
+					$name = explode(".", $uploaded);
+					$image = "users/" . $username . "/maps/" . $name[0] . "/minimap.bmp";
+					echo "<img src='" . $image . "'>";
 				}
 			}
 		}
