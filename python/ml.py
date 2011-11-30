@@ -251,7 +251,7 @@ tempList = []
 
 # load template file and the data
 
-file = open(os.path.realpath(os.path.dirname(sys.argv[0]))+os.sep+MapMod+os.sep+MapTileset+".yaml")
+file = open(os.path.realpath(os.path.dirname(sys.argv[0]))+os.sep+MapMod+os.sep+MapTileset.lower()+".yaml")
 while 1:
 	line = file.readline()
 	if not line:
@@ -296,7 +296,7 @@ resTypes = []
 
 tempType = ""
 tempTerrType = ""
-file = open(os.path.realpath(os.path.dirname(sys.argv[0]))+os.sep+MapMod+os.sep+"system.yaml")
+file = open(os.path.realpath(os.path.dirname(sys.argv[0]))+os.sep+MapMod.lower()+os.sep+"system.yaml")
 while 1:
 	line = file.readline()
 	if not line:

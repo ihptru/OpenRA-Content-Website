@@ -37,6 +37,7 @@ class upload
 					$target_path = $path . "/" . $filename;
 					if(move_uploaded_file($source, $target_path))
 					{
+						exec("python python/ml.py " . $path . "/ ? " . $filename);
 						return $target_path;
 					}
 					else

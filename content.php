@@ -106,7 +106,7 @@
             
             if (user::online())
             {
-				echo "<li style='float:right;' id='"; echo pages::current('logout', $request); echo"'><a href='index.php?logout'>Logout</a></li>";
+				echo "<li style='float:right;' id=''><a href='index.php?logout'>Logout</a></li>";
 				echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='index.php?p=profile'>Profile</a></li>";
 			}
         }
