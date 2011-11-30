@@ -70,11 +70,11 @@ content::head();
 				<div class="sidemenu">
 					<h3>Sidebar Menu</h3>
 					<ul>				
-						<li><a href="index.php?register=true">Register</a></li>
+						<li><a href="index.php">Link</a></li>
 					</ul>	
 				</div>
 							
-				<h3>Image Gallery </h3>
+				<h3>Gallery</h3>
 
 				<p class="thumbs">
                     <?PHP 

@@ -583,6 +583,7 @@
 						<a href="index.php?lang=en">English</a>
 						<a href="index.php?lang=ru">Русский</a>
 						<a href="index.php?lang=de">Deutsch</a>
+						<a href="index.php?lang=sv">Swedish</a>
 						</div>
 						';
             
@@ -595,7 +596,7 @@
 		public static function upload_map()
 		{
 			echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
-				<label>Choose a map file(.oramap) to upload: <input type=\"file\" name=\"oramap_f\" /></label>
+				<label>Choose a map file(.oramap) to upload: <input type=\"file\" name=\"map_upload\" /></label>
 				<br />
 				<input type=\"submit\" name=\"submit\" value=\"Upload\" />
             
@@ -609,8 +610,18 @@
                 </script>
 				";
             
-			$uploaded = upload::upload_oramap("/home/oramod/www/", "ihptru", "oramap_f");
-			echo $uploaded;
+			$uploaded = upload::upload_oramap(user::username());
+			if ($uploaded != "")
+			{
+				if ($uploaded == "exists")
+				{
+					echo "This map already exists";
+				}
+				else
+				{
+					echo "Uploaded map: " . $uploaded;
+				}
+			}
 		}
 	}
 ?>

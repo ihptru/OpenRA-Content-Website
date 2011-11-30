@@ -15,6 +15,23 @@ class user
         return $_SESSION['user_id'];
     }
 	
+	public static function username()
+	{
+		if (isset($_SESSION['user_id']))
+		{
+			$query = "SELECT login FROM users WHERE uid = " . $_SESSION['user_id'];
+			$result = db::executeQuery($query);
+			while ($db_data = db::fetch_array($result))
+			{
+				return $db_data['login'];
+			}
+		}
+		else
+		{
+			return "";	// if somehow this function is run by some hacker which is not logged in
+		}
+	}
+
 	public static function check_logout()
 	{
 		if (isset($_GET['logout']))
@@ -170,6 +187,7 @@ class user
 		$path = WEBSITE_PATH . "users/" . $username;
 		mkdir($path);
 		mkdir($path . "/maps");
+		mkdir($path . "/units");
 	}
 	
 	public static function recover()
