@@ -593,12 +593,77 @@ class content
 
 	return $content;
     }
+    
+    public static function page($page)
+    {
+	// $page contains function name from `objects` class
+	if ($page == "maps")
+	{
+	    objects::maps();
+	}
+	elseif ($page == "units")
+	{
+	    objects::units();
+	}
+	elseif ($page == "guides")
+	{
+	    objects::guides();
+	}
+	elseif ($page == "about")
+	{
+	    objects::about();
+	}
+    }
+    
+    public static function action($request)
+    {
+	if ($request == "upload_map")
+	{
+	    profile::upload_map();
+	}
+    }
+}
+
+class objects
+{
+    public static function maps()
+    {
+	echo "<h3>Maps!</h3>";
+	if (user::online())
+	{
+	    echo "<a href='/index.php?action=upload_map'>Upload your maps</a>";
+	}
+    }
+    
+    public static function units()
+    {
+	echo "<h3>Units!</h3>";
+    }
+    
+    public static function guides()
+    {
+	echo "<h3>Guides!</h3>";
+    }
+    
+    public static function about()
+    {
+	echo "<h3>About!</h3>";
+    }
 }
 
 class profile
 {
+    public static function show_news()
+    {
+	echo "<h3>Recent Events</h3>";
+    }
+
     public static function upload_map()
     {
+	if (!user::online())
+	{
+	    return;
+	}
 	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
 		<label>Choose a map file(.oramap) to upload: <input type=\"file\" name=\"map_upload\" /></label>
 		<br />

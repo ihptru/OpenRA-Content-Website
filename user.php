@@ -72,7 +72,7 @@ class user
 		if( $pass == $db_pass )		//hashes match
 		{
 		    $_SESSION['user_id'] = $user_id;	//start session
-		    header("Location: /");
+		    header("Location: /index.php?p=profile");
 		}
 	    }
 	}

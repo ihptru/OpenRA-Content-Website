@@ -50,13 +50,19 @@ content::head();
 			{
 			    if (user::online())
 			    {
-				profile::upload_map();
+				profile::show_news();
 			    }
 			}
+			else
+			{
+			    content::page($_GET['p']);
+			}
+			
 		    }
-		    elseif (isset($_GET['p']))
+		    elseif (isset($_GET['action']))
 		    {
-			//content::page($_GET['p'])
+			// non menu or profile: other pages
+			content::action($_GET['action']);
 		    }
 		    else
 		    {
@@ -65,7 +71,7 @@ content::head();
 		    //content::createArticleItems($result);
 		    
 		    ?>
-		<!-- /main -->	
+		<!-- /main -->
 		</div>
 		
 		<!-- sidebar -->
