@@ -653,8 +653,18 @@ class objects
 
 class profile
 {
-    public static function show_news()
+    public static function show_profile()
     {
+	$query = "SELECT avatar FROM users WHERE uid = " . user::uid();
+	$result = db::executeQuery($query);
+	while ($db_data = db::fetch_array($result))
+	{
+	    $avatar = $db_data['avatar'];
+	}
+	if ($avatar == "None")
+	{
+	    echo "<img src='images/noavatar.jpg' width='120px'>";
+	}
 	echo "<h3>Recent Events</h3>";
     }
 

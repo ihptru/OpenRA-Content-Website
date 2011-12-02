@@ -16,10 +16,10 @@ content::head();
     <div id="featured">			
 
 	<?PHP
-	
+
 	$res = db::executeQuery("SELECT * FROM maps");
 	echo content::createFeaturedItems($res,"maps");
-        
+
 	?>		
 
     <!-- /featured -->
@@ -29,6 +29,7 @@ content::head();
 	<div id="content-wrap" class="clear">
 
 	    <div id="content">
+
 
 		<!-- main -->
 		<div id="main">
@@ -50,7 +51,11 @@ content::head();
 			{
 			    if (user::online())
 			    {
-				profile::show_news();
+				profile::show_profile();
+			    }
+			    else
+			    {
+				echo "<h3>You are not logged in</h3>";
 			    }
 			}
 			else

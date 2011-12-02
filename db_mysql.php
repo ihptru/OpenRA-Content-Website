@@ -148,7 +148,7 @@
         {
 	    return mysql_fetch_array($result);
 	}
-
+	
 	public static function num_rows($result)
 	{
 	    return mysql_num_rows($result);

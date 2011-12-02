@@ -1,5 +1,5 @@
 <?PHP
-	include_once "hub.php";
-	db::clearOldRecords();
+    include_once "hub.php";
+    db::clearOldRecords();
     db::disconnect();
 ?>
