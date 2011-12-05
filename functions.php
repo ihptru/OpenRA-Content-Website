@@ -56,6 +56,18 @@ class pages
 	    return "";
 	}
     }
+    
+    public static function cur_lang($lang)
+    {
+	if ($lang == $_COOKIE['language'])
+	{
+	    return "underline_link";
+	}
+	else
+	{
+	    return "";
+	}
+    }
 }
 
 ?>

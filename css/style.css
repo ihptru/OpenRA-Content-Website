@@ -274,22 +274,26 @@ input.button {
 
 /* register link */
 #register_link {
+	text-align:right;
 	font-size: 11px;
 	position: absolute;
-	top: 15px; right: -72px;
+	top: 15px; right: -150px;
 	background: #070605;
 	padding: 0px 15px 0px 15px;
 	text-decoration:underline;
 }
 #recover_link {
+	text-align:right;
 	font-size: 11px;
 	position: absolute;
-	top: 33px; right: -72px;
+	top: 33px; right: -150px;
 	background: #070605;
 	padding: 0px 15px 0px 15px;
 	text-decoration:underline;
 }
-
+#underline_link {
+    text-decoration:underline;
+}
 /* header quick search */
 #header form#quick-search {
 	position: absolute;
@@ -299,7 +303,6 @@ input.button {
 	border: none;
 	width: 222px; height: 32px;
 	background: url(../images/header-search.png) no-repeat;
-
 }
 #header form#quick-search p {
 	margin: 0; padding: 0;		
@@ -321,7 +324,6 @@ input.button {
 	margin: 6px 0 0 5px; 
 	width: 170px;	
 	display: inline;
-
 }
 #header #search form#quick-search .btn{
 	width: 25px; height: 25px;		

@@ -204,22 +204,22 @@ class user
 	{
 	    echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
 	    echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
-	    echo "Recover";
+	    echo lang::$lang['recover'];
 	    echo "</b></td></tr><tr><td>";
-	    echo "Login</td><td><input type=\"text\" name=\"rpass_login\"></td></tr><tr><td>";
+	    echo lang::$lang['login']."</td><td><input type=\"text\" name=\"rpass_login\"></td></tr><tr><td>";
 	    echo "E-mail</td><td><input type=\"text\" name=\"rpass_email\"></td></tr><tr><td>";
-	    echo "<input type=\"submit\" value=\"Confirm\">
+	    echo "<input type=\"submit\" value=\"".lang::$lang['confirm']."\">
 		</td></tr></table></form>";
 	}
 	elseif(isset($_GET['recover_user']))
 	{
 	    echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
 	    echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
-	    echo "Recover";
+	    echo lang::$lang['recover'];
 	    echo "</b></td></tr><tr><td>";
-	    echo "Password</td><td><input type=\"password\" name=\"ruser_pass\"></td></tr><tr><td>";
+	    echo lang::$lang['password']."</td><td><input type=\"password\" name=\"ruser_pass\"></td></tr><tr><td>";
 	    echo "E-mail</td><td><input type=\"text\" name=\"ruser_email\"></td></tr><tr><td>";
-	    echo "<input type=\"submit\" value=\"Confirm\">
+	    echo "<input type=\"submit\" value=\"".lang::$lang['confirm']."\">
 	    </td></tr></table></form>";
 	}
 
@@ -283,11 +283,11 @@ class user
 	    }
 	    echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
 	    echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
-	    echo "Enter new password:";
+	    echo lang::$lang['enter new pw'].":";
 	    echo "</b></td></tr><tr><td>";
-	    echo "Password</td><td><input type=\"password\" name=\"rpass_new\"></td></tr><tr><td>";
-	    echo "Re-enter Password</td><td><input type=\"password\" name=\"rpass_new_check\"></td></tr><tr><td>";
-	    echo "<input type=\"submit\" value=\"Confirm\">
+	    echo lang::$lang['password']."</td><td><input type=\"password\" name=\"rpass_new\"></td></tr><tr><td>";
+	    echo lang::$lang['reenter pw']."</td><td><input type=\"password\" name=\"rpass_new_check\"></td></tr><tr><td>";
+	    echo "<input type=\"submit\" value=\"".lang::$lang['confirm']."\">
 		</td></tr></table></form>";
 	    if (isset($_POST['rpass_new']) && isset($_POST['rpass_new_check']))
 	    {

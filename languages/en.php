@@ -3,7 +3,7 @@
 class lang
 {
 	public static $lang = array(
-	    'website_name' 	=> "OpenRA - Website",
+	    'website_name' 	=> "OpenRA - Resources",
 	    'website_slowgun' 	=> "Brings your content",
 	    'login' 		=> "Login",
 	    'password' 		=> "Password",
@@ -26,11 +26,34 @@ class lang
             'recover requested' => "You've already requested password update",
 	    'recover pw'	=> "Recover password",
 	    'recover usr'	=> "Recover username",
+	    'recover'		=> "recover",
 	    'not logged'	=> "You are not logged in",
 	    'link'		=> "Link",
 	    'gallery'		=> "Gallery",
 	    'sidebar menu'	=> "Sidebar Menu",
 	    'recent articles'	=> "Recent Articles",
+	    'confirm'		=> "Confirm",
+	    'enter new pw'	=> "Enter new password",
+	    'reenter pw'	=> "Re-enter password",
+	    'contact_info'	=> "Contact Info",
+	    'home'		=> "Home",
+	    'to top'		=> "Back to Top",
+	    'search'		=> "Search...",
+	    'register'		=> "register",
+	    'registration'	=> "Registration",
+	    
+	    'maps'		=> "Maps",
+	    'units'		=> "Units",
+	    'guides'		=> "Guides",
+	    'about'		=> "About",
+	    'profile'		=> "Profile",
+	    'logout'		=> "Logout",
+	    
+	    'map exists'	=> "This map already exists",
+	    'recent events' 	=> "Recent Events",
+	    'upload'		=> "Upload",
+	    'choose map upload' => "Choose a map file to upload",
+	    'upload maps'	=> "Upload your maps",
 	);
 }
 

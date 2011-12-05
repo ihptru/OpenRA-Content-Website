@@ -64,16 +64,16 @@ class content
 		<!-- / id='login_form' -->
 		</div>
 		<div id=\"register_link\">
-		    <a href=\"index.php?register\">register</a>
+		    <a href=\"index.php?register\">".lang::$lang['register']."</a>
 		</div>
 		<div id=\"recover_link\">
-		    <a href=\"index.php?recover\">recover</a>
+		    <a href=\"index.php?recover\">".lang::$lang['recover']."</a>
 		</div>";
 	}
 	echo "<form id='quick-search' action='index.php' method='GET' >
 		<p>
 		<label for='qsearch'>Search:</label>
-		<input class='tbox' id='qsearch' type='text' name='qsearch' onclick=\"this.value='';\" onfocus=\"this.select()\" onblur=\"this.value=!this.value?'Search...':this.value;\" value='Search...' title='Start typing and hit ENTER' />
+		<input class='tbox' id='qsearch' type='text' name='qsearch' onclick=\"this.value='';\" onfocus=\"this.select()\" onblur=\"this.value=!this.value?'".lang::$lang['search']."':this.value;\" value='".lang::$lang['search']."' />
 		<input class='btn' alt='Search' type='image' name='searchsubmit' title='Search' src='images/search.png' />
 		</p>
 		</form>	
@@ -103,16 +103,16 @@ class content
 	{
 	    $request = "";
 	}
-	echo "<li id='"; echo pages::current('', $request); echo"'><a href='/'>Home</a></li>";
-	echo "<li id='"; echo pages::current('maps', $request); echo"'><a href='index.php?p=maps'>Maps</a></li>";
-	echo "<li id='"; echo pages::current('units', $request); echo"'><a href='index.php?p=units'>Units</a></li>";
-	echo "<li id='"; echo pages::current('guides', $request); echo"'><a href='index.php?p=guides'>Guides</a></li>";
-	echo "<li id='"; echo pages::current('about', $request); echo"'><a href='index.php?p=about'>About</a></li>";
+	echo "<li id='"; echo pages::current('', $request); echo"'><a href='/'>".lang::$lang['home']."</a></li>";
+	echo "<li id='"; echo pages::current('maps', $request); echo"'><a href='index.php?p=maps'>".lang::$lang['maps']."</a></li>";
+	echo "<li id='"; echo pages::current('units', $request); echo"'><a href='index.php?p=units'>".lang::$lang['units']."</a></li>";
+	echo "<li id='"; echo pages::current('guides', $request); echo"'><a href='index.php?p=guides'>".lang::$lang['guides']."</a></li>";
+	echo "<li id='"; echo pages::current('about', $request); echo"'><a href='index.php?p=about'>".lang::$lang['about']."</a></li>";
             
 	if (user::online())
 	{
-	    echo "<li style='float:right;' id=''><a href='index.php?logout'>Logout</a></li>";
-	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='index.php?p=profile'>Profile</a></li>";
+	    echo "<li style='float:right;' id=''><a href='index.php?logout'>".lang::$lang['logout']."</a></li>";
+	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='index.php?p=profile'>".lang::$lang['profile']."</a></li>";
 	}
     }
 
@@ -120,16 +120,16 @@ class content
     {
 	echo "<form id=\"register_form\" method=\"POST\" action=\"\">
 	    <table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>
-	    Registration
+	    ".lang::$lang['registration']."
 	    </b></td></tr><tr><td>
-	    Login</td><td><input type=\"text\" name=\"rlogin\"></td></tr><tr><td>
-	    Password</td><td><input type=\"password\" name=\"rpass\"></td></tr><tr><td>
-	    Re-enter password:</td><td><input type=\"password\" name=\"verpass\"></td></tr><tr><td>
+	    ".lang::$lang['login']."</td><td><input type=\"text\" name=\"rlogin\"></td></tr><tr><td>
+	    ".lang::$lang['password']."</td><td><input type=\"password\" name=\"rpass\"></td></tr><tr><td>
+	    ".lang::$lang['reenter pw']."</td><td><input type=\"password\" name=\"verpass\"></td></tr><tr><td>
 	    E-mail</td><td><input type=\"text\" name=\"email\"></td></tr><tr><td>
 
 	    <input type=\"hidden\" name=\"act\">
 
-	    <input type=\"submit\" value=\"Confirm\"
+	    <input type=\"submit\" value=\"".lang::$lang['confirm']."\"
 	    </td></tr></table></form>
 	";
     }
@@ -469,7 +469,7 @@ class content
 
 	$content .= '<div class="col-a">';
 
-	$content .= '<h3>Contact Info</h3>';
+	$content .= '<h3>'.lang::$lang['contact_info'].'</h3>';
 
 	$content .= '<p>';
 
@@ -573,8 +573,8 @@ class content
 
 	$content .= '<div class="bottom-right">';
 	$content .= '<p>';
-	$content .= '<a href="/">Home</a> |';
-	$content .= '<strong><a href="#top" class="back-to-top">Back to Top</a></strong>';						
+	$content .= '<a href="/">'.lang::$lang['home'].'</a> |';
+	$content .= '<strong><a href="#top" class="back-to-top">'.lang::$lang['to top'].'</a></strong>';						
 	$content .= '</p>';
 	$content .= '</div>';
 	
@@ -584,10 +584,10 @@ class content
 	$content .= '<!-- /footer-outer -->	';	
 	$content .= '</div></div>';
 	$content .= '<div class="lang">
-		    <a href="index.php?lang=en">English</a>
-		    <a href="index.php?lang=ru">Русский</a>
-		    <a href="index.php?lang=de">Deutsch</a>
-		    <a href="index.php?lang=sv">Swedish</a>
+		    <a id="'.pages::cur_lang("en").'" href="index.php?lang=en">English</a>
+		    <a id="'.pages::cur_lang("ru").'" href="index.php?lang=ru">Русский</a>
+		    <a id="'.pages::cur_lang("de").'" href="index.php?lang=de">Deutsch</a>
+		    <a id="'.pages::cur_lang("sv").'" href="index.php?lang=sv">Swedish</a>
 		    </div>
 	';
 
@@ -628,26 +628,26 @@ class objects
 {
     public static function maps()
     {
-	echo "<h3>Maps!</h3>";
+	echo "<h3>".lang::$lang['maps']."!</h3>";
 	if (user::online())
 	{
-	    echo "<a href='/index.php?action=upload_map'>Upload your maps</a>";
+	    echo "<a href='/index.php?action=upload_map'>".lang::$lang['upload maps']."</a>";
 	}
     }
     
     public static function units()
     {
-	echo "<h3>Units!</h3>";
+	echo "<h3>".lang::$lang['units']."!</h3>";
     }
     
     public static function guides()
     {
-	echo "<h3>Guides!</h3>";
+	echo "<h3>".lang::$lang['guides']."!</h3>";
     }
     
     public static function about()
     {
-	echo "<h3>About!</h3>";
+	echo "<h3>".lang::$lang['about']."!</h3>";
     }
 }
 
@@ -665,7 +665,7 @@ class profile
 	{
 	    echo "<img src='images/noavatar.jpg' width='120px'>";
 	}
-	echo "<h3>Recent Events</h3>";
+	echo "<h3>".lang::$lang['recent events']."</h3>";
     }
 
     public static function upload_map()
@@ -675,9 +675,9 @@ class profile
 	    return;
 	}
 	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
-		<label>Choose a map file(.oramap) to upload: <input type=\"file\" name=\"map_upload\" /></label>
+		<label>".lang::$lang['choose map upload']." (.oramap): <input type=\"file\" name=\"map_upload\" /></label>
 		<br />
-		<input type=\"submit\" name=\"submit\" value=\"Upload\" />
+		<input type=\"submit\" name=\"submit\" value=\"".lang::$lang['upload']."\" />
 
 		<input id='my_file_element' type='file' name='file_1' >
 		</form>
@@ -695,7 +695,7 @@ class profile
 	{
 	    if ($uploaded == "exists")
 	    {
-		echo "This map already exists";
+		echo lang::$lang['map exists'];
 	    }
 	    else
 	    {

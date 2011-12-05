@@ -42,7 +42,7 @@ content::head();
 		    elseif (isset($_GET['recover']) and (!user::online()))
 		    {
 			echo "<a href='index.php?recover&recover_pass'>".lang::$lang['recover pw']."</a><br>";
-			echo "<a href='index.php?recover&recover_user'>".lang::$lang['recove usr']."</a><br>";
+			echo "<a href='index.php?recover&recover_user'>".lang::$lang['recover usr']."</a><br>";
 			user::recover();
 		    }
 		    elseif (isset($_GET['p']))
