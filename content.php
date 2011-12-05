@@ -631,7 +631,7 @@ class objects
 	echo "<h3>".lang::$lang['maps']."!</h3>";
 	if (user::online())
 	{
-	    echo "<a href='/index.php?action=upload_map'>".lang::$lang['upload maps']."</a>";
+	    echo "<a href='/index.php?action=upload_map&p=maps'>".lang::$lang['upload maps']."</a>";
 	    $result = db::executeQuery("SELECT * FROM maps");
 	    content::create_grid($result);
 	}

@@ -45,6 +45,55 @@ class upload
 
 class pages
 {
+    public static function main_page_request()
+    {
+	if (isset($_GET['register']) and (!user::online()))
+	{
+	    user::register_actions();
+	    return;
+	}
+	if (isset($_GET['recover']) and (!user::online()))
+	{
+	    echo "<a href='index.php?recover&recover_pass'>".lang::$lang['recover pw']."</a><br>";
+	    echo "<a href='index.php?recover&recover_user'>".lang::$lang['recover usr']."</a><br>";
+	    user::recover();
+	    return;
+	}
+	if (isset($_GET['action']))
+	{
+	    // non menu or profile: other pages
+	    content::action($_GET['action']);
+	    return;
+	}
+	// other checks should be done before $_GET['p'], because it will override page
+	if (isset($_GET['p']))
+	{
+	    if ($_GET['p'] == "profile")
+	    {
+		if (user::online())
+		{
+		    profile::show_profile();
+		}
+		else
+		{
+		    echo "<h3>".lang::$lang['not logged']."</h3>";
+		}
+	    }
+	    else
+	    {
+		content::page($_GET['p']);
+		return;
+	    }
+	}
+
+	if (count($_GET) == 0)
+	{
+	    echo "<h3>".lang::$lang['recent articles']."</h3>";
+	    return;
+	}
+	//content::createArticleItems($result);
+    }
+
     public static function current($page, $request)
     {
 	if ($page == $request)

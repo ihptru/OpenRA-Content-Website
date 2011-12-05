@@ -34,46 +34,8 @@ content::head();
 		<!-- main -->
 		<div id="main">
 		    <?PHP
-		    
-		    if (isset($_GET['register']) and (!user::online()))
-		    {
-			user::register_actions();
-		    }
-		    elseif (isset($_GET['recover']) and (!user::online()))
-		    {
-			echo "<a href='index.php?recover&recover_pass'>".lang::$lang['recover pw']."</a><br>";
-			echo "<a href='index.php?recover&recover_user'>".lang::$lang['recover usr']."</a><br>";
-			user::recover();
-		    }
-		    elseif (isset($_GET['p']))
-		    {
-			if ($_GET['p'] == "profile")
-			{
-			    if (user::online())
-			    {
-				profile::show_profile();
-			    }
-			    else
-			    {
-				echo "<h3>".lang::$lang['not logged']."</h3>";
-			    }
-			}
-			else
-			{
-			    content::page($_GET['p']);
-			}
-			
-		    }
-		    elseif (isset($_GET['action']))
-		    {
-			// non menu or profile: other pages
-			content::action($_GET['action']);
-		    }
-		    else
-		    {
-			echo "<h3>".lang::$lang['recent articles']."</h3>";
-		    }
-		    //content::createArticleItems($result);
+
+		    pages::main_page_request();
 		    
 		    ?>
 		<!-- /main -->
