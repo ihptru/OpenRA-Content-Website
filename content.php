@@ -73,7 +73,7 @@ class content
 	echo "<form id='quick-search' action='index.php' method='GET' >
 		<p>
 		<label for='qsearch'>Search:</label>
-		<input class='tbox' id='qsearch' type='text' name='qsearch' value='Search...' title='Start typing and hit ENTER' />
+		<input class='tbox' id='qsearch' type='text' name='qsearch' onclick=\"this.value='';\" onfocus=\"this.select()\" onblur=\"this.value=!this.value?'Search...':this.value;\" value='Search...' title='Start typing and hit ENTER' />
 		<input class='btn' alt='Search' type='image' name='searchsubmit' title='Search' src='images/search.png' />
 		</p>
 		</form>	

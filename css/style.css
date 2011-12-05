@@ -299,6 +299,7 @@ input.button {
 	border: none;
 	width: 222px; height: 32px;
 	background: url(../images/header-search.png) no-repeat;
+
 }
 #header form#quick-search p {
 	margin: 0; padding: 0;		
@@ -311,10 +312,16 @@ input.button {
 	background: transparent;
 	color: #4a413c;	
 }
+#header form#quick-search input:focus {
+	background-color: #934A00;
+	border: 1px solid #BF6000;
+	color: #fff;
+}
 #header form#quick-search .tbox {
 	margin: 6px 0 0 5px; 
 	width: 170px;	
-	display: inline;		
+	display: inline;
+
 }
 #header #search form#quick-search .btn{
 	width: 25px; height: 25px;		

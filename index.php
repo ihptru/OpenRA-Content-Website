@@ -41,8 +41,8 @@ content::head();
 		    }
 		    elseif (isset($_GET['recover']) and (!user::online()))
 		    {
-			echo "<a href='index.php?recover&recover_pass'>Recover Password</a><br>";
-			echo "<a href='index.php?recover&recover_user'>Recover Username</a><br>";
+			echo "<a href='index.php?recover&recover_pass'>".lang::$lang['recover pw']."</a><br>";
+			echo "<a href='index.php?recover&recover_user'>".lang::$lang['recove usr']."</a><br>";
 			user::recover();
 		    }
 		    elseif (isset($_GET['p']))
@@ -55,7 +55,7 @@ content::head();
 			    }
 			    else
 			    {
-				echo "<h3>You are not logged in</h3>";
+				echo "<h3>".lang::$lang['not logged']."</h3>";
 			    }
 			}
 			else
@@ -71,7 +71,7 @@ content::head();
 		    }
 		    else
 		    {
-			echo "<h3>Recent Articles</h3>";
+			echo "<h3>".lang::$lang['recent articles']."</h3>";
 		    }
 		    //content::createArticleItems($result);
 		    
@@ -83,13 +83,13 @@ content::head();
 		<div id="sidebar">
 
 		    <div class="sidemenu">
-			<h3>Sidebar Menu</h3>
+			<h3><? echo lang::$lang['sidebar menu']; ?></h3>
 			<ul>				
-			    <li><a href="index.php">Link</a></li>
+			    <li><a href="index.php"><? echo lang::$lang['link']; ?></a></li>
 			</ul>	
 		    </div>
 
-		    <h3>Gallery</h3>
+		    <h3><? echo lang::$lang['gallery']; ?></h3>
 
 		    <p class="thumbs">
 			<?PHP 
@@ -97,7 +97,7 @@ content::head();
 			//db::createImageGallery($result)
 			
 			?>
-		    </p>					
+		    </p>			
 
 		<!-- /sidebar -->				
 		</div>		
