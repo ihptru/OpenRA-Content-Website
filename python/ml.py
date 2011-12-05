@@ -6,6 +6,7 @@ import io;
 import bmp;
 import os;
 import getopt;
+import MySQLdb;
 
 # Check if path exist
 # -f <filepath> -u <user_id>
@@ -55,6 +56,8 @@ MapAuthor = "";
 MapTileset = "";
 MapType = "";
 MapBounds = "";
+MapDesc = "";
+MapPlayers = 0;
 
 # 1 byte
 def Bytes2Int1(data):
@@ -97,18 +100,24 @@ def init2Dlist(w,h):
 	return ll
 
 for line in string.split(yamlData, '\n'):
-	if line[0:5] == "Title":
-		MapTitle = strFixer(line[6:]);
-	if line[0:11] == "RequiresMod":
-		MapMod = strFixer(line[12:]);
-	if line[0:6] == "Author":
-		MapAuthor = strFixer(line[7:]);
-	if line[0:7] == "Tileset":
-		MapTileset = strFixer(line[8:]);
-	if line[0:4] == "Type":
-		MapType = strFixer(line[5:]);
-	if line[0:6] == "Bounds":
-		MapBounds = strFixer(line[7:]);
+    if line[0:5] == "Title":
+        MapTitle = strFixer(line[6:]);
+    if line[0:11] == "RequiresMod":
+        MapMod = strFixer(line[12:]);
+    if line[0:6] == "Author":
+        MapAuthor = strFixer(line[7:]);
+    if line[0:7] == "Tileset":
+        MapTileset = strFixer(line[8:]);
+    if line[0:4] == "Type":
+        MapType = strFixer(line[5:]);
+    if line[0:11] == "Description":
+        MapDesc == strFixer(line[12:]);
+    if line[0:6] == "Bounds":
+        MapBounds = strFixer(line[7:]);
+    if line.strip()[0:8] == "Playable":
+        state = line.split(':')[1]
+        if state.strip().lower() in ['true', 'on', 'yes', 'y']:
+            MapPlayers += 1
 
 #Take map bounds
 MapBounds = strFixer(MapBounds)
@@ -359,3 +368,26 @@ for x in range(Left,Right+Left):
 		img.plotPoint(x-Left,y-Top);
 
 img.saveFile(path + "minimap.bmp");
+
+conn = MySQLdb.connect("localhost", "oramod", "iequeiR6", "oramod")
+cur = conn.cursor()
+sql = """INSERT INTO maps
+        (title, description, author, type, players, width, height, tileset, minimap, user_id, screenshot_group_id)
+        VALUES
+        (
+        '%(MapTitle)s',
+        '%(MapDesc)s',
+        '%(MapAuthor)s',
+        '%(MapType)s',
+        %(MapPlayers)s,
+        %(width)s,
+        %(height)s,
+        '%(MapTileset)s',
+        '%(mapfile)s',
+        %(uid)s,
+        0
+        )
+""" % vars()
+cur.execute(sql)
+conn.commit()
+cur.close()
