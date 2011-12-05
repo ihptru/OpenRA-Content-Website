@@ -5,43 +5,38 @@ import struct;
 import io;
 import bmp;
 import os;
+import getopt;
 
 # Check if path exist
-# Takes 2 or more arguments sperate them with ?
-path = ""
-file = ""
-getPath = 1
-for arg in sys.argv:
-	if not arg[len(arg)-5:] == "ml.py":
-                if not arg == "?":
-                        if getPath == 0:
-                                if len(file) > 0:
-                                        file = file + " " + arg
-                                if len(file) == 0:
-                                        file = arg
-                        if getPath == 1:
-                                if len(path) > 0:
-                                        path = path + " " + arg
-                                if len(path) == 0:
-                                        path = arg
-		if arg == "?":
-                        getPath = 0
-if path == "":
-	print "Error: Need path to map"
-        exit()
-if file == "":
-	print "Error: Need name of map"
-	exit()
-print "Path: " + path + file
-if not os.path.isfile(path + file):
-        print "Error: File dose not exist"
+# -f <filepath> -u <user_id>
+
+try:
+    optlist,  args = getopt.getopt(sys.argv[1:], 'u:f:')
+except getopt.GetoptError, err:
+    print err
+    exit()
+
+if optlist == []:
+    print "Incorrect options"
+    exit()
+
+for  i in range(len(optlist)):
+    if optlist[i][0] == "-f":
+        mapfile = optlist[i][1]
+    if optlist[i][0] == "-u":
+        uid = optlist[i][1]
+
+file = os.path.basename(mapfile)
+path = os.path.dirname(mapfile) + os.sep
+
+print "Path: " + mapfile
+if not os.path.isfile(mapfile):
+        print "Error: File does not exist"
         exit()
 yamlData = "";
 bin = "";
 
-print path + file
-
-z = zipfile.ZipFile(path + file, mode='a')
+z = zipfile.ZipFile(mapfile, mode='a')
 
 for filename in z.namelist():
 	#print filename
@@ -113,7 +108,7 @@ for line in string.split(yamlData, '\n'):
 	if line[0:4] == "Type":
 		MapType = strFixer(line[5:]);
 	if line[0:6] == "Bounds":
-                MapBounds = strFixer(line[7:]);
+		MapBounds = strFixer(line[7:]);
 
 #Take map bounds
 MapBounds = strFixer(MapBounds)

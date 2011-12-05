@@ -28,7 +28,7 @@ class upload
 	    $target_path = $path . "/" . $filename;
 	    if(move_uploaded_file($source, $target_path))
 	    {
-		exec("python python/ml.py " . $path . "/ ? " . $filename);
+		exec("python python/ml.py -f " . str_replace(" ", "\ ", $target_path) . "-u " . user::uid);
 		return $filename;
 	    }
 	    else
