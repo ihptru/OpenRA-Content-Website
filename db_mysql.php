@@ -60,6 +60,7 @@
 			    author VARCHAR(80) NOT NULL,
 			    type VARCHAR(80) NOT NULL,
 			    players INTEGER NOT NULL,
+			    g_mod VARCHAR(80) NOT NULL,
 			    width INTEGER NOT NULL,
 			    height INTEGER NOT NULL,
 			    tileset VARCHAR(80) NOT NULL,
