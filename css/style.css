@@ -271,7 +271,13 @@ input.button {
 	background: url(../images/right-nav-bg.gif) no-repeat right top;
 	color: #f0e8e8;		
 }
-
+#profile_bar {
+	position: absolute;
+	padding: 0px 0px 0px 0px;
+	background: transparent;
+	top: 70px; right: -145px;
+	font-size: 12px;
+}
 /* register link */
 #register_link {
 	text-align:right;

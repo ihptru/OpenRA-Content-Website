@@ -72,6 +72,18 @@ class content
 		</div>
 	    ";
 	}
+	if (isset($_GET['p']))
+	{
+	    if ($_GET['p'] == "profile")
+	    {
+		if (user::online())
+		{
+		    echo "<div id=\"profile_bar\">";
+		    profile::profile_bar();
+		    echo "</div>";
+		}
+	    }
+	}
 	echo "<form id='quick-search' action='index.php' method='GET' >
 		<p>
 		<label for='qsearch'>Search:</label>
@@ -659,6 +671,11 @@ class profile
 {
     public static function show_profile()
     {
+	echo "<h3>".lang::$lang['recent events']."</h3>";
+    }
+    
+    public static function profile_bar()
+    {
 	$query = "SELECT avatar FROM users WHERE uid = " . user::uid();
 	$result = db::executeQuery($query);
 	while ($db_data = db::fetch_array($result))
@@ -669,7 +686,6 @@ class profile
 	{
 	    echo "<img src='images/noavatar.jpg' width='120px'>";
 	}
-	echo "<h3>".lang::$lang['recent events']."</h3>";
     }
 
     public static function upload_map()
