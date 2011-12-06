@@ -54,6 +54,8 @@ class lang
 	    'upload'		=> "Upload",
 	    'choose map upload' => "Choose a map file to upload",
 	    'upload maps'	=> "Upload your maps",
+	    
+	    'remember me'	=> "remember me",
 	);
 }
 

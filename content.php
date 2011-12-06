@@ -64,11 +64,13 @@ class content
 		<!-- / id='login_form' -->
 		</div>
 		<div id=\"register_link\">
+		    <input style=\"position:absolute; right: 130px; top: 15px;\" type=\"checkbox\" name=\"remember\" value=\"yes\" checked title=\"".lang::$lang['remember me']."\">
 		    <a href=\"index.php?register\">".lang::$lang['register']."</a>
 		</div>
 		<div id=\"recover_link\">
 		    <a href=\"index.php?recover\">".lang::$lang['recover']."</a>
-		</div>";
+		</div>
+	    ";
 	}
 	echo "<form id='quick-search' action='index.php' method='GET' >
 		<p>

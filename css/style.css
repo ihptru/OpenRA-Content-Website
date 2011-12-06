@@ -278,7 +278,7 @@ input.button {
 	font-size: 11px;
 	position: absolute;
 	top: 15px; right: -150px;
-	background: #070605;
+	background: transparent;
 	padding: 0px 15px 0px 15px;
 	text-decoration:underline;
 }
@@ -287,7 +287,7 @@ input.button {
 	font-size: 11px;
 	position: absolute;
 	top: 33px; right: -150px;
-	background: #070605;
+	background: transparent;
 	padding: 0px 15px 0px 15px;
 	text-decoration:underline;
 }

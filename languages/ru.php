@@ -55,6 +55,8 @@ class lang
 	    'upload'		=> "Загрузить",
 	    'choose map upload' => "Выберите файл карты для загрузки",
 	    'upload maps'	=> "Загрузить ваши карты",
+	    
+	    'remember me'	=> "запомнить меня",
 	);
 }
 
