@@ -287,7 +287,7 @@ class content
 	    $content .= "<h2><a href='index.html'>" . $title . "</a></h2>"; //index.html? could it be something else..
 	    $content .= "<p class='post-info'>" . $subtitle . "</p>";
 	    $content .= "<p>" . $text . "</p>";
-	    $content .= "<p><a href='index.html' class='more-link'>Read More</a></p>"; //index.html? could it be something else..
+	    $content .= "<p><a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table . "' class='more-link'>Read More</a></p>"; //index.html? could it be something else..
 											//All use read more button?
 	    $content .= "</div>";
 	    $content .= "</div>";
@@ -396,7 +396,7 @@ class content
 	while ($comment = db::nextRowFromQuery($result))
 	{
 	    $counter++;
-	    $res = db::executeQuery("SELECT * FROM users WHERE uid = " . $comment["id"]);
+	    $res = db::executeQuery("SELECT * FROM users WHERE uid = " . $comment["table_id"]);
 	    $author = db::nextRowFromQuery($res);
 
 	    if($counter > 0)
@@ -408,9 +408,9 @@ class content
 		$content .= "<li class='thread-alt depth-1'>";
 
                 $content .= "<div class='comment-info'>";			
-                $content .= "<img alt='' src='" . $autor["avatar"] . "' class='avatar' height='40' width='40' />";
+                $content .= "<img alt='' src='" . $author["avatar"] . "' class='avatar' height='40' width='40' />";
                 $content .= "<cite>";
-                $content .= "<a href='index.html'>" . $autor["login"] . "</a> Says: <br />"; //index.html?? << need correct page
+                $content .= "<a href='index.html'>" . $author["login"] . "</a> Says: <br />"; //index.html?? << need correct page
                 $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
                 $content .= "</cite>";
                 $content .= "</div>";
@@ -631,6 +631,10 @@ class content
 	{
 	    objects::about();
 	}
+	elseif ($page == "detail")
+	{
+		objects::detail();
+	}
     }
     
     public static function action($request)
@@ -668,6 +672,12 @@ class objects
     public static function about()
     {
 	echo "<h3>".lang::$lang['about']."!</h3>";
+    }
+    
+    public static function detail()
+    {
+    $result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "'");
+	content::create_comment_section($result);
     }
 }
 

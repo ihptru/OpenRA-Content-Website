@@ -110,7 +110,7 @@
 			    content VARCHAR(500) NOT NULL,
 			    user_id INTEGER NOT NULL,
 			    table_id INTEGER NOT NULL,
-			    table_name INTEGER NOT NULL,
+			    table_name VARCHAR(80) NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
