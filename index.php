@@ -20,8 +20,8 @@ content::head();
 	if (count($_GET) == 0)
 	{
 	    
-	    $res = db::executeQuery("SELECT * FROM featured ORDER BY uid LIMIT 1");
-	    echo content::createFeaturedItems($res,"maps");
+	    $res = db::executeQuery("SELECT * FROM featured");
+	    echo content::createFeaturedItems($res);
 	}
 	?>		
 

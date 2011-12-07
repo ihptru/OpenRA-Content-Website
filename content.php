@@ -255,6 +255,8 @@ class content
 		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
 		    $text = $row["description"];
 		    $imagePath = $row["minimap"];
+		    $imagePath = explode(WEBSITE_PATH, $imagePath);
+		    $imagePath = $imagePath[1];
 		    break;
 		case "units":
 		    $title = $row["title"];
@@ -277,7 +279,7 @@ class content
 	    if(strlen($imagePath) > 0)
 	    {
 		$content .= "<div class='image-block'>";
-		$content .= "<a href='index.html' title=''><img src='" . $imagePath . "' alt='featured' width='350px' height='250px'/></a>";
+		$content .= "<a href='index.html' title=''><img src='" . $imagePath . "' alt='featured' style='max-height:350px;max-width:250px;'/></a>";
 		$content .= "</div>";
 	    }
 
@@ -327,7 +329,7 @@ class content
 	    if($counter == 0)
 		$content .= "<tr>";
 
-	    $content .= "<td><img src='" . $imagePath . "'>" . $title . "</td>";
+	    $content .= "<td><img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'></br><div align=center>" . $title . "</div></td>";
 
 	    if($counter > 2)
 	    {
