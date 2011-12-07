@@ -38,6 +38,12 @@ class content
 	    </script>
 	";
 	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" /></head>";
+	
+	if( isset($_POST['message']))
+	{
+		db::executeQuery("INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES ('','".$_POST['message']."',".user::uid().",".$_GET['id'].",'".$_GET['table']."')");
+	}
+	
     }
 		
     public static function body_head()
@@ -396,7 +402,7 @@ class content
 	while ($comment = db::nextRowFromQuery($result))
 	{
 	    $counter++;
-	    $res = db::executeQuery("SELECT * FROM users WHERE uid = " . $comment["table_id"]);
+	    $res = db::executeQuery("SELECT * FROM users WHERE uid = " . $comment["user_id"]);
 	    $author = db::nextRowFromQuery($res);
 
 	    if($counter > 0)
@@ -407,8 +413,13 @@ class content
 	    else
 		$content .= "<li class='thread-alt depth-1'>";
 
+		$avatarImg = $author["avatar"];
+		if ($avatarImg == "None") {
+	    	$avatarImg = "images/noavatar.jpg";
+		}
+
                 $content .= "<div class='comment-info'>";			
-                $content .= "<img alt='' src='" . $author["avatar"] . "' class='avatar' height='40' width='40' />";
+                $content .= "<img alt='' src='" . $avatarImg . "' class='avatar' height='40' width='40' />";
                 $content .= "<cite>";
                 $content .= "<a href='index.html'>" . $author["login"] . "</a> Says: <br />"; //index.html?? << need correct page
                 $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
@@ -418,11 +429,13 @@ class content
                 $content .= "<div class='comment-text'>";
                 $content .= "<p>" . $comment["content"] . "</p>";
                 $content .= "<div class='reply'>";
-                $content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
+                //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
                 $content .= "</div>";
                 $content .= "</div>";
                 
                 $content .= "</li>";
+
+
 	}
 
 	$content .= "</ol>";
@@ -437,7 +450,7 @@ class content
 	{
 	    $content .= "<div id='respond'>";
 	    $content .= "<h3>Leave a Reply</h3>";			
-	    $content .= "<form action='index.html' method='post' id='commentform'>"; // index.html ?? (Need a page to take form data and put into comments table)
+	    $content .= "<form action='index.php?p=detail&table=".$table_name."&id=".$table_id."' method='post' id='commentform'>"; // index.html ?? (Need a page to take form data and put into comments table)
 	    $content .= "<p>";
 	    $content .= "<label for='message'>Your Message</label><br />";
 	    $content .= "<textarea id='message' name='message' rows='10' cols='20' tabindex='4'></textarea>";
@@ -677,7 +690,9 @@ class objects
     public static function detail()
     {
     $result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "'");
-	content::create_comment_section($result);
+	echo content::create_comment_section($result);
+	
+	echo content::create_comment_respond($_GET['table'],$_GET['id']);
     }
 }
 
