@@ -452,9 +452,9 @@ class content
 	     
 	     if($table == "maps")
 	     {
-	     	$download = str_replace('.bmp', '.oramap', $row["minimap"]);
-	     	$download = explode(WEBSITE_PATH, $download);
-		    $download = $download[1];
+		$mapfile = basename(dirname($row["minimap"])) . ".oramap";
+	     	$download = explode(WEBSITE_PATH, $row["minimap"]);
+		    $download = dirname($download[1]) . "/" . $mapfile;
 	     	$content .= '<tr><td><a href="'.$download.'">Download</a></tr></td>';
 	     }
 	     
