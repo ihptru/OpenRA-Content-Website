@@ -290,7 +290,7 @@ class content
 	    if(strlen($imagePath) > 0)
 	    {
 		$content .= "<div class='image-block'>";
-		$content .= "<a href='index.html' title=''><img src='" . $imagePath . "' alt='featured' style='max-height:350px;max-width:250px;'/></a>";
+		$content .= "<a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table . "' title=''><img src='" . $imagePath . "' alt='featured' style='max-height:350px;max-width:250px;'/></a>";
 		$content .= "</div>";
 	    }
 
