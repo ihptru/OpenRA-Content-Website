@@ -389,6 +389,79 @@ class content
 	$content .= "</table>";
 	return $content;
     }
+    
+    public static function displayItem($result, $table)
+    {
+    	$content = "";
+    	while ($row = db::nextRowFromQuery($result))
+		{
+		
+		$content .= "<table>";
+		
+	    $title = "";
+	    $imagePath = "";
+	    $subtitle = "";
+	    $text = "";
+	    
+	    $usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]));
+	    $user_name = $usr["login"];
+	    
+    	switch($table)
+	    {
+		case "maps":
+		    $title = $row["title"];
+		    $imagePath = $row["minimap"];
+		    $imagePath = explode(WEBSITE_PATH, $imagePath);
+		    $imagePath = $imagePath[1];
+		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
+		    $text = $row["description"];
+		    break;
+		case "units":
+		    $title = $row["title"];
+		    $imagePath = $row["preview_image"];
+		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
+		    $text = "";
+		    break;
+		case "guide":
+		    $title = $row["title"];
+		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
+		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
+		    $text = $row["html_content"];
+		    break;
+	     }
+	     
+	     if($imagePath != "")
+	     {
+	     	$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
+	     }
+	     
+	     if($title != "")
+	     {
+	     	$content .= "<tr><td>" . $title;
+	     	if($subtitle != "")
+	     	{
+	     		$content .= " " . $subtitle;
+	     	}
+	     	$content .= "</td></tr>";
+	     }
+	     
+	     if($text != "")
+	     {
+	     	$content .= "<tr><td>".$text."</td></tr>";
+	     }
+	     
+	     if($table == "maps")
+	     {
+	     	$download = str_replace('.bmp', '.oramap', $row["minimap"]);
+	     	$download = explode(WEBSITE_PATH, $download);
+		    $download = $download[1];
+	     	$content .= '<tr><td><a href="'.$download.'">Download</a></tr></td>';
+	     }
+	     
+	     $content .= "</table>";
+	     }
+	return $content;
+    }
 
     public static function create_comment_section($result)
     {
@@ -689,6 +762,9 @@ class objects
     
     public static function detail()
     {
+    $result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
+    echo content::displayItem($result, $_GET['table']);
+    
     $result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "'");
 	echo content::create_comment_section($result);
 	
