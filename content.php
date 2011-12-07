@@ -41,9 +41,12 @@ class content
 	
 	if( isset($_POST['message']))
 	{
-	    if (trim($_POST['message']) != "")
+	    if (user::online())
 	    {
-		db::executeQuery("INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES ('','".$_POST['message']."',".user::uid().",".$_GET['id'].",'".$_GET['table']."')");
+		if (trim($_POST['message']) != "")
+		{
+		    db::executeQuery("INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES ('','".$_POST['message']."',".user::uid().",".$_GET['id'].",'".$_GET['table']."')");
+		}
 	    }
 	}
 	
