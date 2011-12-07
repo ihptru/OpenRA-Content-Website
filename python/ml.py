@@ -29,6 +29,7 @@ for  i in range(len(optlist)):
 
 file = os.path.basename(mapfile)
 path = os.path.dirname(mapfile) + os.sep
+minimap_path = path + "minimap.bmp"
 
 print "Path: " + mapfile
 if not os.path.isfile(mapfile):
@@ -385,7 +386,7 @@ sql = """INSERT INTO maps
         %(width)s,
         %(height)s,
         '%(MapTileset)s',
-        '%(mapfile)s',
+        '%(minimap_path)s',
         %(uid)s,
         0
         )

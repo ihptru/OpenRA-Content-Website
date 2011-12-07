@@ -17,9 +17,12 @@ content::head();
 
 	<?PHP
 
-	$res = db::executeQuery("SELECT * FROM maps");
-	echo content::createFeaturedItems($res,"maps");
-
+	if (count($_GET) == 0)
+	{
+	    
+	    $res = db::executeQuery("SELECT * FROM featured ORDER BY uid LIMIT 1");
+	    echo content::createFeaturedItems($res,"maps");
+	}
 	?>		
 
     <!-- /featured -->

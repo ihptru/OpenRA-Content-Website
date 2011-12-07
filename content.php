@@ -311,6 +311,8 @@ class content
 		case "maps":
 		    $title = $row["title"];
 		    $imagePath = $row["minimap"];
+		    $imagePath = explode(WEBSITE_PATH, $imagePath);
+		    $imagePath = $imagePath[1];
 		    break;
 		case "units":
 		    $title = $row["title"];
@@ -646,9 +648,9 @@ class objects
 	if (user::online())
 	{
 	    echo "<a href='/index.php?action=upload_map&p=maps'>".lang::$lang['upload maps']."</a>";
-	    $result = db::executeQuery("SELECT * FROM maps");
-	    content::create_grid($result);
 	}
+	$result = db::executeQuery("SELECT * FROM maps");
+	echo content::create_grid($result);
     }
     
     public static function units()
@@ -698,15 +700,7 @@ class profile
 		<label>".lang::$lang['choose map upload']." (.oramap): <input type=\"file\" name=\"map_upload\" /></label>
 		<br />
 		<input type=\"submit\" name=\"submit\" value=\"".lang::$lang['upload']."\" />
-
-		<input id='my_file_element' type='file' name='file_1' >
 		</form>
-
-	    <div id='files_list'></div>
-	    <script>
-		var multi_selector = new MultiSelector( document.getElementById( 'files_list' ), 5 );
-		multi_selector.addElement( document.getElementById( 'my_file_element' ) );
-	    </script>
 	";
             
 	$username = user::username();

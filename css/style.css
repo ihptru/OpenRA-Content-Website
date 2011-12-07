@@ -121,6 +121,12 @@ td {
 /* end - table */
 
 /* form elements */
+
+input[type="file"]{
+border:1px solid #ccc;
+padding:5px;
+min-width:100px;
+}
 #form_class {
 	margin: 10px 20px 10px 20px; 
 	padding: 15px 25px 25px 25px; 
