@@ -340,7 +340,7 @@ class content
 	    if($counter == 0)
 		$content .= "<tr>";
 
-	    $content .= "<td><img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'></br><div align=center><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>" . $title . "</a></div></td>";
+	    $content .= "<td id='map_grid'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'><img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'></br>" . $title . "</a></td>";
 
 	    if($counter > 2)
 	    {
