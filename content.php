@@ -41,7 +41,10 @@ class content
 	
 	if( isset($_POST['message']))
 	{
+	    if (trim($_POST['message']) != "")
+	    {
 		db::executeQuery("INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES ('','".$_POST['message']."',".user::uid().",".$_GET['id'].",'".$_GET['table']."')");
+	    }
 	}
 	
     }
@@ -719,7 +722,7 @@ class content
 	}
 	elseif ($page == "detail")
 	{
-		objects::detail();
+	    objects::detail();
 	}
     }
     
@@ -762,10 +765,10 @@ class objects
     
     public static function detail()
     {
-    $result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
-    echo content::displayItem($result, $_GET['table']);
+	$result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
+	echo content::displayItem($result, $_GET['table']);
     
-    $result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "'");
+	$result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "'");
 	echo content::create_comment_section($result);
 	
 	echo content::create_comment_respond($_GET['table'],$_GET['id']);
