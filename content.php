@@ -255,13 +255,15 @@ class content
 		$table = $row["table_name"];
 		$res = db::executeQuery("SELECT * FROM " . $table . " WHERE uid = " . $row["id"]);
 		$row = db::nextRowFromQuery($res);
+		$res = db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]);
+		$username = db::nextRowFromQuery($res);
 	    }
 	    switch($table)
 	    {
 		//Set title, image
 		case "maps":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
+		    $subtitle = "posted at " . $row["posted"] . " by " . $username["login"];
 		    $text = $row["description"];
 		    $imagePath = $row["minimap"];
 		    $imagePath = explode(WEBSITE_PATH, $imagePath);
@@ -269,13 +271,13 @@ class content
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
+		    $subtitle = "posted at " . $row["posted"] . " by " . $username["login"];
 		    $text = "";
 		    $imagePath = $row["preview_image"];
 		    break;
 		case "guide":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
+		    $subtitle = "posted at " . $row["posted"] . " by " . $username["login"];
 		    $text = "";
 		    $imagePath = "";
 		    break;
