@@ -14,7 +14,14 @@ class user
     // uid of current client
     public static function uid()
     {
-        return $_SESSION['user_id'];
+	if (isset($_SESSION['user_id']))
+	{
+	    return $_SESSION['user_id'];
+	}
+	else
+	{
+	    return "0";
+	}
     }
 
     // get username of current client

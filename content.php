@@ -49,6 +49,13 @@ class content
 		}
 	    }
 	}
+	if ( isset($_GET['delete_comment']) and isset($_GET['user_comment']) )
+	{
+	    $id = $_GET['delete_comment'];
+	    $user = $_GET['user_comment'];
+	    misc::delete_comment($id, $user);
+	    header("Location: {$_SERVER['HTTP_REFERER']}");
+	}
 	
     }
 		
@@ -480,7 +487,7 @@ class content
 	$counter = 0;
 	$content = "";
 
-	$comments = mysql_num_rows($result);
+	$comments = db::num_rows($result);
 	$content .= "<h3 id='comments'>" . $comments . " Responses</h3>";
 	$content .= "<ol class='commentlist'>";
 
@@ -498,21 +505,22 @@ class content
 	    else
 		$content .= "<li class='thread-alt depth-1'>";
 
-		$avatarImg = $author["avatar"];
-		if ($avatarImg == "None") {
-	    	$avatarImg = "images/noavatar.jpg";
-		}
-
+		$avatarImg = misc::avatar($author["avatar"]);
+		
                 $content .= "<div class='comment-info'>";			
                 $content .= "<img alt='' src='" . $avatarImg . "' class='avatar' height='40' width='40' />";
                 $content .= "<cite>";
-                $content .= "<a href='index.html'>" . $author["login"] . "</a> Says: <br />"; //index.html?? << need correct page
+                $content .= "<a href='index.php?profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
                 $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
                 $content .= "</cite>";
                 $content .= "</div>";
                 
                 $content .= "<div class='comment-text'>";
                 $content .= "<p>" . $comment["content"] . "</p>";
+		if (misc::comment_owner($comment["user_id"]))
+		{
+		    $content .= "<a style='float: right; margin: 3px -20px 0 0; border: 1px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."'>delete</a>";
+		}
                 $content .= "<div class='reply'>";
                 //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
                 $content .= "</div>";

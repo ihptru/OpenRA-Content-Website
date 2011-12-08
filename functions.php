@@ -119,4 +119,36 @@ class pages
     }
 }
 
+class misc
+{
+    public static function avatar($ava)
+    {
+	if ($ava == "None")
+	{
+	    return "images/noavatar.jpg";
+	}
+    }
+    
+    public static function comment_owner($id)
+    {
+	if (user::online())
+	{
+	    if ($id == user::uid())
+	    {
+		return True;
+	    }
+	}
+	return False;
+    }
+    
+    public static function delete_comment($id, $user)
+    {
+	if ( $user == user::uid() )
+	{
+	    $query = "DELETE FROM comments WHERE uid = " . $id;
+	    db::executeQuery($query);
+	}
+    }
+}
+
 ?>
