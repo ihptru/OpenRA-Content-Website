@@ -115,71 +115,88 @@ class user
 	}
 	elseif(isset($_POST['act']))
 	{
-	    if(!empty($_POST['rlogin']) && !empty($_POST['rpass']) && !empty($_POST['verpass']) && !empty($_POST['email'])) 
+	    require_once('libs/recaptchalib.php');
+	    $privatekey = "6Ldq-soSAAAAAJnSn1-Gi9CBbuFQ3O-SLw1f0scW";
+	    $resp = recaptcha_check_answer ($privatekey,
+                                $_SERVER["REMOTE_ADDR"],
+                                $_POST["recaptcha_challenge_field"],
+                                $_POST["recaptcha_response_field"]);
+
+	    if (!$resp->is_valid)
 	    {
-		if ($_POST['rpass'] == $_POST['verpass'])
+		// What happens when the CAPTCHA was entered incorrectly
+		echo "The reCAPTCHA wasn't entered correctly. Go back and try it again." .
+		"(reCAPTCHA said: " . $resp->error . ")";
+		content::create_register_form();
+	    }
+	    else
+	    {
+		if(!empty($_POST['rlogin']) && !empty($_POST['rpass']) && !empty($_POST['verpass']) && !empty($_POST['email'])) 
 		{
-		    $query = "SELECT email FROM users WHERE email = '".$_POST['email']."'";
-		    if (db::num_rows(db::executeQuery($query)) == 0)
+		    if ($_POST['rpass'] == $_POST['verpass'])
 		    {
-			$query = "SELECT login FROM users WHERE login = '".$_POST['rlogin']."'";
+			$query = "SELECT email FROM users WHERE email = '".$_POST['email']."'";
 			if (db::num_rows(db::executeQuery($query)) == 0)
 			{
-			    if ( strpos($_POST['email'], '@') )
+			    $query = "SELECT login FROM users WHERE login = '".$_POST['rlogin']."'";
+			    if (db::num_rows(db::executeQuery($query)) == 0)
 			    {
-				$already_requested = false;
-				$query = "SELECT login FROM activation WHERE login = '".$_POST['rlogin']."'";
-				if (db::num_rows(db::executeQuery($query)) != 0)
+				if ( strpos($_POST['email'], '@') )
 				{
-				    $already_requested = true;
-				}
-				$query = "SELECT email FROM activation WHERE email = '".$_POST['email']."'";
-				if (db::num_rows(db::executeQuery($query)) != 0)
-				{
-				    $already_requested = true;
-				}
-				if ($already_requested == false)
-				{
-				    $query = "INSERT INTO activation
-					    (email,pass,login,hash)
-					    VALUES
-					    (
-					    '".$_POST['email']."','".md5($_POST['rpass'])."','".$_POST['rlogin']."','".md5($_POST['email'])."'
-					    );";
-				    db::executeQuery($query);
-				    mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://oramod.lv-vl.net/index.php?register&key=".md5($_POST['email'])."",
-					"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
-				    echo lang::$lang['ask to activate'];
+				    $already_requested = false;
+				    $query = "SELECT login FROM activation WHERE login = '".$_POST['rlogin']."'";
+				    if (db::num_rows(db::executeQuery($query)) != 0)
+				    {
+					$already_requested = true;
+				    }
+				    $query = "SELECT email FROM activation WHERE email = '".$_POST['email']."'";
+				    if (db::num_rows(db::executeQuery($query)) != 0)
+				    {
+					$already_requested = true;
+				    }
+				    if ($already_requested == false)
+				    {
+					$query = "INSERT INTO activation
+						(email,pass,login,hash)
+						VALUES
+						(
+						'".$_POST['email']."','".md5($_POST['rpass'])."','".$_POST['rlogin']."','".md5($_POST['email'])."'
+						);";
+					db::executeQuery($query);
+					mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://oramod.lv-vl.net/index.php?register&key=".md5($_POST['email'])."",
+					    "From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
+					echo lang::$lang['ask to activate'];
+				    }
+				    else
+				    {
+					echo lang::$lang['already requested'];
+				    }
 				}
 				else
 				{
-				    echo lang::$lang['already requested'];
+				    echo lang::$lang['email error'];
 				}
 			    }
 			    else
 			    {
-				echo lang::$lang['email error'];
+				echo lang::$lang['user exists'];
 			    }
 			}
 			else
 			{
-			    echo lang::$lang['user exists'];
+			    echo lang::$lang['email in use']; 
 			}
 		    }
 		    else
 		    {
-			echo lang::$lang['email in use']; 
+			echo lang::$lang['password not match']; 
 		    }
 		}
 		else
 		{
-		    echo lang::$lang['password not match']; 
+		    echo lang::$lang['empty fields']."<br><br>";
+		    content::create_register_form();
 		}
-	    }
-	    else
-	    {
-		echo lang::$lang['empty fields']."<br><br>";
-		content::create_register_form();
 	    }
 	}
 	else

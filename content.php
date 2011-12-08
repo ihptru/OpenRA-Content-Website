@@ -152,11 +152,15 @@ class content
 	    ".lang::$lang['password']."</td><td><input type=\"password\" name=\"rpass\"></td></tr><tr><td>
 	    ".lang::$lang['reenter pw']."</td><td><input type=\"password\" name=\"verpass\"></td></tr><tr><td>
 	    E-mail</td><td><input type=\"text\" name=\"email\"></td></tr><tr><td>
-
 	    <input type=\"hidden\" name=\"act\">
-
-	    <input type=\"submit\" value=\"".lang::$lang['confirm']."\"
-	    </td></tr></table></form>
+	    <td>
+	";
+	require_once('libs/recaptchalib.php');
+	$publickey = "6Ldq-soSAAAAADuu6iGZoCiTSOzBcoKXBwlhjM5u";
+	echo recaptcha_get_html($publickey);
+	
+	echo "</td></tr><tr><td><input type=\"submit\" value=\"".lang::$lang['confirm']."\"
+	</td></tr></table></form>
 	";
     }
 
