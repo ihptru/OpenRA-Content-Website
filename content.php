@@ -56,6 +56,16 @@ class content
 	    misc::delete_comment($id, $user);
 	    header("Location: {$_SERVER['HTTP_REFERER']}");
 	}
+	if( isset($_POST['upload_guide_title']) && isset($_POST['upload_guide_text']))
+	{
+	    if (user::online())
+	    {
+		if (trim($_POST['upload_guide_text']) != "" && trim($_POST['upload_guide_title']) != "")
+		{
+		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES ('".$_POST['upload_guide_title']."','".$_POST['upload_guide_text']."','',".user::uid().")");
+		}
+	    }
+	}
 	
     }
 		
@@ -189,7 +199,7 @@ class content
 		case "units":
 		    $imagePath = $row["preview_image"];
 		    break;
-		case "guide":
+		case "guides":
 		    $imagePath = "";
 		    break;
 	    }
@@ -289,7 +299,7 @@ class content
 		    $text = "";
 		    $imagePath = $row["preview_image"];
 		    break;
-		case "guide":
+		case "guides":
 		    $title = $row["title"];
 		    $subtitle = "posted at " . $row["posted"] . " by " . $username["login"];
 		    $text = "";
@@ -330,7 +340,7 @@ class content
 	while ($row = db::nextRowFromQuery($result))
 	{
 	    $title = "";
-	    $image = "";
+	    $imagePath = "";
 
 	    switch($table)
 	    {
@@ -345,7 +355,7 @@ class content
 		    $title = $row["title"];
 		    $imagePath = $row["preview_image"];
 		    break;
-		case "guide":
+		case "guides":
 		    $title = $row["title"];
 		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
 		    break;
@@ -354,7 +364,10 @@ class content
 	    if($counter == 0)
 		$content .= "<tr>";
 
-	    $content .= "<td id='map_grid'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'><img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'></br>" . $title . "</a></td>";
+	    $content .= "<td id='map_grid'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>";
+	    if($imagePath != "")
+	    	$content .= "<img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'>";
+	    $content .= "</br>" . $title . "</a></td>";
 
 	    if($counter > 2)
 	    {
@@ -394,7 +407,7 @@ class content
 		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
 		    $text = "";
 		    break;
-		case "guide":
+		case "guides":
 		    $title = $row["title"];
 		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
 		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
@@ -441,7 +454,7 @@ class content
 		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
 		    $text = "";
 		    break;
-		case "guide":
+		case "guides":
 		    $title = $row["title"];
 		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
 		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
@@ -466,6 +479,8 @@ class content
 	     
 	     if($text != "")
 	     {
+	     	$allow = '<table><tr><td><img><a><b><i><u><p>';
+	     	$text = strip_tags($text, $allow);
 	     	$content .= "<tr><td>".$text."</td></tr>";
 	     }
 	     
@@ -773,6 +788,8 @@ class objects
     public static function guides()
     {
 	echo "<h3>".lang::$lang['guides']."!</h3>";
+	$result = db::executeQuery("SELECT * FROM guides");
+	echo content::create_grid($result,"guides");
     }
     
     public static function about()
@@ -797,6 +814,10 @@ class profile
     public static function show_profile()
     {
 	echo "<h3>".lang::$lang['recent events']."</h3>";
+	
+	profile::upload_map();
+	profile::upload_guide();
+	
     }
     
     public static function profile_bar()
@@ -842,6 +863,24 @@ class profile
 		echo "<img src='" . $image . "'>";
 	    }
 	}
+    }
+    
+    public static function upload_guide()
+    {
+    	if(!user::online())
+    		return;
+    	
+    	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
+		<label>Upload guide:</label>
+		<br />
+		<label>Title: <input type='text' name='upload_guide_title' /></label>
+		<br />
+		<label>Text: <textarea name='upload_guide_text' cols='40' rows='5'></textarea></label>
+		<br />
+		<input type=\"submit\" name=\"submit\" value=\"".lang::$lang['upload']."\" />
+		</form>
+	";
+    	
     }
 }
 
