@@ -67,6 +67,15 @@ class content
 	    }
 	}
 	
+	if ( isset($_GET['del_item']) and isset($_GET['del_item_table']) and isset($_GET['del_item_user']))
+	{
+	    $item_id = $_GET['del_item'];
+	    $table_name = $_GET['del_item_table'];
+	    $user_id = $_GET['del_item_user'];
+	    misc::delete_item($item_id, $table_name, $user_id);	//delete item and comments related to it
+	    header("Location: /");
+	}
+	
     }
 		
     public static function body_head()
@@ -413,8 +422,8 @@ class content
 		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
 		    $text = "";
 		    break;
-	     }
-
+	    }
+	    
 	    //TODO: Text should truncate if too large
 	    $content .= "<tr><td><img src='" . $imagePath . "'></td><td>" . $title . "</br>" . $subtitle . "</br>" . $text . "</td></tr>";
 	}
@@ -434,6 +443,7 @@ class content
 	    $imagePath = "";
 	    $subtitle = "";
 	    $text = "";
+	    $delete = "";
 	    
 	    $usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]));
 	    $user_name = $usr["login"];
@@ -462,6 +472,9 @@ class content
 		    break;
 	     }
 	     
+	     if ($row["user_id"] == user::uid())
+		$delete = "Delete ".rtrim($table,"s");
+
 	     if($imagePath != "")
 	     {
 	     	$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
@@ -491,6 +504,9 @@ class content
 		    $download = dirname($download[1]) . "/" . $mapfile;
 	     	$content .= '<tr><td><a href="'.$download.'">Download</a></tr></td>';
 	     }
+	     
+	     if ($delete != "")
+		$content .= "<tr><td><a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."'>".$delete."</a></td></tr>";
 	     
 	     $content .= "</table>";
 	     }
@@ -868,7 +884,7 @@ class profile
     public static function upload_guide()
     {
     	if(!user::online())
-    		return;
+	    return;
     	
     	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
 		<label>Upload guide:</label>

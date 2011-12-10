@@ -149,6 +149,41 @@ class misc
 	    db::executeQuery($query);
 	}
     }
+    
+    public static function delete_item($item_id, $table_name, $user_id)
+    {
+	if ($user_id == user::uid())
+	{	    
+	    //remove map directory and it's content from disk
+	    if ($table_name = "maps")
+	    {
+		$query = "SELECT minimap FROM maps WHERE uid = ".$item_id;
+		$result = db::executeQuery($query);
+		while ($db_data = db::fetch_array($result))
+		{
+		    $path = dirname($db_data['minimap'])."/";
+		}
+		foreach (scandir($path) as $item)
+		{
+		    if ($item == '.' || $item == '..') continue;
+		    unlink($path.$item);
+		}
+		rmdir($path);
+	    }
+	    
+	    if ($table_name == "units")
+	    {
+		//todo: remove unit from disk when Unit Upload feature is coded
+	    }
+	    
+	    //remove item from DB
+	    $query = "DELETE FROM ".$table_name." WHERE uid = ".$item_id;
+	    db::executeQuery($query);
+	    //remove comments from DB
+	    $query = "DELETE FROM comments WHERE table_name = '".$table_name."' AND table_id = ".$item_id;
+	    db::executeQuery($query);
+	}
+    }
 }
 
 ?>
