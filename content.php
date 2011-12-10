@@ -38,7 +38,7 @@ class content
 	    </script>
 	";
 	echo "<script type='text/javascript'>
-	function confirmPost()
+	function confirmDelete()
 	{
 	    var agree=confirm('Are you sure you want to delete an item?');
 	    if (agree)
@@ -517,7 +517,7 @@ class content
 	     }
 	     
 	     if ($delete != "")
-		$content .= "<tr><td><a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmPost()'>".$delete."</a></td></tr>";
+		$content .= "<tr><td><a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete()'>".$delete."</a></td></tr>";
 	     
 	     $content .= "</table>";
 	     }

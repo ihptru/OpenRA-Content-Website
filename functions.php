@@ -155,7 +155,7 @@ class misc
 	if ($user_id == user::uid())
 	{	    
 	    //remove map directory and it's content from disk
-	    if ($table_name = "maps")
+	    if ($table_name == "maps")
 	    {
 		$query = "SELECT minimap FROM maps WHERE uid = ".$item_id;
 		$result = db::executeQuery($query);
