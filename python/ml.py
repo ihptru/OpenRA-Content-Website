@@ -7,6 +7,7 @@ import bmp;
 import os;
 import getopt;
 import MySQLdb;
+import hashlib;
 
 # Check if path exist
 # -f <filepath> -u <user_id>
@@ -46,9 +47,16 @@ for filename in z.namelist():
     bytes = z.read(filename)
     #print len(bytes)
     if filename == "map.yaml":
+        raw_yamlData = bytes
         yamlData = bytes.decode("utf-8")
     if filename == "map.bin":
-        bin = bytes;
+        bin = bytes
+
+# getting hash
+concat_bytes = raw_yamlData + bin
+h = hashlib.sha1()
+h.update(concat_bytes)
+hash = h.hexdigest()
 
 yamlTemp = yamlData;
 
@@ -374,7 +382,7 @@ img.saveFile(path + "minimap.bmp");
 conn = MySQLdb.connect("localhost", "oramod", "iequeiR6", "oramod")
 cur = conn.cursor()
 sql = """INSERT INTO maps
-        (title, description, author, type, players, g_mod, width, height, tileset, minimap, user_id, screenshot_group_id)
+        (title, description, author, type, players, g_mod, maphash, width, height, tileset, minimap, user_id, screenshot_group_id)
         VALUES
         (
         '%(MapTitle)s',
@@ -383,6 +391,7 @@ sql = """INSERT INTO maps
         '%(MapType)s',
         %(MapPlayers)s,
         '%(MapMod)s',
+        '%(hash)s',
         %(width)s,
         %(height)s,
         '%(MapTileset)s',
