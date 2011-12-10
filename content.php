@@ -37,6 +37,17 @@ class content
 	    });
 	    </script>
 	";
+	echo "<script type='text/javascript'>
+	function confirmPost()
+	{
+	    var agree=confirm('Are you sure you want to delete an item?');
+	    if (agree)
+	    return true ;
+	    else
+	    return false ;
+	}
+	</script>
+	";
 	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" /></head>";
 	
 	if( isset($_POST['message']))
@@ -506,7 +517,7 @@ class content
 	     }
 	     
 	     if ($delete != "")
-		$content .= "<tr><td><a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."'>".$delete."</a></td></tr>";
+		$content .= "<tr><td><a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmPost()'>".$delete."</a></td></tr>";
 	     
 	     $content .= "</table>";
 	     }
