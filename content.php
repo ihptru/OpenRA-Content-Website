@@ -798,7 +798,7 @@ class objects
 	{
 	    echo "<a href='/index.php?action=upload_map&p=maps'>".lang::$lang['upload maps']."</a>";
 	}
-	$result = db::executeQuery("SELECT * FROM maps");
+	$result = db::executeQuery("SELECT * FROM maps GROUP BY maphash");
 	echo content::create_grid($result);
     }
     
