@@ -9,6 +9,8 @@ import getopt;
 import MySQLdb;
 import hashlib;
 
+WEBSITE_PATH = "/home/oramod/www/"  #with / at the end
+
 # Check if path exist
 # -f <filepath> -u <user_id>
 
@@ -30,7 +32,7 @@ for  i in range(len(optlist)):
 
 file = os.path.basename(mapfile)
 path = os.path.dirname(mapfile) + os.sep
-minimap_path = path + "minimap.bmp"
+db_path = path.split(WEBSITE_PATH)[1]
 
 print "Path: " + mapfile
 if not os.path.isfile(mapfile):
@@ -382,7 +384,7 @@ img.saveFile(path + "minimap.bmp");
 conn = MySQLdb.connect("localhost", "oramod", "iequeiR6", "oramod")
 cur = conn.cursor()
 sql = """INSERT INTO maps
-        (title, description, author, type, players, g_mod, maphash, width, height, tileset, minimap, user_id, screenshot_group_id)
+        (title, description, author, type, players, g_mod, maphash, width, height, tileset, path, user_id, screenshot_group_id)
         VALUES
         (
         '%(MapTitle)s',
@@ -395,7 +397,7 @@ sql = """INSERT INTO maps
         %(width)s,
         %(height)s,
         '%(MapTileset)s',
-        '%(minimap_path)s',
+        '%(db_path)s',
         %(uid)s,
         0
         )

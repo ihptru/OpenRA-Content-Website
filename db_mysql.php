@@ -65,7 +65,7 @@
 			    width INTEGER NOT NULL,
 			    height INTEGER NOT NULL,
 			    tileset VARCHAR(80) NOT NULL,
-			    minimap VARCHAR(80) NOT NULL,
+			    path VARCHAR(80) NOT NULL,
 			    user_id INTEGER NOT NULL,
 			    screenshot_group_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";

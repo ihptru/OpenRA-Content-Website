@@ -214,7 +214,7 @@ class content
 	    {
 		//Set title, image
 		case "maps":
-		    $imagePath = $row["minimap"];
+		    $imagePath = WEBSITE_PATH . $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
 		    $imagePath = $row["preview_image"];
@@ -309,7 +309,7 @@ class content
 		    $title = $row["title"];
 		    $subtitle = "posted at " . $row["posted"] . " by " . $username["login"];
 		    $text = $row["description"];
-		    $imagePath = $row["minimap"];
+		    $imagePath = WEBSITE_PATH . $row["path"] . "minimap.bmp";
 		    $imagePath = explode(WEBSITE_PATH, $imagePath);
 		    $imagePath = $imagePath[1];
 		    break;
@@ -367,9 +367,7 @@ class content
 		//Set title, image
 		case "maps":
 		    $title = $row["title"];
-		    $imagePath = $row["minimap"];
-		    $imagePath = explode(WEBSITE_PATH, $imagePath);
-		    $imagePath = $imagePath[1];
+		    $imagePath = $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
 		    $title = $row["title"];
@@ -417,7 +415,7 @@ class content
 		//Set title, image
 		case "maps":
 		    $title = $row["title"];
-		    $imagePath = $row["minimap"];
+		    $imagePath = WEBSITE_PATH . $row["path"] . "minimap.bmp";
 		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
 		    $text = $row["description"];
 		    break;
@@ -463,9 +461,7 @@ class content
 	    {
 		case "maps":
 		    $title = $row["title"];
-		    $imagePath = $row["minimap"];
-		    $imagePath = explode(WEBSITE_PATH, $imagePath);
-		    $imagePath = $imagePath[1];
+		    $imagePath = $row["path"] . "minimap.bmp";
 		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
 		    $text = $row["description"];
 		    break;
@@ -510,9 +506,8 @@ class content
 	     
 	     if($table == "maps")
 	     {
-		$mapfile = basename(dirname($row["minimap"])) . ".oramap";
-	     	$download = explode(WEBSITE_PATH, $row["minimap"]);
-		    $download = dirname($download[1]) . "/" . $mapfile;
+		$mapfile = basename($row["path"]) . ".oramap";
+	     	$download = $row["path"] . $mapfile;
 	     	$content .= '<tr><td><a href="'.$download.'">Download</a></tr></td>';
 	     }
 	     

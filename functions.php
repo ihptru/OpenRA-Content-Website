@@ -157,11 +157,11 @@ class misc
 	    //remove map directory and it's content from disk
 	    if ($table_name == "maps")
 	    {
-		$query = "SELECT minimap FROM maps WHERE uid = ".$item_id;
+		$query = "SELECT path FROM maps WHERE uid = ".$item_id;
 		$result = db::executeQuery($query);
 		while ($db_data = db::fetch_array($result))
 		{
-		    $path = dirname($db_data['minimap'])."/";
+		    $path = WEBSITE_PATH . $db_data['path'];
 		}
 		foreach (scandir($path) as $item)
 		{
