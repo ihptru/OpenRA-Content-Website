@@ -863,7 +863,7 @@ class profile
 	    return;
 	}
 	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
-		<label>".lang::$lang['choose map upload']." (.oramap): <input type=\"file\" name=\"map_upload\" /></label>
+		<label>".lang::$lang['choose map upload']." (.oramap): <input type=\"file\" size='30' name=\"map_upload\" /></label>
 		<br />
 		<input type=\"submit\" name=\"submit\" value=\"".lang::$lang['upload']."\" />
 		</form>
