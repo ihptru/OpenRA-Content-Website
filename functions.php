@@ -22,7 +22,7 @@ class upload
 	    $path = WEBSITE_PATH . "users/" . $username . "/maps/" . $name[0];
 	    if (is_dir($path))
 	    {
-		return "exists";
+		return "Map with such name already exists";
 	    }
 	    mkdir($path);
 	    $target_path = $path . "/" . $filename;
@@ -40,6 +40,82 @@ class upload
 	{
 	    return "";	// file is not choosen
 	}
+    }
+    
+    public static function upload_unit($username)
+    {
+	function db_work($dirname,$description)
+	{
+	    $query = "INSERT INTO units
+		(title,description,preview_image,user_id,screenshot_group_id)
+		VALUES
+		(
+		'".$dirname."','".$description."','0',".user::uid().",0
+		)
+		";
+	    db::executeQuery($query);
+	}
+	$count = 0;
+	$messages = "";
+	while (isset($_FILES["file_".$count]))
+	{
+	    $filename = $_FILES["file_".$count]["name"];
+	    if ($filename == "")
+		return $messages;
+
+	    if (!isset($_POST["unit_name"]) or $_POST["unit_name"] == "")
+		return "Name of unit is not set!";
+	    $dirname = $_POST["unit_name"];
+	    
+	    $description = "";
+	    if (isset($_POST["unit_description"]))
+	    {
+		$description = $_POST["unit_description"];
+	    }
+	    
+	    $source = $_FILES["file_".$count]["tmp_name"];
+	    $type = $_FILES["file_".$count]["type"];
+	    $name = explode(".", $filename);	//array
+
+	    $accepted_types = array("application/octet-stream","application/x-qgis");
+	    $accepted_exts = array("shp","yaml");
+	    if(!in_array($type, $accepted_types) or !in_array(strtolower($name[1]), $accepted_exts))
+	    {
+		$messages .= $filename . " - upload fail: not supported file type<br>";
+		continue;
+	    }
+
+	    $path = WEBSITE_PATH . "users/" . $username . "/units/" . $dirname;
+	    if ($count == 0)	//make dir checking at first file recognised
+	    {
+		if (is_dir($path))
+		{
+		    return "Unit with such name already exists";
+		}
+		else
+		{
+		    mkdir($path);
+		    db_work($dirname, $description);
+		}
+	    }
+	    else
+	    {
+		//directory was not created before this moment - file types were unsupported
+		if (!is_dir(path))
+		{
+		    mkdir($path);
+		    db_work($dirname, $description);
+		}
+	    }
+	    
+	    $target_path = $path . "/" . $filename;
+	    if(move_uploaded_file($source, $target_path))
+	    {
+		$messages .= $filename ." - uploaded<br>";
+	    }
+	    $count++;
+	}
+	return $messages;
     }
 }
 

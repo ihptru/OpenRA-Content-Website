@@ -30,7 +30,7 @@ class lang
 	    'not logged'	=> "You are not logged in",
 	    'link'		=> "Link",
 	    'gallery'		=> "Gallery",
-	    'sidebar menu'	=> "Sidebar Menu",
+	    'sidebar menu'	=> "Your content",
 	    'recent articles'	=> "Recent Articles",
 	    'confirm'		=> "Confirm",
 	    'enter new pw'	=> "Enter new password",

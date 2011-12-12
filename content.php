@@ -33,9 +33,6 @@ class content
 	    }
 	    });
 	    </script>
-	    
-	    //include multi upload file support
-	    <script src='multi_upload/multifile.js'>
 	";
 	echo "<script type='text/javascript'>
 	function confirmDelete()
@@ -46,6 +43,9 @@ class content
 	    else
 	    return false ;
 	}
+	</script>
+	<script src='multi_upload/multifile.js'>
+	//inlucde multi upload form
 	</script>
 	";
 	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" /></head>";
@@ -671,6 +671,7 @@ class content
 	$content .= '<div class="col-a">';		
 
 	$content .= '<h3>Site Links</h3>';
+	$content .= '<h3>Site Links</h3>';
 	$content .= '<div class="footer-list">';
 	$content .= '<ul>';
 	$content .= '<li><a href="index.html">Home</a></li>';
@@ -786,6 +787,18 @@ class content
 	{
 	    profile::upload_map();
 	}
+	if ($request == "mymaps")
+	{
+	    profile::upload_map();
+	}
+	if ($request == "myguides")
+	{
+	    profile::upload_guide();
+	}
+	if ($request == "myunits")
+	{
+	    profile::upload_unit();
+	}
     }
 }
 
@@ -794,12 +807,12 @@ class objects
     public static function maps()
     {
 	echo "<h3>".lang::$lang['maps']."!</h3>";
-	if (user::online())
-	{
-	    echo "<a href='/index.php?action=upload_map&p=maps'>".lang::$lang['upload maps']."</a>";
-	}
 	$result = db::executeQuery("SELECT * FROM maps GROUP BY maphash");
 	echo content::create_grid($result);
+	if (user::online())
+	{
+	    echo "<br><a href='/index.php?action=upload_map&p=maps'>".lang::$lang['upload maps']."</a>";
+	}
     }
     
     public static function units()
@@ -910,27 +923,27 @@ class profile
     	if(!user::online())
 	    return;
     	
-    	echo '<form enctype="multipart/form-data" action="your_script_here.script" method = "post">
-		<input id="my_file_element" type="file" name="file_1" >
-		<input type="submit">
-		</form>';
+    	echo "<form id='form_class' enctype='multipart/form-data' action='' method=POST>
+	    <label>Uploading unit</label><br><br>
+	    <label>Unit name: </label>
+		<input type='text' name='unit_name'><br>
+	    <label>Unit description:<br> </label>
+		<textarea name='unit_description' cols='40' rows='5'></textarea><br>
+	    <label>Choose unit file:</label><br>
+		<input id='my_file_element' size='30' type='file' name='file_0' >
+	";
 		
-		echo '<div id="files_list"></div>
+	echo "<div id='files_list'></div>
 		<script>
-		var multi_selector = new MultiSelector( document.getElementById( \'files_list\' ), 3 );
-		multi_selector.addElement( document.getElementById( \'my_file_element\' ) );
-		</script>';
-    	
-    	/*echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
-		<label>Upload guide:</label>
-		<br />
-		<label>Title: <input type='text' name='upload_guide_title' /></label>
-		<br />
-		<label>Text: <textarea name='upload_guide_text' cols='40' rows='5'></textarea></label>
-		<br />
-		<input type=\"submit\" name=\"submit\" value=\"".lang::$lang['upload']."\" />
-		</form>
-	";*/
+		    var multi_selector = new MultiSelector( document.getElementById( 'files_list' ), 8 );
+		    multi_selector.addElement( document.getElementById( 'my_file_element' ) );
+		</script>
+	    <input type='submit' value='".lang::$lang['upload']."'>
+	    </form>
+	";
+	$username = user::username();
+	$uploaded = upload::upload_unit($username);
+	echo $uploaded;
     }
     
 }
