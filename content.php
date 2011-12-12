@@ -19,9 +19,6 @@ class content
 	    hs.wrapperClassName = 'dark';
 	    hs.fadeInOut = true;
 
-	    //include multi upload file support
-	    <script src='multi_upload/multifile_compressed.js'>
-
 	    // Add the controlbar
 	    if (hs.addSlideshow) hs.addSlideshow({
 	    //slideshowGroup: 'group1',
@@ -36,6 +33,9 @@ class content
 	    }
 	    });
 	    </script>
+	    
+	    //include multi upload file support
+	    <script src='multi_upload/multifile.js'>
 	";
 	echo "<script type='text/javascript'>
 	function confirmDelete()
@@ -839,6 +839,7 @@ class profile
 	
 	profile::upload_map();
 	profile::upload_guide();
+	profile::upload_unit();
 	
     }
     
@@ -902,8 +903,36 @@ class profile
 		<input type=\"submit\" name=\"submit\" value=\"".lang::$lang['upload']."\" />
 		</form>
 	";
-    	
     }
+    
+    public static function upload_unit()
+    {
+    	if(!user::online())
+	    return;
+    	
+    	echo '<form enctype="multipart/form-data" action="your_script_here.script" method = "post">
+		<input id="my_file_element" type="file" name="file_1" >
+		<input type="submit">
+		</form>';
+		
+		echo '<div id="files_list"></div>
+		<script>
+		var multi_selector = new MultiSelector( document.getElementById( \'files_list\' ), 3 );
+		multi_selector.addElement( document.getElementById( \'my_file_element\' ) );
+		</script>';
+    	
+    	/*echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
+		<label>Upload guide:</label>
+		<br />
+		<label>Title: <input type='text' name='upload_guide_title' /></label>
+		<br />
+		<label>Text: <textarea name='upload_guide_text' cols='40' rows='5'></textarea></label>
+		<br />
+		<input type=\"submit\" name=\"submit\" value=\"".lang::$lang['upload']."\" />
+		</form>
+	";*/
+    }
+    
 }
 
 ?>
