@@ -371,7 +371,7 @@ class content
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $imagePath = $row["preview_image"];
+		    $imagePath = "";//$row["preview_image"];
 		    break;
 		case "guides":
 		    $title = $row["title"];
@@ -467,7 +467,7 @@ class content
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $imagePath = $row["preview_image"];
+		    $imagePath = "";//$row["preview_image"];
 		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
 		    $text = "";
 		    break;
@@ -506,9 +506,21 @@ class content
 	     
 	     if($table == "maps")
 	     {
-		$mapfile = basename($row["path"]) . ".oramap";
+			$mapfile = basename($row["path"]) . ".oramap";
 	     	$download = $row["path"] . $mapfile;
 	     	$content .= '<tr><td><a href="'.$download.'">Download</a></tr></td>';
+	     }
+	     else if($table == "units")
+	     {
+	     	$content .= "<tr><td>Description: " . strip_tags($row["description"]) . "</td></tr>";
+	     	$content .= "<tr><td><br>Files (click to download):";
+	     	$directory = "users/".$user_name."/units/".$title."/";
+			$shapes = glob($directory . "*.*");
+			foreach($shapes as $shape)
+			{
+				$content .= "<br><a href='".$shape."'>".$shape."</a>";
+			}
+			$content .= "</td></tr>";
 	     }
 	     
 	     if ($delete != "")
@@ -818,6 +830,8 @@ class objects
     public static function units()
     {
 	echo "<h3>".lang::$lang['units']."!</h3>";
+	$result = db::executeQuery("SELECT * FROM units");
+	echo content::create_grid($result,"units");
     }
     
     public static function guides()
