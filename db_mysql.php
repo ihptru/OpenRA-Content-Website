@@ -49,6 +49,7 @@
             $query = "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    pass VARCHAR(80) NOT NULL,
 			    login VARCHAR(80) NOT NULL,
+			    experiance INTEGER NOT NULL DEFAULT 0,
 			    email VARCHAR(80) NOT NULL,
 			    avatar VARCHAR(500) NOT NULL DEFAULT 'None',
 			    register_date TIMESTAMP NOT NULL);";
@@ -60,10 +61,12 @@
 			    author VARCHAR(80) NOT NULL,
 			    type VARCHAR(80) NOT NULL,
 			    players INTEGER NOT NULL,
+			    g_mod VARCHAR(80) NOT NULL,
+			    maphash VARCHAR(80) NOT NULL,
 			    width INTEGER NOT NULL,
 			    height INTEGER NOT NULL,
 			    tileset VARCHAR(80) NOT NULL,
-			    minimap VARCHAR(80) NOT NULL,
+			    path VARCHAR(80) NOT NULL,
 			    user_id INTEGER NOT NULL,
 			    screenshot_group_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
@@ -72,7 +75,7 @@
             //Used on front page
             $query = "CREATE TABLE IF NOT EXISTS articles (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
-			    content VARCHAR(500) NOT NULL,
+			    content VARCHAR(9000) NOT NULL,
 			    image VARCHAR(500) NOT NULL,
 			    user_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
@@ -90,7 +93,7 @@
             //guide_type (modding, mapping, pixel art, utilities,..) each should have different images
             $query = "CREATE TABLE IF NOT EXISTS guides (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
-			    html_content VARCHAR(500) NOT NULL,
+			    html_content VARCHAR(9000) NOT NULL,
 			    guide_type VARCHAR(500) NOT NULL,
 			    user_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
@@ -110,7 +113,7 @@
 			    content VARCHAR(500) NOT NULL,
 			    user_id INTEGER NOT NULL,
 			    table_id INTEGER NOT NULL,
-			    table_name INTEGER NOT NULL,
+			    table_name VARCHAR(80) NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
@@ -149,7 +152,7 @@
         {
 	    return mysql_fetch_array($result);
 	}
-
+	
 	public static function num_rows($result)
 	{
 	    return mysql_num_rows($result);
