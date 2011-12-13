@@ -413,14 +413,22 @@ class content
 	    $content .= "</tr>";
 	    
 	//Print pages
-	$nrOfPages = floor($total / $maxItemsPerPage) + 1;
+	$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
 	$pages = "";
+	
+	$gets = "";
+	$keys = array_keys($_GET);
+	foreach($keys as $key)
+	{
+		if($key != "current_grid_page")
+			$gets .= "&" . $key . "=" . $_GET[$key];
+	}
 	for($i = 1; $i < $nrOfPages+1; $i++)
 	{
 		if($current == $i)
 			$pages .= " [" . $i . "]";
 		else
-			$pages .= " <a href='index.php?p=".$table."&current_grid_page=".$i."'>" . $i . "</a>";
+			$pages .= " <a href='index.php?current_grid_page=".$i.$gets."'>" . $i . "</a>";
 	}
 	
 	$content .= "<tr><td>" . $pages . "</td></tr>";
