@@ -250,7 +250,25 @@ class misc
 	    
 	    if ($table_name == "units")
 	    {
-		//todo: remove unit from disk when Unit Upload feature is coded
+		$query = "SELECT title FROM units WHERE uid = ".$item_id;
+		$result = db::executeQuery($query);
+		while ($db_data = db::fetch_array($result))
+		{
+		    $title = $db_data['title'];
+		}
+		$query = "SELECT login FROM users WHERE uid = ".$user_id;
+		$result = db::executeQuery($query);
+		while ($db_data = db::fetch_array($result))
+		{
+		    $username = $db_data['login'];
+		}
+		$path = WEBSITE_PATH . "users/" . $username . "/units/" . $title . "/";
+		foreach (scandir($path) as $item)
+		{
+		    if ($item == '.' || $item == '..') continue;
+		    unlink($path.$item);
+		}
+		rmdir($path);
 	    }
 	    
 	    //remove item from DB

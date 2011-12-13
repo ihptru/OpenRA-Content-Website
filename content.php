@@ -414,7 +414,7 @@ class content
 	    
 	//Print pages
 	$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
-	$pages = "";
+	$pages = "<table><tr>";
 	
 	$gets = "";
 	$keys = array_keys($_GET);
@@ -426,14 +426,16 @@ class content
 	for($i = 1; $i < $nrOfPages+1; $i++)
 	{
 		if($current == $i)
-			$pages .= " [" . $i . "]";
+			$pages .= "<td>" . $i . "</td>";
 		else
-			$pages .= " <a href='index.php?current_grid_page=".$i.$gets."'>" . $i . "</a>";
+			$pages .= "<td id='page_count'><a href='index.php?current_grid_page=".$i.$gets."'>" . $i . "</a></td>";
 	}
-	
-	$content .= "<tr><td>" . $pages . "</td></tr>";
-	    
+	$pages .= "</tr></table>";
+	if ($nrOfPages == 1)
+	{ $pages = ""; }
+
 	$content .= "</table>";
+	$content .= $pages;
 	return $content;
     }
 
@@ -882,10 +884,6 @@ class objects
 	echo "<h3>".lang::$lang['maps']."!</h3>";
 	$result = db::executeQuery("SELECT * FROM maps GROUP BY maphash");
 	echo content::create_grid($result);
-	if (user::online())
-	{
-	    echo "<br><a href='/index.php?action=upload_map&p=maps'>".lang::$lang['upload maps']."</a>";
-	}
     }
     
     public static function units()

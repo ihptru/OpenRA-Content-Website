@@ -118,6 +118,13 @@ td {
 	border-color: #231A14;
 	padding: .7em 1em;	
 }	
+td#page_count {
+
+}
+td#page_count:hover{
+    background-color: #934A00;
+    color:#fff;
+}
 /* end - table */
 
 /* form elements */
