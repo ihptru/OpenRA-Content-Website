@@ -100,6 +100,7 @@
             $query = "CREATE TABLE IF NOT EXISTS featured (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    table_name VARCHAR(80) NOT NULL,
 			    id INTEGER NOT NULL,
+			    type VARCHAR(80) NOT NULL DEFAULT featured,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             

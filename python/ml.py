@@ -125,6 +125,11 @@ Right = int(MapBounds[0:MapBounds.find(",")]);
 MapBounds = MapBounds[MapBounds.find(",")+1:];
 Bottom = int(MapBounds);
 
+print "Left: " + str(Left)
+print "Top: " + str(Top)
+print "Right: " + str(Right)
+print "Bottom: " + str(Bottom)
+
 #Generate info file
 print "Creating info file..."
 text_file = open(path + "info.txt", "w")
@@ -161,6 +166,9 @@ print "Generating minimap..."
 
 width = Bytes2Int2(b.read(2));
 height = Bytes2Int2(b.read(2));
+
+print "Width: " + str(width);
+print "Height: " + str(height);
 
 tilesTile = init2Dlist(width,height)
 tilesIndex = init2Dlist(width,height)

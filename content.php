@@ -1,4 +1,4 @@
-<?PHP
+﻿<?PHP
     class content
     {
         public static function head()
@@ -251,7 +251,14 @@
                 }
                 //Should get these from db
                 $content .= "<div id='featured-block' class='clear'>";
-                $content .= "<div id='featured-ribbon'></div>";//<< Maybe have different ribbons? ex: featured, editors choice, peoples choice,...
+		if($row["type"]=="featured")
+                	$content .= "<div id='featured-ribbon'></div>";
+		else if($row["type"]=="people")
+                	$content .= "<div id='peoples-ribbon'></div>";
+		else if($row["type"]=="editors")
+                	$content .= "<div id='editors-ribbon'></div>";
+		else
+                	$content .= "<div id='featured-ribbon'></div>";
                 $content .= "<a name='TemplateInfo'></a>";
                 
                 if(strlen($imagePath) > 0)
