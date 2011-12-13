@@ -75,7 +75,7 @@
             //Used on front page
             $query = "CREATE TABLE IF NOT EXISTS articles (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
-			    content VARCHAR(500) NOT NULL,
+			    content VARCHAR(9000) NOT NULL,
 			    image VARCHAR(500) NOT NULL,
 			    user_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
@@ -93,7 +93,7 @@
             //guide_type (modding, mapping, pixel art, utilities,..) each should have different images
             $query = "CREATE TABLE IF NOT EXISTS guides (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
-			    html_content VARCHAR(500) NOT NULL,
+			    html_content VARCHAR(9000) NOT NULL,
 			    guide_type VARCHAR(500) NOT NULL,
 			    user_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";

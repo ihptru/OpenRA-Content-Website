@@ -269,6 +269,8 @@ class content
         $content .= "</div>";
                 
         $content .= "<div class='blk-content'>";
+        if(strlen($text) > 500)
+        	$text = substr($text,0,500) . "...";
         $content .= "<p>" . $text . "</p>";			
         $content .= "<p><a class='more' href='index.php?p=detail&table=articles&id=".$row["uid"]."'>continue reading &raquo;</a></p>"; 
         //index.html need to be fixed (should be link to article)
