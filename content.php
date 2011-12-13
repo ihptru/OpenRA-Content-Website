@@ -355,12 +355,25 @@ class content
     {
 	$columns = 3;
 	$counter = 0;
-
+	$maxItemsPerPage = ($columns+1) * 4;
 	$content = "<table>";
+	$total = db::num_rows($result);
+	$i = 0;
+	if(isset($_GET["current_grid_page"]))
+		$current = $_GET["current_grid_page"];
+	else
+		$current = 1;
 	if (db::num_rows($result) == 0)
 	    return "";
 	while ($row = db::nextRowFromQuery($result))
 	{
+		if( !($i >= ($current-1) * $maxItemsPerPage && $i < $current * $maxItemsPerPage ) )
+		{
+			$i++;
+			continue;
+		}
+		$i++;
+		
 	    $title = "";
 	    $imagePath = "";
 
@@ -398,6 +411,20 @@ class content
 	}
 	if($counter <= 2)
 	    $content .= "</tr>";
+	    
+	//Print pages
+	$nrOfPages = floor($total / $maxItemsPerPage) + 1;
+	$pages = "";
+	for($i = 1; $i < $nrOfPages+1; $i++)
+	{
+		if($current == $i)
+			$pages .= " [" . $i . "]";
+		else
+			$pages .= " <a href='index.php?p=".$table."&current_grid_page=".$i."'>" . $i . "</a>";
+	}
+	
+	$content .= "<tr><td>" . $pages . "</td></tr>";
+	    
 	$content .= "</table>";
 	return $content;
     }
