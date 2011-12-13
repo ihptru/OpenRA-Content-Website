@@ -264,7 +264,7 @@ class content
 			$content .= "<a title='' href='index.html'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
                 
     	$content .= "<div class='blk-top'>";
-        $content .= "<h4><a href='index.php?p=detail&table=articles&id=".$row["uid"]."l'>" . $title . "</a></h4>";
+        $content .= "<h4><a href='index.php?p=detail&table=articles&id=".$row["uid"]."'>" . $title . "</a></h4>";
         $content .= "<p><span class='datetime'>" . $date . "</span><a href='index.php?p=detail&table=articles&id=".$row["uid"]."' class='comment'>" . $comments . " Comments</a></p>";
         $content .= "</div>";
                 
