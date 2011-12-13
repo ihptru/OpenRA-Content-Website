@@ -166,9 +166,11 @@ class pages
 	if (count($_GET) == 0)
 	{
 	    echo "<h3>".lang::$lang['recent articles']."</h3>";
+	    $result = db::executeQuery("SELECT * FROM articles");
+		echo content::createArticleItems($result);
 	    return;
 	}
-	//content::createArticleItems($result);
+	
     }
 
     public static function current($page, $request)

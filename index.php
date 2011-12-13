@@ -19,7 +19,6 @@ content::head();
 
 	if (count($_GET) == 0)
 	{
-	    
 	    $res = db::executeQuery("SELECT * FROM featured");
 	    echo content::createFeaturedItems($res);
 	}

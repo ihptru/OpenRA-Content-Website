@@ -244,8 +244,9 @@ class content
 	    $comments = 0;
 
 	    //Calculates number of comments for that article
-	    $res = db::executeQuery("SELECT COUNT(uid) FROM comments WHERE article_id = " . $row["uid"]);
-	    $comments = db::nextRowFromQuery($res);
+	    $res = db::executeQuery("SELECT COUNT(uid) as count FROM comments WHERE table_name='articles' AND table_id = " . $row["uid"]);
+	    $comment = db::nextRowFromQuery($res);
+		$comments = $comment['count'];
 
 	    $counter++;
 	    if($counter == 1)
@@ -260,19 +261,19 @@ class content
 	    }
 
 	    if(strlen($imagePath) > 0)
-		$content .= "<a title='' href='index.html'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
+			$content .= "<a title='' href='index.html'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
                 
-                $content .= "<div class='blk-top'>";
-                $content .= "<h4><a href='index.html'>" . $title . "</a></h4>";
-                $content .= "<p><span class='datetime'>" . $date . "</span><a href='index.html' class='comment'>" . $comments . " Comments</a></p>";
-                $content .= "</div>";
+    	$content .= "<div class='blk-top'>";
+        $content .= "<h4><a href='index.php?p=detail&table=articles&id=".$row["uid"]."l'>" . $title . "</a></h4>";
+        $content .= "<p><span class='datetime'>" . $date . "</span><a href='index.php?p=detail&table=articles&id=".$row["uid"]."' class='comment'>" . $comments . " Comments</a></p>";
+        $content .= "</div>";
                 
-                $content .= "<div class='blk-content'>";
-                $content .= "<p>" . $text . "</p>";			
-                $content .= "<p><a class='more' href='index.html'>continue reading &raquo;</a></p>"; 
-                //index.html need to be fixed (should be link to article)
-                $content .= "</div>";
-                $content .= "</div>";
+        $content .= "<div class='blk-content'>";
+        $content .= "<p>" . $text . "</p>";			
+        $content .= "<p><a class='more' href='index.php?p=detail&table=articles&id=".$row["uid"]."'>continue reading &raquo;</a></p>"; 
+        //index.html need to be fixed (should be link to article)
+        $content .= "</div>";
+        $content .= "</div>";
 	}
 	if($counter != 0)
 	    $content .= "<div class='fix'></div>";
@@ -515,6 +516,12 @@ class content
 		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
 		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
 		    $text = $row["html_content"];
+		    break;
+		case "articles":
+			$title = $row["title"];
+		    $imagePath = $row["image"]; //Get one depending on type of guide (There should be pre made icons for different types)
+		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
+		    $text = $row["content"];
 		    break;
 	     }
 	     

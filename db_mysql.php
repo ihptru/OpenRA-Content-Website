@@ -49,6 +49,7 @@
             $query = "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    pass VARCHAR(80) NOT NULL,
 			    login VARCHAR(80) NOT NULL,
+			    experiance INTEGER NOT NULL DEFAULT 0,
 			    email VARCHAR(80) NOT NULL,
 			    avatar VARCHAR(500) NOT NULL DEFAULT 'None',
 			    register_date TIMESTAMP NOT NULL);";
