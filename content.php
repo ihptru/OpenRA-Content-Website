@@ -357,6 +357,8 @@ class content
 	$counter = 0;
 
 	$content = "<table>";
+	if (db::num_rows($result) == 0)
+	    return "";
 	while ($row = db::nextRowFromQuery($result))
 	{
 	    $title = "";
@@ -518,7 +520,7 @@ class content
 			$shapes = glob($directory . "*.*");
 			foreach($shapes as $shape)
 			{
-				$content .= "<br><a href='".$shape."'>".$shape."</a>";
+				$content .= "<br><a href='".$shape."'>".basename($shape)."</a>";
 			}
 			$content .= "</td></tr>";
 	     }
@@ -802,14 +804,38 @@ class content
 	if ($request == "mymaps")
 	{
 	    profile::upload_map();
+	    echo "<h3>Your maps</h3>";
+	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid());
+	    $output = content::create_grid($result);
+	    if ($output == "")
+	    {
+		echo "No maps uploaded yet";
+	    }
+	    echo $output;
 	}
 	if ($request == "myguides")
 	{
 	    profile::upload_guide();
+	    echo "<h3>Your guides</h3>";
+	    $result = db::executeQuery("SELECT * FROM guides WHERE user_id = ".user::uid());
+	    $output = content::create_grid($result, "guides");
+	    if ($output == "")
+	    {
+		echo "No guides uploaded yet";
+	    }
+	    echo $output;
 	}
 	if ($request == "myunits")
 	{
 	    profile::upload_unit();
+	    echo "<h3>Your units</h3>";
+	    $result = db::executeQuery("SELECT * FROM units WHERE user_id = ".user::uid());
+	    $output = content::create_grid($result, "units");
+	    if ($output == "")
+	    {
+		echo "No units uploaded yet";
+	    }
+	    echo $output;
 	}
     }
 }
@@ -863,10 +889,6 @@ class profile
     public static function show_profile()
     {
 	echo "<h3>".lang::$lang['recent events']."</h3>";
-	
-	profile::upload_map();
-	profile::upload_guide();
-	profile::upload_unit();
 	
     }
     

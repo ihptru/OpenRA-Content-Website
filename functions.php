@@ -138,7 +138,8 @@ class pages
 	if (isset($_GET['action']))
 	{
 	    // non menu or profile: other pages
-	    content::action($_GET['action']);
+	    if (user::online())
+		content::action($_GET['action']);
 	    return;
 	}
 	// other checks should be done before $_GET['p'], because it will override page

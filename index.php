@@ -46,7 +46,9 @@ content::head();
 		
 		<!-- sidebar -->
 		<div id="sidebar">
-
+		    <? if (user::online())
+		    {
+		    ?>
 		    <div class="sidemenu">
 			<h3><? echo lang::$lang['sidebar menu']; ?></h3>
 			<ul>				
@@ -55,7 +57,7 @@ content::head();
 			    <li><a href="index.php?action=myunits&p=profile"><? echo "units"; ?></a></li>
 			</ul>	
 		    </div>
-
+		    <? } ?>
 		    <h3><? echo lang::$lang['gallery']; ?></h3>
 
 		    <p class="thumbs">
