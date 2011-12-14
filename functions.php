@@ -270,8 +270,13 @@ class misc
 	    $query = "DELETE FROM ".$table_name." WHERE uid = ".$item_id;
 	    db::executeQuery($query);
 	    //remove comments from DB
-	    $query = "DELETE FROM comments WHERE table_name = '".$table_name."' AND table_id = ".$item_id;
-	    db::executeQuery($query);
+	    //remove records from fav_item table related to current item for each user
+	    $tables = array("comments", "fav_item");
+	    foreach($tables as $table)
+	    {
+		$query = "DELETE FROM ".$table." WHERE table_name = '".$table_name."' AND table_id = ".$item_id;
+		db::executeQuery($query);
+	    }
 	}
     }
     
