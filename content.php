@@ -147,7 +147,7 @@ class content
 		}
 	    }
 	}
-	echo "<form id='quick-search' action='index.php' method='GET' >
+	echo "<form id='quick-search' action='index.php' method='GET'>
 		<p>
 		<label for='qsearch'>Search:</label>
 		<input class='tbox' id='qsearch' type='text' name='qsearch' onclick=\"this.value='';\" onfocus=\"this.select()\" onblur=\"this.value=!this.value?'".lang::$lang['search']."':this.value;\" value='".lang::$lang['search']."' />
@@ -972,15 +972,7 @@ class objects
     		foreach($searchArray as $value)
     		{
     			$result = db::executeQuery("SELECT * FROM ".$value." WHERE title like '%".$search."%' LIMIT 10");
-    			if (db::num_rows($result) > 0)
-	    		{
-	    			echo "<table>";
-	    			echo "<tr><td>".$value." found:</td></tr>";
-					while ($row = db::nextRowFromQuery($result)) {
-						echo "<tr><td><a href='index.php?p=detail&table=".$value."&id=".$row["uid"]."'>".$row["title"]."</a></td></tr>";
-					}
-					echo "</table>";
-				}
+    			echo content::create_list($result,$value);
     		}
     		
     		$result = db::executeQuery("SELECT * FROM users WHERE login like '%".$search."%' LIMIT 10");
