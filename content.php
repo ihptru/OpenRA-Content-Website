@@ -505,7 +505,7 @@ class content
 	    $content .= "<tr>";
 	    if($imagePath != "")
 	    	$content .= "<td><img src='" . $imagePath . "'></td>";
-	    $content .= "<td>" . strip_tags($title) . "</br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
+	    $content .= "<td><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
 	}
 	$content .= "</table>";
 	return $content;
