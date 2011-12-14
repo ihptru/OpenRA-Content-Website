@@ -468,7 +468,7 @@ class content
 
     public static function create_list($result, $table)
     {
-    if (db::num_rows($result) == 0)
+	if (db::num_rows($result) == 0)
 	    return "";
 	$content = "<table>";
 	while ($row = db::nextRowFromQuery($result))
@@ -478,25 +478,34 @@ class content
 	    $subtitle = "";
 	    $text = "";
 
+	    $usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]));
+	    $username = $usr["login"];
+
 	    switch($table)
 	    {
 		//Set title, image
 		case "maps":
 		    $title = $row["title"];
 		    $imagePath = $row["path"] . "minimap.bmp";
-		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = $row["description"];
 		    break;
 		case "units":
 		    $title = $row["title"];
 		    $imagePath = "";//$row["preview_image"];
-		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
 		case "guides":
 		    $title = $row["title"];
 		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
-		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $text = "";
+		    break;
+		case "articles":
+		    $title = $row["title"];
+		    $imagePath = "";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
 	    }
@@ -969,28 +978,57 @@ class objects
     {
     	if(isset($_GET["qsearch"]))
     	{
-    		$search = $_GET["qsearch"];
-    		
-    		$found = false;
-    		
-    		$searchArray = array("maps","guides","articles","units");
-    		foreach($searchArray as $value)
-    		{
-    			$result = db::executeQuery("SELECT * FROM ".$value." WHERE title like '%".$search."%' LIMIT 10");
-    			echo content::create_list($result,$value);
-    		}
-    		
-    		$result = db::executeQuery("SELECT * FROM users WHERE login like '%".$search."%' LIMIT 10");
-    		if (db::num_rows($result) > 0)
-	    	{
-	    		echo "<table>";
-	    		echo "<tr><td>users found:</td></tr>";
-				while ($row = db::nextRowFromQuery($result)) {
-					echo "<tr><td><a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a></td></tr>";
-				}
-				echo "</table>";
-			}
-    		
+	    if (trim($_GET["qsearch"]) == "")
+	    {
+		echo "<table>
+			  <tr>
+			      <td>Empty request</td>
+			  </tr>
+		      </table>
+		";
+		return;
+	    }
+	    
+	    $content = "";
+
+	    $search = $_GET["qsearch"];
+
+	    $found = false;
+
+	    $searchArray = array("maps","guides","articles","units");
+	    foreach($searchArray as $value)
+	    {
+		
+		$result = db::executeQuery("SELECT * FROM ".$value." WHERE title LIKE '%".$search."%' LIMIT 10");
+		$output = content::create_list($result, $value);
+		if ($output != "")
+		{
+		    $content .= "<br><label>".$value." found:</label>";
+		    $content .= $output;
+		}
+	    }
+
+	    $result = db::executeQuery("SELECT * FROM users WHERE login LIKE '%".$search."%' LIMIT 10");
+	    if (db::num_rows($result) > 0)
+	    {
+		$content .= "<br><label>users found:</label>";
+		$content .= "<table>";
+		while ($row = db::nextRowFromQuery($result)) {
+		    $content .= "<tr><td><a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a></td></tr>";
+		}
+		$content .= "</table>";
+	    }
+	    if ($content == "")
+	    {
+		echo "<table>
+			  <tr>
+			      <td>Nothing found</td>
+			  </tr>
+		      </table>
+		";
+		return;
+	    }
+	    echo $content;
     	}
     }
 }
