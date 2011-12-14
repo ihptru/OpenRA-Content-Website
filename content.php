@@ -351,9 +351,9 @@ class content
 	    }
 
 	    $content .= "<div class='text-block'>";
-	    $content .= "<h2><a href='index.html'>" . $title . "</a></h2>"; //index.html? could it be something else..
+	    $content .= "<h2><a href='index.html'>" . strip_tags($title) . "</a></h2>"; //index.html? could it be something else..
 	    $content .= "<p class='post-info'>" . $subtitle . "</p>";
-	    $content .= "<p>" . $text . "</p>";
+	    $content .= "<p>" . strip_tags($text) . "</p>";
 	    $content .= "<p><a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table . "' class='more-link'>Read More</a></p>"; //index.html? could it be something else..
 											//All use read more button?
 	    $content .= "</div>";
@@ -412,7 +412,7 @@ class content
 	    $content .= "<td id='map_grid'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>";
 	    if($imagePath != "")
 	    	$content .= "<img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'>";
-	    $content .= "</br>" . $title . "</a></td>";
+	    $content .= "</br>" . strip_tags($title) . "</a></td>";
 
 	    if($counter > 2)
 	    {
@@ -485,7 +485,7 @@ class content
 	    }
 	    
 	    //TODO: Text should truncate if too large
-	    $content .= "<tr><td><img src='" . $imagePath . "'></td><td>" . $title . "</br>" . $subtitle . "</br>" . $text . "</td></tr>";
+	    $content .= "<tr><td><img src='" . $imagePath . "'></td><td>" . strip_tags($title) . "</br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
 	}
 	$content .= "</table>";
 	return $content;
@@ -546,7 +546,7 @@ class content
 	     
 	     if($title != "")
 	     {
-	     	$content .= "<tr><td>" . $title;
+	     	$content .= "<tr><td>" . strip_tags($title);
 	     	if($subtitle != "")
 	     	{
 	     		$content .= " " . $subtitle;
@@ -605,34 +605,34 @@ class content
 
 	    if($counter > 0)
 	    {
-		$content .= "<li class='depth-1'>";
-		$counter = -1;
+			$content .= "<li class='depth-1'>";
+			$counter = -1;
 	    }
 	    else
-		$content .= "<li class='thread-alt depth-1'>";
+			$content .= "<li class='thread-alt depth-1'>";
 
 		$avatarImg = misc::avatar($author["avatar"]);
 		
-                $content .= "<div class='comment-info'>";			
-                $content .= "<img alt='' src='" . $avatarImg . "' class='avatar' height='40' width='40' />";
-                $content .= "<cite>";
-                $content .= "<a href='index.php?profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
-                $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
-                $content .= "</cite>";
-                $content .= "</div>";
+        $content .= "<div class='comment-info'>";			
+        $content .= "<img alt='' src='" . $avatarImg . "' class='avatar' height='40' width='40' />";
+        $content .= "<cite>";
+        $content .= "<a href='index.php?profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
+        $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
+    	$content .= "</cite>";
+        $content .= "</div>";
                 
-                $content .= "<div class='comment-text'>";
-                $content .= "<p>" . $comment["content"] . "</p>";
+        $content .= "<div class='comment-text'>";
+        $content .= "<p>" . strip_tags($comment["content"]) . "</p>";
 		if (misc::comment_owner($comment["user_id"]))
 		{
 		    $content .= "<a style='float: right; margin: 3px -20px 0 0; border: 1px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."'>delete</a>";
 		}
-                $content .= "<div class='reply'>";
-                //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
-                $content .= "</div>";
-                $content .= "</div>";
-                
-                $content .= "</li>";
+        $content .= "<div class='reply'>";
+        //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
+        $content .= "</div>";
+        $content .= "</div>";
+
+        $content .= "</li>";
 
 
 	}
