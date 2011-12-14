@@ -57,6 +57,7 @@ class content
 		if (trim($_POST['message']) != "")
 		{
 		    db::executeQuery("INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES ('','".$_POST['message']."',".user::uid().",".$_GET['id'].",'".$_GET['table']."')");
+		    misc::increase_experiance(5);
 		}
 	    }
 	}
@@ -74,6 +75,7 @@ class content
 		if (trim($_POST['upload_guide_text']) != "" && trim($_POST['upload_guide_title']) != "")
 		{
 		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES ('".$_POST['upload_guide_title']."','".$_POST['upload_guide_text']."','',".user::uid().")");
+		    misc::increase_experiance(50);
 		}
 	    }
 	}

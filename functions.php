@@ -29,6 +29,7 @@ class upload
 	    if(move_uploaded_file($source, $target_path))
 	    {
 		exec("python python/ml.py -f " . str_replace(" ", "\ ", $target_path) . " -u " . user::uid());
+		misc::increase_experiance(10);
 		return $filename;
 	    }
 	    else
@@ -54,6 +55,7 @@ class upload
 		)
 		";
 	    db::executeQuery($query);
+	    misc::increase_experiance(50);
 	}
 	$count = 0;
 	$messages = "";
@@ -283,6 +285,15 @@ class misc
     public static function avatar_actions()
     {
 	//todo...
+    }
+    
+    public static function increase_experiance($points)
+    {
+	$query = "SELECT experiance FROM users WHERE uid = ".user::uid();
+	$value = db::nextRowFromQuery(db::executeQuery($query));
+	$value = $value["experiance"] + $points;
+	$query = "UPDATE users SET experiance = ".$value." WHERE uid = ".user::uid();
+	db::executeQuery($query);
     }
 }
 
