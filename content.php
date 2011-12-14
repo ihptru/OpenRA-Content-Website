@@ -386,8 +386,8 @@ class content
 	$content = "<table>";
 	$total = db::num_rows($result);
 	$i = 0;
-	if(isset($_GET["current_grid_page"]))
-		$current = $_GET["current_grid_page"];
+	if(isset($_GET["current_grid_page_".$table]))
+		$current = $_GET["current_grid_page_".$table];
 	else
 		$current = 1;
 	if (db::num_rows($result) == 0)
@@ -455,7 +455,7 @@ class content
 		if($current == $i)
 			$pages .= "<td>" . $i . "</td>";
 		else
-			$pages .= "<td id='page_count'><a href='index.php?current_grid_page=".$i.$gets."'>" . $i . "</a></td>";
+			$pages .= "<td id='page_count'><a href='index.php?current_grid_page_".$table."=".$i.$gets."'>" . $i . "</a></td>";
 	}
 	$pages .= "</tr></table>";
 	if ($nrOfPages == 1)
@@ -997,6 +997,22 @@ class objects
     	}
     }
 }
+
+100 -> 108
+108/100=1.08
+1.08 * 114 = 123.12
+
+1 + 0.08 = 1.08
+1.08 / 100 * 114 = 1.2312
+
+svar: 23.12%
+
+
+108%
+
+23.12%
+
+108/100 = 
 
 class profile
 {
