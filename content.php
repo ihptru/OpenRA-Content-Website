@@ -998,22 +998,6 @@ class objects
     }
 }
 
-100 -> 108
-108/100=1.08
-1.08 * 114 = 123.12
-
-1 + 0.08 = 1.08
-1.08 / 100 * 114 = 1.2312
-
-svar: 23.12%
-
-
-108%
-
-23.12%
-
-108/100 = 
-
 class profile
 {
     public static function show_profile()
