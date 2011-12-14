@@ -44,7 +44,7 @@ class upload
     
     public static function upload_unit($username)
     {
-	function db_work($dirname,$description)
+	function insert_unit($dirname,$description)
 	{
 	    $query = "INSERT INTO units
 		(title,description,preview_image,user_id,screenshot_group_id)
@@ -95,16 +95,16 @@ class upload
 		else
 		{
 		    mkdir($path);
-		    db_work($dirname, $description);
+		    insert_unit($dirname, $description);
 		}
 	    }
 	    else
 	    {
 		//directory was not created before this moment - file types were unsupported
-		if (!is_dir(path))
+		if (!is_dir($path))
 		{
 		    mkdir($path);
-		    db_work($dirname, $description);
+		    insert_unit($dirname, $description);
 		}
 	    }
 	    
