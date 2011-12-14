@@ -152,6 +152,7 @@ class content
 		<label for='qsearch'>Search:</label>
 		<input class='tbox' id='qsearch' type='text' name='qsearch' onclick=\"this.value='';\" onfocus=\"this.select()\" onblur=\"this.value=!this.value?'".lang::$lang['search']."':this.value;\" value='".lang::$lang['search']."' />
 		<input class='btn' alt='Search' type='image' name='searchsubmit' title='Search' src='images/search.png' />
+		<input type='hidden' name='p' value='search'>
 		</p>
 		</form>	
 	    <!-- / id='header' -->
@@ -869,6 +870,10 @@ class content
 	{
 	    objects::detail();
 	}
+	elseif ($page == "search")
+	{
+		objects::search();
+	}
     }
     
     public static function action($request)
@@ -953,6 +958,43 @@ class objects
 	echo content::create_comment_section($result);
 	
 	echo content::create_comment_respond($_GET['table'],$_GET['id']);
+    }
+    
+    public static function search()
+    {
+    	if(isset($_GET["qsearch"]))
+    	{
+    		$search = $_GET["qsearch"];
+    		
+    		$found = false;
+    		
+    		$searchArray = array("maps","guides","articles","units");
+    		foreach($searchArray as $value)
+    		{
+    			$result = db::executeQuery("SELECT * FROM ".$value." WHERE title like '%".$search."%' LIMIT 10");
+    			if (db::num_rows($result) > 0)
+	    		{
+	    			echo "<table>";
+	    			echo "<tr><td>".$value." found:</td></tr>";
+					while ($row = db::nextRowFromQuery($result)) {
+						echo "<tr><td><a href='index.php?p=detail&table=".$value."&id=".$row["uid"]."'>".$row["title"]."</a></td></tr>";
+					}
+					echo "</table>";
+				}
+    		}
+    		
+    		$result = db::executeQuery("SELECT * FROM users WHERE login like '%".$search."%' LIMIT 10");
+    		if (db::num_rows($result) > 0)
+	    	{
+	    		echo "<table>";
+	    		echo "<tr><td>users found:</td></tr>";
+				while ($row = db::nextRowFromQuery($result)) {
+					echo "<tr><td><a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a></td></tr>";
+				}
+				echo "</table>";
+			}
+    		
+    	}
     }
 }
 
