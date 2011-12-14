@@ -468,11 +468,13 @@ class content
 
     public static function create_list($result, $table)
     {
+    if (db::num_rows($result) == 0)
+	    return "";
 	$content = "<table>";
 	while ($row = db::nextRowFromQuery($result))
 	{
 	    $title = "";
-	    $image = "";
+	    $imagePath = "";
 	    $subtitle = "";
 	    $text = "";
 
@@ -481,13 +483,13 @@ class content
 		//Set title, image
 		case "maps":
 		    $title = $row["title"];
-		    $imagePath = WEBSITE_PATH . $row["path"] . "minimap.bmp";
+		    $imagePath = $row["path"] . "minimap.bmp";
 		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
 		    $text = $row["description"];
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $imagePath = $row["preview_image"];
+		    $imagePath = "";//$row["preview_image"];
 		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
 		    $text = "";
 		    break;
@@ -500,7 +502,10 @@ class content
 	    }
 	    
 	    //TODO: Text should truncate if too large
-	    $content .= "<tr><td><img src='" . $imagePath . "'></td><td>" . strip_tags($title) . "</br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
+	    $content .= "<tr>";
+	    if($imagePath != "")
+	    	$content .= "<td><img src='" . $imagePath . "'></td>";
+	    $content .= "<td>" . strip_tags($title) . "</br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
 	}
 	$content .= "</table>";
 	return $content;
@@ -972,15 +977,7 @@ class objects
     		foreach($searchArray as $value)
     		{
     			$result = db::executeQuery("SELECT * FROM ".$value." WHERE title like '%".$search."%' LIMIT 10");
-    			if (db::num_rows($result) > 0)
-	    		{
-	    			echo "<table>";
-	    			echo "<tr><td>".$value." found:</td></tr>";
-					while ($row = db::nextRowFromQuery($result)) {
-						echo "<tr><td><a href='index.php?p=detail&table=".$value."&id=".$row["uid"]."'>".$row["title"]."</a></td></tr>";
-					}
-					echo "</table>";
-				}
+    			echo content::create_list($result,$value);
     		}
     		
     		$result = db::executeQuery("SELECT * FROM users WHERE login like '%".$search."%' LIMIT 10");
