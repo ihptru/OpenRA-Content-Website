@@ -38,22 +38,36 @@
 
         public static function setup()
         {
-	    $query = "CREATE TABLE IF NOT EXISTS activation (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	    	$query = "CREATE TABLE IF NOT EXISTS activation (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    pass VARCHAR(80) NOT NULL,
 			    login VARCHAR(80) NOT NULL,
 			    email VARCHAR(80) NOT NULL,
 			    register_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			    hash VARCHAR(500) NOT NULL);";
-	    db::executeQuery($query);
+	    	db::executeQuery($query);
 
             $query = "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    pass VARCHAR(80) NOT NULL,
 			    login VARCHAR(80) NOT NULL,
 			    experiance INTEGER NOT NULL DEFAULT 0,
+			    gender INTEGER NOT NULL DEFAULT 1,
+			    permission INTEGER NOT NULL DEFAULT 0,
+				occupation VARCHAR(80) NOT NULL,
+				interests VARCHAR(500) NOT NULL,
+				real_name VARCHAR(200) NOT NULL,
+				fav_faction VARCHAR(80) NOT NULL DEFAULT random,
+				birth_date DATE,
 			    email VARCHAR(80) NOT NULL,
 			    avatar VARCHAR(500) NOT NULL DEFAULT 'None',
 			    register_date TIMESTAMP NOT NULL);";
             db::executeQuery($query);
+            
+            $query = "CREATE TABLE IF NOT EXISTS fav_item (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    user_id INTEGER NOT NULL,
+			    table_name VARCHAR(80) NOT NULL,
+			    table_id INTEGER NOT NULL,
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+	    	db::executeQuery($query);
 
             $query = "CREATE TABLE IF NOT EXISTS maps (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
