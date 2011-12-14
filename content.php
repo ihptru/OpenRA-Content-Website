@@ -35,16 +35,16 @@ class content
 	    </script>
 	";
 	echo "<script type='text/javascript'>
-	function confirmDelete()
+	function confirmDelete(item)
 	{
-	    var agree=confirm('Are you sure you want to delete it?');
+	    var agree=confirm('Are you sure you want to delete this '+item+'?');
 	    if (agree)
 	    return true ;
 	    else
 	    return false ;
 	}
 	</script>
-	<script src='multi_upload/multifile.js'>
+	<script src='libs/multifile.js'>
 	//inlucde multi upload form
 	</script>
 	";
@@ -616,7 +616,7 @@ class content
 	     }
 	     
 	     if ($delete != "")
-		 	$content .= "<tr><td><a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete()'>".$delete."</a></td></tr>";
+		 	$content .= "<tr><td><a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".rtrim($table,"s")."\")'>".$delete."</a></td></tr>";
 	     
 	     $content .= "</table>";
 	     }
@@ -660,7 +660,7 @@ class content
         $content .= "<p>" . strip_tags($comment["content"]) . "</p>";
 		if (misc::comment_owner($comment["user_id"]))
 		{
-		    $content .= "<a style='float: right; margin: -25px 12px 0 0; border: 1px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."' onClick='return confirmDelete()'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px;' border='0' /></a>";
+		    $content .= "<a style='float: right; margin: -25px 12px 0 0; border: 1px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."' onClick='return confirmDelete(\"comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px;' border='0' /></a>";
 		}
         $content .= "<div class='reply'>";
         //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
