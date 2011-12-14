@@ -77,6 +77,20 @@ class content
 		}
 	    }
 	}
+	if ( isset($_GET["fav"]) && isset($_GET["table"]) && isset($_GET["id"]) )
+	{
+		if (user::online())
+	    {
+			if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
+			{
+				db::executeQuery("DELETE FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = ".user::uid());
+			}
+			else
+			{
+				db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (".user::uid().",'".$_GET["table"]."','".$_GET["id"]."')");
+			}
+	    }
+	}
 	
 	if ( isset($_GET['del_item']) and isset($_GET['del_item_table']) and isset($_GET['del_item_user']))
 	{
@@ -544,15 +558,22 @@ class content
 	     	$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
 	     }
 	     
-	     if($title != "")
+	     $content .= "<tr><td>" . strip_tags($title);
+	     if($subtitle != "")
 	     {
-	     	$content .= "<tr><td>" . strip_tags($title);
-	     	if($subtitle != "")
-	     	{
-	     		$content .= " " . $subtitle;
-	     	}
-	     	$content .= "</td></tr>";
+	     	$content .= " " . $subtitle;
 	     }
+	     $content .= "</td>";
+	     
+	     if(user::online())
+	     {
+	     	$favIcon = "notFav.png";
+	     	if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())) ) {
+	     		$favIcon = "isFav.png";
+	     	}
+	     	$content .= "<td style='padding: .5em .5em;'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav=yes'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
+	     }
+	     $content .= "</tr>";
 	     
 	     if($text != "")
 	     {
@@ -581,7 +602,7 @@ class content
 	     }
 	     
 	     if ($delete != "")
-		$content .= "<tr><td><a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete()'>".$delete."</a></td></tr>";
+		 	$content .= "<tr><td><a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete()'>".$delete."</a></td></tr>";
 	     
 	     $content .= "</table>";
 	     }
@@ -956,7 +977,7 @@ class profile
     	else
     		$gender = "female";
     	
-    	if(user::uid() == $self && user::online() && $_GET["edit"] == "on")
+    	if(user::uid() == $self && user::online() && isset($_GET["edit"]))
     	{
     		$didUpdate = false;
     		if(isset($_POST["occupation"])) {
@@ -1029,6 +1050,7 @@ class profile
     	}
     	else
     	{
+    		//Display common info
     		echo "<table>";
     		echo "<tr><td><h1>".$usr["login"]."'s profile</h1></td>";
     		if(user::uid() == $usr["uid"] && user::online())
@@ -1046,8 +1068,30 @@ class profile
     		echo "<tr><td>Level</td><td>".$level."</td></tr>";
     		echo "<tr><td>Experiance left to ".$nextLevel."</td><td>".($expNeeded - $x)."</td></tr>";
     		echo "</table>";
+    		
+    		
+    		//Display latest favorited items
+    		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"]);
+    		if (db::num_rows($result) > 0)
+	    	{
+	    		echo "<table>";
+	    		echo "<tr><td></td><td>".$usr["login"]."'s latest favorited items:</td></tr>";
+				while ($row = db::nextRowFromQuery($result)) {
+					$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"] . " ORDER BY posted LIMIT 10"));
+    				if($item)
+    				{
+    					echo "<tr><td style='padding: .5em .5em;'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'></td>";
+    					echo "<td>favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."</td></tr>";
+    				}
+    			}
+    			echo "</table>";
+    		}
+    		
+    		//Display fun facts
+    		// ex: how many items this user has favorited,
+    		// how many comments this user has done, ..
+    		// 
     	}
-    	
 		//echo "<h3>".lang::$lang['recent events']."</h3>";
 	
     }
