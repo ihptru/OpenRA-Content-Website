@@ -316,33 +316,31 @@ class content
 		//Get row for featured post
 		// Why have a featured table when you can use maps/units/guides/.. ?
 		// Answer: In featured you can combine different elements if you wish (maps and units)
-		$table = $row["table_name"];
+		$table_item = $row["table_name"];
 		$t = $row["type"];
-		$res = db::executeQuery("SELECT * FROM " . $table . " WHERE uid = " . $row["id"]);
+		$res = db::executeQuery("SELECT * FROM " . $table_item . " WHERE uid = " . $row["id"]);
 		$row = db::nextRowFromQuery($res);
 		$res = db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]);
 		$username = db::nextRowFromQuery($res);
 	    }
-	    switch($table)
+	    switch($table_item)
 	    {
 		//Set title, image
 		case "maps":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by " . $username["login"];
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username["login"] . "</a>";
 		    $text = $row["description"];
-		    $imagePath = WEBSITE_PATH . $row["path"] . "minimap.bmp";
-		    $imagePath = explode(WEBSITE_PATH, $imagePath);
-		    $imagePath = $imagePath[1];
+		    $imagePath =  $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by " . $username["login"];
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username["login"] . "</a>";
 		    $text = "";
 		    $imagePath = $row["preview_image"];
 		    break;
 		case "guides":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by " . $username["login"];
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username["login"] . "</a>";
 		    $text = "";
 		    $imagePath = "";
 		    break;
@@ -352,7 +350,7 @@ class content
 		if($t=="featured")
                 	$content .= "<div id='featured-ribbon'></div>";
 		else if($t=="people")
-                	$content .= "<div id='peoples-ribbon'></div>";
+			$content .= "<div id='peoples-ribbon'></div>";
 		else if($t=="editors")
                 	$content .= "<div id='editors-ribbon'></div>";
 		else
@@ -362,7 +360,7 @@ class content
 	    if(strlen($imagePath) > 0)
 	    {
 		$content .= "<div class='image-block'>";
-		$content .= "<a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table . "' title=''><img src='" . $imagePath . "' alt='featured' style='max-height:350px;max-width:250px;'/></a>";
+		$content .= "<a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' title=''><img src='" . $imagePath . "' alt='featured' style='max-height:350px;max-width:250px;'/></a>";
 		$content .= "</div>";
 	    }
 
@@ -370,7 +368,7 @@ class content
 	    $content .= "<h2>" . strip_tags($title) . "</h2>";
 	    $content .= "<p class='post-info'>" . $subtitle . "</p>";
 	    $content .= "<p>" . strip_tags($text) . "</p>";
-	    $content .= "<p><a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table . "' class='more-link'>Read More</a></p>";
+	    $content .= "<p><a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' class='more-link'>Read More</a></p>";
 											//All use read more button?
 	    $content .= "</div>";
 	    $content .= "</div>";

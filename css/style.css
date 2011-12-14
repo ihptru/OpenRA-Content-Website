@@ -558,7 +558,7 @@ a.more-link:hover {
 	font-size: 11px;
 	line-height: 20px;	
 	text-transform: uppercase;	
-	background: url(../images/bullet.gif) no-repeat 0 14px;
+	background: url(../images/arrow1.gif) no-repeat 0 14px;
 }
 .sidemenu ul li a:link, 
 .sidemenu ul li a:visited {

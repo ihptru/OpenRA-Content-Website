@@ -21,6 +21,16 @@ content::head();
 	{
 	    $res = db::executeQuery("SELECT * FROM featured");
 	    echo content::createFeaturedItems($res);
+	    $query = "SELECT
+		    table_name, table_id AS id, 'people' as type
+		  FROM fav_item
+		  WHERE table_name <> 'articles'
+                  GROUP BY table_name,table_id
+		  HAVING (COUNT(table_name) > 1) 
+		  ORDER BY RAND() LIMIT 1
+	    ";
+	    $res = db::executeQuery($query);
+	    echo content::createFeaturedItems($res);
 	}
 	?>		
 
