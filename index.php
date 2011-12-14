@@ -19,14 +19,15 @@ content::head();
 
 	if (count($_GET) == 0)
 	{
-	    $res = db::executeQuery("SELECT * FROM featured");
-	    echo content::createFeaturedItems($res);
 	    $query = "SELECT
-		    table_name, table_id AS id, 'people' as type
-		  FROM fav_item
+			table_name, table_id AS id, 'people' as type
+		      FROM fav_item
 		  WHERE table_name <> 'articles'
                   GROUP BY table_name,table_id
 		  HAVING (COUNT(table_name) > 1) 
+		UNION ALL
+		  SELECT table_name,id,type FROM featured
+
 		  ORDER BY RAND() LIMIT 1
 	    ";
 	    $res = db::executeQuery($query);
