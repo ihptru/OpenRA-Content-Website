@@ -1039,6 +1039,12 @@ class profile
     		echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
     		echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
     		echo "<tr><td>Favorite faction</td><td>".$usr["fav_faction"]."</td></tr>";
+    		$x = $usr["experiance"];
+			$level = floor((25 + sqrt(625 + 100 * $x)) / 50);
+			$nextLevel = $level+1;
+			$expNeeded = 25 * $nextLevel * $nextLevel - 25 * $nextLevel;
+    		echo "<tr><td>Level</td><td>".$level."</td></tr>";
+    		echo "<tr><td>Experiance left to ".$nextLevel."</td><td>".($expNeeded - $x)."</td></tr>";
     		echo "</table>";
     	}
     	

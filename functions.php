@@ -147,14 +147,7 @@ class pages
 	{
 	    if ($_GET['p'] == "profile")
 	    {
-		if (user::online())
-		{
 		    profile::show_profile();
-		}
-		else
-		{
-		    echo "<h3>".lang::$lang['not logged']."</h3>";
-		}
 	    }
 	    else
 	    {
