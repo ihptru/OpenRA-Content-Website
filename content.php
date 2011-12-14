@@ -386,8 +386,8 @@ class content
 	$content = "<table>";
 	$total = db::num_rows($result);
 	$i = 0;
-	if(isset($_GET["current_grid_page"]))
-		$current = $_GET["current_grid_page"];
+	if(isset($_GET["current_grid_page_".$table]))
+		$current = $_GET["current_grid_page_".$table];
 	else
 		$current = 1;
 	if (db::num_rows($result) == 0)
@@ -455,7 +455,7 @@ class content
 		if($current == $i)
 			$pages .= "<td>" . $i . "</td>";
 		else
-			$pages .= "<td id='page_count'><a href='index.php?current_grid_page=".$i.$gets."'>" . $i . "</a></td>";
+			$pages .= "<td id='page_count'><a href='index.php?current_grid_page_".$table."=".$i.$gets."'>" . $i . "</a></td>";
 	}
 	$pages .= "</tr></table>";
 	if ($nrOfPages == 1)
@@ -468,11 +468,13 @@ class content
 
     public static function create_list($result, $table)
     {
+    if (db::num_rows($result) == 0)
+	    return "";
 	$content = "<table>";
 	while ($row = db::nextRowFromQuery($result))
 	{
 	    $title = "";
-	    $image = "";
+	    $imagePath = "";
 	    $subtitle = "";
 	    $text = "";
 
@@ -481,13 +483,13 @@ class content
 		//Set title, image
 		case "maps":
 		    $title = $row["title"];
-		    $imagePath = WEBSITE_PATH . $row["path"] . "minimap.bmp";
+		    $imagePath = $row["path"] . "minimap.bmp";
 		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
 		    $text = $row["description"];
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $imagePath = $row["preview_image"];
+		    $imagePath = "";//$row["preview_image"];
 		    $subtitle = "posted at " . $row["posted"] . " by " . $row["user_id"];
 		    $text = "";
 		    break;
@@ -500,7 +502,10 @@ class content
 	    }
 	    
 	    //TODO: Text should truncate if too large
-	    $content .= "<tr><td><img src='" . $imagePath . "'></td><td>" . strip_tags($title) . "</br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
+	    $content .= "<tr>";
+	    if($imagePath != "")
+	    	$content .= "<td><img src='" . $imagePath . "'></td>";
+	    $content .= "<td><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
 	}
 	$content .= "</table>";
 	return $content;
