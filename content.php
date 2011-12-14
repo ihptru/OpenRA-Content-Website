@@ -37,7 +37,7 @@ class content
 	echo "<script type='text/javascript'>
 	function confirmDelete()
 	{
-	    var agree=confirm('Are you sure you want to delete an item?');
+	    var agree=confirm('Are you sure you want to delete it?');
 	    if (agree)
 	    return true ;
 	    else
@@ -365,7 +365,7 @@ class content
 	    }
 
 	    $content .= "<div class='text-block'>";
-	    $content .= "<h2><a href='index.html'>" . strip_tags($title) . "</a></h2>"; //index.html? could it be something else..
+	    $content .= "<h2>" . strip_tags($title) . "</h2>"; //index.html? could it be something else..
 	    $content .= "<p class='post-info'>" . $subtitle . "</p>";
 	    $content .= "<p>" . strip_tags($text) . "</p>";
 	    $content .= "<p><a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table . "' class='more-link'>Read More</a></p>"; //index.html? could it be something else..
@@ -635,7 +635,7 @@ class content
 		$avatarImg = misc::avatar($author["avatar"]);
 		
         $content .= "<div class='comment-info'>";			
-        $content .= "<img alt='' src='" . $avatarImg . "' class='avatar' height='40' width='40' />";
+        $content .= "<a href='index.php?p=profile&profile=".$comment["user_id"]."'><img alt='' src='" . $avatarImg . "' class='avatar' height='45' width='45' /></a>";
         $content .= "<cite>";
         $content .= "<a href='index.php?p=profile&profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
         $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
@@ -646,7 +646,7 @@ class content
         $content .= "<p>" . strip_tags($comment["content"]) . "</p>";
 		if (misc::comment_owner($comment["user_id"]))
 		{
-		    $content .= "<a style='float: right; margin: 3px -20px 0 0; border: 1px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."'>delete</a>";
+		    $content .= "<a style='float: right; margin: -25px 12px 0 0; border: 1px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."' onClick='return confirmDelete()'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px;' border='0' /></a>";
 		}
         $content .= "<div class='reply'>";
         //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
@@ -837,7 +837,7 @@ class content
 	$content .= '</div></div>';
 	$content .= '<div class="lang">
 		    <a id="'.pages::cur_lang("en").'" href="index.php?lang=en">English</a>
-		    <a id="'.pages::cur_lang("ru").'" href="index.php?lang=ru">???????</a>
+		    <a id="'.pages::cur_lang("ru").'" href="index.php?lang=ru">Русский</a>
 		    <a id="'.pages::cur_lang("de").'" href="index.php?lang=de">Deutsch</a>
 		    <a id="'.pages::cur_lang("sv").'" href="index.php?lang=sv">Swedish</a>
 		    </div>
@@ -1002,14 +1002,17 @@ class profile
     		}
     		
     		if($didUpdate)
-    			echo "profile updated!<br />";
-    			
+    			echo "<u>profile updated!</u><br />";
+    		
     		$query = "SELECT * FROM users WHERE uid = " . user::uid();
     		$result = db::executeQuery($query);
     		$usr = db::nextRowFromQuery($result);
     			
     		echo "<form action='index.php?p=profile&edit=on' method='post' id='commentform'>";
 	    	echo "<p>";
+		echo "<label>Change avatar</label><br />";
+		echo "<input type='file' name='avatar'><br />";
+		misc::avatar_actions();
 	    	echo "<label for='message'>Your occupation</label><br />";
 	    	echo "<input type='text' name='occupation' value='".$usr["occupation"]."'><br />";
 	    	echo "<label for='message'>Your real name</label><br />";
@@ -1071,13 +1074,13 @@ class profile
     		
     		
     		//Display latest favorited items
-    		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"]);
+    		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC LIMIT 10");
     		if (db::num_rows($result) > 0)
 	    	{
 	    		echo "<table>";
 	    		echo "<tr><td></td><td>".$usr["login"]."'s latest favorited items:</td></tr>";
 				while ($row = db::nextRowFromQuery($result)) {
-					$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"] . " ORDER BY posted LIMIT 10"));
+					$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
     				if($item)
     				{
     					echo "<tr><td style='padding: .5em .5em;'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'></td>";

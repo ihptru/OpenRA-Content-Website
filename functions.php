@@ -274,6 +274,11 @@ class misc
 	    db::executeQuery($query);
 	}
     }
+    
+    public static function avatar_actions()
+    {
+	//todo...
+    }
 }
 
 ?>
