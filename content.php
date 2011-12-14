@@ -513,25 +513,25 @@ class content
 		case "maps":
 		    $title = $row["title"];
 		    $imagePath = $row["path"] . "minimap.bmp";
-		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
+		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = $row["description"];
 		    break;
 		case "units":
 		    $title = $row["title"];
 		    $imagePath = "";//$row["preview_image"];
-		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
+		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = "";
 		    break;
 		case "guides":
 		    $title = $row["title"];
 		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
-		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
+		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = $row["html_content"];
 		    break;
 		case "articles":
 			$title = $row["title"];
 		    $imagePath = $row["image"]; //Get one depending on type of guide (There should be pre made icons for different types)
-		    $subtitle = "posted at " . $row["posted"] . " by " . $user_name;
+		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = $row["content"];
 		    break;
 	     }
@@ -616,7 +616,7 @@ class content
         $content .= "<div class='comment-info'>";			
         $content .= "<img alt='' src='" . $avatarImg . "' class='avatar' height='40' width='40' />";
         $content .= "<cite>";
-        $content .= "<a href='index.php?profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
+        $content .= "<a href='index.php?p=profile&profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
         $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
     	$content .= "</cite>";
         $content .= "</div>";
@@ -939,7 +939,110 @@ class profile
 {
     public static function show_profile()
     {
-	echo "<h3>".lang::$lang['recent events']."</h3>";
+    	//Get user id
+    	$self = -1;
+    	if(isset($_GET["profile"]))
+    		$self = $_GET["profile"];
+    	if($self == -1)
+    		$self = user::uid();
+    	
+    	$query = "SELECT * FROM users WHERE uid = " . $self;
+    	$result = db::executeQuery($query);
+    	$usr = db::nextRowFromQuery($result);
+    	
+    	$gender = "";
+    	if($usr["gender"]==1)
+    		$gender = "male";
+    	else
+    		$gender = "female";
+    	
+    	if(user::uid() == $self && user::online() && $_GET["edit"] == "on")
+    	{
+    		$didUpdate = false;
+    		if(isset($_POST["occupation"])) {
+    			db::executeQuery("UPDATE users SET occupation = '".$_POST["occupation"]."' WHERE uid = " . user::uid());
+    			$didUpdate = true;
+    		}
+    		if(isset($_POST["real_name"])) {
+    			db::executeQuery("UPDATE users SET real_name = '".$_POST["real_name"]."' WHERE uid = " . user::uid());
+    			$didUpdate = true;
+    		}
+    		if(isset($_POST["gender"])) {
+    			db::executeQuery("UPDATE users SET gender = ".$_POST["gender"]." WHERE uid = " . user::uid());
+    			$didUpdate = true;
+    		}
+    		if(isset($_POST["fav_faction"])) {
+    			db::executeQuery("UPDATE users SET fav_faction = '".$_POST["fav_faction"]."' WHERE uid = " . user::uid());
+    			$didUpdate = true;
+    		}
+    		if(isset($_POST["interests"])) {
+    			db::executeQuery("UPDATE users SET interests = '".$_POST["interests"]."' WHERE uid = " . user::uid());
+    			$didUpdate = true;
+    		}
+    		
+    		if($didUpdate)
+    			echo "profile updated!<br />";
+    			
+    		$query = "SELECT * FROM users WHERE uid = " . user::uid();
+    		$result = db::executeQuery($query);
+    		$usr = db::nextRowFromQuery($result);
+    			
+    		echo "<form action='index.php?p=profile&edit=on' method='post' id='commentform'>";
+	    	echo "<p>";
+	    	echo "<label for='message'>Your occupation</label><br />";
+	    	echo "<input type='text' name='occupation' value='".$usr["occupation"]."'><br />";
+	    	echo "<label for='message'>Your real name</label><br />";
+	    	echo "<input type='text' name='real_name' value='".$usr["real_name"]."'><br />";
+	    	echo "<label for='message'>Your gender</label><br />";
+	    	echo "<select name='gender'>";
+	    	if($usr["gender"]==1)
+	    		echo "<option value='1' selected='selected'>Male</option>";
+	    	else
+	    		echo "<option value='1'>Male</option>";
+	    	if($usr["gender"]==0)
+	    		echo "<option value='0' selected='selected'>Female</option>";
+	    	else
+	    		echo "<option value='0'>Female</option>";
+	    	echo "</select><br />";
+	    	echo "<label for='message'>Your favorite faction</label><br />";
+	    	echo "<select name='fav_faction'>";
+	    	if($usr["fav_faction"]=="random")
+	    		echo "<option value='random' selected='selected'>Random</option>";
+	    	else
+	    		echo "<option value='random'>Random</option>";
+	    	if($usr["fav_faction"]=="soviet")
+	    		echo "<option value='soviet' selected='selected'>Soviet</option>";
+	    	else
+	    		echo "<option value='soviet'>Soviet</option>";
+	    	if($usr["fav_faction"]=="allies")
+	    		echo "<option value='allies' selected='selected'>Allies</option>";
+	    	else
+	    		echo "<option value='allies'>Allies</option>";
+	    	echo "</select><br />";
+	    	echo "<label for='message'>Your interests</label><br />";
+	    	echo "<textarea id='interests' name='interests' rows='10' cols='20' tabindex='4'>".$usr["interests"]."</textarea>";
+	    	echo "</p>";
+	    	echo "<p class='no-border'>";
+	    	echo "<input class='button' type='submit' value='Edit' tabindex='5'/>";      		
+	    	echo "</p>";
+	    	echo "</form>";
+    	}
+    	else
+    	{
+    		echo "<table>";
+    		echo "<tr><td><h1>".$usr["login"]."'s profile</h1></td>";
+    		if(user::uid() == $usr["uid"] && user::online())
+    			echo "<td><a href='index.php?p=profile&edit=on'><h2>edit</h2></a></td>";
+    		echo "</tr>";
+    		echo "<tr><td>Gender</td><td>".$gender."</td></tr>";
+    		echo "<tr><td>Occupation</td><td>".$usr["occupation"]."</td></tr>";
+    		echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
+    		echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
+    		echo "<tr><td>Favorite faction</td><td>".$usr["fav_faction"]."</td></tr>";
+    		echo "</table>";
+    	}
+    	
+		//echo "<h3>".lang::$lang['recent events']."</h3>";
 	
     }
     
