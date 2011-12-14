@@ -287,8 +287,7 @@ class content
         if(strlen($text) > 500)
         	$text = substr($text,0,500) . "...";
         $content .= "<p>" . $text . "</p>";			
-        $content .= "<p><a class='more' href='index.php?p=detail&table=articles&id=".$row["uid"]."'>continue reading &raquo;</a></p>"; 
-        //index.html need to be fixed (should be link to article)
+        $content .= "<p><a href='index.php?p=detail&table=articles&id=".$row["uid"]."' class='more-link'>continue reading &raquo;</a></p>"; 
         $content .= "</div>";
         $content .= "</div>";
 	}
@@ -366,10 +365,10 @@ class content
 	    }
 
 	    $content .= "<div class='text-block'>";
-	    $content .= "<h2>" . strip_tags($title) . "</h2>"; //index.html? could it be something else..
+	    $content .= "<h2>" . strip_tags($title) . "</h2>";
 	    $content .= "<p class='post-info'>" . $subtitle . "</p>";
 	    $content .= "<p>" . strip_tags($text) . "</p>";
-	    $content .= "<p><a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table . "' class='more-link'>Read More</a></p>"; //index.html? could it be something else..
+	    $content .= "<p><a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table . "' class='more-link'>Read More</a></p>";
 											//All use read more button?
 	    $content .= "</div>";
 	    $content .= "</div>";

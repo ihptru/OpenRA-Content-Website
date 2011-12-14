@@ -433,7 +433,7 @@ input.button {
 	margin: 15px 25px 0 0;
 	display: inline;
 }
-#featured a.more-link {
+a.more-link {
 	float: left;
 	margin-top: 25px;
 	padding: 5px 10px;
@@ -447,7 +447,7 @@ input.button {
 	color: #fff;	
 	display: block;
 }
-#featured a.more-link:hover {
+a.more-link:hover {
 	border: 1px solid #2f4c13;
 	background: #4a781d url(../images/button-hover-bg.png) repeat-x;
 }
