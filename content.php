@@ -231,7 +231,7 @@ class content
 	    {
 		//Set title, image
 		case "maps":
-		    $imagePath = WEBSITE_PATH . $row["path"] . "minimap.bmp";
+		    $imagePath = $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
 		    $imagePath = $row["preview_image"];
@@ -241,7 +241,7 @@ class content
 		    break;
 	    }
 
-	    $content .= "<a href='index.html'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
+	    $content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
 	}
 	return $content;
     }

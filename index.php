@@ -73,7 +73,8 @@ content::head();
 		    <p class="thumbs">
 			<?PHP 
 			
-			//db::createImageGallery($result)
+			$result = db::executeQuery("SELECT * FROM maps ORDER BY RAND() LIMIT 12");
+			echo content::createImageGallery($result);
 			
 			?>
 		    </p>			
