@@ -1,4 +1,4 @@
-<?PHP
+﻿<?PHP
 
 class content
 {
@@ -741,15 +741,33 @@ class content
 	return $content;
     }
     
-    public static function create_dynamic_list($data, $columns)
+    public static function create_dynamic_list($data, $columns, $name = "dyn", $maxItemsPerPage = 10, $header = false, $use_pages = true)
     {
     	$content = "";
     	if($data && $columns > 0)
     	{
     		if(count($data)%$columns == 0)
     		{
-    			$content .= "<table>";
-    			for($i = 0; $i < count($data)+1-$columns; $i=$i+$columns)
+			$total = count($data);
+			if(isset($_GET["current_dynamic_page_".$name]))
+				$current = $_GET["current_dynamic_page_".$name];
+			else
+				$current = 1;
+			$start = ($current-1) * $maxItemsPerPage * $columns;
+			$maxItemsPerPage *= $columns;
+			$content .= "<table>";
+			if($header)
+			{
+				if($start < $columns)
+					$start = $columns;
+				$content .= "<tr>";
+				for($row = 0; $row < $columns; $row++)
+    				{
+    					$content .= "<td>" . $data[$row] . "</td>";
+    				}
+				$content .= "</tr>";
+			}
+    			for($i = $start; $i < count($data)+1-$columns && $i < $start+$maxItemsPerPage; $i=$i+$columns)
     			{
     				$content .= "<tr>";
     				for($row = 0; $row < $columns; $row++)
@@ -759,6 +777,27 @@ class content
     				$content .= "</tr>";
     			}
     			$content .= "</table>";
+			$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
+			$gets = "";
+			$pages = "<table>";
+			$keys = array_keys($_GET);
+			foreach($keys as $key)
+			{
+				if($key != "current_dynamic_page_".$name)
+					$gets .= "&" . $key . "=" . $_GET[$key];
+			}
+			for($i = 1; $i < $nrOfPages+1; $i++)
+			{
+				if($current == $i)
+					$pages .= "<td>" . $i . "</td>";
+				else
+					$pages .= "<td id='page_count'><a href='index.php?current_dynamic_page_".$name."=".$i.$gets."'>" . $i . "</a></td>";
+			}
+			$pages .= "</tr></table>";
+			if ($nrOfPages == 1)
+				$pages = "";
+			if($use_pages)
+				$content .= $pages;
     		}
     	}
     	return $content;
@@ -1316,7 +1355,7 @@ class profile
 				array_push($data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
 			    }
 			}
-    			echo content::create_dynamic_list($data,2);
+    			echo content::create_dynamic_list($data,2,"favorites",10,true,true);
     		}
     		
     		//Display fun facts
