@@ -900,6 +900,7 @@ class content
 
 	$content .= '<div class="bottom-right">';
 	$content .= '<p>';
+	$content .= '<strong><a href="index.php?p=members">Members</a></strong> |';
 	$content .= '<a href="/">'.lang::$lang['home'].'</a> |';
 	$content .= '<strong><a href="#top" class="back-to-top">'.lang::$lang['to top'].'</a></strong>';						
 	$content .= '</p>';
@@ -947,6 +948,23 @@ class content
 	elseif ($page == "search")
 	{
 		objects::search();
+	}
+	elseif ($page == "members")
+	{
+	    $result = db::executeQuery("SELECT * FROM users");
+	    if (db::num_rows($result) > 0)
+	    {
+		echo "<label>Members:</label>";
+	    	$data = array();
+		while ($row = db::nextRowFromQuery($result))
+		{
+		    $avatar = $row["avatar"];
+		    if ($avatar == "None")
+			$avatar = "images/noavatar.jpg";
+		    array_push($data,"<a href='index.php?p=profile&profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a>");
+		}
+		echo content::create_dynamic_list($data,2);
+	    }
 	}
     }
     
@@ -1005,16 +1023,19 @@ class content
 	    if (isset($_GET["faction"]))
 	    {
 		$faction = $_GET["faction"];
-		$result = db::executeQuery("SELECT uid,login FROM users WHERE fav_faction = '".$faction."'");
+		$result = db::executeQuery("SELECT uid,login,avatar FROM users WHERE fav_faction = '".$faction."'");
 		if (db::num_rows($result) > 0)
 		{
 		    $data = array();
-		    array_push($data,"This people like ".$faction." faction:");
+		    array_push($data,"","This people like ".$faction." faction:");
 		    while ($row = db::nextRowFromQuery($result))
 		    {
-			array_push($data,"<a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a>");
+			$avatar = $row["avatar"];
+			if ($avatar == "None")
+			    $avatar = "images/noavatar.jpg";
+			array_push($data,"<a href='index.php?p=profile&profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a>");
 		    }
-		    echo content::create_dynamic_list($data,1);
+		    echo content::create_dynamic_list($data,2);
     		}
 		else
 		{
@@ -1104,8 +1125,8 @@ class objects
 	    $result = db::executeQuery("SELECT * FROM users WHERE login LIKE '%".$search."%'");
 	    if (db::num_rows($result) > 0)
 	    {
+		$content .= "<br><label>users:</label>";
 	    	$data = array();
-	    	array_push($data,"Users:");
 			while ($row = db::nextRowFromQuery($result))
 		    	array_push($data,"<a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a>");
 		    $content .= content::create_dynamic_list($data,1);
