@@ -1171,9 +1171,9 @@ class profile
     		while($country = db::nextRowFromQuery($result))
     		{
     			if($country["name"] == $usr["country"])
-    				echo "<option value='".$country["name"]."'>".$country["title"]."</option>";
-    			else
     				echo "<option value='".$country["name"]."' selected='selected'>".$country["title"]."</option>";
+    			else
+    				echo "<option value='".$country["name"]."'>".$country["title"]."</option>";
     		}
     		echo "</select><br />";
 	    	
