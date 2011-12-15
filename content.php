@@ -954,10 +954,14 @@ class content
     {
 	if ($request == "upload_map")
 	{
+	    if (!user::online())
+		return;
 	    profile::upload_map();
 	}
 	if ($request == "mymaps")
 	{
+	    if (!user::online())
+		return;
 	    profile::upload_map();
 	    echo "<h3>Your maps</h3>";
 	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid());
@@ -970,6 +974,8 @@ class content
 	}
 	if ($request == "myguides")
 	{
+	    if (!user::online())
+		return;
 	    profile::upload_guide();
 	    echo "<h3>Your guides</h3>";
 	    $result = db::executeQuery("SELECT * FROM guides WHERE user_id = ".user::uid());
@@ -982,6 +988,8 @@ class content
 	}
 	if ($request == "myunits")
 	{
+	    if (!user::online())
+		return;
 	    profile::upload_unit();
 	    echo "<h3>Your units</h3>";
 	    $result = db::executeQuery("SELECT * FROM units WHERE user_id = ".user::uid());
@@ -991,6 +999,33 @@ class content
 		echo "No units uploaded yet";
 	    }
 	    echo $output;
+	}
+	if ($request == "display_faction")
+	{
+	    if (isset($_GET["faction"]))
+	    {
+		$faction = $_GET["faction"];
+		$result = db::executeQuery("SELECT uid,login FROM users WHERE fav_faction = '".$faction."'");
+		if (db::num_rows($result) > 0)
+		{
+		    $data = array();
+		    array_push($data,"This people like ".$faction." faction:");
+		    while ($row = db::nextRowFromQuery($result))
+		    {
+			array_push($data,"<a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a>");
+		    }
+		    echo content::create_dynamic_list($data,1);
+    		}
+		else
+		{
+		    echo "<table>
+			      <tr>
+				  <td>No one likes ".$faction."</td>
+			      </tr>
+			  </table>
+		    ";
+		}
+	    }
 	}
     }
 }
@@ -1230,7 +1265,7 @@ class profile
     		echo "<tr><td>Occupation</td><td>".$usr["occupation"]."</td></tr>";
     		echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
     		echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
-    		echo "<tr><td>Favorite faction</td><td><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></td></tr>";
+    		echo "<tr><td>Favorite faction</td><td><a href='index.php?action=display_faction&faction=".$usr["fav_faction"]."'><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></a></td></tr>";
     		
     		$query = "SELECT * FROM country WHERE name = '".$usr["country"]."'";
     		$result = db::executeQuery($query);
@@ -1253,13 +1288,13 @@ class profile
     		if (db::num_rows($result) > 0) {
 	    		$data = array();
 	    		array_push($data,"",$usr["login"]."'s latest favorited items:");
-				while ($row = db::nextRowFromQuery($result)) {
-					$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
-    				if($item) {
-    					array_push($data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
-    					array_push($data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
-    				}
-    			}
+			while ($row = db::nextRowFromQuery($result)) {
+			    $item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
+			    if($item) {
+				array_push($data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
+				array_push($data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
+			    }
+			}
     			echo content::create_dynamic_list($data,2);
     		}
     		
