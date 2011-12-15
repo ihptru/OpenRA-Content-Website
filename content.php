@@ -1217,7 +1217,6 @@ class profile
     	{
     		//Display common info
     		echo "<table>";
-    		
     		echo "<tr><td><h1>".$usr["login"]."'s profile</h1></td>";
     		$img = "";
     		if($usr["country"] != "None" && $usr["country"] != "")
@@ -1251,19 +1250,17 @@ class profile
     		
     		//Display latest favorited items
     		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC LIMIT 10");
-    		if (db::num_rows($result) > 0)
-	    	{
-	    		echo "<table>";
-	    		echo "<tr><td></td><td>".$usr["login"]."'s latest favorited items:</td></tr>";
+    		if (db::num_rows($result) > 0) {
+	    		$data = array();
+	    		array_push($data,"",$usr["login"]."'s latest favorited items:");
 				while ($row = db::nextRowFromQuery($result)) {
 					$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
-    				if($item)
-    				{
-    					echo "<tr><td style='padding: .5em .5em;'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'></td>";
-    					echo "<td>favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."</td></tr>";
+    				if($item) {
+    					array_push($data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
+    					array_push($data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
     				}
     			}
-    			echo "</table>";
+    			echo content::create_dynamic_list($data,2);
     		}
     		
     		//Display fun facts
@@ -1271,8 +1268,6 @@ class profile
     		// how many comments this user has done, ..
     		// 
     	}
-		//echo "<h3>".lang::$lang['recent events']."</h3>";
-	
     }
     
     public static function profile_bar()
