@@ -56,6 +56,7 @@
 				interests VARCHAR(500) NOT NULL,
 				real_name VARCHAR(200) NOT NULL,
 				fav_faction VARCHAR(80) NOT NULL DEFAULT 'random',
+				country VARCHAR(200) NOT NULL DEFAULT 'None',
 				birth_date DATE,
 			    email VARCHAR(80) NOT NULL,
 			    avatar VARCHAR(500) NOT NULL DEFAULT 'None',
@@ -121,6 +122,11 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
+            $query = "CREATE TABLE IF NOT EXISTS country (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    name VARCHAR(200) NOT NULL,
+			    title VARCHAR(500) NOT NULL DEFAULT 'none');";
+            db::executeQuery($query);
+            
             //Comments made by users on articles
             $query = "CREATE TABLE IF NOT EXISTS comments (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
@@ -148,6 +154,25 @@
 			    group_id INTEGER NOT NULL,
 			    image_id INTEGER NOT NULL);";
 	    db::executeQuery($query);
+
+			$query = "SELECT COUNT(*) as count FROM country";
+	    	$result = db::executeQuery($query);
+	    	$item = db::nextRowFromQuery($result);
+	    	if($item["count"]==0)
+	    	{
+	    		//Get all countries
+	    		$files = scandir("images/country_flags/");
+				foreach($files as $key => $value)
+					if($value != "" && $value != "." && $value != "..")
+					{
+						$name = $value;
+						$title = str_replace("-"," ",substr($value,0,strlen($value)-4));
+						$title = str_replace("(","",$title);
+						$title = str_replace(")","",$title);
+						db::executeQuery("INSERT INTO country (name, title) VALUES ('".$name."','".$title."')");
+					}
+	    	}
+
         }
         
         public static function executeQuery($q)
@@ -172,7 +197,7 @@
 	    return mysql_num_rows($result);
 	}
 
-        private static function table_exists($tablename) 
+        private static function table_exists($tablename, $emptyIsOK=true) 
         {
             $res = mysql_query("
                                SELECT COUNT(*) AS count 
@@ -180,18 +205,45 @@
                                WHERE table_schema = '".DB_DATABASE."' 
                                AND table_name = '$tablename'
                                ");
+                               
+        	if(!$emptyIsOK && mysql_result($res,0) == 1)
+        	{
+        		$query = "SELECT COUNT(*) as count FROM " . $tablename;
+	    		$result = db::executeQuery($query);
+	    		$item = db::nextRowFromQuery($result);
+	    		if($item["count"]==0)
+	    		{
+	    			$allSystemsGo = false;
+	    		}
+        	}
+                               
             return mysql_result($res, 0) == 1;
         }
 
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group");
+	    $tables = array("activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item");
+	    $checkNotEmpty = array("country");
 	    foreach ($tables as $table)
 	    {
-		if(!db::table_exists($table))
-		    $allSystemsGo = false;
+	    	$checkHasContent = false;
+	    	foreach ($checkNotEmpty as $empty)
+	    	{
+	    		if($empty == $table)
+	    		{
+	    			$checkHasContent = true;
+	    			break;
+	    		}
+	    	}
+	    	if($checkHasContent == true)
+				if(!db::table_exists($table,false))
+		    		$allSystemsGo = false;
+		    else
+		    	if(!db::table_exists($table))
+		    		$allSystemsGo = false;
 	    }
+
             return $allSystemsGo;
         }
 

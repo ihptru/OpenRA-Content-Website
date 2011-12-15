@@ -379,9 +379,11 @@ class content
 
     public static function create_grid($result, $table = "maps")
     {
-	$columns = 3;
+	$columns = 4; //dynamic based on table?
+	$rows = 4;
 	$counter = 0;
-	$maxItemsPerPage = ($columns+1) * 4;
+	$columns--;
+	$maxItemsPerPage = ($columns+1) * $rows;
 	$content = "<table>";
 	$total = db::num_rows($result);
 	$i = 0;
@@ -446,7 +448,7 @@ class content
 	$keys = array_keys($_GET);
 	foreach($keys as $key)
 	{
-		if($key != "current_grid_page")
+		if($key != "current_grid_page_".$table)
 			$gets .= "&" . $key . "=" . $_GET[$key];
 	}
 	for($i = 1; $i < $nrOfPages+1; $i++)
@@ -469,9 +471,23 @@ class content
     {
 	if (db::num_rows($result) == 0)
 	    return "";
+	if(isset($_GET["current_list_page_".$table]))
+		$current = $_GET["current_list_page_".$table];
+	else
+		$current = 1;
+	$maxItemsPerPage = 10; //dynamic depending on table?
+	$total = db::num_rows($result);
 	$content = "<table>";
+	$i = 0;
 	while ($row = db::nextRowFromQuery($result))
 	{
+		if( !($i >= ($current-1) * $maxItemsPerPage && $i < $current * $maxItemsPerPage ) )
+		{
+			$i++;
+			continue;
+		}
+		$i++;
+	
 	    $title = "";
 	    $imagePath = "";
 	    $subtitle = "";
@@ -515,7 +531,29 @@ class content
 	    	$content .= "<td><img src='" . $imagePath . "'></td>";
 	    $content .= "<td><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
 	}
+	
+	$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
+	$gets = "";
+	$pages = "<table>";
+	$keys = array_keys($_GET);
+	foreach($keys as $key)
+	{
+		if($key != "current_list_page_".$table)
+			$gets .= "&" . $key . "=" . $_GET[$key];
+	}
+	for($i = 1; $i < $nrOfPages+1; $i++)
+	{
+		if($current == $i)
+			$pages .= "<td>" . $i . "</td>";
+		else
+			$pages .= "<td id='page_count'><a href='index.php?current_list_page_".$table."=".$i.$gets."'>" . $i . "</a></td>";
+	}
+	$pages .= "</tr></table>";
+	if ($nrOfPages == 1)
+	{ $pages = ""; }
+	
 	$content .= "</table>";
+	$content .= $pages;
 	return $content;
     }
     
@@ -998,7 +1036,7 @@ class objects
 	    foreach($searchArray as $value)
 	    {
 		
-		$result = db::executeQuery("SELECT * FROM ".$value." WHERE title LIKE '%".$search."%' LIMIT 10");
+		$result = db::executeQuery("SELECT * FROM ".$value." WHERE title LIKE '%".$search."%'");
 		$output = content::create_list($result, $value);
 		if ($output != "")
 		{
@@ -1076,6 +1114,10 @@ class profile
     			db::executeQuery("UPDATE users SET interests = '".$_POST["interests"]."' WHERE uid = " . user::uid());
     			$didUpdate = true;
     		}
+    		if(isset($_POST["country"])) {
+    			db::executeQuery("UPDATE users SET country = '".$_POST["country"]."' WHERE uid = " . user::uid());
+    			$didUpdate = true;
+    		}
     		
     		if($didUpdate)
     			echo "<u>profile updated!</u><br />";
@@ -1104,6 +1146,7 @@ class profile
 	    	else
 	    		echo "<option value='0'>Female</option>";
 	    	echo "</select><br />";
+	    	
 	    	echo "<label for='message'>Your favorite faction</label><br />";
 	    	echo "<select name='fav_faction'>";
 	    	if($usr["fav_faction"]=="random")
@@ -1119,6 +1162,21 @@ class profile
 	    	else
 	    		echo "<option value='allies'>Allies</option>";
 	    	echo "</select><br />";
+	    	
+	    	echo "<label for='message'>Where do you come from?</label><br />";
+	    	echo "<select name='country'>";
+	    	echo "<option value='None'>None</option>";
+	    	$query = "SELECT * FROM country";
+    		$result = db::executeQuery($query);
+    		while($country = db::nextRowFromQuery($result))
+    		{
+    			if($country["name"] == $usr["country"])
+    				echo "<option value='".$country["name"]."'>".$country["title"]."</option>";
+    			else
+    				echo "<option value='".$country["name"]."' selected='selected'>".$country["title"]."</option>";
+    		}
+    		echo "</select><br />";
+	    	
 	    	echo "<label for='message'>Your interests</label><br />";
 	    	echo "<textarea id='interests' name='interests' rows='10' cols='20' tabindex='4'>".$usr["interests"]."</textarea>";
 	    	echo "</p>";
@@ -1131,15 +1189,33 @@ class profile
     	{
     		//Display common info
     		echo "<table>";
+    		
     		echo "<tr><td><h1>".$usr["login"]."'s profile</h1></td>";
+    		$img = "";
+    		if($usr["country"] != "None" && $usr["country"] != "")
+    			$img = "<img style='float:center;border: 0px solid #261b15; padding: 0px;' src='images/country_flags/".$usr["country"]."'>";
     		if(user::uid() == $usr["uid"] && user::online())
-    			echo "<td><a href='index.php?p=profile&edit=on'><h2>edit</h2></a></td>";
+    			echo "<td><a href='index.php?p=profile&edit=on'><h2>edit</h2></a>".$img."</td>";
+    		else
+    			echo "<td style='padding: .0em 0em;'><center>".$img."</center></td>";
     		echo "</tr>";
     		echo "<tr><td>Gender</td><td>".$gender."</td></tr>";
     		echo "<tr><td>Occupation</td><td>".$usr["occupation"]."</td></tr>";
     		echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
     		echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
     		echo "<tr><td>Favorite faction</td><td>".$usr["fav_faction"]."</td></tr>";
+    		
+    		$query = "SELECT * FROM country WHERE name = '".$usr["country"]."'";
+    		$result = db::executeQuery($query);
+    		if($country = db::nextRowFromQuery($result))
+    		{
+    			echo "<tr><td>Country</td><td>".$country["title"]."</td></tr>";
+    		}
+    		else
+    		{
+    			echo "<tr><td>Country</td><td>None</td></tr>";
+    		}
+    		
     		$x = $usr["experiance"];
 			$level = floor((25 + sqrt(625 + 100 * $x)) / 50);
 			$nextLevel = $level+1;
