@@ -1161,6 +1161,14 @@ class profile
 	    		echo "<option value='allies' selected='selected'>Allies</option>";
 	    	else
 	    		echo "<option value='allies'>Allies</option>";
+	    	if($usr["fav_faction"]=="nod")
+	    		echo "<option value='nod' selected='selected'>NOD</option>";
+	    	else
+	    		echo "<option value='nod'>NOD</option>";
+	    	if($usr["fav_faction"]=="gda")
+	    		echo "<option value='gda' selected='selected'>GDA</option>";
+	    	else
+	    		echo "<option value='gda'>GDA</option>";
 	    	echo "</select><br />";
 	    	
 	    	echo "<label for='message'>Where do you come from?</label><br />";
@@ -1203,18 +1211,14 @@ class profile
     		echo "<tr><td>Occupation</td><td>".$usr["occupation"]."</td></tr>";
     		echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
     		echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
-    		echo "<tr><td>Favorite faction</td><td>".$usr["fav_faction"]."</td></tr>";
+    		echo "<tr><td>Favorite faction</td><td><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></td></tr>";
     		
     		$query = "SELECT * FROM country WHERE name = '".$usr["country"]."'";
     		$result = db::executeQuery($query);
     		if($country = db::nextRowFromQuery($result))
-    		{
     			echo "<tr><td>Country</td><td>".$country["title"]."</td></tr>";
-    		}
     		else
-    		{
     			echo "<tr><td>Country</td><td>None</td></tr>";
-    		}
     		
     		$x = $usr["experiance"];
 			$level = floor((25 + sqrt(625 + 100 * $x)) / 50);
