@@ -740,6 +740,29 @@ class content
 	}
 	return $content;
     }
+    
+    public static function create_dynamic_list($data, $columns)
+    {
+    	$content = "";
+    	if($data && $columns > 0)
+    	{
+    		if(count($data)%$columns == 0)
+    		{
+    			$content .= "<table>";
+    			for($i = 0; $i < count($data)+1-$columns; $i=$i+$columns)
+    			{
+    				$content .= "<tr>";
+    				for($row = 0; $row < $columns; $row++)
+    				{
+    					$content .= "<td>" . $data[$i+$row] . "</td>";
+    				}
+    				$content .= "</tr>";
+    			}
+    			$content .= "</table>";
+    		}
+    	}
+    	return $content;
+    }
 
     //Accept image table
     public static function create_highslide_gallery($result)
@@ -1027,9 +1050,7 @@ class objects
 	    }
 	    
 	    $content = "";
-
 	    $search = $_GET["qsearch"];
-
 	    $found = false;
 
 	    $searchArray = array("maps","guides","articles","units");
@@ -1045,15 +1066,14 @@ class objects
 		}
 	    }
 
-	    $result = db::executeQuery("SELECT * FROM users WHERE login LIKE '%".$search."%' LIMIT 10");
+	    $result = db::executeQuery("SELECT * FROM users WHERE login LIKE '%".$search."%'");
 	    if (db::num_rows($result) > 0)
 	    {
-		$content .= "<br><label>users found:</label>";
-		$content .= "<table>";
-		while ($row = db::nextRowFromQuery($result)) {
-		    $content .= "<tr><td><a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a></td></tr>";
-		}
-		$content .= "</table>";
+	    	$data = array();
+	    	array_push($data,"Users:");
+			while ($row = db::nextRowFromQuery($result))
+		    	array_push($data,"<a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a>");
+		    $content .= content::create_dynamic_list($data,1);
 	    }
 	    if ($content == "")
 	    {
