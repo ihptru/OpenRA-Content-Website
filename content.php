@@ -560,11 +560,10 @@ class content
     public static function displayItem($result, $table)
     {
     	$content = "";
+ 
     	while ($row = db::nextRowFromQuery($result))
 		{
-		
-		$content .= "<table>";
-		
+
 	    $title = "";
 	    $imagePath = "";
 	    $subtitle = "";
@@ -593,14 +592,44 @@ class content
 		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
 		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = $row["html_content"];
+		    
+		    $content .= "<div class='block odd'>";
+		    $content .= "<div class='blk-top'>";
+			$content .= "<h4>" . $title . "</h4>";
+			$content .= "<p><span class='datetime'>" . $row["posted"] . "</span></p>";
+			$content .= "</div>";
+					
+			$content .= "<div class='blk-content'>";
+			$content .= "<p>" . $text . "</p>";			
+			$content .= "</div>";
+			$content .= "</div>";
+			
+			return $content;
+		    
 		    break;
 		case "articles":
 			$title = $row["title"];
 		    $imagePath = $row["image"]; //Get one depending on type of guide (There should be pre made icons for different types)
 		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = $row["content"];
+		    
+		    $content .= "<div class='block odd'>";
+		    $content .= "<div class='blk-top'>";
+			$content .= "<h4>" . $title . "</h4>";
+			$content .= "<p><span class='datetime'>" . $row["posted"] . "</span></p>";
+			$content .= "</div>";
+					
+			$content .= "<div class='blk-content'>";
+			$content .= "<p>" . $text . "</p>";			
+			$content .= "</div>";
+			$content .= "</div>";
+			
+			return $content;
+		    
 		    break;
 	     }
+	     
+		 $content .= "<table>";
 	     
 	     if ($row["user_id"] == user::uid())
 		$delete = "Delete ".rtrim($table,"s");
