@@ -294,6 +294,18 @@ class misc
 	$query = "UPDATE users SET experiance = ".$value." WHERE uid = ".user::uid();
 	db::executeQuery($query);
     }
+    
+    public static function amount_rows($result, $value)
+    {
+	if (db::num_rows($result) > $value)
+	{
+	    return True;
+	}
+	else
+	{
+	    return False;
+	}
+    }
 }
 
 ?>
