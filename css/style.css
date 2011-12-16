@@ -492,7 +492,7 @@ a.more-link:hover {
    border: 1px solid #261b15;
 	display: block;
 }
-#main .block .blk-top {
+#main .block .blk-top .blk-mid {
 	width: 100%;
 	margin-bottom: 10px;
 	padding-bottom: 2px;
