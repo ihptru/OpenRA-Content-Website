@@ -70,6 +70,27 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
 	    	db::executeQuery($query);
 
+			//conversation_id -1 is a wildcard
+			$query = "CREATE TABLE IF NOT EXISTS pm (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    from_user_id INTEGER NOT NULL,
+			    to_user_id INTEGER NOT NULL,
+			    conversation_id INTEGER NOT NULL DEFAULT -1,
+			    title VARCHAR(200) NOT NULL,
+			    content VARCHAR(5000) NOT NULL,
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+	    	db::executeQuery($query);
+	    	
+	    	//Needs to be fixed
+	    	/*$query = "CREATE TRIGGER IF NOT EXISTS pm_trigger AFTER INSERT ON pm
+	    	FOR EACH ROW BEGIN
+	    	DECLARE cid INTEGER;
+	    	SET cid = SELECT conversation_id FROM pm WHERE uid = new.uid;
+	    	IF cid == -1 THEN
+				UPDATE pm SET conversation_id = new.uid WHERE uid = new.uid;
+			END IF
+	    	END";
+	    	db::executeQuery($query);*/
+
             $query = "CREATE TABLE IF NOT EXISTS maps (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
 			    description VARCHAR(500) NOT NULL,
@@ -87,8 +108,17 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
 
-            //Used on front page
             $query = "CREATE TABLE IF NOT EXISTS articles (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    title VARCHAR(80) NOT NULL,
+			    content VARCHAR(9000) NOT NULL,
+			    image VARCHAR(500) NOT NULL,
+			    user_id INTEGER NOT NULL,
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+            db::executeQuery($query);
+            
+            //Used for example: User create's a map that makes huge success. A entry could be made in this table
+            // it should show a trophy on his profile with some info. (Maybe could be auto generated some how)
+            $query = "CREATE TABLE IF NOT EXISTS trophy (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
 			    content VARCHAR(9000) NOT NULL,
 			    image VARCHAR(500) NOT NULL,
@@ -105,7 +135,6 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
-            //guide_type (modding, mapping, pixel art, utilities,..) each should have different images
             $query = "CREATE TABLE IF NOT EXISTS guides (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
 			    html_content VARCHAR(9000) NOT NULL,
@@ -114,11 +143,17 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
-            //Special table for just featured 
             $query = "CREATE TABLE IF NOT EXISTS featured (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    table_name VARCHAR(80) NOT NULL,
 			    id INTEGER NOT NULL,
 			    type VARCHAR(80) NOT NULL DEFAULT 'featured',
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+            db::executeQuery($query);
+            
+            $query = "CREATE TABLE IF NOT EXISTS rated (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    table_name VARCHAR(80) NOT NULL,
+			    id INTEGER NOT NULL,
+			    rating INTEGER NOT NULL default 0,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
@@ -127,7 +162,6 @@
 			    title VARCHAR(500) NOT NULL DEFAULT 'none');";
             db::executeQuery($query);
             
-            //Comments made by users on articles
             $query = "CREATE TABLE IF NOT EXISTS comments (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
 			    content VARCHAR(500) NOT NULL,
@@ -142,18 +176,18 @@
 			    email VARCHAR(80) NOT NULL,
 			    hash VARCHAR(500) NOT NULL,
 			    date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-	    db::executeQuery($query);
+			db::executeQuery($query);
             
             $query = "CREATE TABLE IF NOT EXISTS image (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    path VARCHAR(500) NOT NULL,
 			    path_thumb VARCHAR(500) NOT NULL,
 			    description VARCHAR(500) NOT NULL);";
-	    db::executeQuery($query);
+			db::executeQuery($query);
 
             $query = "CREATE TABLE IF NOT EXISTS screenshot_group (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    group_id INTEGER NOT NULL,
 			    image_id INTEGER NOT NULL);";
-	    db::executeQuery($query);
+			db::executeQuery($query);
 
 			$query = "SELECT COUNT(*) as count FROM country";
 	    	$result = db::executeQuery($query);
@@ -223,7 +257,7 @@
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item");
+	    $tables = array("rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item");
 	    $checkNotEmpty = array("country");
 	    foreach ($tables as $table)
 	    {
