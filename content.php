@@ -83,16 +83,17 @@ class content
 	}
 	if ( isset($_GET["fav"]) && isset($_GET["table"]) && isset($_GET["id"]) )
 	{
-		if (user::online())
+	    if (user::online())
 	    {
-			if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
-			{
-				db::executeQuery("DELETE FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = ".user::uid());
-			}
-			else
-			{
-				db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (".user::uid().",'".$_GET["table"]."','".$_GET["id"]."')");
-			}
+		if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
+		{
+		    db::executeQuery("DELETE FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = ".user::uid());
+		}
+		else
+		{
+		    db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (".user::uid().",'".$_GET["table"]."','".$_GET["id"]."')");
+		}
+		header("Location: {$_SERVER['HTTP_REFERER']}");
 	    }
 	}
 	
@@ -627,7 +628,7 @@ class content
 	     	if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())) ) {
 	     		$favIcon = "isFav.png";
 	     	}
-	     	$content .= "<td style='padding: .5em .5em;'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav=yes'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
+	     	$content .= "<td style='padding: .5em .5em;'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
 	     }
 	     $content .= "</tr>";
 	     
@@ -767,7 +768,7 @@ class content
 				$content .= "<tr>";
 				for($row = 0; $row < $columns; $row++)
     				{
-    					$content .= "<td>" . $data[$row] . "</td>";
+    					$content .= "<th>" . $data[$row] . "</th>";
     				}
 				$content .= "</tr>";
 			}
