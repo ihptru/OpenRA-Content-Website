@@ -48,6 +48,8 @@ class content
 	//inlucde multi upload form
 	</script>
 	";
+	echo '<script type="text/javascript" src="libs/password/jquery.js"></script>
+		  <script type="text/javascript" src="libs/password/mocha.js"></script>';
 	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" /></head>";
 	
 	if( isset($_POST['message']))
@@ -203,7 +205,8 @@ class content
 	    ".lang::$lang['registration']."
 	    </b></td></tr><tr><td>
 	    ".lang::$lang['login']."</td><td><input type=\"text\" name=\"rlogin\"></td></tr><tr><td>
-	    ".lang::$lang['password']."</td><td><input type=\"password\" name=\"rpass\"></td></tr><tr><td>
+	    ".lang::$lang['password']."</td><td><input type=\"password\" id=\"inputPassword\" name=\"rpass\">
+	    <div id=\"complexity\" class=\"default\">Password security</div></td></tr><tr><td>
 	    ".lang::$lang['reenter pw']."</td><td><input type=\"password\" name=\"verpass\"></td></tr><tr><td>
 	    E-mail</td><td><input type=\"text\" name=\"email\"></td></tr><tr><td>
 	    <input type=\"hidden\" name=\"act\">

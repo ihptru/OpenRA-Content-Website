@@ -870,3 +870,9 @@ p.thumbs {
 	font-size:10;
 	text-align:center;
 }
+
+.default{background-color: #000000; color: #FFFFFF;}
+.weak{background-color: #992222; color: #FFFFFF;}
+.strong{background-color: #996644; color: #FFFFFF;}
+.stronger{background-color: #46505A; color: #FFFFFF; }
+.strongest{background-color: #335533; color: #FFFFFF;}
