@@ -68,13 +68,13 @@ class content
 	    misc::delete_comment($id, $user);
 	    header("Location: {$_SERVER['HTTP_REFERER']}");
 	}
-	if( isset($_POST['upload_guide_title']) && isset($_POST['upload_guide_text']))
+	if( isset($_POST['upload_guide_title']) && isset($_POST['upload_guide_text']) && isset($_POST['upload_guide_type']))
 	{
 	    if (user::online())
 	    {
-		if (trim($_POST['upload_guide_text']) != "" && trim($_POST['upload_guide_title']) != "")
+		if (trim($_POST['upload_guide_text']) != "" && trim($_POST['upload_guide_title']) != "" && trim($_POST['upload_guide_type'] != ""))
 		{
-		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES ('".$_POST['upload_guide_title']."','".$_POST['upload_guide_text']."','',".user::uid().")");
+		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES ('".$_POST['upload_guide_title']."','".$_POST['upload_guide_text']."','".$_POST['upload_guide_type']."',".user::uid().")");
 		    misc::increase_experiance(50);
 		}
 	    }
@@ -342,7 +342,7 @@ class content
 		    $title = $row["title"];
 		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username["login"] . "</a>";
 		    $text = "";
-		    $imagePath = "";
+		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    break;
 	    }
 	    //Should get these from db
@@ -418,7 +418,7 @@ class content
 		    break;
 		case "guides":
 		    $title = $row["title"];
-		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
+		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    break;
 	    }
 
@@ -513,7 +513,7 @@ class content
 		    break;
 		case "guides":
 		    $title = $row["title"];
-		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
+		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
@@ -589,7 +589,7 @@ class content
 		    break;
 		case "guides":
 		    $title = $row["title"];
-		    $imagePath = ""; //Get one depending on type of guide (There should be pre made icons for different types)
+		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = $row["html_content"];
 		    break;
@@ -1470,6 +1470,14 @@ class profile
 		<label>Title: <input type='text' name='upload_guide_title' /></label>
 		<br />
 		<label>Text: <textarea name='upload_guide_text' cols='40' rows='5'></textarea></label>
+		<br />
+		<select name='upload_guide_type'>
+		<option value='other' selected='selected'>Other</option>
+		<option value='design'>Design (2D/3D)</option>
+		<option value='mapping'>Mapping</option>
+		<option value='modding'>Modding</option>
+		<option value='coding'>Coding</option>
+		</select>
 		<br />
 		<input type=\"submit\" name=\"submit\" value=\"".lang::$lang['upload']."\" />
 		</form>

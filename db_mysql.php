@@ -135,10 +135,11 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
+            //types: other,mapping,modding,design,coding
             $query = "CREATE TABLE IF NOT EXISTS guides (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
 			    html_content VARCHAR(9000) NOT NULL,
-			    guide_type VARCHAR(500) NOT NULL,
+			    guide_type VARCHAR(500) NOT NULL DEFAULT 'other',
 			    user_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
