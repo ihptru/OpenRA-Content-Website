@@ -44,50 +44,75 @@ class ImageHeader:
 		self.RefImage = None;
 
 class Format80:
+    @staticmethod
+    def ReplicatePrevious(dest, destIndex, srcIndex, count ):
+        if srcIndex > destIndex :
+            print "srcIndex > destIndex " + str(srcIndex) + " " + str(destIndex );
+            sys.exit();
+        if destIndex - srcIndex == 1:
+            for i in range(count):
+                dest[ destIndex + i ] = dest[ destIndex - 1 ];
+        else:
+            for i in range(count):
+                dest[ destIndex + i ] = dest[ srcIndex + i ];
+    
 	@staticmethod
 	def DecodeInto(src, dest):
-		var ctx = new FastByteReader(src);
-			int destIndex = 0;
-			while( true ):
-				byte i = ctx.ReadByte();
-				if( ( i & 0x80 ) == 0 ):
-					#case 2
-					byte secondByte = ctx.ReadByte();
-					int count = ( ( i & 0x70 ) >> 4 ) + 3;
-					int rpos = ( ( i & 0xf ) << 8 ) + secondByte;
-					ReplicatePrevious( dest, destIndex, destIndex - rpos, count );
-					destIndex += count;
-				elif ( ( i & 0x40 ) == 0 ):
-					#case 1
-					int count = i & 0x3F;
-					if( count == 0 )
-						return destIndex;
-					ctx.CopyTo( dest, destIndex, count );
-					destIndex += count;
-				else:
-					int count3 = i & 0x3F;
-					if count3 == 0x3E:
-						#case 4
-						int count = ctx.ReadWord();
-						byte color = ctx.ReadByte();
-						for( int end = destIndex + count ; destIndex < end ; destIndex++ )
-							dest[ destIndex ] = color;
-					elif count3 == 0x3F:
-						#case 5
-						int count = ctx.ReadWord();
-						int srcIndex = ctx.ReadWord();
-						if srcIndex >= destIndex:
-							throw new NotImplementedException( string.Format( "srcIndex >= destIndex  {0}  {1}", srcIndex, destIndex ) );
-						for( int end = destIndex + count ; destIndex < end ; destIndex++ )
-							dest[ destIndex ] = dest[ srcIndex++ ];
-					else:
-						#case 3
-						int count = count3 + 3;
-						int srcIndex = ctx.ReadWord();
-						if srcIndex >= destIndex:
-							throw new NotImplementedException( string.Format( "srcIndex >= destIndex  {0}  {1}", srcIndex, destIndex ) );
-						for( int end = destIndex + count ; destIndex < end ; destIndex++ )
-							dest[ destIndex ] = dest[ srcIndex++ ];
+		ctx = src;
+        destIndex = 0;
+        while( 1 == 1 ):
+            i = Bytes2Int1(ctx);
+            if( ( i & 0x80 ) == 0 ):
+                #case 2
+                secondByte = Bytes2Int1(ctx);
+                count = ( ( i & 0x70 ) >> 4 ) + 3;
+                rpos = ( ( i & 0xf ) << 8 ) + secondByte;
+                ReplicatePrevious( dest, destIndex, destIndex - rpos, count );
+                destIndex += count;
+            elif ( ( i & 0x40 ) == 0 ):
+                #case 1
+                count = i & 0x3F;
+                if count == 0:
+                    return destIndex;
+                #ctx.CopyTo( dest, destIndex, count );
+                destIndex += count;
+            else:
+                count3 = i & 0x3F;
+                if count3 == 0x3E:
+                    #case 4
+                    count = Bytes2Int4(ctx);
+                    color = Bytes2Int1(ctx);
+                    end = destIndex + count
+                    start = end - destIndex
+                    for x in range(start,end):
+                        dest[ destIndex ] = color;
+                        destIndex = destIndex + 1;
+                elif count3 == 0x3F:
+                    #case 5
+                    count = Bytes2Int4(ctx);
+                    srcIndex = Bytes2Int4(ctx);
+                    if srcIndex >= destIndex:
+                        print "srcIndex >= destIndex }" + str(srcIndex) + " " + str(destIndex);
+                        sys.exit();
+                    end = destIndex + count;
+                    start = end - destIndex;
+                    for x in range(start,end):
+                        dest[ destIndex ] = dest[ srcIndex ];
+                        srcIndex = srcIndex + 1;
+                        destIndex = destIndex + 1;
+                else:
+                    #case 3
+                    count = count3 + 3;
+                    srcIndex = Bytes2Int4(ctx);
+                    if srcIndex >= destIndex:
+                        print "srcIndex >= destIndex }" + str(srcIndex) + " " + str(destIndex);
+                        sys.exit();
+                    end = destIndex + count;
+                    start = end - destIndex;
+                    for x in range(start,end):
+                        dest[ destIndex ] = dest[ srcIndex ];
+                        srcIndex = srcIndex + 1;
+                        destIndex = destIndex + 1;
 
 class SHPReader:
 	recurseDepth = 0;
@@ -95,11 +120,19 @@ class SHPReader:
 	Width = 0;
 	Height = 0;
 	ImageCount = 0;
-	def CopyImageData(self, baseImage)
-		imageData = [self.Width * self.Height];
-		for i = range(Width * Height)
-			imageData[i] = baseImage[i];
-		return imageData;
+	def CopyImageData(self, baseImage):
+		if baseImage != None:
+			imageData = [self.Width * self.Height];
+			for i in range(self.Width * self.Height):
+				imageData[i] = baseImage[i];
+			return imageData;
+		return None;
+	def ReadCompressedData(stream, h):
+		stream.Position = h.Offset;
+		compressedLength = stream.Length - stream.Position;
+		compressedBytes = new byte[ compressedLength ];
+		stream.Read( compressedBytes, 0, compressedLength );
+		return compressedBytes;
 	def Decompress(self, stream, h):
 		if self.recurseDepth > self.ImageCount:
 			print "Format20/40 headers contain infinite loop";
@@ -111,16 +144,20 @@ class SHPReader:
 						self.recurseDepth = self.recurseDepth + 1;
 						self.Decompress( stream, h.RefImage );
 						self.recurseDepth = self.recurseDepth - 1;
-				h.Image = CopyImageData( h.RefImage.Image );
+				if h.RefImage == None:
+					h.Image = self.CopyImageData( None );
+				else:
+					h.Image = self.CopyImageData( h.RefImage.Image );
 				#Format40.DecodeInto(ReadCompressedData(stream, h), h.Image);
 				print "32 or 64"
 			elif h.Format == 128:
 				imageBytes = [ Width * Height ];
-				#Format80.DecodeInto( ReadCompressedData( stream, h ), imageBytes );
+				Format80.DecodeInto( ReadCompressedData( stream, h ), imageBytes );
 				h.Image = imageBytes;
 				print "128"
 			else:
 				print "invalid data - " + str(h.Format);
+
 	def __init__(self, bytes):
 		self.ImageCount = Bytes2Int4(bytes)
 		Bytes2Int4(bytes)
