@@ -35,68 +35,100 @@ class ImageHeader:
 	Image = [];
 	SizeOnDisk = 8;
 	def __init__(self, bytes):
-		self.Offset = Bytes2Int4(bytes)
+		self.Offset = Bytes2Int4(bytes.read(4))
 		self.Format = self.Offset;
 		#>> 24;
 		self.Offset &= 0xFFFFFF;
-		self.RefOffset = Bytes2Int4(bytes)
-		self.RefFormat = Bytes2Int4(bytes)
+		self.RefOffset = Bytes2Int4(bytes.read(4))
+		self.RefFormat = Bytes2Int4(bytes.read(4))
 		self.RefImage = None;
 
 class Format40:
 	@staticmethod
 	def DecodeInto(src, dest):
+			print "DecodeInto"
 			ctx = src;
+			ctx2 = ""
+			for i in range(len(ctx)):
+				ctx2 = ctx2 + str(ctx[i])
+			ctx = ctx2
+			if dest == None:
+				dest = {};
+			else:
+				back_dest = dest;
+				dest = {};
+				for i in range(len(li)):
+					dest[i] = back_dest[i];
 			destIndex = 0;
 			while( 1 == 1 ):
 				print "Format40 - len: " + str(len(ctx));
 				#print "Format40 - content: " + str(ctx)
-				print "before"
-				i = Bytes2Int1(ctx);
-				print "after"
+				i = Bytes2Int1(ctx.read(1));
+				print "i: " + str(i)
+				print "len: " + str(len(ctx))
 				if( ( i & 0x80 ) == 0 ):
 					count = i & 0x7F;
 					if( count == 0 ):
+						print "case 6"
 						#case 6
-						count = Bytes2Int1(ctx);
-						value = Bytes2Int1(ctx);
+						count = Bytes2Int1(ctx.read(1));
+						value = Bytes2Int1(ctx.read(1));
+						start = destIndex
 						end = destIndex + count
-						start = end - destIndex
 						for x in range(start,end):
+							if not destIndex in dest.keys():
+								dest[destIndex] = 0;
 							dest[ destIndex ] ^= value;
 							destIndex = destIndex + 1;
 					else:
 						#case 5
+						print "case 5"
+						print "destindex: " + str(destIndex)
+						#for( int end = destIndex + count ; destIndex < end ; destIndex++ )
+						start = destIndex
 						end = destIndex + count
-						start = end - destIndex
 						for x in range(start,end):
-							dest[destIndex] ^= Bytes2Int1(ctx);
+							if not destIndex in dest.keys():
+								dest[destIndex] = 0;
+							dest[destIndex] ^= Bytes2Int1(ctx.read(1));
+							destIndex = destIndex + 1;
 				else:
 					count = i & 0x7F;
 					if( count == 0 ):
-						count = Bytes2Int4(ctx);
+						count = Bytes2Int4(ctx.read(4));
 						if( count == 0 ):
+							print "RETURN!!"
 							return destIndex;
 						if( ( count & 0x8000 ) == 0 ):
 							# case 2
+							print "case 2"
 							destIndex += ( count & 0x7FFF );
 						elif( ( count & 0x4000 ) == 0 ):
 							# case 3
+							print "case 3"
+							start = destIndex
 							end = destIndex + (count & 0x3FFF );
 							start = end - destIndex;
 							for x in range(start,end):
-								dest[destIndex] ^= Bytes2Int1(ctx);
+								if not destIndex in dest.keys():
+									dest[destIndex] = 0;
+								dest[destIndex] ^= Bytes2Int1(ctx.read(1));
 								destIndex = destIndex + 1;
 						else:
 							# case 4
-							value = Bytes2Int1(ctx);
+							print "case 4"
+							value = Bytes2Int1(ctx.read(1));
+							start = destIndex
 							end = destIndex + (count & 0x3FFF );
 							start = end - destIndex;
 							for x in range(start,end):
+								if not destIndex in dest.keys():
+									dest[destIndex] = 0;
 								dest[ destIndex ] ^= value;
 								destIndex = destIndex + 1;
 					else:
 						# case 1
+						print "case 1"
 						destIndex += count;
 
 class Format80:
@@ -111,16 +143,15 @@ class Format80:
         else:
             for i in range(count):
                 dest[ destIndex + i ] = dest[ srcIndex + i ];
-    
 	@staticmethod
 	def DecodeInto(src, dest):
 		ctx = src;
         destIndex = 0;
         while( 1 == 1 ):
-            i = Bytes2Int1(ctx);
+            i = Bytes2Int1(ctx.read(1));
             if( ( i & 0x80 ) == 0 ):
                 #case 2
-                secondByte = Bytes2Int1(ctx);
+                secondByte = Bytes2Int1(ctx.read(1));
                 count = ( ( i & 0x70 ) >> 4 ) + 3;
                 rpos = ( ( i & 0xf ) << 8 ) + secondByte;
                 ReplicatePrevious( dest, destIndex, destIndex - rpos, count );
@@ -136,39 +167,45 @@ class Format80:
                 count3 = i & 0x3F;
                 if count3 == 0x3E:
                     #case 4
-                    count = Bytes2Int4(ctx);
-                    color = Bytes2Int1(ctx);
-                    end = destIndex + count
-                    start = end - destIndex
-                    for x in range(start,end):
-                        dest[ destIndex ] = color;
-                        destIndex = destIndex + 1;
+					count = Bytes2Int4(ctx.read(4));
+					color = Bytes2Int1(ctx.read(1));
+					start = destIndex
+					end = destIndex + count
+					for x in range(start,end):
+						if not destIndex in dest.keys():
+							dest[destIndex] = 0;
+						dest[ destIndex ] = color;
+						destIndex = destIndex + 1;
                 elif count3 == 0x3F:
                     #case 5
-                    count = Bytes2Int4(ctx);
-                    srcIndex = Bytes2Int4(ctx);
-                    if srcIndex >= destIndex:
-                        print "srcIndex >= destIndex }" + str(srcIndex) + " " + str(destIndex);
-                        sys.exit();
-                    end = destIndex + count;
-                    start = end - destIndex;
-                    for x in range(start,end):
-                        dest[ destIndex ] = dest[ srcIndex ];
-                        srcIndex = srcIndex + 1;
-                        destIndex = destIndex + 1;
+					count = Bytes2Int4(ctx.read(4));
+					srcIndex = Bytes2Int4(ctx.read(4));
+					if srcIndex >= destIndex:
+						print "srcIndex >= destIndex }" + str(srcIndex) + " " + str(destIndex);
+						sys.exit();
+					start = destIndex
+					end = destIndex + count
+					for x in range(start,end):
+						if not destIndex in dest.keys():
+							dest[destIndex] = 0;
+						dest[ destIndex ] = dest[ srcIndex ];
+						srcIndex = srcIndex + 1;
+						destIndex = destIndex + 1;
                 else:
                     #case 3
-                    count = count3 + 3;
-                    srcIndex = Bytes2Int4(ctx);
-                    if srcIndex >= destIndex:
-                        print "srcIndex >= destIndex }" + str(srcIndex) + " " + str(destIndex);
-                        sys.exit();
-                    end = destIndex + count;
-                    start = end - destIndex;
-                    for x in range(start,end):
-                        dest[ destIndex ] = dest[ srcIndex ];
-                        srcIndex = srcIndex + 1;
-                        destIndex = destIndex + 1;
+					count = count3 + 3;
+					srcIndex = Bytes2Int4(ctx.read(4));
+					if srcIndex >= destIndex:
+						print "srcIndex >= destIndex }" + str(srcIndex) + " " + str(destIndex);
+						sys.exit();
+					start = destIndex
+					end = destIndex + count
+					for x in range(start,end):
+						if not destIndex in dest.keys():
+							dest[destIndex] = 0;
+						dest[ destIndex ] = dest[ srcIndex ];
+						srcIndex = srcIndex + 1;
+						destIndex = destIndex + 1;
 
 class SHPReader:
 	recurseDepth = 0;
@@ -187,11 +224,11 @@ class SHPReader:
 		pos = h.Offset;
 		compressedLength = len(stream) - pos;
 		compressedBytes = [ compressedLength ];
+		compressedBytes.extend(stream[:compressedLength]);
+		stream = stream[compressedLength:];
 		print "ReadCompressedData - compressedLength: " + str(compressedLength)
 		print "ReadCompressedData - compressedBytes: " + str(len(compressedBytes))
 		print "ReadCompressedData - pos: " + str(pos)
-		compressedBytes.extend(stream[:compressedLength]);
-		stream = stream[compressedLength:];
 		return compressedBytes;
 	def Decompress(self, stream, h):
 		if self.recurseDepth > self.ImageCount:
@@ -208,23 +245,23 @@ class SHPReader:
 					h.Image = self.CopyImageData( None );
 				else:
 					h.Image = self.CopyImageData( h.RefImage.Image );
+				print "Format40 - DecodeInto"
 				Format40.DecodeInto(self.ReadCompressedData(stream, h), h.Image);
-				print "32 or 64"
 			elif h.Format == 128:
-				imageBytes = [ Width * Height ];
+				imageBytes = [ self.Width * self.Height ];
+				print "Format80 - DecodeInto"
 				Format80.DecodeInto( self.ReadCompressedData( stream, h ), imageBytes );
 				h.Image = imageBytes;
-				print "128"
 			else:
 				print "invalid data - " + str(h.Format);
 
 	def __init__(self, bytes):
-		self.ImageCount = Bytes2Int4(bytes)
-		Bytes2Int4(bytes)
-		Bytes2Int4(bytes)
-		self.Width = Bytes2Int4(bytes)
-		self.Height = Bytes2Int4(bytes)
-		Bytes2Int4(bytes)
+		self.ImageCount = Bytes2Int4(bytes.read(4))
+		Bytes2Int4(bytes.read(4))
+		Bytes2Int4(bytes.read(4))
+		self.Width = Bytes2Int4(bytes.read(4))
+		self.Height = Bytes2Int4(bytes.read(4))
+		Bytes2Int4(bytes.read(4))
 		print "ImageCount: " + str(self.ImageCount)
 		print "Width: " + str(self.Width)
 		print "Height: " + str(self.Height)
@@ -244,9 +281,8 @@ class SHPReader:
 			#	if !offsets.TryGetValue( h.RefOffset, out h.RefImage ):
 			#		throw new InvalidDataException( string.Format( "Reference doesnt point to image data {0}->{1}", h.Offset, h.RefOffset ) );
 		for i in range(len(self.headers)):
-			print self.headers[i]
 			self.Decompress(bytes, self.headers[i]);
-			print self.headers[i]
 			
-bytes = io.open("test.shp","rb").read()
+bin = io.open("test.shp","rb").read()
+bytes = io.BytesIO(bin);
 reader = SHPReader(bytes);
