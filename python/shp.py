@@ -43,6 +43,59 @@ class ImageHeader:
 		self.RefFormat = Bytes2Int4(bytes)
 		self.RefImage = None;
 
+class Format40:
+	@staticmethod
+	def DecodeInto(src, dest):
+			ctx = src;
+			destIndex = 0;
+			while( 1 == 1 ):
+				print "Format40 - len: " + str(len(ctx));
+				i = Bytes2Int1(ctx);
+				if( ( i & 0x80 ) == 0 ):
+					count = i & 0x7F;
+					if( count == 0 ):
+						#case 6
+						count = Bytes2Int1(ctx);
+						value = Bytes2Int1(ctx);
+						end = destIndex + count
+						start = end - destIndex
+						for x in range(start,end):
+							dest[ destIndex ] ^= value;
+							destIndex = destIndex + 1;
+					else:
+						#case 5
+						end = destIndex + count
+						start = end - destIndex
+						for x in range(start,end):
+							dest[destIndex] ^= Bytes2Int1(ctx);
+				else:
+					count = i & 0x7F;
+					if( count == 0 ):
+						count = Bytes2Int4(ctx);
+						if( count == 0 ):
+							return destIndex;
+						if( ( count & 0x8000 ) == 0 ):
+							# case 2
+							destIndex += ( count & 0x7FFF );
+						elif( ( count & 0x4000 ) == 0 ):
+							# case 3
+							end = destIndex + (count & 0x3FFF );
+							start = end - destIndex;
+							for x in range(start,end):
+								dest[destIndex] ^= Bytes2Int1(ctx);
+								destIndex = destIndex + 1;
+						else:
+							# case 4
+							value = Bytes2Int1(ctx);
+							end = destIndex + (count & 0x3FFF );
+							start = end - destIndex;
+							for x in range(start,end):
+								dest[ destIndex ] ^= value;
+								destIndex = destIndex + 1;
+					else:
+						# case 1
+						destIndex += count;
+
 class Format80:
     @staticmethod
     def ReplicatePrevious(dest, destIndex, srcIndex, count ):
@@ -127,11 +180,15 @@ class SHPReader:
 				imageData[i] = baseImage[i];
 			return imageData;
 		return None;
-	def ReadCompressedData(stream, h):
-		stream.Position = h.Offset;
-		compressedLength = stream.Length - stream.Position;
-		compressedBytes = new byte[ compressedLength ];
-		stream.Read( compressedBytes, 0, compressedLength );
+	def ReadCompressedData(self, stream, h):
+		pos = h.Offset;
+		compressedLength = len(stream) - pos;
+		compressedBytes = [ compressedLength ];
+		print "ReadCompressedData - compressedLength: " + str(compressedLength)
+		print "ReadCompressedData - compressedBytes: " + str(len(compressedBytes))
+		print "ReadCompressedData - pos: " + str(pos)
+		compressedBytes.extend(stream[:compressedLength]);
+		stream = stream[compressedLength:];
 		return compressedBytes;
 	def Decompress(self, stream, h):
 		if self.recurseDepth > self.ImageCount:
@@ -148,11 +205,11 @@ class SHPReader:
 					h.Image = self.CopyImageData( None );
 				else:
 					h.Image = self.CopyImageData( h.RefImage.Image );
-				#Format40.DecodeInto(ReadCompressedData(stream, h), h.Image);
+				Format40.DecodeInto(self.ReadCompressedData(stream, h), h.Image);
 				print "32 or 64"
 			elif h.Format == 128:
 				imageBytes = [ Width * Height ];
-				Format80.DecodeInto( ReadCompressedData( stream, h ), imageBytes );
+				Format80.DecodeInto( self.ReadCompressedData( stream, h ), imageBytes );
 				h.Image = imageBytes;
 				print "128"
 			else:
