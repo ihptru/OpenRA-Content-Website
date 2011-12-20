@@ -37,8 +37,8 @@ class ImageHeader:
 	def __init__(self, bytes):
 		self.Offset = Bytes2Int4(bytes)
 		self.Format = self.Offset;
-		#Offset >> 24;
-		self.Offset = 16777215;
+		#>> 24;
+		self.Offset &= 0xFFFFFF;
 		self.RefOffset = Bytes2Int4(bytes)
 		self.RefFormat = Bytes2Int4(bytes)
 		self.RefImage = None;
@@ -50,7 +50,10 @@ class Format40:
 			destIndex = 0;
 			while( 1 == 1 ):
 				print "Format40 - len: " + str(len(ctx));
+				#print "Format40 - content: " + str(ctx)
+				print "before"
 				i = Bytes2Int1(ctx);
+				print "after"
 				if( ( i & 0x80 ) == 0 ):
 					count = i & 0x7F;
 					if( count == 0 ):
