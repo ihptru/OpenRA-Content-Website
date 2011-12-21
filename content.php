@@ -1499,7 +1499,7 @@ class profile
 	    return;
     	
 	echo "Preview (Will only be updated if JavaScript is enabled):";
-	$arr = array("title" => "", "html_content" => "", "posted" => date("F d, Y"), "guide_type" => "", "user_id" => "1");
+	$arr = array("title" => "", "html_content" => "", "posted" => date("F d, Y"), "guide_type" => "", "user_id" => user::uid());
 	echo content::displayItem($arr,"guides",true);
 	
     	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
