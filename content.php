@@ -611,7 +611,7 @@ class content
 		    $content .= "<div class='post'>";
 		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";
 		    $content .= "<p class='post-info'>Posted by <a href='index.php?p=profile&profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a></p>";
-		    $content .= "<div id='id_display_text'>" . $text . "</div>";
+		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    $content .= "<span class='date'>".$row["posted"]."</span>";
 		    $content .= "</p>";
@@ -624,9 +624,9 @@ class content
 		    $text = strip_tags($row["content"], $allow);
 		    
 		    $content .= "<div class='post'>";
-		    $content .= "<h2>" . strip_tags($row["title"]) . "</h2>";
+		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";
 		    $content .= "<p class='post-info'>Posted by <a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a></p>";
-		    $content .= $text;
+		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    $content .= "<span class='date'>".$row["posted"]."</span>";
 		    $content .= "</p>";
@@ -1505,9 +1505,9 @@ class profile
     	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
 		<label>Upload guide:</label>
 		<br />
-		<label>Title: <input id='id_guide_title' type='text' name='upload_guide_title' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>
+		<label>Title: <input id='id_guide_title' type='text' name='upload_guide_title' onkeyup='updateContent(\"id_display_title\",\"id_guide_title\");' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>
 		<br />
-		<label>Text: <textarea id='id_guide_text' name='upload_guide_text' cols='40' rows='5' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<p><table><br><i><b><tr><td><img><a>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<p><table><br><i><b><tr><td><img><a>\");'></textarea></label>
+		<label>Text: <textarea id='id_guide_text' name='upload_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<p><table><br><i><b><tr><td><img><a>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<p><table><br><i><b><tr><td><img><a>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<p><table><br><i><b><tr><td><img><a>\");'></textarea></label>
 		<br />
 		<select name='upload_guide_type'>
 		<option value='other' selected='selected'>Other</option>
