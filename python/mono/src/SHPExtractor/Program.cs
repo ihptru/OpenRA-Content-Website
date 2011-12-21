@@ -23,7 +23,14 @@ namespace SHPExtractor
                 var shp = new ShpReader(s);
                 var palette = new Palette(FileSystem.Open("temperat.pal"), true);
 
-                var frame = shp[0];
+				// assume that it has 32 sides
+				// we want the SHP/Actor/Unit on a angle instead of facing north
+				int frames = shp.ImageCount;
+				while(frames > 32)
+					frames -= 32;
+				int frameToUse = (int)((float)frames / 100.0 * 37.5);
+
+                var frame = shp[frameToUse];
                 var bitmap = new Bitmap(shp.Width, shp.Height, PixelFormat.Format8bppIndexed);
                 bitmap.Palette = palette.AsSystemPalette();
                 var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),

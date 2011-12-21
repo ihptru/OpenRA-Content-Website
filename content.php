@@ -47,6 +47,9 @@ class content
 	<script src='libs/multifile.js'>
 	//inlucde multi upload form
 	</script>
+	<script src='libs/strip_tags.js'>
+	//inlucde strip_tags function
+	</script>
 	";
 	echo '<script type="text/javascript" src="libs/password/jquery.js"></script>
 		  <script type="text/javascript" src="libs/password/mocha.js"></script>';
@@ -313,13 +316,8 @@ class content
 	    $text = "";
 	    $imagePath = "";
 	    $t = "";
-
-	    //$table = db::getTableNameFrom($row); //not sure at all if this works (not tested)
 	    if($table == "featured")
 	    {
-		//Get row for featured post
-		// Why have a featured table when you can use maps/units/guides/.. ?
-		// Answer: In featured you can combine different elements if you wish (maps and units)
 		$table_item = $row["table_name"];
 		$t = $row["type"];
 		$res = db::executeQuery("SELECT * FROM " . $table_item . " WHERE uid = " . $row["id"]);
@@ -329,7 +327,6 @@ class content
 	    }
 	    switch($table_item)
 	    {
-		//Set title, image
 		case "maps":
 		    $title = $row["title"];
 		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username["login"] . "</a>";
@@ -383,8 +380,9 @@ class content
 
     public static function create_grid($result, $table = "maps")
     {
-	$columns = 4; //dynamic based on table?
-	$rows = 4;
+	//Setup\\
+	$columns = 4;	//Amount of columns
+	$rows = 4;	//Amount of rows (before starting paging)
 	$counter = 0;
 	$columns--;
 	$maxItemsPerPage = ($columns+1) * $rows;
@@ -561,12 +559,26 @@ class content
 	return $content;
     }
     
-    public static function displayItem($result, $table)
+    public static function displayItem($result, $table, $resultNotQuery = false)
     {
     	$content = "";
- 
-    	while ($row = db::nextRowFromQuery($result))
-		{
+	$flag = false;
+	
+    	while (1 == 1)
+	{
+	    if($resultNotQuery == false)
+	    {
+		if($row = db::nextRowFromQuery($result))
+		{ } else { break;}
+	    }
+	    else
+	    {
+		if($flag)
+		    break;
+		else
+		    $flag = true;
+		$row = $result;
+	    }
 
 	    $title = "";
 	    $imagePath = "";
@@ -577,7 +589,7 @@ class content
 	    $usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]));
 	    $user_name = $usr["login"];
 	    
-    	switch($table)
+	    switch($table)
 	    {
 		case "maps":
 		    $title = $row["title"];
@@ -592,20 +604,38 @@ class content
 		    $text = "";
 		    break;
 		case "guides":
-		    $title = $row["title"];
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
-		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
-		    $text = $row["html_content"];
+		    $allow = '<table><tr><td><img><a><b><i><u><p>';
+		    $text = strip_tags($row["html_content"], $allow);
+		    
+		    $content .= "<div class='post'>";
+		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";
+		    $content .= "<p class='post-info'>Posted by <a href='index.php?p=profile&profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a></p>";
+		    $content .= "<div id='id_display_text'>" . $text . "</div>";
+		    $content .= "<p class='postmeta'>";
+		    $content .= "<span class='date'>".$row["posted"]."</span>";
+		    $content .= "</p>";
+		    $content .= "</div>";
+		    return $content;
 		    break;
 		case "articles":
-			$title = $row["title"];
-		    $imagePath = $row["image"]; //Get one depending on type of guide (There should be pre made icons for different types)
-		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
-		    $text = $row["content"];
+		    $imagePath = $row["image"];
+		    $allow = '<table><tr><td><img><a><b><i><u><p>';
+		    $text = strip_tags($row["content"], $allow);
+		    
+		    $content .= "<div class='post'>";
+		    $content .= "<h2>" . strip_tags($row["title"]) . "</h2>";
+		    $content .= "<p class='post-info'>Posted by <a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a></p>";
+		    $content .= $text;
+		    $content .= "<p class='postmeta'>";
+		    $content .= "<span class='date'>".$row["posted"]."</span>";
+		    $content .= "</p>";
+		    $content .= "</div>";
+		    return $content;
 		    break;
 	     }
 	     
-		 $content .= "<table>";
+	    $content .= "<table>";
 	     
 	     if ($row["user_id"] == user::uid())
 		$delete = "Delete ".rtrim($table,"s");
@@ -1468,12 +1498,16 @@ class profile
     	if(!user::online())
 	    return;
     	
+	echo "Preview (Will only be updated if JavaScript is enabled):";
+	$arr = array("title" => "", "html_content" => "", "posted" => date("F d, Y"), "guide_type" => "", "user_id" => "1");
+	echo content::displayItem($arr,"guides",true);
+	
     	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
 		<label>Upload guide:</label>
 		<br />
-		<label>Title: <input type='text' name='upload_guide_title' /></label>
+		<label>Title: <input id='id_guide_title' type='text' name='upload_guide_title' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>
 		<br />
-		<label>Text: <textarea name='upload_guide_text' cols='40' rows='5'></textarea></label>
+		<label>Text: <textarea id='id_guide_text' name='upload_guide_text' cols='40' rows='5' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<p><table><br><i><b><tr><td><img><a>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<p><table><br><i><b><tr><td><img><a>\");'></textarea></label>
 		<br />
 		<select name='upload_guide_type'>
 		<option value='other' selected='selected'>Other</option>
