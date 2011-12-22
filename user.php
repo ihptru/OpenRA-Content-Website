@@ -5,16 +5,80 @@ class user
     // user online?
     public static function online()
     {
-	if (isset($_SESSION['user_id']))
+	if (misc::check_cookie_enabled())
 	{
-	    return True;
+	    if(isset($_COOKIE["remember"]))
+	    {
+		$cookie_hash = $_COOKIE["remember"];
+		
+		$query = "SELECT * FROM signed_in WHERE sess_hash = '".$cookie_hash."'";
+		$result = db::executeQuery($query);
+		if (db::num_rows($result) == 0)
+		{
+		    //cookie is set but hashes do not match: probably faking user's identities
+		    setcookie("remember", "", time()-60*60, "/");	//destroy cookie var
+		    return False;
+		}
+		$row = db::nextRowFromQuery($result);
+		$db_hash = $row["sess_hash"];
+		$user_id = $row["user_id"];
+		if (isset($_SESSION["sess_id"]))
+		{
+		    //user could still have not expired session
+		    if ($_SESSION["sess_id"] == $db_hash)
+		    {
+			return True;
+		    }
+		    else
+		    {
+			//probably faking user's identities
+			return False;
+		    }
+		}
+		else
+		{
+		    $current_session_id = session_id();
+		    //update values in db and in cookie
+		    setcookie("remember", $current_session_id, time()+3600*24*360, "/");
+		    
+		    $query = "UPDATE signed_in SET sess_hash = '".$current_session_id."' WHERE user_id = ".$user_id;
+		    
+		    $_SESSION["sess_id"] = $current_session_id;
+		    $_SESSION["user_id"] = $user_id;
+		    return True;
+		}
+	    }
+	}
+	
+	if (isset($_SESSION['sess_id']))
+	{
+	    $sess_id = $_SESSION["sess_id"];
+	    $user_id = $_SESSION["user_id"];
+
+	    $query = "SELECT * FROM signed_in WHERE user_id = ".$user_id;
+	    $result = db::executeQuery($query);
+	    if (db::num_rows($result) == 0)
+	    {
+		session_destroy();	//tried to fake user's identities
+		return False;
+	    }
+	    $row = db::nextRowFromQuery($result);
+	    if ($row["sess_hash"] == $sess_id)
+	    {
+		return True;
+	    }
+	    else
+	    {
+		session_destroy();	// user_id matches but session_id is wrong: probably tried to fake user's identities
+		return False;
+	    }
 	}
     }
 
     // uid of current client
     public static function uid()
     {
-	if (isset($_SESSION['user_id']))
+	if (user::online())
 	{
 	    return $_SESSION['user_id'];
 	}
@@ -27,7 +91,7 @@ class user
     // get username of current client
     public static function username()
     {
-	if (isset($_SESSION['user_id']))
+	if (user::online())
 	{
 	    $query = "SELECT login FROM users WHERE uid = " . $_SESSION['user_id'];
 	    $result = db::executeQuery($query);
@@ -38,7 +102,7 @@ class user
 	}
 	else
 	{
-	    return "";	// if somehow this function is run by some hacker which is not logged in
+	    return "";	// if somehow this function is run by some faker which is not logged in
 	}
     }
 
@@ -49,7 +113,20 @@ class user
 	{
 	    if (user::online())
 	    {
+		//remove from cookie if user is remembered
+		if (isset($_COOKIE["remember"]))
+		{
+		    //destroy cookie var
+		    setcookie("remember", "", time()-60*60, "/");
+		}
+		//remove from db
+		$query = "DELETE FROM signed_in WHERE user_id = ".user::uid();
+		db::executeQuery($query);
+		//unset session vars
 		unset($_SESSION['user_id']);
+		unset($_SESSION['sess_id']);
+
+		session_destroy();	//after redirect user will get a new session ID
 		header("Location: /");
 	    }
 	}
@@ -58,6 +135,10 @@ class user
     // is always executed to check login action
     public static function login()
     {
+	if (user::online())
+	{
+	    return;	//is signed in
+	}
 	if (isset($_POST['login']) && isset($_POST['pass']))
 	{
 	    if (!empty($_POST['login']) && !empty($_POST['pass']))
@@ -78,7 +159,36 @@ class user
 		}
 		if( $pass == $db_pass )		//hashes match
 		{
-		    $_SESSION['user_id'] = $user_id;	//start session
+		    $sess_hash = session_id();
+		    $query = "SELECT * FROM signed_in WHERE user_id = ".$user_id;
+		    $result = db::executeQuery($query);
+		    if (db::num_rows($result) == 0)
+		    {
+			$query = "INSERT INTO signed_in
+				VALUES
+				(
+				".$user_id.",'".$sess_hash."'
+				)";
+			db::executeQuery($query);
+		    }
+		    else
+		    {
+			$query = "UPDATE signed_in
+				    SET sess_hash = '".$sess_hash."'
+				    WHERE user_id = ".$user_id;
+			db::executeQuery($query);
+		    }
+		    
+		    $_SESSION['sess_id'] = $sess_hash;	//start session
+		    $_SESSION['user_id'] = $user_id;
+		    
+		    if ($_POST["remember"] == "yes")
+		    {
+			if (misc::check_cookie_enabled())
+			{
+			    setcookie("remember", $sess_hash, time()+3600*24*360, "/");
+			}
+		    }
 		    header("Location: /index.php?p=profile");
 		}
 	    }

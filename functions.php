@@ -181,6 +181,8 @@ class pages
     
     public static function cur_lang($lang)
     {
+	if (!isset($_COOKIE['language']))
+	    return "";
 	if ($lang == $_COOKIE['language'])
 	{
 	    return "underline_link";
@@ -304,6 +306,18 @@ class misc
 	else
 	{
 	    return False;
+	}
+    }
+    
+    public static function check_cookie_enabled()
+    {
+	if (isset($_COOKIE["language"]))
+	{
+	    return true;
+	}
+	else
+	{
+	    return false;
 	}
     }
 }

@@ -38,59 +38,52 @@
 
         public static function setup()
         {
-	    	$query = "CREATE TABLE IF NOT EXISTS activation (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	    $query = "CREATE TABLE IF NOT EXISTS activation (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    pass VARCHAR(80) NOT NULL,
 			    login VARCHAR(80) NOT NULL,
 			    email VARCHAR(80) NOT NULL,
 			    register_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			    hash VARCHAR(500) NOT NULL);";
-	    	db::executeQuery($query);
+	    db::executeQuery($query);
 
-            $query = "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	    $query = "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    pass VARCHAR(80) NOT NULL,
 			    login VARCHAR(80) NOT NULL,
 			    experiance INTEGER NOT NULL DEFAULT 0,
 			    gender INTEGER NOT NULL DEFAULT 1,
 			    permission INTEGER NOT NULL DEFAULT 0,
-				occupation VARCHAR(80) NOT NULL,
-				interests VARCHAR(500) NOT NULL,
-				real_name VARCHAR(200) NOT NULL,
-				fav_faction VARCHAR(80) NOT NULL DEFAULT 'random',
-				country VARCHAR(200) NOT NULL DEFAULT 'None',
-				birth_date DATE,
+			    occupation VARCHAR(80) NOT NULL,
+			    interests VARCHAR(500) NOT NULL,
+			    real_name VARCHAR(200) NOT NULL,
+			    fav_faction VARCHAR(80) NOT NULL DEFAULT 'random',
+			    country VARCHAR(200) NOT NULL DEFAULT 'None',
+			    birth_date DATE,
 			    email VARCHAR(80) NOT NULL,
 			    avatar VARCHAR(500) NOT NULL DEFAULT 'None',
 			    register_date TIMESTAMP NOT NULL);";
             db::executeQuery($query);
             
+	    $query = "CREATE TABLE IF NOT EXISTS signed_in (user_id INTEGER PRIMARY KEY NOT NULL,
+			    sess_hash VARCHAR(80) NOT NULL);";
+	    db::executeQuery($query);
+
             $query = "CREATE TABLE IF NOT EXISTS fav_item (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    user_id INTEGER NOT NULL,
 			    table_name VARCHAR(80) NOT NULL,
 			    table_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-	    	db::executeQuery($query);
+	    db::executeQuery($query);
 
-			//conversation_id -1 is a wildcard
-			$query = "CREATE TABLE IF NOT EXISTS pm (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	    //conversation_id -1 is a wildcard
+	    $query = "CREATE TABLE IF NOT EXISTS pm (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    from_user_id INTEGER NOT NULL,
 			    to_user_id INTEGER NOT NULL,
 			    conversation_id INTEGER NOT NULL DEFAULT -1,
 			    title VARCHAR(200) NOT NULL,
 			    content VARCHAR(5000) NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-	    	db::executeQuery($query);
+	    db::executeQuery($query);
 	    	
-	    	//Needs to be fixed
-	    	/*$query = "CREATE TRIGGER IF NOT EXISTS pm_trigger AFTER INSERT ON pm
-	    	FOR EACH ROW BEGIN
-	    	DECLARE cid INTEGER;
-	    	SET cid = SELECT conversation_id FROM pm WHERE uid = new.uid;
-	    	IF cid == -1 THEN
-				UPDATE pm SET conversation_id = new.uid WHERE uid = new.uid;
-			END IF
-	    	END";
-	    	db::executeQuery($query);*/
-
             $query = "CREATE TABLE IF NOT EXISTS maps (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
 			    description VARCHAR(500) NOT NULL,
@@ -195,25 +188,25 @@
             $query = "CREATE TABLE IF NOT EXISTS screenshot_group (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    group_id INTEGER NOT NULL,
 			    image_id INTEGER NOT NULL);";
-			db::executeQuery($query);
+	    db::executeQuery($query);
 
-			$query = "SELECT COUNT(*) as count FROM country";
-	    	$result = db::executeQuery($query);
-	    	$item = db::nextRowFromQuery($result);
-	    	if($item["count"]==0)
-	    	{
-	    		//Get all countries
-	    		$files = scandir("images/country_flags/");
-				foreach($files as $key => $value)
-					if($value != "" && $value != "." && $value != "..")
-					{
-						$name = $value;
-						$title = str_replace("-"," ",substr($value,0,strlen($value)-4));
-						$title = str_replace("(","",$title);
-						$title = str_replace(")","",$title);
-						db::executeQuery("INSERT INTO country (name, title) VALUES ('".$name."','".$title."')");
-					}
-	    	}
+	    $query = "SELECT COUNT(*) as count FROM country";
+	    $result = db::executeQuery($query);
+	    $item = db::nextRowFromQuery($result);
+	    if($item["count"]==0)
+	    {
+		//Get all countries
+		$files = scandir("images/country_flags/");
+		foreach($files as $key => $value)
+		    if($value != "" && $value != "." && $value != "..")
+		    {
+			$name = $value;
+			$title = str_replace("-"," ",substr($value,0,strlen($value)-4));
+			$title = str_replace("(","",$title);
+			$title = str_replace(")","",$title);
+			db::executeQuery("INSERT INTO country (name, title) VALUES ('".$name."','".$title."')");
+		    }
+	    }
 
         }
         
@@ -248,16 +241,16 @@
                                AND table_name = '$tablename'
                                ");
                                
-        	if(!$emptyIsOK && mysql_result($res,0) == 1)
-        	{
-        		$query = "SELECT COUNT(*) as count FROM " . $tablename;
-	    		$result = db::executeQuery($query);
-	    		$item = db::nextRowFromQuery($result);
-	    		if($item["count"]==0)
-	    		{
-	    			$allSystemsGo = false;
-	    		}
-        	}
+	    if(!$emptyIsOK && mysql_result($res,0) == 1)
+	    {
+		$query = "SELECT COUNT(*) as count FROM " . $tablename;
+		$result = db::executeQuery($query);
+		$item = db::nextRowFromQuery($result);
+		if($item["count"]==0)
+		{
+		    $allSystemsGo = false;
+		}
+	    }
                                
             return mysql_result($res, 0) == 1;
         }
@@ -265,25 +258,24 @@
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item");
+	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item","signed_in");
 	    $checkNotEmpty = array("country");
 	    foreach ($tables as $table)
 	    {
 	    	$checkHasContent = false;
 	    	foreach ($checkNotEmpty as $empty)
 	    	{
-	    		if($empty == $table)
-	    		{
-	    			$checkHasContent = true;
-	    			break;
-	    		}
+		    if($empty == $table)
+		    {
+			$checkHasContent = true;
+			break;
+		    }
 	    	}
 	    	if($checkHasContent == true)
-				if(!db::table_exists($table,false))
-		    		$allSystemsGo = false;
-		    else
-		    	if(!db::table_exists($table))
-		    		$allSystemsGo = false;
+		    if(!db::table_exists($table,false))
+			$allSystemsGo = false;
+		if(!db::table_exists($table))
+		    $allSystemsGo = false;
 	    }
 
             return $allSystemsGo;

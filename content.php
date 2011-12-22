@@ -145,7 +145,6 @@ class content
 		<!-- / id='login_form' -->
 		</div>
 		<div id=\"register_link\">
-		    <input style=\"position:absolute; right: 130px; top: 15px;\" type=\"checkbox\" name=\"remember\" value=\"yes\" checked title=\"".lang::$lang['remember me']."\">
 		    <a href=\"index.php?register\">".lang::$lang['register']."</a>
 		</div>
 		<div id=\"recover_link\">
@@ -183,6 +182,7 @@ class content
 	echo "<form method=\"POST\" action=\"\">
 	    ".lang::$lang['login'].": <input type=\"text\" name=\"login\">
 	    ".lang::$lang['password'].": <input type=\"password\" name=\"pass\">
+	    <input style=\"position:absolute; right: 130px; top: 15px;\" type=\"checkbox\" name=\"remember\" value=\"yes\" checked title=\"".lang::$lang['remember me']."\">
 	    <input type=\"submit\" value=\"".lang::$lang['sign in']."\">
 	    <br>
 	    </form>
