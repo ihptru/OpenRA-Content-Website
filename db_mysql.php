@@ -153,8 +153,15 @@
             
             $query = "CREATE TABLE IF NOT EXISTS rated (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    table_name VARCHAR(80) NOT NULL,
-			    id INTEGER NOT NULL,
+			    table_id INTEGER NOT NULL,
 			    rating INTEGER NOT NULL default 0,
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+            db::executeQuery($query);
+	    
+	    $query = "CREATE TABLE IF NOT EXISTS reported (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    table_name VARCHAR(80) NOT NULL,
+			    table_id INTEGER NOT NULL,
+			    user_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
@@ -258,7 +265,7 @@
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item");
+	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item");
 	    $checkNotEmpty = array("country");
 	    foreach ($tables as $table)
 	    {

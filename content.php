@@ -84,19 +84,29 @@ class content
 		}
 	    }
 	}
-	if ( isset($_GET["fav"]) && isset($_GET["table"]) && isset($_GET["id"]) )
+	if ( isset($_GET["table"]) && isset($_GET["id"]) )
 	{
 	    if (user::online())
 	    {
-		if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
+		if(isset($_GET["fav"]))
 		{
-		    db::executeQuery("DELETE FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = ".user::uid());
+		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
+		    {
+			db::executeQuery("DELETE FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = ".user::uid());
+		    }
+		    else
+		    {
+			db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (".user::uid().",'".$_GET["table"]."','".$_GET["id"]."')");
+		    }
+		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
-		else
+		else if(isset($_GET["report"]))
 		{
-		    db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (".user::uid().",'".$_GET["table"]."','".$_GET["id"]."')");
+		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
+		    { } else {
+			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id) VALUES ('".$_GET["table"]."', ".$_GET["id"].", ".user::uid() . ")");
+		    }
 		}
-		header("Location: {$_SERVER['HTTP_REFERER']}");
 	    }
 	}
 	
@@ -589,10 +599,27 @@ class content
 	    $usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]));
 	    $user_name = $usr["login"];
 	    
+	    $reported = "";
 	    if ($row["user_id"] == user::uid())
 	    {
 		$delete = "Delete ".rtrim($table,"s");
 		$delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".rtrim($table,"s")."\")'>".$delete."</a>";
+	    }
+	    else
+	    {
+		if(db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())))
+		{
+		    $reported = "You already reported this item";
+		}
+		else
+		{
+		    if(user::online())
+			$reported = "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&report'>Report Item</a>";
+		}
+	    }
+	    $favIcon = "notFav.png";
+	    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())) ) {
+		$favIcon = "isFav.png";
 	    }
 	    
 	    switch($table)
@@ -619,6 +646,8 @@ class content
 		    $content .= "<p class='post-info'>Posted by <a href='index.php?p=profile&profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
+		    if($reported != "")
+			$content .= $reported . " | ";
 		    if($delete != "")
 			$content .= $delete . " | ";
 		    $content .= "<span class='date'>".$row["posted"]."</span>";
@@ -661,10 +690,6 @@ class content
 	     
 	     if(user::online())
 	     {
-	     	$favIcon = "notFav.png";
-	     	if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())) ) {
-	     		$favIcon = "isFav.png";
-	     	}
 	     	$content .= "<td style='padding: .5em .5em;'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
 	     }
 	     $content .= "</tr>";
