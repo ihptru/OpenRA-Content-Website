@@ -589,6 +589,12 @@ class content
 	    $usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]));
 	    $user_name = $usr["login"];
 	    
+	    if ($row["user_id"] == user::uid())
+	    {
+		$delete = "Delete ".rtrim($table,"s");
+		$delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".rtrim($table,"s")."\")'>".$delete."</a>";
+	    }
+	    
 	    switch($table)
 	    {
 		case "maps":
@@ -613,6 +619,8 @@ class content
 		    $content .= "<p class='post-info'>Posted by <a href='index.php?p=profile&profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
+		    if($delete != "")
+			$content .= $delete . " | ";
 		    $content .= "<span class='date'>".$row["posted"]."</span>";
 		    $content .= "</p>";
 		    $content .= "</div>";
@@ -628,6 +636,8 @@ class content
 		    $content .= "<p class='post-info'>Posted by <a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
+		    if($delete != "")
+			$content .= $delete . " | ";
 		    $content .= "<span class='date'>".$row["posted"]."</span>";
 		    $content .= "</p>";
 		    $content .= "</div>";
@@ -635,11 +645,8 @@ class content
 		    break;
 	     }
 	     
-	    $content .= "<table>";
+	     $content .= "<table>";
 	     
-	     if ($row["user_id"] == user::uid())
-		$delete = "Delete ".rtrim($table,"s");
-
 	     if($imagePath != "")
 	     {
 	     	$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
@@ -671,7 +678,7 @@ class content
 	     
 	     if($table == "maps")
 	     {
-			$mapfile = basename($row["path"]) . ".oramap";
+		$mapfile = basename($row["path"]) . ".oramap";
 	     	$download = $row["path"] . $mapfile;
 	     	$content .= '<tr><td><a href="'.$download.'">Download</a></tr></td>';
 	     }
@@ -680,19 +687,19 @@ class content
 	     	$content .= "<tr><td>Description: " . strip_tags($row["description"]) . "</td></tr>";
 	     	$content .= "<tr><td><br>Files (click to download):";
 	     	$directory = "users/".$user_name."/units/".$title."/";
-			$shapes = glob($directory . "*.*");
-			foreach($shapes as $shape)
-			{
-				$content .= "<br><a href='".$shape."'>".basename($shape)."</a>";
-			}
-			$content .= "</td></tr>";
+		$shapes = glob($directory . "*.*");
+		foreach($shapes as $shape)
+		{
+		    $content .= "<br><a href='".$shape."'>".basename($shape)."</a>";
+		}
+		$content .= "</td></tr>";
 	     }
 	     
 	     if ($delete != "")
-		 	$content .= "<tr><td><a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".rtrim($table,"s")."\")'>".$delete."</a></td></tr>";
+		$content .= "<tr><td>".$delete."</td></tr>";
 	     
 	     $content .= "</table>";
-	     }
+	}
 	return $content;
     }
 
