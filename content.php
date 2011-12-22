@@ -602,8 +602,11 @@ class content
 	    $reported = "";
 	    if ($row["user_id"] == user::uid())
 	    {
-		$delete = "Delete ".rtrim($table,"s");
-		$delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".rtrim($table,"s")."\")'>".$delete."</a>";
+		if(isset($row["uid"]))
+		{
+		    $delete = "Delete ".rtrim($table,"s");
+		    $delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".rtrim($table,"s")."\")'>".$delete."</a>";
+		}
 	    }
 	    else
 	    {
@@ -617,11 +620,13 @@ class content
 			$reported = "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&report'>Report Item</a>";
 		}
 	    }
-	    $favIcon = "notFav.png";
-	    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())) ) {
-		$favIcon = "isFav.png";
+	    if(isset($row["uid"]))
+	    {
+		$favIcon = "notFav.png";
+		if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())) ) {
+		    $favIcon = "isFav.png";
+		}
 	    }
-	    
 	    switch($table)
 	    {
 		case "maps":
