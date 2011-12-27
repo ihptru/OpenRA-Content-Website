@@ -49,7 +49,7 @@ class lang
 	    'profile'		=> "Profile",
 	    'logout'		=> "Logout",
 	    
-	    'map exists'	=> "This map already exists",
+	    'map not uploaded'	=> "Map was not uploaded",
 	    'recent events' 	=> "Recent Events",
 	    'upload'		=> "Upload",
 	    'choose map upload' => "Choose a map file to upload",

@@ -20,22 +20,15 @@ class upload
 		return "";	// that's not a map file (map file must have `oramap` extention)
 	    }
 	    $path = WEBSITE_PATH . "users/" . $username . "/maps/" . $name[0];
-	    if (is_dir($path))
-	    {
-		return "Map with such name already exists";
-	    }
-	    mkdir($path);
 	    $target_path = $path . "/" . $filename;
-	    if(move_uploaded_file($source, $target_path))
+
+	    exec("python python/ml.py -f " . str_replace(" ", "\ ", $source) . " -u " . user::uid()) . " -t " . str_replace(" ", "\ ", $target_path);
+	    if (!is_dir($path))
 	    {
-		exec("python python/ml.py -f " . str_replace(" ", "\ ", $target_path) . " -u " . user::uid());
-		misc::increase_experiance(10);
-		return $filename;
+		return "error";
 	    }
-	    else
-	    {
-		return "";	// no idea why map could not be uploaded...
-	    }
+	    misc::increase_experiance(10);
+	    return $filename;
 	}
 	else
 	{

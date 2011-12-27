@@ -4,57 +4,6 @@ class content
 {
     public static function head()
     {
-	echo "<html><head><title>";
-	echo lang::$lang['website_name'];
-	echo "</title>";
-
-	//include highslide (image viewer)
-	echo "<script type='text/javascript' src='highslide/highslide-with-gallery.js'></script>
-	    <link rel='stylesheet' type='text/css' href='highslide/highslide.css' />
-	    <script type='text/javascript'>
-	    hs.graphicsDir = '../highslide/graphics/';
-	    hs.align = 'center';
-	    hs.transitions = ['expand', 'crossfade'];
-	    hs.outlineType = 'glossy-dark';
-	    hs.wrapperClassName = 'dark';
-	    hs.fadeInOut = true;
-
-	    // Add the controlbar
-	    if (hs.addSlideshow) hs.addSlideshow({
-	    //slideshowGroup: 'group1',
-	    interval: 5000,
-	    repeat: false,
-	    useControls: true,
-	    fixedControls: 'fit',
-	    overlayOptions: {
-	    opacity: .6,
-	    position: 'bottom center',
-	    hideOnMouseOut: true
-	    }
-	    });
-	    </script>
-	";
-	echo "<script type='text/javascript'>
-	function confirmDelete(item)
-	{
-	    var agree=confirm('Are you sure you want to delete this '+item+'?');
-	    if (agree)
-	    return true ;
-	    else
-	    return false ;
-	}
-	</script>
-	<script src='libs/multifile.js'>
-	//inlucde multi upload form
-	</script>
-	<script src='libs/strip_tags.js'>
-	//inlucde strip_tags function
-	</script>
-	";
-	echo '<script type="text/javascript" src="libs/password/jquery.js"></script>
-		  <script type="text/javascript" src="libs/password/mocha.js"></script>';
-	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" /></head>";
-	
 	if( isset($_POST['message']))
 	{
 	    if (user::online())
@@ -118,7 +67,57 @@ class content
 	    misc::delete_item($item_id, $table_name, $user_id);	//delete item and comments related to it
 	    header("Location: /");
 	}
-	
+
+	echo "<html><head><title>";
+	echo lang::$lang['website_name'];
+	echo "</title>";
+
+	//include highslide (image viewer)
+	echo "<script type='text/javascript' src='highslide/highslide-with-gallery.js'></script>
+	    <link rel='stylesheet' type='text/css' href='highslide/highslide.css' />
+	    <script type='text/javascript'>
+	    hs.graphicsDir = '../highslide/graphics/';
+	    hs.align = 'center';
+	    hs.transitions = ['expand', 'crossfade'];
+	    hs.outlineType = 'glossy-dark';
+	    hs.wrapperClassName = 'dark';
+	    hs.fadeInOut = true;
+
+	    // Add the controlbar
+	    if (hs.addSlideshow) hs.addSlideshow({
+	    //slideshowGroup: 'group1',
+	    interval: 5000,
+	    repeat: false,
+	    useControls: true,
+	    fixedControls: 'fit',
+	    overlayOptions: {
+	    opacity: .6,
+	    position: 'bottom center',
+	    hideOnMouseOut: true
+	    }
+	    });
+	    </script>
+	";
+	echo "<script type='text/javascript'>
+	function confirmDelete(item)
+	{
+	    var agree=confirm('Are you sure you want to delete this '+item+'?');
+	    if (agree)
+	    return true ;
+	    else
+	    return false ;
+	}
+	</script>
+	<script src='libs/multifile.js'>
+	//inlucde multi upload form
+	</script>
+	<script src='libs/strip_tags.js'>
+	//inlucde strip_tags function
+	</script>
+	";
+	echo '<script type="text/javascript" src="libs/password/jquery.js"></script>
+		  <script type="text/javascript" src="libs/password/mocha.js"></script>';
+	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" /></head>";
     }
 		
     public static function body_head()
@@ -180,7 +179,7 @@ class content
 	echo "<form method=\"POST\" action=\"\">
 	    ".lang::$lang['login'].": <input type=\"text\" name=\"login\">
 	    ".lang::$lang['password'].": <input type=\"password\" name=\"pass\">
-	    <input style=\"position:absolute; right: 130px; top: 15px;\" type=\"checkbox\" name=\"remember\" value=\"yes\" checked title=\"".lang::$lang['remember me']."\">
+	    <input style=\"position:absolute; right: -25px; top: 15px;\" type=\"checkbox\" name=\"remember\" value=\"yes\" checked title=\"".lang::$lang['remember me']."\">
 	    <input type=\"submit\" value=\"".lang::$lang['sign in']."\">
 	    <br>
 	    </form>
@@ -1514,9 +1513,9 @@ class profile
 	$uploaded = upload::upload_oramap($username);
 	if ($uploaded != "")
 	{
-	    if ($uploaded == "exists")
+	    if ($uploaded == "error")
 	    {
-		echo lang::$lang['map exists'];
+		echo lang::$lang['map not uploaded'];
 	    }
 	    else
 	    {

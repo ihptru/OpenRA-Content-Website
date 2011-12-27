@@ -8,14 +8,15 @@ import os;
 import getopt;
 import MySQLdb;
 import hashlib;
+import shutil
 
-WEBSITE_PATH = "/home/oramod/www/"  #with / at the end
+WEBSITE_PATH = os.getcwd() + os.sep
 
 # Check if path exist
-# -f <filepath> -u <user_id>
+# -f <source file> -u <user_id> -t <destination file>
 
 try:
-    optlist,  args = getopt.getopt(sys.argv[1:], 'u:f:')
+    optlist,  args = getopt.getopt(sys.argv[1:], 'u:f:t:')
 except getopt.GetoptError, err:
     print err
     exit()
@@ -26,13 +27,23 @@ if optlist == []:
 
 for  i in range(len(optlist)):
     if optlist[i][0] == "-f":
-        mapfile = optlist[i][1]
+        source = optlist[i][1]
     if optlist[i][0] == "-u":
         uid = optlist[i][1]
+    if optlist[i][0] == "-t":
+        mapfile = optlist[i][1]
 
 file = os.path.basename(mapfile)
 path = os.path.dirname(mapfile) + os.sep
 db_path = path.split(WEBSITE_PATH)[1]
+
+try:
+    os.mkdir(path)
+except OSError as e:
+    if e.args[0]==17: #Directory already exists = map already exists
+        exit()
+
+shutil.move(source, mapfile)    #File was uploaded into tmp dir and must be moved into right place
 
 print "Path: " + mapfile
 if not os.path.isfile(mapfile):
@@ -70,6 +81,7 @@ MapType = "";
 MapBounds = "";
 MapDesc = "";
 MapPlayers = 0;
+MapDefaultRace = "";
 
 # 1 byte
 def Bytes2Int1(data):
@@ -111,6 +123,8 @@ def init2Dlist(w,h):
         ll.append(l)
     return ll
 
+foundDefaultRace = False
+
 for line in string.split(yamlData, '\n'):
     if line[0:5] == "Title":
         MapTitle = strFixer(line[6:]);
@@ -130,6 +144,12 @@ for line in string.split(yamlData, '\n'):
         state = line.split(':')[1]
         if state.strip().lower() in ['true', 'on', 'yes', 'y']:
             MapPlayers += 1
+    if line.strip()[0:5] == "Race:":
+        if foundDefaultRace == False:
+            foundDefaultRace = True
+        else:
+            continue
+        MapDefaultRace = line.strip()[6:]
 
 #Take map bounds
 MapBounds = strFixer(MapBounds)
@@ -160,7 +180,7 @@ if not Bytes2Int1(b.read(1)) == 1:
     exit()
 
 formatOK = 0
-if MapMod == "ra":
+if MapMod == "ra" or MapMod == "":
     if MapTileset == "temperat":
         formatOK = 1
     if MapTileset == "snow":
@@ -177,6 +197,12 @@ if MapMod == "cnc":
 if formatOK == 0:
     print "Error: Unknown mod"
     exit()
+
+if MapMod == "" and MapTileset  == "temperat":
+    if MapDefaultRace == "allies":
+        MapMod = "ra"
+    else:
+        MapMod = "cnc"
 
 print "Generating minimap..."
 
@@ -367,6 +393,8 @@ for x in range(Left,Right+Left):
                 if c == "":
                     c = c = templates[i].list[0].type
                     # accually error but we save it for now
+                    print "type: " + str(templates[i].list[0].type)
+                    print "c: " + c
                 for j in range(len(terrTypes)):
                     if terrTypes[j].type == c:
                         color = bmp.Color(terrTypes[j].r,terrTypes[j].g,terrTypes[j].b)
