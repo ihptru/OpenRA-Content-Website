@@ -15,22 +15,38 @@ namespace SHPExtractor
     {
         static void Main(string[] args)
         {
-            var image = "test";
-            string[] e = { ".shp" };
+            int frameIndex = 0;
+            string filename = "";
+            int uid = 0;
+            OptionSet o = new OptionSet()
+                .Add ("filename=|f=", v => filename = v)
+                .Add("u=|uid=", v => uid = Convert.ToInt32(v))
+                .Add("frame=", v => frameIndex = Convert.ToInt32(v));
+            o.Parse(args);
+
+            string file = System.IO.Path.GetFileNameWithoutExtension(filename);
+            string path = System.IO.Path.GetDirectoryName(filename);
+
+            Console.WriteLine("Filename: " + filename);
+            Console.WriteLine("UID: " + uid.ToString());
+            Console.WriteLine("Frame: " + frameIndex.ToString());
+
+            Console.WriteLine("File: " + file);
+            Console.WriteLine("Path: " + path);
+            Console.WriteLine("Output: " + path + System.IO.Path.DirectorySeparatorChar + "preview.bmp");
+
+            var image = file + ".shp";
+            FileSystem.Mount(path);
             FileSystem.Mount(".");
-            using (var s = FileSystem.OpenWithExts(image, e))
+            using (var s = FileSystem.Open(image))
             {
                 var shp = new ShpReader(s);
                 var palette = new Palette(FileSystem.Open("temperat.pal"), true);
 
-				// assume that it has 32 sides
-				// we want the SHP/Actor/Unit on a angle instead of facing north
-				int frames = shp.ImageCount;
-				while(frames > 32)
-					frames -= 32;
-				int frameToUse = (int)((float)frames / 100.0 * 37.5);
+                if (frameIndex > shp.ImageCount)
+                    frameIndex = shp.ImageCount;
 
-                var frame = shp[frameToUse];
+                var frame = shp[frameIndex];
                 var bitmap = new Bitmap(shp.Width, shp.Height, PixelFormat.Format8bppIndexed);
                 bitmap.Palette = palette.AsSystemPalette();
                 var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
@@ -47,7 +63,7 @@ namespace SHPExtractor
                 }
 
                 bitmap.UnlockBits(data);
-                bitmap.Save("preview.bmp");
+                bitmap.Save(path + System.IO.Path.DirectorySeparatorChar + "preview.bmp");
             }
         }
     }
