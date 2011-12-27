@@ -65,7 +65,7 @@ class content
 	    $table_name = $_GET['del_item_table'];
 	    $user_id = $_GET['del_item_user'];
 	    misc::delete_item($item_id, $table_name, $user_id);	//delete item and comments related to it
-	    header("Location: /");
+	    header("Location: /index.php?p=$table_name");
 	}
 
 	echo "<html><head><title>";
