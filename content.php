@@ -327,7 +327,7 @@ class content
 	    {
 		$table_item = $row["table_name"];
 		$t = $row["type"];
-		$res = db::executeQuery("SELECT * FROM " . $table_item . " WHERE uid = " . $row["id"]);
+		$res = db::executeQuery("SELECT * FROM " . $table_item . " WHERE uid = " . $row["table_id"]);
 		$row = db::nextRowFromQuery($res);
 		$res = db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]);
 		$username = db::nextRowFromQuery($res);

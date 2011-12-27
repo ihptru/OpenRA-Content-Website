@@ -20,13 +20,13 @@ content::head();
 	if (count($_GET) == 0)
 	{
 	    $query = "SELECT
-			table_name, table_id AS id, 'people' as type
+			table_name, table_id, 'people' as type
 		      FROM fav_item
 		  WHERE table_name <> 'articles'
                   GROUP BY table_name,table_id
 		  HAVING (COUNT(table_name) > 1) 
 		UNION ALL
-		  SELECT table_name,id,type FROM featured
+		  SELECT table_name,table_id,type FROM featured
 
 		  ORDER BY RAND() LIMIT 1
 	    ";
