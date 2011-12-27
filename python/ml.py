@@ -8,7 +8,7 @@ import os;
 import getopt;
 import MySQLdb;
 import hashlib;
-import shutil
+import shutil;
 
 WEBSITE_PATH = os.getcwd() + os.sep
 
@@ -81,7 +81,7 @@ MapType = "";
 MapBounds = "";
 MapDesc = "";
 MapPlayers = 0;
-MapDefaultRace = "";
+MapDefaultRace = [];
 
 # 1 byte
 def Bytes2Int1(data):
@@ -123,21 +123,19 @@ def init2Dlist(w,h):
         ll.append(l)
     return ll
 
-foundDefaultRace = False
-
 for line in string.split(yamlData, '\n'):
     if line[0:5] == "Title":
-        MapTitle = strFixer(line[6:]);
+        MapTitle = strFixer(line[6:]).replace("'", "''");
     if line[0:11] == "RequiresMod":
         MapMod = strFixer(line[12:]).lower();
     if line[0:6] == "Author":
-        MapAuthor = strFixer(line[7:]);
+        MapAuthor = strFixer(line[7:]).replace("'", "''");
     if line[0:7] == "Tileset":
         MapTileset = strFixer(line[8:]).lower();
     if line[0:4] == "Type":
         MapType = strFixer(line[5:]);
     if line[0:11] == "Description":
-        MapDesc = strFixer(line[12:]);
+        MapDesc = strFixer(line[12:]).replace("'", "''");
     if line[0:6] == "Bounds":
         MapBounds = strFixer(line[7:]);
     if line.strip()[0:8] == "Playable":
@@ -145,11 +143,7 @@ for line in string.split(yamlData, '\n'):
         if state.strip().lower() in ['true', 'on', 'yes', 'y']:
             MapPlayers += 1
     if line.strip()[0:5] == "Race:":
-        if foundDefaultRace == False:
-            foundDefaultRace = True
-        else:
-            continue
-        MapDefaultRace = line.strip()[6:]
+        MapDefaultRace.append(line.strip()[6:].lower())
 
 #Take map bounds
 MapBounds = strFixer(MapBounds)
@@ -180,7 +174,7 @@ if not Bytes2Int1(b.read(1)) == 1:
     exit()
 
 formatOK = 0
-if MapMod == "ra" or MapMod == "":
+if MapMod == "ra":
     if MapTileset == "temperat":
         formatOK = 1
     if MapTileset == "snow":
@@ -194,15 +188,29 @@ if MapMod == "cnc":
         formatOK = 1
     if MapTileset == "winter":
         formatOK = 1
+if MapMod == "":
+    if MapTileset == "snow":
+        formatOK = 1
+        MapMod = "ra"
+    if MapTileset == "interior":
+        formatOK = 1
+        MapMod = "ra"
+    if MapTileset == "desert":
+        formatOK = 1
+        MapMod = "cnc"
+    if MapTileset == "winter":
+        formatOK = 1
+        MapMod = "cnc"
+    if MapTileset == "temperat":
+        if "gdi" not in MapDefaultRace and "nod" not in MapDefaultRace:
+            MapMod = "ra"
+        else:
+            MapMod = "cnc"
+        formatOK = 1
+
 if formatOK == 0:
     print "Error: Unknown mod"
     exit()
-
-if MapMod == "" and MapTileset  == "temperat":
-    if MapDefaultRace == "allies":
-        MapMod = "ra"
-    else:
-        MapMod = "cnc"
 
 print "Generating minimap..."
 
@@ -393,8 +401,6 @@ for x in range(Left,Right+Left):
                 if c == "":
                     c = c = templates[i].list[0].type
                     # accually error but we save it for now
-                    print "type: " + str(templates[i].list[0].type)
-                    print "c: " + c
                 for j in range(len(terrTypes)):
                     if terrTypes[j].type == c:
                         color = bmp.Color(terrTypes[j].r,terrTypes[j].g,terrTypes[j].b)

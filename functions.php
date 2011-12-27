@@ -22,7 +22,7 @@ class upload
 	    $path = WEBSITE_PATH . "users/" . $username . "/maps/" . $name[0];
 	    $target_path = $path . "/" . $filename;
 
-	    exec("python python/ml.py -f " . str_replace(" ", "\ ", $source) . " -u " . user::uid()) . " -t " . str_replace(" ", "\ ", $target_path);
+	    exec("python python/ml.py -f " . str_replace(" ", "\ ", $source) . " -u " . user::uid() . " -t " . str_replace(" ", "\ ", $target_path));
 	    if (!is_dir($path))
 	    {
 		return "error";
