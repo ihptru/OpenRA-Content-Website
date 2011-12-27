@@ -37,8 +37,10 @@ class user
 		}
 		else
 		{
+		    //session is not set: expired; but `remember` in COOKIE is set
 		    $current_session_id = session_id();
 		    //update values in db and in cookie
+		    //we can not have same hash forever so change it in DB and in COOKIE when user is back after session was expired
 		    setcookie("remember", $current_session_id, time()+3600*24*360, "/");
 		    
 		    $query = "UPDATE signed_in SET sess_hash = '".$current_session_id."' WHERE user_id = ".$user_id;
@@ -49,12 +51,13 @@ class user
 		}
 	    }
 	}
-	
+	//remember me option was not set
 	if (isset($_SESSION['sess_id']))
 	{
 	    $sess_id = $_SESSION["sess_id"];
 	    $user_id = $_SESSION["user_id"];
 
+	    //session is set: record in `signed_in` table must exist
 	    $query = "SELECT * FROM signed_in WHERE user_id = ".$user_id;
 	    $result = db::executeQuery($query);
 	    if (db::num_rows($result) == 0)

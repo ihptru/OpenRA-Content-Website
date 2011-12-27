@@ -123,8 +123,6 @@ class content
 		
     public static function body_head()
     {
-	user::check_logout();
-	user::login();
 	echo "
 	    <div id='header'>
 		<a name='top'></a>

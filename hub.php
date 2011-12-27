@@ -69,4 +69,9 @@ if(isset($_GET['lang']))
 require_once("languages/".USER_LANGUAGE.".php");
 ################################################
 
+###
+user::check_logout();
+user::login();
+###
+
 ?>
