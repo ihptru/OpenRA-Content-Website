@@ -123,6 +123,7 @@
 			    title VARCHAR(80) NOT NULL,
 			    description VARCHAR(500) NOT NULL,
 			    preview_image VARCHAR(500) NOT NULL,
+			    type VARCHAR(80) NOT NULL DEFAULT 'other',
 			    user_id INTEGER NOT NULL,
 			    screenshot_group_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";

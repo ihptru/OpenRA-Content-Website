@@ -38,18 +38,21 @@ class upload
     
     public static function upload_unit($username)
     {
-	function insert_unit($dirname,$description)
+	function insert_unit($dirname,$description,$type)
 	{
 	    $query = "INSERT INTO units
-		(title,description,preview_image,user_id,screenshot_group_id)
+		(title,description,preview_image,user_id,screenshot_group_id,type)
 		VALUES
 		(
-		'".$dirname."','".$description."','0',".user::uid().",0
+		'".$dirname."','".$description."','0',".user::uid().",'".$type."'
 		)
 		";
 	    db::executeQuery($query);
 	    misc::increase_experiance(50);
 	}
+	$frame = 0; //Needed for shp extractor
+	if(isset($_POST['unit_frame']))
+	    $frame = $_POST['unit_frame'];
 	$count = 0;
 	$messages = "";
 	while (isset($_FILES["file_".$count]))
@@ -64,9 +67,11 @@ class upload
 	    
 	    $description = "";
 	    if (isset($_POST["unit_description"]))
-	    {
 		$description = $_POST["unit_description"];
-	    }
+	    
+	    $unit_type = "other";
+	    if (isset($_POST["unit_type"]))
+		$unit_type = $_POST["unit_type"];
 	    
 	    $source = $_FILES["file_".$count]["tmp_name"];
 	    $type = $_FILES["file_".$count]["type"];
@@ -90,7 +95,7 @@ class upload
 		else
 		{
 		    mkdir($path);
-		    insert_unit($dirname, $description);
+		    insert_unit($dirname, $description, $unit_type);
 		}
 	    }
 	    else
@@ -99,7 +104,7 @@ class upload
 		if (!is_dir($path))
 		{
 		    mkdir($path);
-		    insert_unit($dirname, $description);
+		    insert_unit($dirname, $description, $unit_type);
 		}
 	    }
 	    

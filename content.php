@@ -1565,6 +1565,17 @@ class profile
 	    <label>Uploading unit</label><br><br>
 	    <label>Unit name: </label>
 		<input type='text' name='unit_name'><br>
+	    <label>Unit type:<br></label>
+		<select name='unit_type'>
+		<option value='structure'>Structure</option>
+		<option value='infantry'>Infantry</option>
+		<option value='vehicle'>Vehicle</option>
+		<option value='air-borne'>Air-borne</option>
+		<option value='nature'>Nature</option>
+		<option value='other'>Other</option>
+		</select><br>
+	    <label>Frame (What frame of the unit you want to be displayed as a preview image):</label
+		<input type='text' name='unit_frame'><br>
 	    <label>Unit description:<br> </label>
 		<textarea name='unit_description' cols='40' rows='5'></textarea><br>
 	    <label>Choose unit file:</label><br>
