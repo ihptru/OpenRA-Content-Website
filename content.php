@@ -1526,6 +1526,7 @@ class profile
 	    return;
     	
 	echo "Preview (Will only be updated if JavaScript is enabled):";
+	date_default_timezone_set('Europe/Dublin');
 	$arr = array("title" => "", "html_content" => "", "posted" => date("F d, Y"), "guide_type" => "", "user_id" => user::uid());
 	echo content::displayItem($arr,"guides",true);
 	
