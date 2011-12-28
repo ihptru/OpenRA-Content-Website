@@ -21,16 +21,9 @@ function result()
 	{
 	    if ($_GET["hash"][$i] == "'")
 	    {
+		//someone is probably trying to sql inject
 		return;
 	    }
-	}
-
-	$found = strpos($_GET["hash"], "\'");
-	if ($found === true)
-	{
-	    //someone trying to sql inject
-	    echo "error";
-	    return;
 	}
 	$query = "SELECT * FROM maps WHERE maphash = '".$_GET["hash"]."'
 		ORDER BY uid LIMIT 1
