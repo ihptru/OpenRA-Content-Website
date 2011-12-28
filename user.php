@@ -446,6 +446,13 @@ class user
 	    }
 	}
     }
+    
+    public static function login_by_uid($uid)
+    {
+	$query = "SELECT login FROM users WHERE uid = ".$uid;
+	$row = db::nextRowFromQuery(db::executeQuery($query));
+	return $row["login"];
+    }
 }
 
 ?>

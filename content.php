@@ -73,8 +73,8 @@ class content
 	echo "</title>";
 
 	//include highslide (image viewer)
-	echo "<script type='text/javascript' src='highslide/highslide-with-gallery.js'></script>
-	    <link rel='stylesheet' type='text/css' href='highslide/highslide.css' />
+	echo "<script type='text/javascript' src='libs/highslide/highslide-with-gallery.js'></script>
+	    <link rel='stylesheet' type='text/css' href='libs/highslide/highslide.css' />
 	    <script type='text/javascript'>
 	    hs.graphicsDir = '../highslide/graphics/';
 	    hs.align = 'center';
@@ -148,18 +148,6 @@ class content
 		    <a href=\"index.php?recover\">".lang::$lang['recover']."</a>
 		</div>
 	    ";
-	}
-	if (isset($_GET['p']))
-	{
-	    if ($_GET['p'] == "profile")
-	    {
-		if (user::online())
-		{
-		    echo "<div id=\"profile_bar\">";
-		    profile::profile_bar();
-		    echo "</div>";
-		}
-	    }
 	}
 	echo "<form id='quick-search' action='index.php' method='GET'>
 		<p>
@@ -336,19 +324,19 @@ class content
 	    {
 		case "maps":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username["login"] . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>";
 		    $text = $row["description"];
 		    $imagePath =  $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username["login"] . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>";
 		    $text = "";
 		    $imagePath = $row["preview_image"];
 		    break;
 		case "guides":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username["login"] . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>";
 		    $text = "";
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    break;
@@ -511,25 +499,25 @@ class content
 		case "maps":
 		    $title = $row["title"];
 		    $imagePath = $row["path"] . "minimap.bmp";
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username . "</a>";
 		    $text = $row["description"];
 		    break;
 		case "units":
 		    $title = $row["title"];
 		    $imagePath = "";//$row["preview_image"];
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username . "</a>";
 		    $text = "";
 		    break;
 		case "guides":
 		    $title = $row["title"];
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username . "</a>";
 		    $text = "";
 		    break;
 		case "articles":
 		    $title = $row["title"];
 		    $imagePath = "";
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?p=profile&profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username . "</a>";
 		    $text = "";
 		    break;
 	    }
@@ -626,13 +614,13 @@ class content
 		case "maps":
 		    $title = $row["title"];
 		    $imagePath = $row["path"] . "minimap.bmp";
-		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
 		    $text = $row["description"];
 		    break;
 		case "units":
 		    $title = $row["title"];
 		    $imagePath = "";//$row["preview_image"];
-		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
 		    $text = "";
 		    break;
 		case "guides":
@@ -642,7 +630,7 @@ class content
 		    
 		    $content .= "<div class='post'>";
 		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";
-		    $content .= "<p class='post-info'>Posted by <a href='index.php?p=profile&profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a></p>";
+		    $content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."&p=profile' id='id_display_username'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -661,7 +649,7 @@ class content
 		    
 		    $content .= "<div class='post'>";
 		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";
-		    $content .= "<p class='post-info'>Posted by <a href='index.php?p=profile&profile=".$row["user_id"]."'>". $user_name . "</a></p>";
+		    $content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($delete != "")
@@ -750,12 +738,12 @@ class content
 	    else
 		$content .= "<li class='thread-alt depth-1'>";
 
-	    $avatarImg = misc::avatar($author["avatar"]);
+	    $avatarImg = misc::avatar($author["uid"]);
 		
 	    $content .= "<div class='comment-info'>";			
-	    $content .= "<a href='index.php?p=profile&profile=".$comment["user_id"]."'><img alt='' src='" . $avatarImg . "' class='avatar' height='45' width='45' /></a>";
+	    $content .= "<a href='index.php?profile=".$comment["user_id"]."&p=profile'><img alt='' src='" . $avatarImg . "' style='margin-top:10px; max-width:50' /></a>";
 	    $content .= "<cite>";
-	    $content .= "<a href='index.php?p=profile&profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
+	    $content .= "<a href='index.php?profile=".$comment["user_id"]."&p=profile'>" . $author["login"] . "</a> Says: <br />";
 	    $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
 	    $content .= "</cite>";
 	    $content .= "</div>";
@@ -764,7 +752,7 @@ class content
 	    $content .= "<p>" . strip_tags($comment["content"]) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
-		$content .= "<a style='float: right; margin: -25px 12px 0 0; border: 1px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."' onClick='return confirmDelete(\"comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px;' border='0' /></a>";
+		$content .= "<a style='float: right; margin: -129px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."' onClick='return confirmDelete(\"comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
 	    }
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
@@ -1059,10 +1047,8 @@ class content
 	    	$data = array();
 		while ($row = db::nextRowFromQuery($result))
 		{
-		    $avatar = $row["avatar"];
-		    if ($avatar == "None")
-			$avatar = "images/noavatar.jpg";
-		    array_push($data,"<a href='index.php?p=profile&profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a>");
+		    $avatar = misc::avatar($row["uid"]);
+		    array_push($data,"<a href='index.php?profile=".$row["uid"]."&p=profile'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["uid"]."&p=profile'>".$row["login"]."</a>");
 		}
 		echo content::create_dynamic_list($data,2);
 	    }
@@ -1128,24 +1114,19 @@ class content
 		if (db::num_rows($result) > 0)
 		{
 		    $data = array();
-		    array_push($data,"","This people like ".$faction." faction:");
+		    array_push($data,"","This people like <u>".$faction."</u> faction:");
 		    while ($row = db::nextRowFromQuery($result))
 		    {
-			$avatar = $row["avatar"];
-			if ($avatar == "None")
-			    $avatar = "images/noavatar.jpg";
-			array_push($data,"<a href='index.php?p=profile&profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a>");
+			$avatar = misc::avatar($row["uid"]);
+			array_push($data,"<a href='index.php?profile=".$row["uid"]."&p=profile'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["uid"]."&p=profile'>".$row["login"]."</a>");
 		    }
-		    echo content::create_dynamic_list($data,2);
+		    echo content::create_dynamic_list($data,2,"dyn",10,true,true);
     		}
 		else
 		{
-		    echo "<table>
-			      <tr>
-				  <td>No one likes ".$faction."</td>
-			      </tr>
-			  </table>
-		    ";
+		    $data = array();
+		    array_push($data,"No one likes <u>".$faction."</u> faction");
+		    echo content::create_dynamic_list($data,1,"dyn",1,true,true);
 		}
 	    }
 	}
@@ -1157,7 +1138,7 @@ class content
 		$usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = ".$_GET["favorited_id"]));
     		if (db::num_rows($result) > 0) {
 		    $data = array();
-		    array_push($data,"","<a href='index.php?p=profile&profile=".$_GET["favorited_id"]."'>".$usr["login"]."</a>'s latest favorited items:");
+		    array_push($data,"","<a href='index.php?profile=".$_GET["favorited_id"]."&p=profile'>".$usr["login"]."</a>'s latest favorited items:");
 		    while ($row = db::nextRowFromQuery($result)) {
 			$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
 			if($item) {
@@ -1249,7 +1230,7 @@ class objects
 		$content .= "<br><label>users found:</label>";
 	    	$data = array();
 			while ($row = db::nextRowFromQuery($result))
-		    	array_push($data,"<a href='index.php?p=profile&profile=".$row["uid"]."'>".$row["login"]."</a>");
+		    	array_push($data,"<a href='index.php?profile=".$row["uid"]."&p=profile'>".$row["login"]."</a>");
 		    $content .= content::create_dynamic_list($data,1);
 	    }
 	    if ($content == "")
@@ -1318,16 +1299,23 @@ class profile
     		
     		if($didUpdate)
     			echo "<u>profile updated!</u><br />";
-    		
+		$avatar = upload::avatar();
+		if ($avatar == "type error")
+		{
+		    echo "Image type is not supported!";
+		}
+		elseif ($avatar == "done")
+		{
+		    echo "Avatar is uploaded";
+		}
     		$query = "SELECT * FROM users WHERE uid = " . user::uid();
     		$result = db::executeQuery($query);
     		$usr = db::nextRowFromQuery($result);
     			
-    		echo "<table><tr><td><form action='index.php?p=profile&edit=on' method='post' id='commentform'>";
+    		echo "<table><tr><td><form action='index.php?p=profile&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
 	    	echo "<p>";
 		echo "<label>Change avatar</label><br />";
-		echo "<input type='file' name='avatar'><br />";
-		misc::avatar_actions();
+		echo "<input type='file' name='avatar_upload'><br />";
 	    	echo "<label for='message'>Your occupation</label><br />";
 	    	echo "<input type='text' name='occupation' value='".$usr["occupation"]."'><br />";
 	    	echo "<label for='message'>Your real name</label><br />";
@@ -1386,7 +1374,7 @@ class profile
 	    	echo "<textarea id='interests' name='interests' rows='10' cols='20' tabindex='4'>".$usr["interests"]."</textarea>";
 	    	echo "</p>";
 	    	echo "<p class='no-border'>";
-	    	echo "<input class='button' type='submit' value='Edit' tabindex='5'/>";      		
+	    	echo "<input class='button' type='submit' name'submit' value='Edit' tabindex='5'/>";      		
 	    	echo "</p>";
 	    	echo "</form></td></tr></table>";
     	}
@@ -1477,16 +1465,11 @@ class profile
     
     public static function profile_bar()
     {
-	$query = "SELECT avatar FROM users WHERE uid = " . user::uid();
+	$query = "SELECT uid,avatar,login FROM users WHERE uid = " . user::uid();
 	$result = db::executeQuery($query);
-	while ($db_data = db::fetch_array($result))
-	{
-	    $avatar = $db_data['avatar'];
-	}
-	if ($avatar == "None")
-	{
-	    echo "<img src='images/noavatar.jpg' width='120px'>";
-	}
+	$row = db::nextRowFromQuery($result);
+	$avatar = misc::avatar($row["uid"]);
+	echo "<img src='".$avatar."' style='max-width:120px'>";
     }
 
     public static function upload_map()

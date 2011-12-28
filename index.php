@@ -56,18 +56,57 @@ content::head();
 		
 		<!-- sidebar -->
 		<div id="sidebar">
-		    <? if (user::online())
-		    {
-		    ?>
 		    <div class="sidemenu">
+			<?
+			if (user::online())
+			{
+			    if(isset($_GET["profile"]))
+			    {
+				if ($_GET["profile"] == user::uid())
+				{
+				    $id = user::uid();
+				    $profile = "Your avatar:";
+				}
+				else
+				{
+				    $id = $_GET["profile"];
+				    $profile = user::login_by_uid($id)."'s avatar:";
+				}
+			    }
+			    else
+			    {
+				$id = user::uid();
+				$profile = "Your avatar:";
+			    }
+			    $data = array();
+			    array_push($data,$profile);
+			    array_push($data,"<img src='".misc::avatar($id)."'>");
+			    echo content::create_dynamic_list($data,1,"dyn",2,true,true);
+			}
+			else
+			{
+			    if(isset($_GET["profile"]))
+			    {
+				$id = $_GET["profile"];
+				$profile = user::login_by_uid($id)."'s avatar:";
+				$data = array();
+				array_push($data,$profile);
+				array_push($data,"<img src='".misc::avatar($id)."'>");
+				echo content::create_dynamic_list($data,1,"dyn",2,true,true);
+			    }
+			}
+			
+			?>
+			<? if (user::online())
+			{ ?>
 			<h3><? echo lang::$lang['sidebar menu']; ?></h3>
 			<ul>				
 			    <li><a href="index.php?action=mymaps&p=profile"><? echo "maps"; ?></a></li>
 			    <li><a href="index.php?action=myguides&p=profile"><? echo "guides"; ?></a></li>
 			    <li><a href="index.php?action=myunits&p=profile"><? echo "units"; ?></a></li>
 			</ul>	
+			<? } ?>
 		    </div>
-		    <? } ?>
 		    <h3><? echo lang::$lang['gallery']; ?></h3>
 
 		    <p class="thumbs">

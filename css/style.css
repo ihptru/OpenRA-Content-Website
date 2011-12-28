@@ -108,9 +108,9 @@ th, td {
   	border-style: solid;
 }
 th {
-	background-color: #45561B; 
+	background-color: #561B1B; 
 	padding: .8em 1em;	
-  	border-color: #647C28 #586A22 #43511A #5A6F23;	
+  	border-color: #662B2B #460B0B #360505 #591F1F;
 	font-weight: bold;
 	color: #fff;
 }
@@ -876,3 +876,4 @@ p.thumbs {
 .strong{background-color: #996644; color: #FFFFFF;}
 .stronger{background-color: #46505A; color: #FFFFFF; }
 .strongest{background-color: #335533; color: #FFFFFF;}
+

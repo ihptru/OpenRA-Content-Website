@@ -117,6 +117,30 @@ class upload
 	}
 	return $messages;
     }
+    
+    public static function avatar()
+    {
+	if(isset($_FILES["avatar_upload"]["name"]))
+	{
+	    if (!is_uploaded_file($_FILES["avatar_upload"]["tmp_name"]))
+		return "";
+	    $filename = $_FILES["avatar_upload"]["name"];
+	    $source = $_FILES["avatar_upload"]["tmp_name"];
+	    $type = $_FILES["avatar_upload"]["type"];
+	    $accepted_types = array("image/jpeg","image/png","image/gif","image/bmp","image/x-png");
+	    if(!in_array($type, $accepted_types))
+	    {
+		return "type error";
+	    }
+	    move_uploaded_file($source, "users/".user::username()."/avatar_original.jpg");
+	    misc::imageresize("users/".user::username()."/avatar.jpg","users/".user::username()."/avatar_original.jpg",200,400,100, $type);
+	    unlink("users/".user::username()."/avatar_original.jpg");
+	    $query = "UPDATE users SET avatar = 'Some' WHERE uid = ".user::uid();
+	    db::executeQuery($query);
+	    return "done";
+	}
+	return "";
+    }
 }
 
 class pages
@@ -146,7 +170,17 @@ class pages
 	{
 	    if ($_GET['p'] == "profile")
 	    {
+		if (user::online())
+		{
 		    profile::show_profile();
+		}
+		else
+		{
+		    if (isset($_GET["profile"]))
+		    {
+			profile::show_profile();
+		    }
+		}
 	    }
 	    else
 	    {
@@ -194,11 +228,17 @@ class pages
 
 class misc
 {
-    public static function avatar($ava)
+    public static function avatar($user_id)
     {
-	if ($ava == "None")
+	$query = "SELECT avatar,login FROM users WHERE uid = ".$user_id;
+	$ava = db::nextRowFromQuery(db::executeQuery($query));
+	if ($ava["avatar"] == "None")
 	{
 	    return "images/noavatar.jpg";
+	}
+	elseif ($ava["avatar"] == "Some")
+	{
+	    return "users/".$ava["login"]."/avatar.jpg";
 	}
     }
     
@@ -281,11 +321,52 @@ class misc
 	}
     }
     
-    public static function avatar_actions()
+    public static function imageresize($result_file, $original_file, $new_width, $new_height, $quality, $type)
     {
-	//todo...
+	if($type == "image/jpeg")
+	{
+	    $im=imagecreatefromjpeg($original_file);
+	} 
+	elseif($type == "image/png" or $type == "image/x-png")
+	{
+	    $im=imagecreatefrompng($original_file);
+	} 
+	elseif($type == "image/gif")
+	{
+	    $im=imagecreatefromgif($original_file);
+	}
+	elseif($type == "image/bmp")
+	{
+	    $im=imagecreatefrombmp($original_file);
+	}
+
+	$k1=$new_width/imagesx($im);
+	$k2=$new_height/imagesy($im);
+	$k=$k1>$k2?$k2:$k1;
+
+	$w=intval(imagesx($im)*$k);
+	$h=intval(imagesy($im)*$k);
+
+	$im1=imagecreatetruecolor($w,$h);
+	if($type == "image/png" or $type == "image/x-png")
+	{
+	    imagealphablending($im1, false);
+	    imagesavealpha($im1, true);
+	}
+	imagecopyresampled($im1,$im,0,0,0,0,$w,$h,imagesx($im),imagesy($im));
+
+	if($type == "image/png" or $type == "image/x-png")
+	{
+	    imagepng($im1,$result_file);
+	}
+	else
+	{
+	    imagejpeg($im1,$result_file,$quality);
+	}
+	imagedestroy($im);
+	imagedestroy($im1);
     }
-    
+
     public static function increase_experiance($points)
     {
 	$query = "SELECT experiance FROM users WHERE uid = ".user::uid();
