@@ -44,7 +44,7 @@ class upload
 		(title,description,preview_image,user_id,screenshot_group_id,type)
 		VALUES
 		(
-		'".$dirname."','".$description."','0',".user::uid().",'".$type."'
+		'".$dirname."','".$description."','users/".user::username()."/units/".$dirname."/preview.bmp',".user::uid().",'".$type."'
 		)
 		";
 	    db::executeQuery($query);

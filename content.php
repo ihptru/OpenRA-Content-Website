@@ -292,7 +292,7 @@ class content
 	    }
 
 	    if(strlen($imagePath) > 0)
-			$content .= "<a title='' href='index.html'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
+		$content .= "<a title='' href='index.html'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
                 
     	$content .= "<div class='blk-top'>";
         $content .= "<h4><a href='index.php?p=detail&table=articles&id=".$row["uid"]."'>" . $title . "</a></h4>";
@@ -355,14 +355,14 @@ class content
 	    }
 	    //Should get these from db
 	    $content .= "<div id='featured-block' class='clear'>";
-		if($t=="featured")
-                	$content .= "<div id='featured-ribbon'></div>";
-		else if($t=="people")
-			$content .= "<div id='peoples-ribbon'></div>";
-		else if($t=="editors")
-                	$content .= "<div id='editors-ribbon'></div>";
-		else
-                	$content .= "<div id='featured-ribbon'></div>";
+	    if($t=="featured")
+              	$content .= "<div id='featured-ribbon'></div>";
+	    else if($t=="people")
+		$content .= "<div id='peoples-ribbon'></div>";
+	    else if($t=="editors")
+               	$content .= "<div id='editors-ribbon'></div>";
+	    else
+               	$content .= "<div id='featured-ribbon'></div>";
 	    $content .= "<a name='TemplateInfo'></a>";
 
 	    if(strlen($imagePath) > 0)
@@ -404,12 +404,12 @@ class content
 	    return "";
 	while ($row = db::nextRowFromQuery($result))
 	{
-		if( !($i >= ($current-1) * $maxItemsPerPage && $i < $current * $maxItemsPerPage ) )
-		{
-			$i++;
-			continue;
-		}
+	    if( !($i >= ($current-1) * $maxItemsPerPage && $i < $current * $maxItemsPerPage ) )
+	    {
 		$i++;
+		continue;
+	    }
+	    $i++;
 		
 	    $title = "";
 	    $imagePath = "";
@@ -490,12 +490,12 @@ class content
 	$i = 0;
 	while ($row = db::nextRowFromQuery($result))
 	{
-		if( !($i >= ($current-1) * $maxItemsPerPage && $i < $current * $maxItemsPerPage ) )
-		{
-			$i++;
-			continue;
-		}
+	    if( !($i >= ($current-1) * $maxItemsPerPage && $i < $current * $maxItemsPerPage ) )
+	    {
 		$i++;
+		continue;
+	    }
+	    $i++;
 	
 	    $title = "";
 	    $imagePath = "";
@@ -546,20 +546,17 @@ class content
 	$pages = "<table>";
 	$keys = array_keys($_GET);
 	foreach($keys as $key)
-	{
-		if($key != "current_list_page_".$table)
-			$gets .= "&" . $key . "=" . $_GET[$key];
-	}
+	    if($key != "current_list_page_".$table)
+		$gets .= "&" . $key . "=" . $_GET[$key];
 	for($i = 1; $i < $nrOfPages+1; $i++)
-	{
-		if($current == $i)
-			$pages .= "<td>" . $i . "</td>";
-		else
-			$pages .= "<td id='page_count'><a href='index.php?current_list_page_".$table."=".$i.$gets."'>" . $i . "</a></td>";
-	}
+	    if($current == $i)
+		$pages .= "<td>" . $i . "</td>";
+	    else
+		$pages .= "<td id='page_count'><a href='index.php?current_list_page_".$table."=".$i.$gets."'>" . $i . "</a></td>";
 	$pages .= "</tr></table>";
+	
 	if ($nrOfPages == 1)
-	{ $pages = ""; }
+	    $pages = "";
 	
 	$content .= "</table>";
 	$content .= $pages;
@@ -576,7 +573,7 @@ class content
 	    if($resultNotQuery == false)
 	    {
 		if($row = db::nextRowFromQuery($result))
-		{ } else { break;}
+		{ } else { break; }
 	    }
 	    else
 	    {
@@ -747,40 +744,36 @@ class content
 
 	    if($counter > 0)
 	    {
-			$content .= "<li class='depth-1'>";
-			$counter = -1;
+		$content .= "<li class='depth-1'>";
+		$counter = -1;
 	    }
 	    else
-			$content .= "<li class='thread-alt depth-1'>";
+		$content .= "<li class='thread-alt depth-1'>";
 
-		$avatarImg = misc::avatar($author["avatar"]);
+	    $avatarImg = misc::avatar($author["avatar"]);
 		
-        $content .= "<div class='comment-info'>";			
-        $content .= "<a href='index.php?p=profile&profile=".$comment["user_id"]."'><img alt='' src='" . $avatarImg . "' class='avatar' height='45' width='45' /></a>";
-        $content .= "<cite>";
-        $content .= "<a href='index.php?p=profile&profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
-        $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
-    	$content .= "</cite>";
-        $content .= "</div>";
+	    $content .= "<div class='comment-info'>";			
+	    $content .= "<a href='index.php?p=profile&profile=".$comment["user_id"]."'><img alt='' src='" . $avatarImg . "' class='avatar' height='45' width='45' /></a>";
+	    $content .= "<cite>";
+	    $content .= "<a href='index.php?p=profile&profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
+	    $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
+	    $content .= "</cite>";
+	    $content .= "</div>";
                 
-        $content .= "<div class='comment-text'>";
-        $content .= "<p>" . strip_tags($comment["content"]) . "</p>";
-		if (misc::comment_owner($comment["user_id"]))
-		{
-		    $content .= "<a style='float: right; margin: -25px 12px 0 0; border: 1px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."' onClick='return confirmDelete(\"comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px;' border='0' /></a>";
-		}
-        $content .= "<div class='reply'>";
-        //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
-        $content .= "</div>";
-        $content .= "</div>";
+	    $content .= "<div class='comment-text'>";
+	    $content .= "<p>" . strip_tags($comment["content"]) . "</p>";
+	    if (misc::comment_owner($comment["user_id"]))
+	    {
+		$content .= "<a style='float: right; margin: -25px 12px 0 0; border: 1px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."' onClick='return confirmDelete(\"comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px;' border='0' /></a>";
+	    }
+	    $content .= "<div class='reply'>";
+	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
+	    $content .= "</div>";
+	    $content .= "</div>";
 
-        $content .= "</li>";
-
-
+	    $content .= "</li>";
 	}
-
 	$content .= "</ol>";
-
 	return $content;
     }
 
@@ -815,59 +808,59 @@ class content
     	$content = "";
     	if($data && $columns > 0)
     	{
-    		if(count($data)%$columns == 0)
-    		{
-			$total = count($data);
-			if(isset($_GET["current_dynamic_page_".$name]))
-				$current = $_GET["current_dynamic_page_".$name];
-			else
-				$current = 1;
-			$start = ($current-1) * $maxItemsPerPage * $columns;
-			$maxItemsPerPage *= $columns;
-			$content .= "<table>";
-			if($header)
-			{
-				if($start < $columns)
-					$start = $columns;
-				$content .= "<tr>";
-				for($row = 0; $row < $columns; $row++)
-    				{
-    					$content .= "<th>" . $data[$row] . "</th>";
-    				}
-				$content .= "</tr>";
-			}
-    			for($i = $start; $i < count($data)+1-$columns && $i < $start+$maxItemsPerPage; $i=$i+$columns)
-    			{
-    				$content .= "<tr>";
-    				for($row = 0; $row < $columns; $row++)
-    				{
-    					$content .= "<td>" . $data[$i+$row] . "</td>";
-    				}
-    				$content .= "</tr>";
-    			}
-    			$content .= "</table>";
-			$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
-			$gets = "";
-			$pages = "<table>";
-			$keys = array_keys($_GET);
-			foreach($keys as $key)
-			{
-				if($key != "current_dynamic_page_".$name)
-					$gets .= "&" . $key . "=" . $_GET[$key];
-			}
-			for($i = 1; $i < $nrOfPages+1; $i++)
-			{
-				if($current == $i)
-					$pages .= "<td>" . $i . "</td>";
-				else
-					$pages .= "<td id='page_count'><a href='index.php?current_dynamic_page_".$name."=".$i.$gets."'>" . $i . "</a></td>";
-			}
-			$pages .= "</tr></table>";
-			if ($nrOfPages == 1)
-				$pages = "";
-			if($use_pages)
-				$content .= $pages;
-    		}
+	    if(count($data)%$columns == 0)
+	    {
+		$total = count($data);
+		if(isset($_GET["current_dynamic_page_".$name]))
+		    $current = $_GET["current_dynamic_page_".$name];
+		else
+		    $current = 1;
+		$start = ($current-1) * $maxItemsPerPage * $columns;
+		$maxItemsPerPage *= $columns;
+		$content .= "<table>";
+		if($header)
+		{
+		    if($start < $columns)
+			$start = $columns;
+		    $content .= "<tr>";
+		    for($row = 0; $row < $columns; $row++)
+		    {
+			$content .= "<th>" . $data[$row] . "</th>";
+		    }
+		    $content .= "</tr>";
+		}
+		for($i = $start; $i < count($data)+1-$columns && $i < $start+$maxItemsPerPage; $i=$i+$columns)
+		{
+		    $content .= "<tr>";
+		    for($row = 0; $row < $columns; $row++)
+		    {
+			$content .= "<td>" . $data[$i+$row] . "</td>";
+		    }
+		    $content .= "</tr>";
+		}
+		$content .= "</table>";
+		$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
+		$gets = "";
+		$pages = "<table>";
+		$keys = array_keys($_GET);
+		foreach($keys as $key)
+		{
+		    if($key != "current_dynamic_page_".$name)
+			$gets .= "&" . $key . "=" . $_GET[$key];
+		}
+		for($i = 1; $i < $nrOfPages+1; $i++)
+		{
+		    if($current == $i)
+			$pages .= "<td>" . $i . "</td>";
+		    else
+			$pages .= "<td id='page_count'><a href='index.php?current_dynamic_page_".$name."=".$i.$gets."'>" . $i . "</a></td>";
+		}
+		$pages .= "</tr></table>";
+		if ($nrOfPages == 1)
+		    $pages = "";
+		if($use_pages)
+		    $content .= $pages;
+	    }
     	}
     	return $content;
     }
