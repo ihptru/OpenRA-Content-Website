@@ -44,7 +44,7 @@ class upload
 		(title,description,preview_image,user_id,screenshot_group_id,type)
 		VALUES
 		(
-		'".$dirname."','".$description."','users/".user::username()."/units/".$dirname."/preview.bmp',".user::uid().",'".$type."'
+		'".$dirname."','".$description."','users/".user::username()."/units/".$dirname."/preview.bmp',".user::uid().",0,'".$type."'
 		)
 		";
 	    db::executeQuery($query);
@@ -57,6 +57,7 @@ class upload
 	$messages = "";
 	while (isset($_FILES["file_".$count]))
 	{
+	    $run_shp = false;
 	    $filename = $_FILES["file_".$count]["name"];
 	    if ($filename == "")
 		return $messages;
@@ -112,6 +113,11 @@ class upload
 	    if(move_uploaded_file($source, $target_path))
 	    {
 		$messages .= $filename ." - uploaded<br>";
+	    }
+	    if (strtolower($name[1]) == "shp" and $run_shp == false)
+	    {
+		exec("mono mono/src/SHPExtractor/bin/Debug/SHPExtractor.exe  -filename=".$target_path." -frame=".$frame);
+		$run_shp = true;
 	    }
 	    $count++;
 	}
@@ -312,7 +318,7 @@ class misc
 	    db::executeQuery($query);
 	    //remove comments from DB
 	    //remove records from fav_item table related to current item for each user
-	    $tables = array("comments", "fav_item", "featured");
+	    $tables = array("comments", "fav_item", "featured", "reported");
 	    foreach($tables as $table)
 	    {
 		$query = "DELETE FROM ".$table." WHERE table_name = '".$table_name."' AND table_id = ".$item_id;

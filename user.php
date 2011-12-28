@@ -185,11 +185,14 @@ class user
 		    $_SESSION['sess_id'] = $sess_hash;	//start session
 		    $_SESSION['user_id'] = $user_id;
 		    
-		    if ($_POST["remember"] == "yes")
+		    if (isset($_POST["remember"]))
 		    {
-			if (misc::check_cookie_enabled())
+			if ($_POST["remember"] == "yes")
 			{
-			    setcookie("remember", $sess_hash, time()+3600*24*360, "/");
+			    if (misc::check_cookie_enabled())
+			    {
+				setcookie("remember", $sess_hash, time()+3600*24*360, "/");
+			    }
 			}
 		    }
 		    header("Location: /index.php?p=profile");

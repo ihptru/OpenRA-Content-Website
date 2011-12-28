@@ -102,8 +102,8 @@ content::head();
 			<h3><? echo lang::$lang['sidebar menu']; ?></h3>
 			<ul>				
 			    <li><a href="index.php?action=mymaps&p=profile"><? echo "maps"; ?></a></li>
-			    <li><a href="index.php?action=myguides&p=profile"><? echo "guides"; ?></a></li>
 			    <li><a href="index.php?action=myunits&p=profile"><? echo "units"; ?></a></li>
+			    <li><a href="index.php?action=myguides&p=profile"><? echo "guides"; ?></a></li>
 			</ul>	
 			<? } ?>
 		    </div>
