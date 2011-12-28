@@ -28,7 +28,8 @@ class content
 	    {
 		if (trim($_POST['upload_guide_text']) != "" && trim($_POST['upload_guide_title']) != "" && trim($_POST['upload_guide_type'] != ""))
 		{
-		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES ('".$_POST['upload_guide_title']."','".$_POST['upload_guide_text']."','".$_POST['upload_guide_type']."',".user::uid().")");
+		    $text = nl2br($_POST['upload_guide_text']);
+		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES ('".$_POST['upload_guide_title']."','".$text."','".$_POST['upload_guide_type']."',".user::uid().")");
 		    misc::increase_experiance(50);
 		}
 	    }
@@ -602,6 +603,7 @@ class content
 			$reported = "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&report'>Report Item</a>";
 		}
 	    }
+	    $favIcon = "";
 	    if(isset($row["uid"]))
 	    {
 		$favIcon = "notFav.png";
@@ -625,7 +627,7 @@ class content
 		    break;
 		case "guides":
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
-		    $allow = '<table><tr><td><img><a><b><i><u><p>';
+		    $allow = '<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>';
 		    $text = strip_tags($row["html_content"], $allow);
 		    
 		    $content .= "<div class='post'>";
@@ -637,6 +639,8 @@ class content
 			$content .= $reported . " | ";
 		    if($delete != "")
 			$content .= $delete . " | ";
+		    if($favIcon != "")
+			$content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a> | ";
 		    $content .= "<span class='date'>".$row["posted"]."</span>";
 		    $content .= "</p>";
 		    $content .= "</div>";
@@ -654,6 +658,8 @@ class content
 		    $content .= "<p class='postmeta'>";
 		    if($delete != "")
 			$content .= $delete . " | ";
+		    if($favIcon != "")
+			$content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a> | ";
 		    $content .= "<span class='date'>".$row["posted"]."</span>";
 		    $content .= "</p>";
 		    $content .= "</div>";
@@ -1518,7 +1524,7 @@ class profile
 		<br />
 		<label>Title: <input id='id_guide_title' type='text' name='upload_guide_title' onkeyup='updateContent(\"id_display_title\",\"id_guide_title\");' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>
 		<br />
-		<label>Text: <textarea id='id_guide_text' name='upload_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<p><table><br><i><b><tr><td><img><a>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<p><table><br><i><b><tr><td><img><a>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<p><table><br><i><b><tr><td><img><a>\");'></textarea></label>
+		<label>Text: <textarea id='id_guide_text' name='upload_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");'></textarea></label>
 		<br />
 		<select name='upload_guide_type'>
 		<option value='other' selected='selected'>Other</option>
