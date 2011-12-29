@@ -34,6 +34,19 @@ class content
 		}
 	    }
 	}
+	if( isset($_POST['edit_guide_title']) && isset($_POST['edit_guide_text']) && isset($_POST['edit_guide_type']) && isset($_POST['edit_guide_uid']))
+	{
+	    if (user::online())
+	    {
+		if (trim($_POST['edit_guide_text']) != "" && trim($_POST['edit_guide_title']) != "" && trim($_POST['edit_guide_type'] != "") && trim($_POST['edit_guide_uid'] != ""))
+		{
+		    $text = nl2br($_POST['edit_guide_text']);
+		    db::executeQuery("UPDATE guides SET title = '".$_POST['edit_guide_title']."' WHERE uid = " . $_POST['edit_guide_uid']);
+		    db::executeQuery("UPDATE guides SET html_content = '".$text."' WHERE uid = " . $_POST['edit_guide_uid']);
+		    db::executeQuery("UPDATE guides SET guide_type = '".$_POST['edit_guide_type']."' WHERE uid = " . $_POST['edit_guide_uid']);
+		}
+	    }
+	}
 	if ( isset($_GET["table"]) && isset($_GET["id"]) )
 	{
 	    if (user::online())
@@ -1039,6 +1052,10 @@ class content
 	{
 	    objects::about();
 	}
+	elseif ($page == "edit_item")
+	{
+	    objects::edit();
+	}
 	elseif ($page == "detail")
 	{
 	    objects::detail();
@@ -1188,6 +1205,71 @@ class objects
     public static function about()
     {
 	echo "<h3>".lang::$lang['about']."!</h3>";
+    }
+    
+    public static function edit()
+    {
+	$table = "";
+	$id = "";
+	if(isset($_GET["table"]))
+	    $table = $_GET["table"];
+	if(isset($_GET["id"]))
+	    $id = $_GET["id"];
+	if($table != "" && $id != "")
+	{
+	    if($table == "guides")
+	    {
+		$result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
+		$row = db::nextRowFromQuery($result);
+		if($row["user_id"] == user::uid())
+		{
+		    echo "Preview (Will only be updated if JavaScript is enabled):";
+		    date_default_timezone_set('Europe/Dublin');
+		    $arr = array("title" => $row["title"], "html_content" => $row["html_content"], "posted" => date("F d, Y"), "guide_type" => "", "user_id" => user::uid());
+		    echo content::displayItem($arr,"guides",true);
+		    
+		    echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
+			    <label>Upload guide:</label>
+			    <br />
+			    <label>Title: <input id='id_guide_title' type='text' value='".$row["title"]."' name='edit_guide_title' onkeyup='updateContent(\"id_display_title\",\"id_guide_title\");' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>
+			    <br />
+			    <label>Text: <textarea id='id_guide_text' name='edit_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");'>".$row["html_content"]."</textarea></label>
+			    <br />
+			    <select name='edit_guide_type'>";
+		    if($row["type"] == "other")
+			echo "<option value='other' selected='selected'>Other</option>";
+		    else
+			echo "<option value='other'>Other</option>";
+		    
+		    if($row["type"] == "design")
+			echo "<option value='design' selected='selected'>Design (2D/3D)</option>";
+		    else
+			echo "<option value='design'>Design (2D/3D)</option>";
+		    
+		    if($row["type"] == "mapping")
+			echo "<option value='mapping' selected='selected'>Mapping</option>";
+		    else
+			echo "<option value='mapping'>Mapping</option>";
+			
+		    if($row["type"] == "modding")
+			echo "<option value='modding' selected='selected'>Modding</option>";
+		    else
+			echo "<option value='modding'>Modding</option>";
+			
+		    if($row["type"] == "coding")
+			echo "<option value='coding' selected='selected'>Coding</option>";
+		    else
+			echo "<option value='coding'>Coding</option>";
+			
+		    echo "</select>
+			    <br />
+			    <input type=\"hidden\" name=\"edit_guide_uid\" value=\"".$row["uid"]."\" />
+			    <input type=\"submit\" name=\"submit\" value=\"".lang::$lang['edit']."\" />
+			    </form>
+		    ";
+		}
+	    }
+	}
     }
     
     public static function detail()

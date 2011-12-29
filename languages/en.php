@@ -52,6 +52,7 @@ class lang
 	    'map not uploaded'	=> "Map was not uploaded",
 	    'recent events' 	=> "Recent Events",
 	    'upload'		=> "Upload",
+	    'edit'		=> "Edit",
 	    'choose map upload' => "Choose a map file to upload",
 	    'upload maps'	=> "Upload your maps",
 	    
