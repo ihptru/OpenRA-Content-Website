@@ -712,7 +712,8 @@ class content
 	     
 	     if($table == "maps")
 	     {
-		$mapfile = basename($row["path"]) . ".oramap";
+		$mapfile = explode("-", basename($row["path"]), 2);
+		$mapfile = $mapfile[1] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
 	     	$content .= '<tr><td><a href="'.$download.'">Download</a></tr></td>';
 	     }

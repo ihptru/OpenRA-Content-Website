@@ -6,33 +6,29 @@ class upload
     {
 	if(isset($_FILES["map_upload"]["name"]))
 	{
-	    $filename = $_FILES["map_upload"]["name"];
-	    $source = $_FILES["map_upload"]["tmp_name"];
-	    $type = $_FILES["map_upload"]["type"];
-	    $name = explode(".", $filename);
-	    $accepted_type = "application/octet-stream";
-	    if ($type != $accepted_type)
+	    if (is_uploaded_file($_FILES["map_upload"]["tmp_name"]))
 	    {
-		return "";	// that's not a map file
+		$filename = $_FILES["map_upload"]["name"];
+		$source = $_FILES["map_upload"]["tmp_name"];
+		$type = $_FILES["map_upload"]["type"];
+		$name = explode(".", $filename);
+		$accepted_type = "application/octet-stream";
+		if ($type != $accepted_type)
+		{
+		    return "";	// that's not a map file
+		}
+		if (strtolower($name[1]) != "oramap")
+		{
+		    return "";	// that's not a map file (map file must have `oramap` extention)
+		}
+		exec("python python/ml.py -s " . str_replace(" ", "\ ", $source) . " -i " . user::uid() . " -u " . user::username() . " -t " . str_replace(" ", "\ ", $filename));
+		misc::increase_experiance(10);
+		return $filename;
 	    }
-	    if (strtolower($name[1]) != "oramap")
+	    else
 	    {
-		return "";	// that's not a map file (map file must have `oramap` extention)
+		return "";
 	    }
-	    $path = WEBSITE_PATH . "users/" . $username . "/maps/" . $name[0];
-	    $target_path = $path . "/" . $filename;
-
-	    if (is_dir($path))
-	    {
-		return "exists";
-	    }
-	    exec("python python/ml.py -f " . str_replace(" ", "\ ", $source) . " -u " . user::uid() . " -t " . str_replace(" ", "\ ", $target_path));
-	    if (!is_dir($path))
-	    {
-		return "error";
-	    }
-	    misc::increase_experiance(10);
-	    return $filename;
 	}
 	else
 	{

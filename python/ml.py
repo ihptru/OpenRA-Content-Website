@@ -16,7 +16,7 @@ WEBSITE_PATH = os.getcwd() + os.sep
 # -f <source file> -u <user_id> -t <destination file>
 
 try:
-    optlist,  args = getopt.getopt(sys.argv[1:], 'u:f:t:')
+    optlist,  args = getopt.getopt(sys.argv[1:], 's:i:u:t:')
 except getopt.GetoptError, err:
     print err
     exit()
@@ -26,34 +26,19 @@ if optlist == []:
     exit()
 
 for  i in range(len(optlist)):
-    if optlist[i][0] == "-f":
+    if optlist[i][0] == "-s":
         source = optlist[i][1]
-    if optlist[i][0] == "-u":
+    if optlist[i][0] == "-i":
         uid = optlist[i][1]
+    if optlist[i][0] == "-u":
+        username = optlist[i][1]
     if optlist[i][0] == "-t":
         mapfile = optlist[i][1]
-
-file = os.path.basename(mapfile)
-path = os.path.dirname(mapfile) + os.sep
-db_path = path.split(WEBSITE_PATH)[1]
-
-try:
-    os.mkdir(path)
-except OSError as e:
-    if e.args[0]==17: #Directory already exists = map already exists
-        exit()
-
-shutil.move(source, mapfile)    #File was uploaded into tmp dir and must be moved into right place
-
-print "Path: " + mapfile
-if not os.path.isfile(mapfile):
-    print "Error: File does not exist"
-    exit()
 
 yamlData = "";
 bin = "";
 
-z = zipfile.ZipFile(mapfile, mode='a')
+z = zipfile.ZipFile(source, mode='a')
 
 for filename in z.namelist():
     #print filename
@@ -207,6 +192,25 @@ if formatOK == 0:
 
 width = Bytes2Int2(b.read(2));
 height = Bytes2Int2(b.read(2));
+
+# Move source file to correct place on disk
+mapfile_full_path = WEBSITE_PATH + "users/" + username + "/" + "maps/" + MapMod + "-" + mapfile.split('.')[0] + "/" + mapfile
+path = os.path.dirname(mapfile_full_path) + os.sep
+db_path = path.split(WEBSITE_PATH)[1]
+
+try:
+    os.mkdir(path)
+except OSError as e:
+    if e.args[0]==17: #Directory already exists = map already exists
+        print "Directory exists... exit"
+        exit()
+
+shutil.move(source, mapfile_full_path)    #File was uploaded into tmp dir and must be moved into right place
+
+print "Path: " + mapfile_full_path
+if not os.path.isfile(mapfile_full_path):
+    print "Error: File is not moved"
+    exit()
 
 #Generate info file
 print "Creating info file..."
@@ -461,27 +465,27 @@ for x in range(Left,Right+Left):
                         break;
             if d2 == 1:
                 break
-	d = 0
-	if(d1 == 0 and d2 == 0):
-	    #nothing was found at all use 255 = clear to fill gap
-	    for i in range(len(templates)):
-		if int(templates[i].id) == 255:
-		    index = tilesIndex[x][y]
-		    c = ""
-		    for j in range(len(templates[i].list)):
-			if templates[i].list[j].id == index:
-			    c = templates[i].list[j].type
-			    break;
-		    if c == "":
-			c = c = templates[i].list[0].type
-			# accually error but we save it for now
-		    for j in range(len(terrTypes)):
-			if terrTypes[j].type == c:
-			    color = bmp.Color(terrTypes[j].r,terrTypes[j].g,terrTypes[j].b)
-			    d = 1
-			    break;
-		    if d == 1:
-			break;
+        d = 0
+        if(d1 == 0 and d2 == 0):
+            #nothing was found at all use 255 = clear to fill gap
+            for i in range(len(templates)):
+                if int(templates[i].id) == 255:
+                    index = tilesIndex[x][y]
+                    c = ""
+                    for j in range(len(templates[i].list)):
+                        if templates[i].list[j].id == index:
+                            c = templates[i].list[j].type
+                            break;
+                    if c == "":
+                        c = c = templates[i].list[0].type
+                        # accually error but we save it for now
+                    for j in range(len(terrTypes)):
+                        if terrTypes[j].type == c:
+                            color = bmp.Color(terrTypes[j].r,terrTypes[j].g,terrTypes[j].b)
+                            d = 1
+                            break;
+                    if d == 1:
+                        break;
         img.setPenColor(color);
         img.plotPoint(x-Left,y-Top);
 
