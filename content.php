@@ -606,7 +606,7 @@ class content
 		}
 	    }
 	    $favIcon = "";
-	    if(isset($row["uid"]))
+	    if(isset($row["uid"]) && user::online())
 	    {
 		$favIcon = "notFav.png";
 		if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())) ) {
@@ -651,7 +651,7 @@ class content
 		    break;
 		case "articles":
 		    $imagePath = $row["image"];
-		    $allow = '<table><tr><td><img><a><b><i><u><p>';
+		    $allow = '<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>';
 		    $text = strip_tags($row["content"], $allow);
 		    
 		    $content .= "<div class='post'>";
