@@ -1024,13 +1024,13 @@ class content
 
 	$content .= '<!-- /footer-outer -->	';	
 	$content .= '</div></div>';
-	$content .= '<div class="lang">
-		    <a id="'.pages::cur_lang("en").'" href="index.php?lang=en">English</a>
-		    <a id="'.pages::cur_lang("ru").'" href="index.php?lang=ru">Русский</a>
-		    <a id="'.pages::cur_lang("de").'" href="index.php?lang=de">Deutsch</a>
-		    <a id="'.pages::cur_lang("sv").'" href="index.php?lang=sv">Swedish</a>
+	$content .= "<div class='lang'>
+		    <a id='".pages::cur_lang("en")."' href='index.php?lang=en'>English</a>
+		    <a id='".pages::cur_lang("ru")."' href='index.php?lang=ru'>Русский</a>
+		    <a id='".pages::cur_lang("de")."' href='index.php?lang=de'>Deutsch</a>
+		    <a id='".pages::cur_lang("sv")."' href='index.php?lang=sv'>Swedish</a>
 		    </div>
-	';
+	";
 
 	return $content;
     }
@@ -1211,17 +1211,6 @@ class objects
     
     public static function edit()
     {
-	function select_default_type($value, $in_db)
-	{
-	    if ($value == $in_db)
-	    {
-		return "selected='selected'";
-	    }
-	    else
-	    {
-		return "";
-	    }
-	}
 	$table = "";
 	$id = "";
 	if(isset($_GET["table"]))
@@ -1249,11 +1238,11 @@ class objects
 			    <label>Text: <textarea id='id_guide_text' name='edit_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");'>".$row["html_content"]."</textarea></label>
 			    <br />
 			    <select name='edit_guide_type'>";
-		    echo "<option value='other' ".select_default_type("other", $row["guide_type"]).">Other</option>";
-		    echo "<option value='design' ".select_default_type("design", $row["guide_type"]).">Design (2D/3D)</option>";
-		    echo "<option value='mapping' ".select_default_type("mapping", $row["guide_type"]).">Mapping</option>";
-		    echo "<option value='modding' ".select_default_type("modding", $row["guide_type"]).">Modding</option>";
-		    echo "<option value='coding' ".select_default_type("coding", $row["guide_type"]).">Coding</option>";
+		    echo "<option value='other' ".misc::option_selected("other", $row["guide_type"]).">Other</option>";
+		    echo "<option value='design' ".misc::option_selected("design", $row["guide_type"]).">Design (2D/3D)</option>";
+		    echo "<option value='mapping' ".misc::option_selected("mapping", $row["guide_type"]).">Mapping</option>";
+		    echo "<option value='modding' ".misc::option_selected("modding", $row["guide_type"]).">Modding</option>";
+		    echo "<option value='coding' ".misc::option_selected("coding", $row["guide_type"]).">Coding</option>";
 
 		    echo "</select>
 			    <br />
@@ -1407,38 +1396,18 @@ class profile
 	    	echo "<input type='text' name='real_name' value='".$usr["real_name"]."'><br />";
 	    	echo "<label for='message'>Your gender</label><br />";
 	    	echo "<select name='gender'>";
-	    	if($usr["gender"]==1)
-	    		echo "<option value='1' selected='selected'>Male</option>";
-	    	else
-	    		echo "<option value='1'>Male</option>";
-	    	if($usr["gender"]==0)
-	    		echo "<option value='0' selected='selected'>Female</option>";
-	    	else
-	    		echo "<option value='0'>Female</option>";
+		echo "<option value='1' ".misc::option_selected(1,$usr["gender"]).">Male</option>";
+		echo "<option value='0' ".misc::option_selected(0,$usr["gender"]).">Female</option>";
 	    	echo "</select><br />";
 	    	
 	    	echo "<label for='message'>Your favorite faction</label><br />";
 	    	echo "<select name='fav_faction'>";
-	    	if($usr["fav_faction"]=="random")
-	    		echo "<option value='random' selected='selected'>Random</option>";
-	    	else
-	    		echo "<option value='random'>Random</option>";
-	    	if($usr["fav_faction"]=="soviet")
-	    		echo "<option value='soviet' selected='selected'>Soviet</option>";
-	    	else
-	    		echo "<option value='soviet'>Soviet</option>";
-	    	if($usr["fav_faction"]=="allies")
-	    		echo "<option value='allies' selected='selected'>Allies</option>";
-	    	else
-	    		echo "<option value='allies'>Allies</option>";
-	    	if($usr["fav_faction"]=="nod")
-	    		echo "<option value='nod' selected='selected'>NOD</option>";
-	    	else
-	    		echo "<option value='nod'>NOD</option>";
-	    	if($usr["fav_faction"]=="gda")
-	    		echo "<option value='gda' selected='selected'>GDA</option>";
-	    	else
-	    		echo "<option value='gda'>GDA</option>";
+		echo "<option value='random' ".misc::option_selected("random",$usr["fav_faction"]).">Random</option>";
+		echo "<option value='soviet' ".misc::option_selected("soviet",$usr["fav_faction"]).">Soviet</option>";
+		echo "<option value='allies' ".misc::option_selected("allies",$usr["fav_faction"]).">Allies</option>";
+		echo "<option value='nod' ".misc::option_selected("nod",$usr["fav_faction"]).">NOD</option>";
+		echo "<option value='gda' ".misc::option_selected("gda",$usr["fav_faction"]).">GDA</option>";
+
 	    	echo "</select><br />";
 	    	
 	    	echo "<label for='message'>Where do you come from?</label><br />";

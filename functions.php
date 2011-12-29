@@ -441,6 +441,18 @@ class misc
 	    return "images/nominimap.png";
 	}
     }
+    
+    public static function option_selected($value, $in_db)
+    {
+	if ($value == $in_db)
+	{
+	    return "selected='selected'";
+	}
+	else
+	{
+	    return "";
+	}
+    }
 }
 
 ?>
