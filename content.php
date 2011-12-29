@@ -425,7 +425,7 @@ class content
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $imagePath = "";//$row["preview_image"];
+		    $imagePath = $row["preview_image"];
 		    break;
 		case "guides":
 		    $title = $row["title"];
@@ -518,7 +518,7 @@ class content
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $imagePath = "";//$row["preview_image"];
+		    $imagePath = $row["preview_image"];
 		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username . "</a>";
 		    $text = "";
 		    break;
@@ -636,7 +636,7 @@ class content
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $imagePath = "";//$row["preview_image"];
+		    $imagePath = $row["preview_image"];
 		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
 		    $text = "";
 		    break;
