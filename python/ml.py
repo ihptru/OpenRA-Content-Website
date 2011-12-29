@@ -397,7 +397,7 @@ while not isdivideable(Bottom):
     Bottom = Bottom + 1;
 
 #Draw map
-img = bmp.BitMap(Right,Bottom,Color.BLACK);
+img = bmp.BitMap(Right,Bottom,bmp.Color(0,0,0));
 for x in range(Left,Right+Left):
     for y in range(Top,Bottom+Top):
         color = bmp.Color(0,0,0);
