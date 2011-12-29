@@ -38,6 +38,7 @@ namespace SHPExtractor
             var image = file + ".shp";
             FileSystem.Mount(path);
             FileSystem.Mount(".");
+            FileSystem.Mount(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
             using (var s = FileSystem.Open(image))
             {
                 var shp = new ShpReader(s);
