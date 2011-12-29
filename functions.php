@@ -15,15 +15,39 @@ class upload
 		$accepted_type = "application/octet-stream";
 		if ($type != $accepted_type)
 		{
-		    return "";	// that's not a map file
+		    return "Not supported file type";	// that's not a map file
 		}
 		if (strtolower($name[1]) != "oramap")
 		{
-		    return "";	// that's not a map file (map file must have `oramap` extention)
+		    return "Not supported file type";	// that's not a map file (map file must have `oramap` extention)
 		}
-		exec("python python/ml.py -s " . str_replace(" ", "\ ", $source) . " -i " . user::uid() . " -u " . user::username() . " -t " . str_replace(" ", "\ ", $filename));
-		misc::increase_experiance(10);
-		return $filename;
+		exec("python python/ml.py -s " . str_replace(" ", "\ ", $source) . " -i " . user::uid() . " -u " . user::username() . " -t " . str_replace(" ", "\ ", $filename), $output, $return_code);
+		function code_match($code)
+		{
+		    $codes = array(
+			'0' => "0",
+			'1' => "Error's while uploading map, contact administrator",
+			'2' => "Incorrect options",
+			'3' => "Unknown map format",
+			'4' => "Unknown mod",
+			'5' => "Map already exists",
+			'6' => "Could not upload the map",
+			'7' => "Database error, try again later",
+		    );
+		    return $codes[$code];
+		}
+		//return codes:
+		// 0  -  Success
+		// 1  -  Other errors
+		// 2  -  Incorrect options
+		// 3  -  Unknown map format
+		// 4  -  Unknown mod
+		// 5  -  Map exists
+		// 6  -  Could not upload map
+		// 7  -  Database error
+		if ($return_code == 0)
+		    misc::increase_experiance(10);
+		return code_match($return_code);
 	    }
 	    else
 	    {

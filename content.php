@@ -1581,21 +1581,18 @@ class profile
 	$uploaded = upload::upload_oramap($username);
 	if ($uploaded != "")
 	{
-	    if ($uploaded == "error")
+	    if ($uploaded == "0")
 	    {
-		echo lang::$lang['map not uploaded'];
+		echo "<table><tr><th>Map is successfully uploaded</th></tr></table>";
+		$query = "SELECT uid,path FROM maps WHERE user_id = ".user::uid()."
+			    ORDER BY posted DESC LIMIT 1
+		";
+		$row = db::nextRowFromQuery(db::executeQuery($query));
+		$imagePath = misc::minimap($row["path"]);
+		echo "<p><a href='index.php?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
+		return;
 	    }
-	    elseif ($uploaded == "exists")
-	    {
-		echo "Map already exists";
-	    }
-	    else
-	    {
-		echo "Uploaded map: " . $uploaded;
-		$name = explode(".", $uploaded);
-		$image = misc::minimap("users/" . $username . "/maps/" . $name[0] . "/");
-		echo "<img src='" . $image . "'>";
-	    }
+	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
 	}
     }
     

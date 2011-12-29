@@ -23,7 +23,7 @@ except getopt.GetoptError, err:
 
 if optlist == []:
     print "Incorrect options"
-    exit()
+    exit(2)
 
 for  i in range(len(optlist)):
     if optlist[i][0] == "-s":
@@ -149,7 +149,7 @@ print "Bottom: " + str(Bottom)
 b = io.BytesIO(bin);
 if not Bytes2Int1(b.read(1)) == 1:
     print "Error: Unknown map format"
-    exit()
+    exit(3)
 
 formatOK = 0
 if MapMod == "ra":
@@ -188,7 +188,7 @@ if MapMod == "":
 
 if formatOK == 0:
     print "Error: Unknown mod"
-    exit()
+    exit(4)
 
 width = Bytes2Int2(b.read(2));
 height = Bytes2Int2(b.read(2));
@@ -203,14 +203,14 @@ try:
 except OSError as e:
     if e.args[0]==17: #Directory already exists = map already exists
         print "Directory exists... exit"
-        exit()
+        exit(5)
 
 shutil.move(source, mapfile_full_path)    #File was uploaded into tmp dir and must be moved into right place
 
 print "Path: " + mapfile_full_path
 if not os.path.isfile(mapfile_full_path):
     print "Error: File is not moved"
-    exit()
+    exit(6)
 
 #Generate info file
 print "Creating info file..."
@@ -220,31 +220,34 @@ text_file.writelines(lines)
 text_file.close()
 
 #Put record into database
-print "Putting record into database..."
-conn = MySQLdb.connect("localhost", "oramod", "iequeiR6", "oramod")
-cur = conn.cursor()
-sql = """INSERT INTO maps
-        (title, description, author, type, players, g_mod, maphash, width, height, tileset, path, user_id, screenshot_group_id)
-        VALUES
-        (
-        '%(MapTitle)s',
-        '%(MapDesc)s',
-        '%(MapAuthor)s',
-        '%(MapType)s',
-        %(MapPlayers)s,
-        '%(MapMod)s',
-        '%(hash)s',
-        %(width)s,
-        %(height)s,
-        '%(MapTileset)s',
-        '%(db_path)s',
-        %(uid)s,
-        0
-        )
-""" % vars()
-cur.execute(sql)
-conn.commit()
-cur.close()
+try:
+    print "Putting record into database..."
+    conn = MySQLdb.connect("localhost", "oramod", "iequeiR6", "oramod")
+    cur = conn.cursor()
+    sql = """INSERT INTO maps
+            (title, description, author, type, players, g_mod, maphash, width, height, tileset, path, user_id, screenshot_group_id)
+            VALUES
+            (
+            '%(MapTitle)s',
+            '%(MapDesc)s',
+            '%(MapAuthor)s',
+            '%(MapType)s',
+            %(MapPlayers)s,
+            '%(MapMod)s',
+            '%(hash)s',
+            %(width)s,
+            %(height)s,
+            '%(MapTileset)s',
+            '%(db_path)s',
+            %(uid)s,
+            0
+            )
+    """ % vars()
+    cur.execute(sql)
+    conn.commit()
+    cur.close()
+except:
+    exit(7)
 
 print "Generating minimap..."
 
@@ -490,3 +493,4 @@ for x in range(Left,Right+Left):
         img.plotPoint(x-Left,y-Top);
 
 img.saveFile(path + "minimap.bmp");
+exit(0)
