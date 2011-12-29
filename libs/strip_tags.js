@@ -8,9 +8,13 @@ function strip_tags (input, allowed) {
 }
 
 function updateContent (object, content) {
-    document.getElementById(object).innerHTML = document.getElementById(content).value;
+    var text = document.getElementById(content).value;
+	text = text.replace(/\n\r?/g, '<br />');
+    document.getElementById(object).innerHTML = text;
 }
 
 function updateContentWithStrip (object, content, allowed) {
-    document.getElementById(object).innerHTML = strip_tags(document.getElementById(content).value, allowed);
+	var text = strip_tags(document.getElementById(content).value, allowed);
+	text = text.replace(/\n\r?/g, '<br />');
+    document.getElementById(object).innerHTML = text;
 }
