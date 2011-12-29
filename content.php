@@ -1178,6 +1178,17 @@ class content
     		}
 	    }
 	}
+	if ($request == "users_items")
+	{
+	    if (isset($_GET["table"]) and isset($_GET["id"]))
+	    {
+		$table = $_GET["table"];
+		$id = $_GET["id"];
+		$query = "SELECT * FROM ".$table." WHERE user_id = ".$id;
+		$result = db::executeQuery($query);
+		echo content::create_list($result, $table);
+	    }
+	}
     }
 }
 
@@ -1488,15 +1499,15 @@ class profile
     		}
     		
     		$result = db::executeQuery("
-		    SELECT 'Total amount of maps' as item, count(*) AS amount FROM maps WHERE user_id = " . $usr["uid"] . "
+		    SELECT 'Total amount of maps' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = " . $usr["uid"] . "
 		    UNION
-		    SELECT 'Total amount of units' as item, count(*) AS amount FROM units WHERE user_id = ". $usr["uid"] . "
+		    SELECT 'Total amount of units' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = ". $usr["uid"] . "
 		    UNION
-		    SELECT 'Total amount of guides' as item, count(*) AS amount FROM guides WHERE user_id = ". $usr["uid"] . "
+		    SELECT 'Total amount of guides' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
 		    UNION
-		    SELECT 'Total favorited items' as item, count(*) AS amount FROM fav_item WHERE user_id = ". $usr["uid"] . "
+		    SELECT 'Total favorited items' as item, count(*) AS amount, 'fav_item' AS table_name FROM fav_item WHERE user_id = ". $usr["uid"] . "
 		    UNION
-		    SELECT 'Total amount of comments' as item, count(*) as amount FROM comments WHERE user_id = ". $usr["uid"] . "
+		    SELECT 'Total amount of comments' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
 		    ");
     		if (db::num_rows($result) > 0) {
 		    $data = array();
@@ -1508,7 +1519,7 @@ class profile
 			}
 			else
 			{
-			    $amount = "<a href='index.php'>".$row["amount"]."</a>";
+			    $amount = "<a href='index.php?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
 			}
 			array_push($data,$row["item"],$amount);
 		    }
