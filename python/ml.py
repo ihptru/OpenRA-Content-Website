@@ -382,23 +382,18 @@ if not tempType == "":
     resTypes.append( resourceType(int(tempType),tempTerrType ) )
     print "resType: " + tempType + " terrType: " + tempTerrType
 
-def isprime(n):
-    n = abs(int(n))
-    if n < 2:
-        return False
-    if n == 2:
-        return True
-    if not n & 1:
-        return False
-    for x in range(3, int(n**0.5)+1, 2):
-        if n % x == 0:
-            return False
-    return True
-
-while isprime(Right):
+def isdivideable(n):
+    r = n / 2.0
+    print "n: " + str(n)
+    print type(n)
+    print "r: " + str(r)
+    print type(r)
+    if(r%1 == 0):
+	return True
+    return False
+while not isdivideable(Right):
     Right = Right + 1;
-
-while isprime(Bottom):
+while not isdivideable(Bottom):
     Bottom = Bottom + 1;
 
 #Draw map
