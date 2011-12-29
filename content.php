@@ -44,6 +44,7 @@ class content
 		    db::executeQuery("UPDATE guides SET title = '".$_POST['edit_guide_title']."' WHERE uid = " . $_POST['edit_guide_uid']);
 		    db::executeQuery("UPDATE guides SET html_content = '".$text."' WHERE uid = " . $_POST['edit_guide_uid']);
 		    db::executeQuery("UPDATE guides SET guide_type = '".$_POST['edit_guide_type']."' WHERE uid = " . $_POST['edit_guide_uid']);
+		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
 	    }
 	}
@@ -1214,7 +1215,7 @@ class objects
 	{
 	    if ($value == $in_db)
 	    {
-		return "selected";
+		return "selected='selected'";
 	    }
 	    else
 	    {
@@ -1248,11 +1249,11 @@ class objects
 			    <label>Text: <textarea id='id_guide_text' name='edit_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");'>".$row["html_content"]."</textarea></label>
 			    <br />
 			    <select name='edit_guide_type'>";
-		    echo "<option value='other' selected='".select_default_type("other", $row["guide_type"])."'>Other</option>";
-		    echo "<option value='design' selected='".select_default_type("design", $row["guide_type"])."'>Design (2D/3D)</option>";
-		    echo "<option value='mapping' selected='".select_default_type("mapping", $row["guide_type"])."'>Mapping</option>";
-		    echo "<option value='modding' selected='".select_default_type("modding", $row["guide_type"])."'>Modding</option>";
-		    echo "<option value='coding' selected='".select_default_type("coding", $row["guide_type"])."'>Coding</option>";
+		    echo "<option value='other' ".select_default_type("other", $row["guide_type"]).">Other</option>";
+		    echo "<option value='design' ".select_default_type("design", $row["guide_type"]).">Design (2D/3D)</option>";
+		    echo "<option value='mapping' ".select_default_type("mapping", $row["guide_type"]).">Mapping</option>";
+		    echo "<option value='modding' ".select_default_type("modding", $row["guide_type"]).">Modding</option>";
+		    echo "<option value='coding' ".select_default_type("coding", $row["guide_type"]).">Coding</option>";
 
 		    echo "</select>
 			    <br />
