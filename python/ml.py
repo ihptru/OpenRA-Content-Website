@@ -401,7 +401,7 @@ while 1:
             tempType = strFixer(line[line.find(":")+1:])
     if line[0:11] == "TerrainType":
         if strFixer(line[12:]).find(" ") < 0:
-            tempTerrType = strFixer(line[12:])
+            tempTerrType = line[12:].strip()
 #One left to fix probably
 if not tempType == "":
     if tempTerrType == "":
@@ -430,7 +430,7 @@ img = bmp.BitMap(Right,Bottom,bmp.Color(0,0,0));
 for x in range(Left,Right+Left):
     for y in range(Top,Bottom+Top):
         color = bmp.Color(0,0,0);
-        d = 0
+        d1 = 0
         if tilesTile[x][y] == 510:
             tilesTile[x][y] = 255 #Change 510 to clear (should probably never happen hint: byte size 255 function in .net line:130)
         for i in range(len(templates)):
@@ -447,20 +447,41 @@ for x in range(Left,Right+Left):
                 for j in range(len(terrTypes)):
                     if terrTypes[j].type == c:
                         color = bmp.Color(terrTypes[j].r,terrTypes[j].g,terrTypes[j].b)
-                        d = 1
+                        d1 = 1
                         break;
-                if d == 1:
+                if d1 == 1:
                     break;
-        d = 0
+        d2 = 0
         for i in range(len(resTypes)):
             if resTypes[i].type == resTile[x][y]:
                 for j in range(len(terrTypes)):
                     if terrTypes[j].type == resTypes[i].terrType:
                         color = bmp.Color(terrTypes[j].r,terrTypes[j].g,terrTypes[j].b)
-                        d = 1
+                        d2 = 1
                         break;
-            if d == 1:
+            if d2 == 1:
                 break
+	d = 0
+	if(d1 == 0 and d2 == 0):
+	    #nothing was found at all use 255 = clear to fill gap
+	    for i in range(len(templates)):
+		if int(templates[i].id) == 255:
+		    index = tilesIndex[x][y]
+		    c = ""
+		    for j in range(len(templates[i].list)):
+			if templates[i].list[j].id == index:
+			    c = templates[i].list[j].type
+			    break;
+		    if c == "":
+			c = c = templates[i].list[0].type
+			# accually error but we save it for now
+		    for j in range(len(terrTypes)):
+			if terrTypes[j].type == c:
+			    color = bmp.Color(terrTypes[j].r,terrTypes[j].g,terrTypes[j].b)
+			    d = 1
+			    break;
+		    if d == 1:
+			break;
         img.setPenColor(color);
         img.plotPoint(x-Left,y-Top);
 
