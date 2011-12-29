@@ -55,7 +55,16 @@ function result($condition, $value)
     }
     elseif ($condition == "title")
     {
+	if (isset($_GET["mod"]))
+	{
+	    $mod = $_GET["mod"];
+	}
+	else
+	{
+	    $mod = "";
+	}
 	$query = "SELECT * FROM maps WHERE lower(".$condition.") LIKE lower('%".$value."%')
+				    AND lower(g_mod) LIKE lower('%".$mod."%')
 	    ORDER BY RAND() LIMIT 1
 	";
     }
