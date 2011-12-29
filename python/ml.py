@@ -125,19 +125,19 @@ def init2Dlist(w,h):
 
 for line in string.split(yamlData, '\n'):
     if line[0:5] == "Title":
-        MapTitle = strFixer(line[6:]).replace("'", "''");
+        MapTitle = line[6:].strip().replace("'", "''");
     if line[0:11] == "RequiresMod":
-        MapMod = strFixer(line[12:]).lower();
+        MapMod = line[12:].strip().lower();
     if line[0:6] == "Author":
-        MapAuthor = strFixer(line[7:]).replace("'", "''");
+        MapAuthor = line[7:].strip().replace("'", "''");
     if line[0:7] == "Tileset":
-        MapTileset = strFixer(line[8:]).lower();
+        MapTileset = line[8:].strip().lower();
     if line[0:4] == "Type":
-        MapType = strFixer(line[5:]);
+        MapType = line[5:].strip();
     if line[0:11] == "Description":
-        MapDesc = strFixer(line[12:]).replace("'", "''");
+        MapDesc = line[12:].strip().replace("'", "''");
     if line[0:6] == "Bounds":
-        MapBounds = strFixer(line[7:]);
+        MapBounds = line[7:].strip();
     if line.strip()[0:8] == "Playable":
         state = line.split(':')[1]
         if state.strip().lower() in ['true', 'on', 'yes', 'y']:

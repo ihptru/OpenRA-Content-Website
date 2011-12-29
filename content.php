@@ -583,12 +583,14 @@ class content
 	    $user_name = $usr["login"];
 	    
 	    $reported = "";
+	    $edit = "";
 	    if ($row["user_id"] == user::uid())
 	    {
 		if(isset($row["uid"]))
 		{
 		    $delete = "Delete ".rtrim($table,"s");
 		    $delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".rtrim($table,"s")."\")'>".$delete."</a>";
+		    $edit = "<a href='index.php?p=edit_item&table=".$table."&id=".$row["uid"]."'>Edit</a>";
 		}
 	    }
 	    else
@@ -642,6 +644,7 @@ class content
 		    if($favIcon != "")
 			$content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a> | ";
 		    $content .= "<span class='date'>".$row["posted"]."</span>";
+		    $content .= " | " . $edit;
 		    $content .= "</p>";
 		    $content .= "</div>";
 		    return $content;
@@ -1557,7 +1560,7 @@ class profile
 		<option value='nature'>Nature</option>
 		<option value='other'>Other</option>
 		</select><br>
-	    <label>Frame (What frame of the unit you want to be displayed as a preview image):</label
+	    <label>Frame (What frame of the unit you want to be displayed as a preview image):</label>
 		<input type='text' name='unit_frame'><br>
 	    <label>Unit description:<br> </label>
 		<textarea name='unit_description' cols='40' rows='5'></textarea><br>
