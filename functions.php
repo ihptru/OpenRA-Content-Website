@@ -22,6 +22,10 @@ class upload
 	    $path = WEBSITE_PATH . "users/" . $username . "/maps/" . $name[0];
 	    $target_path = $path . "/" . $filename;
 
+	    if (is_dir($path))
+	    {
+		return "exists";
+	    }
 	    exec("python python/ml.py -f " . str_replace(" ", "\ ", $source) . " -u " . user::uid() . " -t " . str_replace(" ", "\ ", $target_path));
 	    if (!is_dir($path))
 	    {
@@ -116,7 +120,7 @@ class upload
 	    }
 	    if (strtolower($name[1]) == "shp" and $run_shp == false)
 	    {
-		exec("mono mono/src/SHPExtractor/bin/Debug/SHPExtractor.exe  -filename=".$target_path." -frame=".$frame);
+		exec("mono mono/src/SHPExtractor/bin/Debug/SHPExtractor.exe  -filename=\"".$target_path."\" -frame=".$frame);
 		$run_shp = true;
 	    }
 	    $count++;

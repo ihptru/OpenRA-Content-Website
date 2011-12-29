@@ -382,6 +382,25 @@ if not tempType == "":
     resTypes.append( resourceType(int(tempType),tempTerrType ) )
     print "resType: " + tempType + " terrType: " + tempTerrType
 
+def isprime(n):
+    n = abs(int(n))
+    if n < 2:
+        return False
+    if n == 2:
+        return True
+    if not n & 1:
+        return False
+    for x in range(3, int(n**0.5)+1, 2):
+        if n % x == 0:
+            return False
+    return True
+
+while isprime(Right):
+    Right = Right + 1;
+
+while isprime(Bottom):
+    Bottom = Bottom + 1;
+
 #Draw map
 img = bmp.BitMap(Right,Bottom);
 for x in range(Left,Right+Left):

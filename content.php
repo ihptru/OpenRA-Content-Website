@@ -1,4 +1,4 @@
-﻿<?PHP
+<?PHP
 
 class content
 {
@@ -590,7 +590,7 @@ class content
 		{
 		    $delete = "Delete ".rtrim($table,"s");
 		    $delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".rtrim($table,"s")."\")'>".$delete."</a>";
-		    $edit = "<a href='index.php?p=edit_item&table=".$table."&id=".$row["uid"]."'>Edit</a>";
+		    $edit = " | <a href='index.php?p=edit_item&table=".$table."&id=".$row["uid"]."'>Edit</a>";
 		}
 	    }
 	    else
@@ -644,7 +644,7 @@ class content
 		    if($favIcon != "")
 			$content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a> | ";
 		    $content .= "<span class='date'>".$row["posted"]."</span>";
-		    $content .= " | " . $edit;
+		    $content .= $edit;
 		    $content .= "</p>";
 		    $content .= "</div>";
 		    return $content;
@@ -1501,6 +1501,10 @@ class profile
 	    if ($uploaded == "error")
 	    {
 		echo lang::$lang['map not uploaded'];
+	    }
+	    elseif ($uploaded == "exists")
+	    {
+		echo "Map already exists";
 	    }
 	    else
 	    {
