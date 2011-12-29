@@ -234,7 +234,7 @@ class content
 	    {
 		//Set title, image
 		case "maps":
-		    $imagePath = $row["path"] . "minimap.bmp";
+		    $imagePath = misc::minimap($row["path"]);
 		    break;
 		case "units":
 		    $imagePath = $row["preview_image"];
@@ -408,7 +408,7 @@ class content
 		//Set title, image
 		case "maps":
 		    $title = $row["title"];
-		    $imagePath = $row["path"] . "minimap.bmp";
+		    $imagePath = misc::minimap($row["path"]);
 		    break;
 		case "units":
 		    $title = $row["title"];
@@ -499,7 +499,7 @@ class content
 		//Set title, image
 		case "maps":
 		    $title = $row["title"];
-		    $imagePath = $row["path"] . "minimap.bmp";
+		    $imagePath = misc::minimap($row["path"]);
 		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username . "</a>";
 		    $text = $row["description"];
 		    break;
@@ -617,7 +617,7 @@ class content
 	    {
 		case "maps":
 		    $title = $row["title"];
-		    $imagePath = $row["path"] . "minimap.bmp";
+		    $imagePath = misc::minimap($row["path"]);
 		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
 		    $text = $row["description"];
 		    break;
@@ -1510,7 +1510,7 @@ class profile
 	    {
 		echo "Uploaded map: " . $uploaded;
 		$name = explode(".", $uploaded);
-		$image = "users/" . $username . "/maps/" . $name[0] . "/minimap.bmp";
+		$image = misc::minimap("users/" . $username . "/maps/" . $name[0] . "/");
 		echo "<img src='" . $image . "'>";
 	    }
 	}

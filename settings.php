@@ -8,7 +8,20 @@ define("DB_USERNAME","oramod");
 define("DB_PASSWORD","iequeiR6");
 define("DB_DATABASE","oramod");
 
-define("WEBSITE_PATH", $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR);	# with / at the end
+### website's path
+function site_path($path)
+{
+    $last = $path[strlen($path)-1];
+    if ($last == DIRECTORY_SEPARATOR)
+    {
+	return $last;
+    }
+    else
+    {
+	return $last . DIRECTORY_SEPARATOR;
+    }
+}
+define("WEBSITE_PATH", site_path($_SERVER['DOCUMENT_ROOT']));	# with / at the end
 
 $use_db = "mysql";	//mysql or pgsql
 

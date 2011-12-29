@@ -409,6 +409,18 @@ class misc
 	    return false;
 	}
     }
+    
+    public static function minimap($path)
+    {
+	if (file_exists($path . "minimap.bmp"))
+	{
+	    return $path . "minimap.bmp";
+	}
+	else
+	{
+	    return "images/nominimap.png";
+	}
+    }
 }
 
 ?>

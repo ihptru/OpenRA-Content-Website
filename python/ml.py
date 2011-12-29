@@ -160,13 +160,6 @@ print "Top: " + str(Top)
 print "Right: " + str(Right)
 print "Bottom: " + str(Bottom)
 
-#Generate info file
-print "Creating info file..."
-text_file = open(path + "info.txt", "w")
-lines = [MapTitle+"\n",MapMod+"\n",MapAuthor+"\n",MapTileset+"\n",MapType+"\n",MapDesc+"\n",str(MapPlayers)+"\n"]
-text_file.writelines(lines)
-text_file.close()
-
 #Check so everything is ok before generating a minimap
 b = io.BytesIO(bin);
 if not Bytes2Int1(b.read(1)) == 1:
@@ -212,10 +205,44 @@ if formatOK == 0:
     print "Error: Unknown mod"
     exit()
 
-print "Generating minimap..."
-
 width = Bytes2Int2(b.read(2));
 height = Bytes2Int2(b.read(2));
+
+#Generate info file
+print "Creating info file..."
+text_file = open(path + "info.txt", "w")
+lines = [MapTitle+"\n",MapMod+"\n",MapAuthor+"\n",MapTileset+"\n",MapType+"\n",MapDesc+"\n",str(MapPlayers)+"\n"]
+text_file.writelines(lines)
+text_file.close()
+
+#Put record into database
+print "Putting record into database..."
+conn = MySQLdb.connect("localhost", "oramod", "iequeiR6", "oramod")
+cur = conn.cursor()
+sql = """INSERT INTO maps
+        (title, description, author, type, players, g_mod, maphash, width, height, tileset, path, user_id, screenshot_group_id)
+        VALUES
+        (
+        '%(MapTitle)s',
+        '%(MapDesc)s',
+        '%(MapAuthor)s',
+        '%(MapType)s',
+        %(MapPlayers)s,
+        '%(MapMod)s',
+        '%(hash)s',
+        %(width)s,
+        %(height)s,
+        '%(MapTileset)s',
+        '%(db_path)s',
+        %(uid)s,
+        0
+        )
+""" % vars()
+cur.execute(sql)
+conn.commit()
+cur.close()
+
+print "Generating minimap..."
 
 print "Width: " + str(width);
 print "Height: " + str(height);
@@ -389,10 +416,12 @@ def isdivideable(n):
     print "r: " + str(r)
     print type(r)
     if(r%1 == 0):
-	return True
+        return True
     return False
+
 while not isdivideable(Right):
     Right = Right + 1;
+
 while not isdivideable(Bottom):
     Bottom = Bottom + 1;
 
@@ -436,28 +465,3 @@ for x in range(Left,Right+Left):
         img.plotPoint(x-Left,y-Top);
 
 img.saveFile(path + "minimap.bmp");
-
-conn = MySQLdb.connect("localhost", "oramod", "iequeiR6", "oramod")
-cur = conn.cursor()
-sql = """INSERT INTO maps
-        (title, description, author, type, players, g_mod, maphash, width, height, tileset, path, user_id, screenshot_group_id)
-        VALUES
-        (
-        '%(MapTitle)s',
-        '%(MapDesc)s',
-        '%(MapAuthor)s',
-        '%(MapType)s',
-        %(MapPlayers)s,
-        '%(MapMod)s',
-        '%(hash)s',
-        %(width)s,
-        %(height)s,
-        '%(MapTileset)s',
-        '%(db_path)s',
-        %(uid)s,
-        0
-        )
-""" % vars()
-cur.execute(sql)
-conn.commit()
-cur.close()
