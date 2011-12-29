@@ -1096,11 +1096,11 @@ class content
 		return;
 	    profile::upload_map();
 	    echo "<h3>Your maps</h3>";
-	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid());
+	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." ORDER BY posted DESC");
 	    $output = content::create_grid($result);
 	    if ($output == "")
 	    {
-		echo "No maps uploaded yet";
+		echo "<table><tr><th>No maps uploaded yet</th></tr></table>";
 	    }
 	    echo $output;
 	}
@@ -1114,7 +1114,7 @@ class content
 	    $output = content::create_grid($result, "guides");
 	    if ($output == "")
 	    {
-		echo "No guides uploaded yet";
+		echo "<table><tr><th>No guides uploaded yet</th></tr></table>";
 	    }
 	    echo $output;
 	}
@@ -1128,7 +1128,7 @@ class content
 	    $output = content::create_grid($result, "units");
 	    if ($output == "")
 	    {
-		echo "No units uploaded yet";
+		echo "<table><tr><th>No units uploaded yet</th></tr></table>";
 	    }
 	    echo $output;
 	}
@@ -1185,7 +1185,7 @@ class objects
     public static function maps()
     {
 	echo "<h3>".lang::$lang['maps']."!</h3>";
-	$result = db::executeQuery("SELECT * FROM maps GROUP BY maphash");
+	$result = db::executeQuery("SELECT * FROM maps GROUP BY maphash ORDER BY posted DESC");
 	echo content::create_grid($result);
     }
     
@@ -1210,6 +1210,17 @@ class objects
     
     public static function edit()
     {
+	function select_default_type($value, $in_db)
+	{
+	    if ($value == $in_db)
+	    {
+		return "selected";
+	    }
+	    else
+	    {
+		return "";
+	    }
+	}
 	$table = "";
 	$id = "";
 	if(isset($_GET["table"]))
@@ -1237,31 +1248,12 @@ class objects
 			    <label>Text: <textarea id='id_guide_text' name='edit_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");'>".$row["html_content"]."</textarea></label>
 			    <br />
 			    <select name='edit_guide_type'>";
-		    if($row["type"] == "other")
-			echo "<option value='other' selected='selected'>Other</option>";
-		    else
-			echo "<option value='other'>Other</option>";
-		    
-		    if($row["type"] == "design")
-			echo "<option value='design' selected='selected'>Design (2D/3D)</option>";
-		    else
-			echo "<option value='design'>Design (2D/3D)</option>";
-		    
-		    if($row["type"] == "mapping")
-			echo "<option value='mapping' selected='selected'>Mapping</option>";
-		    else
-			echo "<option value='mapping'>Mapping</option>";
-			
-		    if($row["type"] == "modding")
-			echo "<option value='modding' selected='selected'>Modding</option>";
-		    else
-			echo "<option value='modding'>Modding</option>";
-			
-		    if($row["type"] == "coding")
-			echo "<option value='coding' selected='selected'>Coding</option>";
-		    else
-			echo "<option value='coding'>Coding</option>";
-			
+		    echo "<option value='other' selected='".select_default_type("other", $row["guide_type"])."'>Other</option>";
+		    echo "<option value='design' selected='".select_default_type("design", $row["guide_type"])."'>Design (2D/3D)</option>";
+		    echo "<option value='mapping' selected='".select_default_type("mapping", $row["guide_type"])."'>Mapping</option>";
+		    echo "<option value='modding' selected='".select_default_type("modding", $row["guide_type"])."'>Modding</option>";
+		    echo "<option value='coding' selected='".select_default_type("coding", $row["guide_type"])."'>Coding</option>";
+
 		    echo "</select>
 			    <br />
 			    <input type=\"hidden\" name=\"edit_guide_uid\" value=\"".$row["uid"]."\" />
@@ -1292,7 +1284,7 @@ class objects
 	    {
 		echo "<table>
 			  <tr>
-			      <td>Empty request</td>
+			      <th>Empty request</th>
 			  </tr>
 		      </table>
 		";
@@ -1329,7 +1321,7 @@ class objects
 	    {
 		echo "<table>
 			  <tr>
-			      <td>Nothing found</td>
+			      <th>Nothing found</th>
 			  </tr>
 		      </table>
 		";
