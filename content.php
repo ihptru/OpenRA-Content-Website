@@ -861,7 +861,7 @@ class content
 		    $params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
 		    $params .= ",\"header\":\"".$header."\"";
 		    $params .= ",\"use_pages\":\"1\"";
-		    $content .= "<tr><td colspan='".$columns."'><a href='#' onClick='post_to_url(\"index.php?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
+		    $content .= "<tr><td colspan='".$columns."'><a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
 		    
 		}
 		$content .= "</table>";
@@ -886,7 +886,7 @@ class content
 			    $params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
 			    $params .= ",\"header\":\"".$header."\"";
 			    $params .= ",\"use_pages\":\"1\"";
-			    $pages .= "<td id='page_count'><a href='#' onClick='post_to_url(\"index.php?current_dynamic_page_".$modifiedName."=".$i.$gets."\",{".$params."});'>" . $i . "</a></td>";
+			    $pages .= "<td id='page_count'><a href='javascript:post_to_url(\"index.php?current_dynamic_page_".$modifiedName."=".$i.$gets."\",{".$params."});'>" . $i . "</a></td>";
 			}
 			else
 			    $pages .= "<td id='page_count'><a href='index.php?current_dynamic_page_".$modifiedName."=".$i.$gets."'>" . $i . "</a></td>";
@@ -1573,7 +1573,7 @@ class profile
 				$params .= ",\"maxItemsPerPage\":\"10\"";
 				$params .= ",\"header\":\"1\"";
 				$params .= ",\"use_pages\":\"1\"";
-				$amount = "<a href='#' onClick='post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
+				$amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
 			    }
 			    else if($row["table_name"] == "comments")
 			    {
@@ -1590,7 +1590,7 @@ class profile
 				$params .= ",\"maxItemsPerPage\":\"10\"";
 				$params .= ",\"header\":\"1\"";
 				$params .= ",\"use_pages\":\"1\"";
-				$amount = "<a href='#' onClick='post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
+				$amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
 			    }
 			    else
 				$amount = "<a href='index.php?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
