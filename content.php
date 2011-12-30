@@ -823,11 +823,13 @@ class content
 	    if(count($data)%$columns == 0)
 	    {
 		$total = count($data);
-		if(isset($_GET["current_dynamic_page_".$name]))
-		    $current = $_GET["current_dynamic_page_".$name];
+		$modifiedName = str_replace(" ","_",$name);
+		if(isset($_GET["current_dynamic_page_".$modifiedName]))
+		    $current = $_GET["current_dynamic_page_".$modifiedName];
 		else
 		    $current = 1;
 		$start = ($current-1) * $maxItemsPerPage * $columns;
+		$maxItemsPerPageOrg = $maxItemsPerPage; //original value
 		$maxItemsPerPage *= $columns;
 		$content .= "<table>";
 		if($header)
@@ -850,14 +852,25 @@ class content
 		    }
 		    $content .= "</tr>";
 		}
-		$content .= "</table>";
 		$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
+		if($nrOfPages > 1 && $use_pages == false)
+		{
+		    $params = "\"data\":\"".pages::serialize_array($data)."\"";
+		    $params .= ",\"columns\":\"".$columns."\"";
+		    $params .= ",\"name\":\"".$modifiedName."\"";
+		    $params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
+		    $params .= ",\"header\":\"".$header."\"";
+		    $params .= ",\"use_pages\":\"1\"";
+		    $content .= "<tr><td colspan='".$columns."'><a href='#' onClick='post_to_url(\"index.php?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
+		    
+		}
+		$content .= "</table>";
 		$gets = "";
 		$pages = "<table>";
 		$keys = array_keys($_GET);
 		foreach($keys as $key)
 		{
-		    if($key != "current_dynamic_page_".$name)
+		    if($key != "current_dynamic_page_".$modifiedName)
 			$gets .= "&" . $key . "=" . $_GET[$key];
 		}
 		for($i = 1; $i < $nrOfPages+1; $i++)
@@ -865,7 +878,18 @@ class content
 		    if($current == $i)
 			$pages .= "<td>" . $i . "</td>";
 		    else
-			$pages .= "<td id='page_count'><a href='index.php?current_dynamic_page_".$name."=".$i.$gets."'>" . $i . "</a></td>";
+			if($_GET["p"] == "dynamic")
+			{
+			    $params = "\"data\":\"".pages::serialize_array($data)."\"";
+			    $params .= ",\"columns\":\"".$columns."\"";
+			    $params .= ",\"name\":\"".$modifiedName."\"";
+			    $params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
+			    $params .= ",\"header\":\"".$header."\"";
+			    $params .= ",\"use_pages\":\"1\"";
+			    $pages .= "<td id='page_count'><a href='#' onClick='post_to_url(\"index.php?current_dynamic_page_".$modifiedName."=".$i.$gets."\",{".$params."});'>" . $i . "</a></td>";
+			}
+			else
+			    $pages .= "<td id='page_count'><a href='index.php?current_dynamic_page_".$modifiedName."=".$i.$gets."'>" . $i . "</a></td>";
 		}
 		$pages .= "</tr></table>";
 		if ($nrOfPages == 1)
@@ -1058,6 +1082,10 @@ class content
 	{
 	    objects::edit();
 	}
+	elseif ($page == "dynamic")
+	{
+	    objects::dynamic();
+	}
 	elseif ($page == "detail")
 	{
 	    objects::detail();
@@ -1218,6 +1246,26 @@ class objects
     public static function about()
     {
 	echo "<h3>".lang::$lang['about']."!</h3>";
+    }
+    
+    public static function dynamic()
+    {
+	$arr = array();
+	array_push($arr,"data");
+	array_push($arr,"columns");
+	array_push($arr,"name");
+	array_push($arr,"maxItemsPerPage");
+	array_push($arr,"header");
+	array_push($arr,"use_pages");
+	if( pages::allISSet($arr) )
+	{
+	    $data = pages::deserialize_array($_POST["data"]);
+	    echo content::create_dynamic_list($data, $_POST["columns"], $_POST["name"], $_POST["maxItemsPerPage"], $_POST["header"], $_POST["use_pages"]);
+	}
+	else
+	{
+	    echo "Missing data";
+	}
     }
     
     public static function edit()
@@ -1480,22 +1528,20 @@ class profile
     		
     		//Display latest favorited items
 		$show_more = "";
-		if (misc::amount_rows(db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"]), 8))
-		    $show_more = "<a href='index.php?action=show_favorited&favorited_id=".$usr["uid"]."'>Show more favorited items</a>";
-    		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC LIMIT 8");
-    		if (db::num_rows($result) > 0) {
-	    		$data = array();
-	    		array_push($data,"",$usr["login"]."'s latest favorited items:");
-			while ($row = db::nextRowFromQuery($result)) {
-			    $item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
-			    if($item) {
-				array_push($data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
-				array_push($data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
-			    }
+    		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC");
+    		$fav_data = array();
+		if (db::num_rows($result) > 0) {
+		    array_push($fav_data,"",$usr["login"]."'s latest favorited items:");
+		    while ($row = db::nextRowFromQuery($result)) {
+			$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
+			if($item) {
+			    array_push($fav_data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
+			    array_push($fav_data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
 			}
-			if ($show_more != "")
-			    array_push($data, "", $show_more);
-    			echo content::create_dynamic_list($data,2,"favorites",10,true,true);
+		    }
+		    if ($show_more != "")
+			array_push($fav_data, "", $show_more);
+		    echo content::create_dynamic_list($fav_data,2,"favorite items",10,true,false);
     		}
     		
     		$result = db::executeQuery("
@@ -1519,7 +1565,35 @@ class profile
 			}
 			else
 			{
-			    $amount = "<a href='index.php?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
+			    if($row["table_name"] == "fav_item")
+			    {
+				$params = "\"data\":\"".pages::serialize_array($fav_data)."\"";
+				$params .= ",\"columns\":\"2\"";
+				$params .= ",\"name\":\"favorite items\"";
+				$params .= ",\"maxItemsPerPage\":\"10\"";
+				$params .= ",\"header\":\"1\"";
+				$params .= ",\"use_pages\":\"1\"";
+				$amount = "<a href='#' onClick='post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
+			    }
+			    else if($row["table_name"] == "comments")
+			    {
+				$comment_result = db::executeQuery("SELECT * FROM comments WHERE user_id = ".$usr["uid"]);
+				$comment_data = array();
+				array_push($comment_data,$usr["login"]."'s comments:");
+				while($comment = db::nextRowFromQuery($comment_result))
+				{
+				    array_push($comment_data,$comment["content"]);
+				}
+				$params = "\"data\":\"".pages::serialize_array($comment_data)."\"";
+				$params .= ",\"columns\":\"1\"";
+				$params .= ",\"name\":\"comment items\"";
+				$params .= ",\"maxItemsPerPage\":\"10\"";
+				$params .= ",\"header\":\"1\"";
+				$params .= ",\"use_pages\":\"1\"";
+				$amount = "<a href='#' onClick='post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
+			    }
+			    else
+				$amount = "<a href='index.php?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
 			}
 			array_push($data,$row["item"],$amount);
 		    }
