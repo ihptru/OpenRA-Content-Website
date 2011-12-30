@@ -44,6 +44,7 @@ class content
 		    db::executeQuery("UPDATE guides SET title = '".$_POST['edit_guide_title']."' WHERE uid = " . $_POST['edit_guide_uid']);
 		    db::executeQuery("UPDATE guides SET html_content = '".$text."' WHERE uid = " . $_POST['edit_guide_uid']);
 		    db::executeQuery("UPDATE guides SET guide_type = '".$_POST['edit_guide_type']."' WHERE uid = " . $_POST['edit_guide_uid']);
+		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
 	    }
 	}
@@ -822,11 +823,13 @@ class content
 	    if(count($data)%$columns == 0)
 	    {
 		$total = count($data);
-		if(isset($_GET["current_dynamic_page_".$name]))
-		    $current = $_GET["current_dynamic_page_".$name];
+		$modifiedName = str_replace(" ","_",$name);
+		if(isset($_GET["current_dynamic_page_".$modifiedName]))
+		    $current = $_GET["current_dynamic_page_".$modifiedName];
 		else
 		    $current = 1;
 		$start = ($current-1) * $maxItemsPerPage * $columns;
+		$maxItemsPerPageOrg = $maxItemsPerPage; //original value
 		$maxItemsPerPage *= $columns;
 		$content .= "<table>";
 		if($header)
@@ -849,14 +852,25 @@ class content
 		    }
 		    $content .= "</tr>";
 		}
-		$content .= "</table>";
 		$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
+		if($nrOfPages > 1 && $use_pages == false)
+		{
+		    $params = "\"data\":\"".pages::serialize_array($data)."\"";
+		    $params .= ",\"columns\":\"".$columns."\"";
+		    $params .= ",\"name\":\"".$modifiedName."\"";
+		    $params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
+		    $params .= ",\"header\":\"".$header."\"";
+		    $params .= ",\"use_pages\":\"1\"";
+		    $content .= "<tr><td colspan='".$columns."'><a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
+		    
+		}
+		$content .= "</table>";
 		$gets = "";
 		$pages = "<table>";
 		$keys = array_keys($_GET);
 		foreach($keys as $key)
 		{
-		    if($key != "current_dynamic_page_".$name)
+		    if($key != "current_dynamic_page_".$modifiedName)
 			$gets .= "&" . $key . "=" . $_GET[$key];
 		}
 		for($i = 1; $i < $nrOfPages+1; $i++)
@@ -864,7 +878,18 @@ class content
 		    if($current == $i)
 			$pages .= "<td>" . $i . "</td>";
 		    else
-			$pages .= "<td id='page_count'><a href='index.php?current_dynamic_page_".$name."=".$i.$gets."'>" . $i . "</a></td>";
+			if($_GET["p"] == "dynamic")
+			{
+			    $params = "\"data\":\"".pages::serialize_array($data)."\"";
+			    $params .= ",\"columns\":\"".$columns."\"";
+			    $params .= ",\"name\":\"".$modifiedName."\"";
+			    $params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
+			    $params .= ",\"header\":\"".$header."\"";
+			    $params .= ",\"use_pages\":\"1\"";
+			    $pages .= "<td id='page_count'><a href='javascript:post_to_url(\"index.php?current_dynamic_page_".$modifiedName."=".$i.$gets."\",{".$params."});'>" . $i . "</a></td>";
+			}
+			else
+			    $pages .= "<td id='page_count'><a href='index.php?current_dynamic_page_".$modifiedName."=".$i.$gets."'>" . $i . "</a></td>";
 		}
 		$pages .= "</tr></table>";
 		if ($nrOfPages == 1)
@@ -1023,13 +1048,13 @@ class content
 
 	$content .= '<!-- /footer-outer -->	';	
 	$content .= '</div></div>';
-	$content .= '<div class="lang">
-		    <a id="'.pages::cur_lang("en").'" href="index.php?lang=en">English</a>
-		    <a id="'.pages::cur_lang("ru").'" href="index.php?lang=ru">Русский</a>
-		    <a id="'.pages::cur_lang("de").'" href="index.php?lang=de">Deutsch</a>
-		    <a id="'.pages::cur_lang("sv").'" href="index.php?lang=sv">Swedish</a>
+	$content .= "<div class='lang'>
+		    <a id='".pages::cur_lang("en")."' href='index.php?lang=en'>English</a>
+		    <a id='".pages::cur_lang("ru")."' href='index.php?lang=ru'>Русский</a>
+		    <a id='".pages::cur_lang("de")."' href='index.php?lang=de'>Deutsch</a>
+		    <a id='".pages::cur_lang("sv")."' href='index.php?lang=sv'>Swedish</a>
 		    </div>
-	';
+	";
 
 	return $content;
     }
@@ -1056,6 +1081,10 @@ class content
 	elseif ($page == "edit_item")
 	{
 	    objects::edit();
+	}
+	elseif ($page == "dynamic")
+	{
+	    objects::dynamic();
 	}
 	elseif ($page == "detail")
 	{
@@ -1096,11 +1125,11 @@ class content
 		return;
 	    profile::upload_map();
 	    echo "<h3>Your maps</h3>";
-	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid());
+	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." ORDER BY posted DESC");
 	    $output = content::create_grid($result);
 	    if ($output == "")
 	    {
-		echo "No maps uploaded yet";
+		echo "<table><tr><th>No maps uploaded yet</th></tr></table>";
 	    }
 	    echo $output;
 	}
@@ -1114,7 +1143,7 @@ class content
 	    $output = content::create_grid($result, "guides");
 	    if ($output == "")
 	    {
-		echo "No guides uploaded yet";
+		echo "<table><tr><th>No guides uploaded yet</th></tr></table>";
 	    }
 	    echo $output;
 	}
@@ -1128,7 +1157,7 @@ class content
 	    $output = content::create_grid($result, "units");
 	    if ($output == "")
 	    {
-		echo "No units uploaded yet";
+		echo "<table><tr><th>No units uploaded yet</th></tr></table>";
 	    }
 	    echo $output;
 	}
@@ -1177,6 +1206,17 @@ class content
     		}
 	    }
 	}
+	if ($request == "users_items")
+	{
+	    if (isset($_GET["table"]) and isset($_GET["id"]))
+	    {
+		$table = $_GET["table"];
+		$id = $_GET["id"];
+		$query = "SELECT * FROM ".$table." WHERE user_id = ".$id;
+		$result = db::executeQuery($query);
+		echo content::create_list($result, $table);
+	    }
+	}
     }
 }
 
@@ -1185,7 +1225,7 @@ class objects
     public static function maps()
     {
 	echo "<h3>".lang::$lang['maps']."!</h3>";
-	$result = db::executeQuery("SELECT * FROM maps GROUP BY maphash");
+	$result = db::executeQuery("SELECT * FROM maps GROUP BY maphash ORDER BY posted DESC");
 	echo content::create_grid($result);
     }
     
@@ -1206,6 +1246,26 @@ class objects
     public static function about()
     {
 	echo "<h3>".lang::$lang['about']."!</h3>";
+    }
+    
+    public static function dynamic()
+    {
+	$arr = array();
+	array_push($arr,"data");
+	array_push($arr,"columns");
+	array_push($arr,"name");
+	array_push($arr,"maxItemsPerPage");
+	array_push($arr,"header");
+	array_push($arr,"use_pages");
+	if( pages::allISSet($arr) )
+	{
+	    $data = pages::deserialize_array($_POST["data"]);
+	    echo content::create_dynamic_list($data, $_POST["columns"], $_POST["name"], $_POST["maxItemsPerPage"], $_POST["header"], $_POST["use_pages"]);
+	}
+	else
+	{
+	    echo "Missing data";
+	}
     }
     
     public static function edit()
@@ -1237,31 +1297,12 @@ class objects
 			    <label>Text: <textarea id='id_guide_text' name='edit_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");'>".$row["html_content"]."</textarea></label>
 			    <br />
 			    <select name='edit_guide_type'>";
-		    if($row["type"] == "other")
-			echo "<option value='other' selected='selected'>Other</option>";
-		    else
-			echo "<option value='other'>Other</option>";
-		    
-		    if($row["type"] == "design")
-			echo "<option value='design' selected='selected'>Design (2D/3D)</option>";
-		    else
-			echo "<option value='design'>Design (2D/3D)</option>";
-		    
-		    if($row["type"] == "mapping")
-			echo "<option value='mapping' selected='selected'>Mapping</option>";
-		    else
-			echo "<option value='mapping'>Mapping</option>";
-			
-		    if($row["type"] == "modding")
-			echo "<option value='modding' selected='selected'>Modding</option>";
-		    else
-			echo "<option value='modding'>Modding</option>";
-			
-		    if($row["type"] == "coding")
-			echo "<option value='coding' selected='selected'>Coding</option>";
-		    else
-			echo "<option value='coding'>Coding</option>";
-			
+		    echo "<option value='other' ".misc::option_selected("other", $row["guide_type"]).">Other</option>";
+		    echo "<option value='design' ".misc::option_selected("design", $row["guide_type"]).">Design (2D/3D)</option>";
+		    echo "<option value='mapping' ".misc::option_selected("mapping", $row["guide_type"]).">Mapping</option>";
+		    echo "<option value='modding' ".misc::option_selected("modding", $row["guide_type"]).">Modding</option>";
+		    echo "<option value='coding' ".misc::option_selected("coding", $row["guide_type"]).">Coding</option>";
+
 		    echo "</select>
 			    <br />
 			    <input type=\"hidden\" name=\"edit_guide_uid\" value=\"".$row["uid"]."\" />
@@ -1292,7 +1333,7 @@ class objects
 	    {
 		echo "<table>
 			  <tr>
-			      <td>Empty request</td>
+			      <th>Empty request</th>
 			  </tr>
 		      </table>
 		";
@@ -1329,7 +1370,7 @@ class objects
 	    {
 		echo "<table>
 			  <tr>
-			      <td>Nothing found</td>
+			      <th>Nothing found</th>
 			  </tr>
 		      </table>
 		";
@@ -1414,38 +1455,18 @@ class profile
 	    	echo "<input type='text' name='real_name' value='".$usr["real_name"]."'><br />";
 	    	echo "<label for='message'>Your gender</label><br />";
 	    	echo "<select name='gender'>";
-	    	if($usr["gender"]==1)
-	    		echo "<option value='1' selected='selected'>Male</option>";
-	    	else
-	    		echo "<option value='1'>Male</option>";
-	    	if($usr["gender"]==0)
-	    		echo "<option value='0' selected='selected'>Female</option>";
-	    	else
-	    		echo "<option value='0'>Female</option>";
+		echo "<option value='1' ".misc::option_selected(1,$usr["gender"]).">Male</option>";
+		echo "<option value='0' ".misc::option_selected(0,$usr["gender"]).">Female</option>";
 	    	echo "</select><br />";
 	    	
 	    	echo "<label for='message'>Your favorite faction</label><br />";
 	    	echo "<select name='fav_faction'>";
-	    	if($usr["fav_faction"]=="random")
-	    		echo "<option value='random' selected='selected'>Random</option>";
-	    	else
-	    		echo "<option value='random'>Random</option>";
-	    	if($usr["fav_faction"]=="soviet")
-	    		echo "<option value='soviet' selected='selected'>Soviet</option>";
-	    	else
-	    		echo "<option value='soviet'>Soviet</option>";
-	    	if($usr["fav_faction"]=="allies")
-	    		echo "<option value='allies' selected='selected'>Allies</option>";
-	    	else
-	    		echo "<option value='allies'>Allies</option>";
-	    	if($usr["fav_faction"]=="nod")
-	    		echo "<option value='nod' selected='selected'>NOD</option>";
-	    	else
-	    		echo "<option value='nod'>NOD</option>";
-	    	if($usr["fav_faction"]=="gda")
-	    		echo "<option value='gda' selected='selected'>GDA</option>";
-	    	else
-	    		echo "<option value='gda'>GDA</option>";
+		echo "<option value='random' ".misc::option_selected("random",$usr["fav_faction"]).">Random</option>";
+		echo "<option value='soviet' ".misc::option_selected("soviet",$usr["fav_faction"]).">Soviet</option>";
+		echo "<option value='allies' ".misc::option_selected("allies",$usr["fav_faction"]).">Allies</option>";
+		echo "<option value='nod' ".misc::option_selected("nod",$usr["fav_faction"]).">NOD</option>";
+		echo "<option value='gda' ".misc::option_selected("gda",$usr["fav_faction"]).">GDA</option>";
+
 	    	echo "</select><br />";
 	    	
 	    	echo "<label for='message'>Where do you come from?</label><br />";
@@ -1507,34 +1528,32 @@ class profile
     		
     		//Display latest favorited items
 		$show_more = "";
-		if (misc::amount_rows(db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"]), 8))
-		    $show_more = "<a href='index.php?action=show_favorited&favorited_id=".$usr["uid"]."'>Show more favorited items</a>";
-    		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC LIMIT 8");
-    		if (db::num_rows($result) > 0) {
-	    		$data = array();
-	    		array_push($data,"",$usr["login"]."'s latest favorited items:");
-			while ($row = db::nextRowFromQuery($result)) {
-			    $item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
-			    if($item) {
-				array_push($data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
-				array_push($data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
-			    }
+    		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC");
+    		$fav_data = array();
+		if (db::num_rows($result) > 0) {
+		    array_push($fav_data,"",$usr["login"]."'s latest favorited items:");
+		    while ($row = db::nextRowFromQuery($result)) {
+			$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
+			if($item) {
+			    array_push($fav_data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
+			    array_push($fav_data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
 			}
-			if ($show_more != "")
-			    array_push($data, "", $show_more);
-    			echo content::create_dynamic_list($data,2,"favorites",10,true,true);
+		    }
+		    if ($show_more != "")
+			array_push($fav_data, "", $show_more);
+		    echo content::create_dynamic_list($fav_data,2,"favorite items",10,true,false);
     		}
     		
     		$result = db::executeQuery("
-		    SELECT 'Total amount of maps' as item, count(*) AS amount FROM maps WHERE user_id = " . $usr["uid"] . "
+		    SELECT 'Total amount of maps' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = " . $usr["uid"] . "
 		    UNION
-		    SELECT 'Total amount of units' as item, count(*) AS amount FROM units WHERE user_id = ". $usr["uid"] . "
+		    SELECT 'Total amount of units' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = ". $usr["uid"] . "
 		    UNION
-		    SELECT 'Total amount of guides' as item, count(*) AS amount FROM guides WHERE user_id = ". $usr["uid"] . "
+		    SELECT 'Total amount of guides' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
 		    UNION
-		    SELECT 'Total favorited items' as item, count(*) AS amount FROM fav_item WHERE user_id = ". $usr["uid"] . "
+		    SELECT 'Total favorited items' as item, count(*) AS amount, 'fav_item' AS table_name FROM fav_item WHERE user_id = ". $usr["uid"] . "
 		    UNION
-		    SELECT 'Total amount of comments' as item, count(*) as amount FROM comments WHERE user_id = ". $usr["uid"] . "
+		    SELECT 'Total amount of comments' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
 		    ");
     		if (db::num_rows($result) > 0) {
 		    $data = array();
@@ -1546,7 +1565,35 @@ class profile
 			}
 			else
 			{
-			    $amount = "<a href='index.php'>".$row["amount"]."</a>";
+			    if($row["table_name"] == "fav_item")
+			    {
+				$params = "\"data\":\"".pages::serialize_array($fav_data)."\"";
+				$params .= ",\"columns\":\"2\"";
+				$params .= ",\"name\":\"favorite items\"";
+				$params .= ",\"maxItemsPerPage\":\"10\"";
+				$params .= ",\"header\":\"1\"";
+				$params .= ",\"use_pages\":\"1\"";
+				$amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
+			    }
+			    else if($row["table_name"] == "comments")
+			    {
+				$comment_result = db::executeQuery("SELECT * FROM comments WHERE user_id = ".$usr["uid"]);
+				$comment_data = array();
+				array_push($comment_data,$usr["login"]."'s comments:");
+				while($comment = db::nextRowFromQuery($comment_result))
+				{
+				    array_push($comment_data,$comment["content"]);
+				}
+				$params = "\"data\":\"".pages::serialize_array($comment_data)."\"";
+				$params .= ",\"columns\":\"1\"";
+				$params .= ",\"name\":\"comment items\"";
+				$params .= ",\"maxItemsPerPage\":\"10\"";
+				$params .= ",\"header\":\"1\"";
+				$params .= ",\"use_pages\":\"1\"";
+				$amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
+			    }
+			    else
+				$amount = "<a href='index.php?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
 			}
 			array_push($data,$row["item"],$amount);
 		    }

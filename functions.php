@@ -254,6 +254,24 @@ class pages
 	    return "";
 	}
     }
+    
+    public static function allISSet($arr)
+    {
+	for($i = 0; $i < count($arr); $i++)
+	    if(isset($_POST[$arr[$i]]) == false)
+		return false;
+	return true;
+    }
+    
+    public static function serialize_array($arr)
+    {
+	return base64_encode(json_encode($arr)); 
+    }
+    
+    public static function deserialize_array($str)
+    {
+	return json_decode(base64_decode($str)); 
+    }
 }
 
 class misc
@@ -439,6 +457,18 @@ class misc
 	else
 	{
 	    return "images/nominimap.png";
+	}
+    }
+    
+    public static function option_selected($value, $in_db)
+    {
+	if ($value == $in_db)
+	{
+	    return "selected='selected'";
+	}
+	else
+	{
+	    return "";
 	}
     }
 }
