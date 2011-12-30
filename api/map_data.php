@@ -36,6 +36,21 @@ function map_data($result)
     print(json_encode($json_result_array));
 }
 
+function map_link($result)
+{
+    while ($row = db::nextRowFromQuery($result))
+    {
+	$json_result_array = array();
+	$url = array();
+	$path = $row["path"];
+	$name = explode("-",basename($path),2);
+	$url["url"] = "http://".$_SERVER["SERVER_NAME"]."/".$path.$name[1].".oramap";
+	$json_result_array[] = $url;
+	print(json_encode($json_result_array));
+	return;
+    }
+    echo "-1";
+}
 
 function result($condition, $value)
 {
@@ -68,6 +83,14 @@ function result($condition, $value)
 	    ORDER BY RAND() LIMIT 1
 	";
     }
+    elseif ($condition == "load")
+    {
+	$query = "SELECT path FROM maps WHERE maphash = '".$value."'
+		    ORDER BY RAND() LIMIT 1
+	";
+	map_link(db::executeQuery($query));
+	return;
+    }
     $result = db::executeQuery($query);
     map_data($result);
 }
@@ -82,6 +105,9 @@ elseif (isset($_GET["title"]))
 {
     result("title",$_GET["title"]);
 }
-
+elseif (isset($_GET["load"]))
+{
+    result("load",$_GET["load"]);
+}
 
 ?>
