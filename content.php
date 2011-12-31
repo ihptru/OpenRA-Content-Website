@@ -1131,7 +1131,8 @@ class content
 		return;
 	    profile::upload_map();
 	    echo "<h3>Your maps</h3>";
-	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." ORDER BY posted DESC");
+	    list($order_by, $request_mod, $request_tileset) = content::map_filters();
+	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." AND g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
 	    $output = content::create_grid($result);
 	    if ($output == "")
 	    {
@@ -1224,11 +1225,8 @@ class content
 	    }
 	}
     }
-}
-
-class objects
-{
-    public static function maps()
+    
+    public static function map_filters()
     {
 	$sort_by = "latest";
 	$mod = "";
@@ -1246,15 +1244,14 @@ class objects
 	    $tileset = $_COOKIE["map_tileset"];
 	}
 
-	echo "<h3>".lang::$lang['maps']."!</h3>";
 	//filters
 	echo "<form onLoad='mod_tileset();' name='map_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>mod:</th><th>tileset:</th></tr><tr>";
 	echo "<td>";
 	echo "<select name='sort' id='sort'>";
 	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">latest first</option>";
 	echo "<option value='date' ".misc::option_selected("date",$sort_by).">date</option>";
-	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">alphabetical</option>";
-	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">alphabetical in reverse order</option>";
+	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">title</option>";
+	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">title in reverse order</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
@@ -1337,6 +1334,16 @@ class objects
 	    $request_tileset = $tileset;
 	}
 	
+	return array($order_by, $request_mod, $request_tileset);
+    }
+}
+
+class objects
+{
+    public static function maps()
+    {
+	echo "<h3>".lang::$lang['maps']."!</h3>";
+	list($order_by, $request_mod, $request_tileset) = content::map_filters();
 	$result = db::executeQuery("SELECT * FROM maps WHERE g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
 	echo content::create_grid($result);
     }
