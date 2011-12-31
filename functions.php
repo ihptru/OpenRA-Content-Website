@@ -460,15 +460,27 @@ class misc
 	}
     }
     
-    public static function option_selected($value, $in_db)
+    public static function option_selected($value, $request)
     {
-	if ($value == $in_db)
+	if ($value == $request)
 	{
 	    return "selected='selected'";
 	}
 	else
 	{
 	    return "";
+	}
+    }
+    
+    public static function option_selected_bool($value, $request)
+    {
+	if ($value == $request)
+	{
+	    return "true";
+	}
+	else
+	{
+	    return "false";
 	}
     }
 }

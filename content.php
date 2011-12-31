@@ -82,7 +82,13 @@ class content
 	    misc::delete_item($item_id, $table_name, $user_id);	//delete item and comments related to it
 	    header("Location: /index.php?p=$table_name");
 	}
-
+	
+	if (isset($_POST["apply_filter"]))
+	{
+	    setcookie("map_sort_by", $_POST["sort"], time()+3600*24*360, "/");
+	    setcookie("map_mod", $_POST["mod"], time()+3600*24*360, "/");
+	    setcookie("map_tileset", $_POST["tileset"], time()+3600*24*360, "/");
+	}
 	echo "<html><head><title>";
 	echo lang::$lang['website_name'];
 	echo "</title>";
@@ -1224,8 +1230,114 @@ class objects
 {
     public static function maps()
     {
+	$sort_by = "latest";
+	$mod = "";
+	$tileset = "";
+	if (isset($_POST["apply_filter"]))
+	{
+	    $sort_by = $_POST["sort"];
+	    $mod = $_POST["mod"];
+	    $tileset = $_POST["tileset"];
+	}
+	elseif (isset($_COOKIE["map_sort_by"]))
+	{
+	    $sort_by = $_COOKIE["map_sort_by"];
+	    $mod = $_COOKIE["map_mod"];
+	    $tileset = $_COOKIE["map_tileset"];
+	}
+
 	echo "<h3>".lang::$lang['maps']."!</h3>";
-	$result = db::executeQuery("SELECT * FROM maps GROUP BY maphash ORDER BY posted DESC");
+	//filters
+	echo "<form onLoad='mod_tileset();' name='map_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>mod:</th><th>tileset:</th></tr><tr>";
+	echo "<td>";
+	echo "<select name='sort' id='sort'>";
+	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">latest first</option>";
+	echo "<option value='date' ".misc::option_selected("date",$sort_by).">date</option>";
+	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">alphabetical</option>";
+	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">alphabetical in reverse order</option>";
+    	echo "</select><br />";
+	echo "</td>";
+	echo "<td>";
+	echo "<select onChange='mod_tileset();' name='mod' id='mod'>";
+	echo "<option value='any_mod' ".misc::option_selected("any_mod",$mod).">Any</option>";
+	echo "<option value='ra' ".misc::option_selected("ra",$mod).">RA</option>";
+	echo "<option value='cnc' ".misc::option_selected("cnc",$mod).">CNC</option>";
+    	echo "</select><br />";
+	echo "</td>";
+	echo "<td>";
+	echo "<select name='tileset' id='tileset'>";
+	echo "<option value='any_tileset' ".misc::option_selected("any_tileset",$tileset).">Any</option>";
+    	echo "</select><br />";
+	echo "</td>";
+	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'></div></form>";
+	
+	//next JS script is for generating Tileset list on fly depending on selected mod
+	echo "<script type='text/javascript'>
+	    function mod_tileset()
+	    {
+		var chosen_option=document.getElementById('mod').options[document.getElementById('mod').selectedIndex]
+		if (chosen_option.value == 'any_mod')
+		{
+		    document.map_filters.tileset.options.length=0
+		    document.map_filters.tileset.options[0] = new Option('Any','any_tileset')
+		}
+		if (chosen_option.value == 'ra')
+		{
+		    document.map_filters.tileset.options.length=0
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('Any','any_tileset',false,".misc::option_selected_bool("any_tileset",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('snow','snow',false,".misc::option_selected_bool("snow",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('interior','interior',false,".misc::option_selected_bool("interior",$tileset).")
+		}
+		if (chosen_option.value == 'cnc')
+		{
+		    document.map_filters.tileset.options.length=0
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('Any','any_tileset',false,".misc::option_selected_bool("any_tileset",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('desert','desert',false,".misc::option_selected_bool("desert",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('winter','winter',false,".misc::option_selected_bool("winter",$tileset).")
+		}
+	    }
+	    mod_tileset()
+
+	</script>";
+	// order by
+	if ($sort_by == "latest")
+	{
+	    $order_by = "posted DESC";
+	}
+	elseif ($sort_by == "date")
+	{
+	    $order_by = "posted";
+	}
+	elseif ($sort_by == "alpha")
+	{
+	    $order_by = "title";
+	}
+	elseif ($sort_by == "alpha_reverse")
+	{
+	    $order_by = "title DESC";
+	}
+	//mod
+	if ($mod == "any_mod")
+	{
+	    $request_mod = "";
+	}
+	else
+	{
+	    $request_mod = $mod;
+	}
+	//tileset
+	if ($tileset == "any_tileset")
+	{
+	    $request_tileset = "";
+	}
+	else
+	{
+	    $request_tileset = $tileset;
+	}
+	
+	$result = db::executeQuery("SELECT * FROM maps WHERE g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
 	echo content::create_grid($result);
     }
     
