@@ -133,7 +133,7 @@ class content
     }
 
     //Create image gallery items based on result
-    public static function createImageGallery($result)
+    public static function createImageGallery($result, $condition="")
     {
 	$follow = 0;
 	$content = "";
@@ -155,19 +155,38 @@ class content
 		    $imagePath = "";
 		    break;
 		case "following":
-		misc::avatar($row["whom"]);
-		    $imagePath = misc::avatar($row["whom"]);
+		    if ($condition == "follow")
+		    {
+			misc::avatar($row["whom"]);
+			$imagePath = misc::avatar($row["whom"]);
+		    }
+		    elseif ($condition == "followed")
+		    {
+			misc::avatar($row["who"]);
+			$imagePath = misc::avatar($row["who"]);
+		    }
 		    break;
 	    }
 	    if ($table == "following")
 	    {
+		if ($condition == "follow")
+		{
+		    $show = $row["whom"];
+		    $end = "";
+		}
+		if ($condition == "followed")
+		{
+		    $show = $row["who"];
+		    $end = "ed";
+		}
 		$follow++;
 		if ($follow == 9)
 		{
-		    $content .= "<br><a href='index.php?action=show_user_follow&id=".$row["who"]."' style='float:right;margin-right:10px;'>Show all</a>";
+		    
+		    $content .= "<br><a href='index.php?action=show_user_follow".$end."&id=".$row["who"]."' style='float:right;margin-right:10px;'>Show all</a>";
 		    break;
 		}
-		$content .= "<a href='index.php?profile=".$row["whom"]."&p=profile' title='".user::login_by_uid($row["whom"])."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
+		$content .= "<a href='index.php?profile=".$show."&p=profile' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
 	    }
 	    else
 	    {
@@ -175,6 +194,11 @@ class content
 	    }
 	}
 	return $content;
+    }
+    
+    public static function following($result, $condition)
+    {
+	
     }
 
     //Create article items based on result (only accept articles)
@@ -1145,12 +1169,12 @@ class content
 		if ($id == user::uid())
 		{
 		    $name = "You";
-		    $who = $name." follow";
+		    $who = $name." follow:";
 		}
 		else
 		{
 		    $name = user::login_by_uid($id);
-		    $who = "<a href='index.php?profile=".$id."&p=profile'>".$name."</a> follows";
+		    $who = "<a href='index.php?profile=".$id."&p=profile'>".$name."</a> follows:";
 		}
 		$query = "SELECT * FROM following WHERE who = ".$id;
 		$result = db::executeQuery($query);
@@ -1173,6 +1197,48 @@ class content
 		    echo "<table>
 			      <tr>
 				  <th>".$name." ".$verb." not follow anyone</th>
+			      </tr>
+			  </table>
+		    ";
+		}
+	    }
+	}
+	if ($request == "show_user_followed")
+	{
+	    if (isset($_GET["id"]))
+	    {
+		$id = $_GET["id"];
+		if ($id == user::uid())
+		{
+		    $name = "You";
+		    $who = $name." are followed by:";
+		}
+		else
+		{
+		    $name = user::login_by_uid($id);
+		    $who = "<a href='index.php?profile=".$id."&p=profile'>".$name."</a> is followed by:";
+		}
+		$query = "SELECT * FROM following WHERE whom = ".$id;
+		$result = db::executeQuery($query);
+		if (db::num_rows($result) > 0)
+		{
+		    $data = array();
+		    array_push($data, "", $who);
+		    while ($row = db::nextRowFromQuery($result))
+		    {
+			$avatar = misc::avatar($row["who"]);
+			array_push($data,"<a href='index.php?profile=".$row["who"]."&p=profile'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["who"]."&p=profile'>".user::login_by_uid($row["who"])."</a>");
+		    }
+		    echo content::create_dynamic_list($data,2,"dyn",10,true,true);
+		}
+		else
+		{
+		    $verb = "is";
+		    if ($name == "You")
+			$verb = "are";
+		    echo "<table>
+			      <tr>
+				  <th>".$name." ".$verb." not followed by anyone</th>
 			      </tr>
 			  </table>
 		    ";
@@ -1523,8 +1589,34 @@ class profile
 		      </tr>
 		  </table>";
 	    echo "<p style='margin-left:5px;' class='thumbs'>";
-	    echo content::createImageGallery($result);
+	    echo content::createImageGallery($result,"follow");
 	    echo "</p>";
+	}
+	
+	// followed by is not shown for non logged in users
+	if (!user::online())
+	{
+	    $query = "SELECT * FROM following WHERE whom = ".$id;
+	    $result = db::executeQuery($query);
+	    if (db::num_rows($result) > 0)
+	    {
+		if ( $profile == "You" )
+		{
+		    $to_head = "You are followed by ".db::num_rows($result)." people:";
+		}
+		else
+		{
+		    $to_head = $profile." is followed by ".db::num_rows($result)." people:";
+		}
+		echo "<table style='margin-left:9px;width:274px;'>
+		      <tr>
+			  <th>".$to_head."</th>
+		      </tr>
+		  </table>";
+		echo "<p style='margin-left:5px;' class='thumbs'>";
+		echo content::createImageGallery($result,"followed");
+		echo "</p>";
+	    }
 	}
     }
 
