@@ -11,6 +11,7 @@ class content
 		if (trim($_POST['message']) != "")
 		{
 		    db::executeQuery("INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES ('','".$_POST['message']."',".user::uid().",".$_GET['id'].",'".$_GET['table']."')");
+		    misc::event_log(user::uid(), "comment", $_GET['table'], $_GET['id']);
 		    misc::increase_experiance(5);
 		}
 	    }
@@ -20,6 +21,7 @@ class content
 	    $id = $_GET['delete_comment'];
 	    $user = $_GET['user_comment'];
 	    misc::delete_comment($id, $user);
+	    misc::event_log($user, "delete_comment", $_GET["table_name"], $_GET["table_id"]);
 	    header("Location: {$_SERVER['HTTP_REFERER']}");
 	}
 	if( isset($_POST['upload_guide_title']) && isset($_POST['upload_guide_text']) && isset($_POST['upload_guide_type']))
@@ -31,6 +33,9 @@ class content
 		    $text = nl2br($_POST['upload_guide_text']);
 		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES ('".$_POST['upload_guide_title']."','".$text."','".$_POST['upload_guide_type']."',".user::uid().")");
 		    misc::increase_experiance(50);
+		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM guides WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
+		    misc::event_log(user::uid(), "add", "guides", $row["uid"]);
+		    header("Location: index.php?p=detail&table=guides&id=".$row["uid"]);
 		}
 	    }
 	}
@@ -44,6 +49,7 @@ class content
 		    db::executeQuery("UPDATE guides SET title = '".$_POST['edit_guide_title']."' WHERE uid = " . $_POST['edit_guide_uid']);
 		    db::executeQuery("UPDATE guides SET html_content = '".$text."' WHERE uid = " . $_POST['edit_guide_uid']);
 		    db::executeQuery("UPDATE guides SET guide_type = '".$_POST['edit_guide_type']."' WHERE uid = " . $_POST['edit_guide_uid']);
+		    misc::event_log(user::uid(), "edit", "guides", $_POST['edit_guide_uid']);
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
 	    }
@@ -57,10 +63,12 @@ class content
 		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
 		    {
 			db::executeQuery("DELETE FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = ".user::uid());
+			misc::event_log(user::uid(), "unfav", $_GET["table"], $_GET["id"]);
 		    }
 		    else
 		    {
 			db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (".user::uid().",'".$_GET["table"]."','".$_GET["id"]."')");
+			misc::event_log(user::uid(), "fav", $_GET["table"], $_GET["id"]);
 		    }
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
@@ -69,6 +77,7 @@ class content
 		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
 		    { } else {
 			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id) VALUES ('".$_GET["table"]."', ".$_GET["id"].", ".user::uid() . ")");
+			misc::event_log(user::uid(), "report", $_GET["table"], $_GET["id"]);
 		    }
 		}
 	    }
@@ -80,6 +89,7 @@ class content
 	    $table_name = $_GET['del_item_table'];
 	    $user_id = $_GET['del_item_user'];
 	    misc::delete_item($item_id, $table_name, $user_id);	//delete item and comments related to it
+	    misc::event_log(user::uid(), "delete_item", $table_name, $item_id);
 	    header("Location: /index.php?p=$table_name");
 	}
 	
@@ -120,9 +130,9 @@ class content
 	    </script>
 	";
 	echo "<script type='text/javascript'>
-	function confirmDelete(item)
+	function confirmDelete(desc)
 	{
-	    var agree=confirm('Are you sure you want to delete this '+item+'?');
+	    var agree=confirm('Are you sure you want to '+desc+'?');
 	    if (agree)
 	    return true ;
 	    else
@@ -609,7 +619,7 @@ class content
 		if(isset($row["uid"]))
 		{
 		    $delete = "Delete ".rtrim($table,"s");
-		    $delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".rtrim($table,"s")."\")'>".$delete."</a>";
+		    $delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"delete this ".rtrim($table,"s")."\")'>".$delete."</a>";
 		    $edit = " | <a href='index.php?p=edit_item&table=".$table."&id=".$row["uid"]."'>Edit</a>";
 		}
 	    }
@@ -622,7 +632,7 @@ class content
 		else
 		{
 		    if(user::online())
-			$reported = "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&report'>Report Item</a>";
+			$reported = "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&report' onClick='return confirmDelete(\"report this item\")'>Report Item</a>";
 		}
 	    }
 	    $favIcon = "";
@@ -758,7 +768,7 @@ class content
 	$comments = db::num_rows($result);
 	$content .= "<h3 id='comments'>" . $comments . " Responses</h3>";
 	$content .= "<ol class='commentlist'>";
-
+	$table = db::getTableNameFrom($result);
 	while ($comment = db::nextRowFromQuery($result))
 	{
 	    $counter++;
@@ -787,7 +797,7 @@ class content
 	    $content .= "<p>" . strip_tags($comment["content"]) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
-		$content .= "<a style='float: right; margin: -129px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."' onClick='return confirmDelete(\"comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
+		$content .= "<a style='float: right; margin: -129px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
 	    }
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
@@ -1443,7 +1453,7 @@ class objects
 	$result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
 	echo content::displayItem($result, $_GET['table']);
     
-	$result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "'");
+	$result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "' ORDER by posted");
 	echo content::create_comment_section($result);
 	
 	echo content::create_comment_respond($_GET['table'],$_GET['id']);
@@ -1528,7 +1538,19 @@ class profile
     	
     	if(user::uid() == $self && user::online() && isset($_GET["edit"]))
     	{
-    		$didUpdate = false;
+		$didUpdate = false;
+		
+		$avatar = upload::avatar();
+		if ($avatar == "type error")
+		{
+		    echo "Image type is not supported!<br>";
+		}
+		elseif ($avatar == "done")
+		{
+		    echo "Avatar is uploaded<br>";
+		    $didUpdate = true;
+		}
+
     		if(isset($_POST["occupation"])) {
     			db::executeQuery("UPDATE users SET occupation = '".$_POST["occupation"]."' WHERE uid = " . user::uid());
     			$didUpdate = true;
@@ -1554,17 +1576,8 @@ class profile
     			$didUpdate = true;
     		}
     		
-    		if($didUpdate)
+		if($didUpdate)
     			echo "<u>profile updated!</u><br />";
-		$avatar = upload::avatar();
-		if ($avatar == "type error")
-		{
-		    echo "Image type is not supported!";
-		}
-		elseif ($avatar == "done")
-		{
-		    echo "Avatar is uploaded";
-		}
     		$query = "SELECT * FROM users WHERE uid = " . user::uid();
     		$result = db::executeQuery($query);
     		$usr = db::nextRowFromQuery($result);

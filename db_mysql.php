@@ -196,6 +196,15 @@
 			    group_id INTEGER NOT NULL,
 			    image_id INTEGER NOT NULL);";
 	    db::executeQuery($query);
+	    
+	    //types: add,delete,report,fav,unfav,edit,login,logout,comment
+	    $query = "CREATE TABLE IF NOT EXISTS event_log (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    type VARCHAR(80) NOT NULL,
+			    user_id INTEGER NOT NULL,
+			    table_name VARCHAR(80),
+			    table_id INTEGER);			    
+	    ";
+	    db::executeQuery($query);
 
 	    $query = "SELECT COUNT(*) as count FROM country";
 	    $result = db::executeQuery($query);
@@ -268,7 +277,7 @@
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item","signed_in");
+	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item","signed_in","event_log");
 	    $checkNotEmpty = array("country");
 	    foreach ($tables as $table)
 	    {

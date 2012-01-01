@@ -133,6 +133,7 @@ class user
 		$query = "DELETE FROM signed_in WHERE user_id = ".user::uid();
 		db::executeQuery($query);
 		//unset session vars
+		misc::event_log($_SESSION['user_id'], "logout");
 		unset($_SESSION['user_id']);
 		unset($_SESSION['sess_id']);
 
@@ -202,6 +203,7 @@ class user
 			    }
 			}
 		    }
+		    misc::event_log($user_id, "login");
 		    header("Location: /index.php?p=profile");
 		}
 	    }
