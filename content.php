@@ -249,7 +249,7 @@ class content
 	{
 	    $imagePath = "";
 
-	    $table = db::getTableNameFrom($row); //not sure at all if this works (not tested)
+	    $table = db::getTableNameFrom($result);
 	    switch($table)
 	    {
 		//Set title, image

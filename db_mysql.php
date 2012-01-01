@@ -4,6 +4,7 @@
     {
 	public static $con = null; //Database connection
 
+	// connect to database
         public static function connect()
         {
             db::$con = mysql_connect(DB_HOST,DB_USERNAME,DB_PASSWORD);
@@ -14,19 +15,21 @@
             mysql_select_db(DB_DATABASE, db::$con);
         }
 
+	// check if we are connected to database
         public static function is_connected()
         {
             return (db::$con != null);
         }
 
+	// gets query SELECT result and returns 1 row per 1 loop iteration
         public static function nextRowFromQuery($result)
         {
             return mysql_fetch_assoc($result);
         }
 
-        public static function getTableNameFrom($row)
+        public static function getTableNameFrom($result)
         {
-            return "maps";	//mysql_tablename($row);
+            return mysql_field_table($result,0);
         }
 
         public static function clearOldRecords()
