@@ -27,11 +27,13 @@
             return mysql_fetch_assoc($result);
         }
 
+	// get table name from executed query
         public static function getTableNameFrom($result)
         {
             return mysql_field_table($result,0);
         }
 
+	// is for cron
         public static function clearOldRecords()
         {
             $query = "DELETE FROM activation WHERE register_date < (CURRENT_TIMESTAMP-2629743)"; //one month
@@ -39,6 +41,7 @@
             db::executeQuery($query);
         }
 
+	// run function if at least one of the tables do not exist
         public static function setup()
         {
 	    $query = "CREATE TABLE IF NOT EXISTS activation (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -213,7 +216,7 @@
 	    }
 
         }
-        
+
         public static function executeQuery($q)
         {
             $result = mysql_query($q);
@@ -230,12 +233,14 @@
         {
 	    return mysql_fetch_array($result);
 	}
-	
+
+	// amount of rows from SELECT result
 	public static function num_rows($result)
 	{
 	    return mysql_num_rows($result);
 	}
 
+	// private function to check if table exists in database - unless: execute setup() function
         private static function table_exists($tablename, $emptyIsOK=true) 
         {
             $res = mysql_query("
@@ -259,6 +264,7 @@
             return mysql_result($res, 0) == 1;
         }
 
+	// check if all tables exist
         public static function check()
         {
             $allSystemsGo = true;
@@ -290,5 +296,25 @@
             mysql_close(db::$con);
             db::$con = null;
         }
+	
+	/* 
+	 * Queries
+	 * This part is responsible for all website queries
+	 */
+	 
+	 // simple select queries
+	 public static function simpleselect($what, $from, $where, $after_where, $order_by)
+	 {
+	     if (isset($where))
+	     {
+		 $where = "WHERE ".$where;
+	     }
+	     if (isset($order_by))
+	     {
+		 $order_by = "ORDER BY ".$order_by;
+	     }
+	     return "SELECT ".$what." FROM ".$from." ".$where." ".$order_by;
+	     
+	 }
     }
 ?>
