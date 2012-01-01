@@ -1,6 +1,7 @@
 <?PHP
 include_once("hub.php");
 include_once("content.php");
+include_once("header.php");
 
 content::head();
 ?>
@@ -81,7 +82,15 @@ content::head();
 			    $data = array();
 			    array_push($data,$profile);
 			    array_push($data,"<img src='".misc::avatar($id)."'>");
-			    echo content::create_dynamic_list($data,1,"dyn",2,true,true);
+			    if (profile::ifFollow($id)==0)
+			    {
+				array_push($data,"<a href='index.php?follow=".$id."'>Follow user</a>");
+			    }
+			    elseif (profile::ifFollow($id)==1)
+			    {
+				array_push($data,"<a href='index.php?unfollow=".$id."'>Unfollow user</a>");
+			    }
+			    echo content::create_dynamic_list($data,1,"dyn",3,true,true);
 			}
 			else
 			{
@@ -92,7 +101,15 @@ content::head();
 				$data = array();
 				array_push($data,$profile);
 				array_push($data,"<img src='".misc::avatar($id)."'>");
-				echo content::create_dynamic_list($data,1,"dyn",2,true,true);
+				if (profile::ifFollow($id)==0)
+				{
+				    array_push($data,"<a href='index.php?follow=".$id."'>Follow user</a>");
+				}
+				elseif (profile::ifFollow($id)==1)
+				{
+				    array_push($data,"<a href='index.php?unfollow=".$id."'>Unfollow user</a>");
+				}
+				echo content::create_dynamic_list($data,1,"dyn",3,true,true);
 			    }
 			}
 			

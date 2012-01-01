@@ -205,6 +205,12 @@
 			    table_id INTEGER);			    
 	    ";
 	    db::executeQuery($query);
+	    
+	    $query = "CREATE TABLE IF NOT EXISTS following (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    who INTEGER NOT NULL,
+			    whom INTEGER NOT NULL);
+	    ";
+	    db::executeQuery($query);
 
 	    $query = "SELECT COUNT(*) as count FROM country";
 	    $result = db::executeQuery($query);
@@ -277,7 +283,7 @@
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item","signed_in","event_log");
+	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item","signed_in","event_log","following");
 	    $checkNotEmpty = array("country");
 	    foreach ($tables as $table)
 	    {
