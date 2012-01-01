@@ -1641,204 +1641,211 @@ class profile
     	
     	if(user::uid() == $self && user::online() && isset($_GET["edit"]))
     	{
-		$didUpdate = false;
-		
-		$avatar = upload::avatar();
-		if ($avatar == "type error")
-		{
-		    echo "Image type is not supported!<br>";
-		}
-		elseif ($avatar == "done")
-		{
-		    echo "Avatar is uploaded<br>";
-		    $didUpdate = true;
-		}
+	    $didUpdate = false;
 
-    		if(isset($_POST["occupation"])) {
-    			db::executeQuery("UPDATE users SET occupation = '".$_POST["occupation"]."' WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		if(isset($_POST["real_name"])) {
-    			db::executeQuery("UPDATE users SET real_name = '".$_POST["real_name"]."' WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		if(isset($_POST["gender"])) {
-    			db::executeQuery("UPDATE users SET gender = ".$_POST["gender"]." WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		if(isset($_POST["fav_faction"])) {
-    			db::executeQuery("UPDATE users SET fav_faction = '".$_POST["fav_faction"]."' WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		if(isset($_POST["interests"])) {
-    			db::executeQuery("UPDATE users SET interests = '".$_POST["interests"]."' WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		if(isset($_POST["country"])) {
-    			db::executeQuery("UPDATE users SET country = '".$_POST["country"]."' WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		
-		if($didUpdate)
-    			echo "<u>profile updated!</u><br />";
-    		$query = "SELECT * FROM users WHERE uid = " . user::uid();
-    		$result = db::executeQuery($query);
-    		$usr = db::nextRowFromQuery($result);
-    			
-    		echo "<table><tr><td><form action='index.php?p=profile&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
-	    	echo "<p>";
-		echo "<label>Change avatar</label><br />";
-		echo "<input type='file' name='avatar_upload'><br />";
-	    	echo "<label for='message'>Your occupation</label><br />";
-	    	echo "<input type='text' name='occupation' value='".$usr["occupation"]."'><br />";
-	    	echo "<label for='message'>Your real name</label><br />";
-	    	echo "<input type='text' name='real_name' value='".$usr["real_name"]."'><br />";
-	    	echo "<label for='message'>Your gender</label><br />";
-	    	echo "<select name='gender'>";
-		echo "<option value='1' ".misc::option_selected(1,$usr["gender"]).">Male</option>";
-		echo "<option value='0' ".misc::option_selected(0,$usr["gender"]).">Female</option>";
-	    	echo "</select><br />";
-	    	
-	    	echo "<label for='message'>Your favorite faction</label><br />";
-	    	echo "<select name='fav_faction'>";
-		echo "<option value='random' ".misc::option_selected("random",$usr["fav_faction"]).">Random</option>";
-		echo "<option value='soviet' ".misc::option_selected("soviet",$usr["fav_faction"]).">Soviet</option>";
-		echo "<option value='allies' ".misc::option_selected("allies",$usr["fav_faction"]).">Allies</option>";
-		echo "<option value='nod' ".misc::option_selected("nod",$usr["fav_faction"]).">NOD</option>";
-		echo "<option value='gda' ".misc::option_selected("gda",$usr["fav_faction"]).">GDA</option>";
+	    $avatar = upload::avatar();
+	    if ($avatar == "type error")
+	    {
+		echo "Image type is not supported!<br>";
+	    }
+	    elseif ($avatar == "done")
+	    {
+		echo "Avatar is uploaded<br>";
+		$didUpdate = true;
+	    }
 
-	    	echo "</select><br />";
-	    	
-	    	echo "<label for='message'>Where do you come from?</label><br />";
-	    	echo "<select name='country'>";
-	    	echo "<option value='None'>None</option>";
-	    	$query = "SELECT * FROM country";
-    		$result = db::executeQuery($query);
-    		while($country = db::nextRowFromQuery($result))
-    		{
-    			if($country["name"] == $usr["country"])
-    				echo "<option value='".$country["name"]."' selected='selected'>".$country["title"]."</option>";
-    			else
-    				echo "<option value='".$country["name"]."'>".$country["title"]."</option>";
-    		}
-    		echo "</select><br />";
-	    	
-	    	echo "<label for='message'>Your interests</label><br />";
-	    	echo "<textarea id='interests' name='interests' rows='10' cols='20' tabindex='4'>".$usr["interests"]."</textarea>";
-	    	echo "</p>";
-	    	echo "<p class='no-border'>";
-	    	echo "<input class='button' type='submit' name'submit' value='Edit' tabindex='5'/>";      		
-	    	echo "</p>";
-	    	echo "</form></td></tr></table>";
+	    if(isset($_POST["occupation"])) {
+		db::executeQuery("UPDATE users SET occupation = '".$_POST["occupation"]."' WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+	    if(isset($_POST["real_name"])) {
+		db::executeQuery("UPDATE users SET real_name = '".$_POST["real_name"]."' WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+	    if(isset($_POST["gender"])) {
+		db::executeQuery("UPDATE users SET gender = ".$_POST["gender"]." WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+	    if(isset($_POST["fav_faction"])) {
+		db::executeQuery("UPDATE users SET fav_faction = '".$_POST["fav_faction"]."' WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+	    if(isset($_POST["interests"])) {
+		db::executeQuery("UPDATE users SET interests = '".$_POST["interests"]."' WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+	    if(isset($_POST["country"])) {
+		db::executeQuery("UPDATE users SET country = '".$_POST["country"]."' WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+
+	    if($didUpdate)
+		echo "<u>profile updated!</u><br />";
+	    $query = "SELECT * FROM users WHERE uid = " . user::uid();
+	    $result = db::executeQuery($query);
+	    $usr = db::nextRowFromQuery($result);
+
+	    echo "<table><tr><td><form action='index.php?p=profile&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
+	    echo "<p>";
+	    echo "<label>Change avatar</label><br />";
+	    echo "<input type='file' name='avatar_upload'><br />";
+	    echo "<label for='message'>Your occupation</label><br />";
+	    echo "<input type='text' name='occupation' value='".$usr["occupation"]."'><br />";
+	    echo "<label for='message'>Your real name</label><br />";
+	    echo "<input type='text' name='real_name' value='".$usr["real_name"]."'><br />";
+	    echo "<label for='message'>Your gender</label><br />";
+	    echo "<select name='gender'>";
+	    echo "<option value='1' ".misc::option_selected(1,$usr["gender"]).">Male</option>";
+	    echo "<option value='0' ".misc::option_selected(0,$usr["gender"]).">Female</option>";
+	    echo "</select><br />";
+	    
+	    echo "<label for='message'>Your favorite faction</label><br />";
+	    echo "<select name='fav_faction'>";
+	    echo "<option value='random' ".misc::option_selected("random",$usr["fav_faction"]).">Random</option>";
+	    echo "<option value='soviet' ".misc::option_selected("soviet",$usr["fav_faction"]).">Soviet</option>";
+	    echo "<option value='allies' ".misc::option_selected("allies",$usr["fav_faction"]).">Allies</option>";
+	    echo "<option value='nod' ".misc::option_selected("nod",$usr["fav_faction"]).">NOD</option>";
+	    echo "<option value='gda' ".misc::option_selected("gda",$usr["fav_faction"]).">GDA</option>";
+
+	    echo "</select><br />";
+	    
+	    echo "<label for='message'>Where do you come from?</label><br />";
+	    echo "<select name='country'>";
+	    echo "<option value='None'>None</option>";
+	    $query = "SELECT * FROM country";
+	    $result = db::executeQuery($query);
+	    while($country = db::nextRowFromQuery($result))
+	    {
+		if($country["name"] == $usr["country"])
+		    echo "<option value='".$country["name"]."' selected='selected'>".$country["title"]."</option>";
+		else
+		    echo "<option value='".$country["name"]."'>".$country["title"]."</option>";
+	    }
+	    echo "</select><br />";
+
+	    echo "<label for='message'>Your interests</label><br />";
+	    echo "<textarea id='interests' name='interests' rows='10' cols='20' tabindex='4'>".$usr["interests"]."</textarea>";
+	    echo "</p>";
+	    echo "<p class='no-border'>";
+	    echo "<input class='button' type='submit' name'submit' value='Edit' tabindex='5'/>";      		
+	    echo "</p>";
+	    echo "</form></td></tr></table>";
     	}
     	else
     	{
-    		//Display common info
-    		echo "<table>";
-    		echo "<tr><td><h1>".$usr["login"]."'s profile</h1></td>";
-    		$img = "";
-    		if($usr["country"] != "None" && $usr["country"] != "")
-    			$img = "<img style='float:center;border: 0px solid #261b15; padding: 0px;' src='images/country_flags/".$usr["country"]."'>";
-    		if(user::uid() == $usr["uid"] && user::online())
-    			echo "<td><a href='index.php?p=profile&edit=on'><h2>edit</h2></a>".$img."</td>";
-    		else
-    			echo "<td style='padding: .0em 0em;'><center>".$img."</center></td>";
-    		echo "</tr>";
-    		echo "<tr><td>Gender</td><td>".$gender."</td></tr>";
-    		echo "<tr><td>Occupation</td><td>".$usr["occupation"]."</td></tr>";
-    		echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
-    		echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
-    		echo "<tr><td>Favorite faction</td><td><a href='index.php?action=display_faction&faction=".$usr["fav_faction"]."'><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></a></td></tr>";
+	    if ($usr["uid"] == user::uid())
+	    {
+		$whos = "Your";
+	    }
+	    else
+	    {
+		$whos = $usr["login"]."'s";
+	    }
+	    //Display common info
+	    echo "<table>";
+	    echo "<tr><td><h1>".$whos." profile</h1></td>";
+	    $img = "";
+	    if($usr["country"] != "None" && $usr["country"] != "")
+		$img = "<img style='float:center;border: 0px solid #261b15; padding: 0px;' src='images/country_flags/".$usr["country"]."'>";
+	    if(user::uid() == $usr["uid"] && user::online())
+		echo "<td><a href='index.php?p=profile&edit=on'><h2>edit</h2></a>".$img."</td>";
+	    else
+		echo "<td style='padding: .0em 0em;'><center>".$img."</center></td>";
+	    echo "</tr>";
+	    echo "<tr><td>Gender</td><td>".$gender."</td></tr>";
+	    echo "<tr><td>Occupation</td><td>".$usr["occupation"]."</td></tr>";
+	    echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
+	    echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
+	    echo "<tr><td>Favorite faction</td><td><a href='index.php?action=display_faction&faction=".$usr["fav_faction"]."'><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></a></td></tr>";
     		
-    		$query = "SELECT * FROM country WHERE name = '".$usr["country"]."'";
-    		$result = db::executeQuery($query);
-    		if($country = db::nextRowFromQuery($result))
-    			echo "<tr><td>Country</td><td>".$country["title"]."</td></tr>";
-    		else
-    			echo "<tr><td>Country</td><td>None</td></tr>";
-    		
-    		$x = $usr["experiance"];
-			$level = floor((25 + sqrt(625 + 100 * $x)) / 50);
-			$nextLevel = $level+1;
-			$expNeeded = 25 * $nextLevel * $nextLevel - 25 * $nextLevel;
-    		echo "<tr><td>Level</td><td>".$level."</td></tr>";
-    		echo "<tr><td>Experiance left to ".$nextLevel."</td><td>".($expNeeded - $x)."</td></tr>";
-    		echo "</table>";
-    		
-    		
-    		//Display latest favorited items
-		$show_more = "";
-    		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC");
-    		$fav_data = array();
-		if (db::num_rows($result) > 0) {
-		    array_push($fav_data,"",$usr["login"]."'s latest favorited items:");
-		    while ($row = db::nextRowFromQuery($result)) {
-			$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
-			if($item) {
-			    array_push($fav_data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
-			    array_push($fav_data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
-			}
+	    $query = "SELECT * FROM country WHERE name = '".$usr["country"]."'";
+	    $result = db::executeQuery($query);
+	    if($country = db::nextRowFromQuery($result))
+		echo "<tr><td>Country</td><td>".$country["title"]."</td></tr>";
+	    else
+		echo "<tr><td>Country</td><td>None</td></tr>";
+
+	    $x = $usr["experiance"];
+	    $level = floor((25 + sqrt(625 + 100 * $x)) / 50);
+	    $nextLevel = $level+1;
+	    $expNeeded = 25 * $nextLevel * $nextLevel - 25 * $nextLevel;
+	    echo "<tr><td>Level</td><td>".$level."</td></tr>";
+	    echo "<tr><td>Experiance left to ".$nextLevel."</td><td>".($expNeeded - $x)."</td></tr>";
+	    echo "</table>";
+
+	    //Display latest favorited items
+	    $show_more = "";
+	    $result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC");
+	    $fav_data = array();
+	    if (db::num_rows($result) > 0) {
+		array_push($fav_data,"",$whos." latest favorited items:");
+		while ($row = db::nextRowFromQuery($result)) {
+		    $item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
+		    if($item) {
+			array_push($fav_data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
+			array_push($fav_data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
 		    }
-		    if ($show_more != "")
-			array_push($fav_data, "", $show_more);
-		    echo content::create_dynamic_list($fav_data,2,"favorite items",10,true,false);
-    		}
-    		
-    		$result = db::executeQuery("
-		    SELECT 'Total amount of maps' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = " . $usr["uid"] . "
-		    UNION
-		    SELECT 'Total amount of units' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = ". $usr["uid"] . "
-		    UNION
-		    SELECT 'Total amount of guides' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
-		    UNION
-		    SELECT 'Total favorited items' as item, count(*) AS amount, 'fav_item' AS table_name FROM fav_item WHERE user_id = ". $usr["uid"] . "
-		    UNION
-		    SELECT 'Total amount of comments' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
-		    ");
-    		if (db::num_rows($result) > 0) {
-		    $data = array();
-		    array_push($data,$usr["login"]."'s progress:","");
-		    while ($row = db::nextRowFromQuery($result)) {
-			if ($row["amount"] == 0)
+		}
+		if ($show_more != "")
+		    array_push($fav_data, "", $show_more);
+		echo content::create_dynamic_list($fav_data,2,"favorite items",10,true,false);
+	    }
+
+	    $result = db::executeQuery("
+		SELECT 'Total amount of maps' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = " . $usr["uid"] . "
+		UNION
+		SELECT 'Total amount of units' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = ". $usr["uid"] . "
+		UNION
+		SELECT 'Total amount of guides' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
+		UNION
+		SELECT 'Total favorited items' as item, count(*) AS amount, 'fav_item' AS table_name FROM fav_item WHERE user_id = ". $usr["uid"] . "
+		UNION
+		SELECT 'Total amount of comments' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
+	    ");
+	    if (db::num_rows($result) > 0) {
+		$data = array();
+		array_push($data,$whos." progress:","");
+		while ($row = db::nextRowFromQuery($result)) {
+		    if ($row["amount"] == 0)
+		    {
+			$amount = $row["amount"];
+		    }
+		    else
+		    {
+			if($row["table_name"] == "fav_item")
 			{
-			    $amount = $row["amount"];
+			    $params = "\"data\":\"".pages::serialize_array($fav_data)."\"";
+			    $params .= ",\"columns\":\"2\"";
+			    $params .= ",\"name\":\"favorite items\"";
+			    $params .= ",\"maxItemsPerPage\":\"10\"";
+			    $params .= ",\"header\":\"1\"";
+			    $params .= ",\"use_pages\":\"1\"";
+			    $amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
+			}
+			else if($row["table_name"] == "comments")
+			{
+			    $comment_result = db::executeQuery("SELECT * FROM comments WHERE user_id = ".$usr["uid"]);
+			    $comment_data = array();
+			    array_push($comment_data,$usr["login"]."'s comments:");
+			    while($comment = db::nextRowFromQuery($comment_result))
+			    {
+				array_push($comment_data,$comment["content"]);
+			    }
+			    $params = "\"data\":\"".pages::serialize_array($comment_data)."\"";
+			    $params .= ",\"columns\":\"1\"";
+			    $params .= ",\"name\":\"comment items\"";
+			    $params .= ",\"maxItemsPerPage\":\"10\"";
+			    $params .= ",\"header\":\"1\"";
+			    $params .= ",\"use_pages\":\"1\"";
+			    $amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
 			}
 			else
-			{
-			    if($row["table_name"] == "fav_item")
-			    {
-				$params = "\"data\":\"".pages::serialize_array($fav_data)."\"";
-				$params .= ",\"columns\":\"2\"";
-				$params .= ",\"name\":\"favorite items\"";
-				$params .= ",\"maxItemsPerPage\":\"10\"";
-				$params .= ",\"header\":\"1\"";
-				$params .= ",\"use_pages\":\"1\"";
-				$amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
-			    }
-			    else if($row["table_name"] == "comments")
-			    {
-				$comment_result = db::executeQuery("SELECT * FROM comments WHERE user_id = ".$usr["uid"]);
-				$comment_data = array();
-				array_push($comment_data,$usr["login"]."'s comments:");
-				while($comment = db::nextRowFromQuery($comment_result))
-				{
-				    array_push($comment_data,$comment["content"]);
-				}
-				$params = "\"data\":\"".pages::serialize_array($comment_data)."\"";
-				$params .= ",\"columns\":\"1\"";
-				$params .= ",\"name\":\"comment items\"";
-				$params .= ",\"maxItemsPerPage\":\"10\"";
-				$params .= ",\"header\":\"1\"";
-				$params .= ",\"use_pages\":\"1\"";
-				$amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
-			    }
-			    else
-				$amount = "<a href='index.php?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
-			}
-			array_push($data,$row["item"],$amount);
+			    $amount = "<a href='index.php?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
 		    }
-		    echo content::create_dynamic_list($data,2,"dyn",15,true,false);
+		    array_push($data,$row["item"],$amount);
 		}
+		echo content::create_dynamic_list($data,2,"dyn",15,true,false);
+	    }
     	}
     }
     
