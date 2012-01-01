@@ -679,6 +679,8 @@ class content
 		    $content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
+		    if($reported != "")
+			$content .= $reported . " | ";
 		    if($delete != "")
 			$content .= $delete . " | ";
 		    if($favIcon != "")
@@ -688,44 +690,44 @@ class content
 		    $content .= "</div>";
 		    return $content;
 		    break;
-	     }
+	    }
 	     
-	     $content .= "<table>";
+	    $content .= "<table>";
+ 
+	    if($imagePath != "")
+	    {
+		$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
+	    }
 	     
-	     if($imagePath != "")
-	     {
-	     	$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
-	     }
+	    $content .= "<tr><td>" . strip_tags($title);
+	    if($subtitle != "")
+	    {
+		$content .= " " . $subtitle;
+	    }
+	    $content .= "</td>";
+
+	    if(user::online())
+	    {
+		$content .= "<td style='padding: .5em .5em;'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
+	    }
+	    $content .= "</tr>";
+
+	    if($text != "")
+	    {
+		$allow = '<table><tr><td><img><a><b><i><u><p>';
+		$text = strip_tags($text, $allow);
+		$content .= "<tr><td>".$text."</td></tr>";
+	    }
 	     
-	     $content .= "<tr><td>" . strip_tags($title);
-	     if($subtitle != "")
-	     {
-	     	$content .= " " . $subtitle;
-	     }
-	     $content .= "</td>";
-	     
-	     if(user::online())
-	     {
-	     	$content .= "<td style='padding: .5em .5em;'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
-	     }
-	     $content .= "</tr>";
-	     
-	     if($text != "")
-	     {
-	     	$allow = '<table><tr><td><img><a><b><i><u><p>';
-	     	$text = strip_tags($text, $allow);
-	     	$content .= "<tr><td>".$text."</td></tr>";
-	     }
-	     
-	     if($table == "maps")
-	     {
+	    if($table == "maps")
+	    {
 		$mapfile = explode("-", basename($row["path"]), 2);
 		$mapfile = $mapfile[1] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
 	     	$content .= '<tr><td><a href="'.$download.'">Download</a></tr></td>';
-	     }
-	     else if($table == "units")
-	     {
+	    }
+	    else if($table == "units")
+	    {
 	     	$content .= "<tr><td>Description: " . strip_tags($row["description"]) . "</td></tr>";
 	     	$content .= "<tr><td><br>Files (click to download):";
 	     	$directory = "users/".$user_name."/units/".$title."/";
@@ -735,12 +737,15 @@ class content
 		    $content .= "<br><a href='".$shape."'>".basename($shape)."</a>";
 		}
 		$content .= "</td></tr>";
-	     }
+	    }
 	     
-	     if ($delete != "")
+	    if ($delete != "")
 		$content .= "<tr><td>".$delete."</td></tr>";
+	    elseif ($reported != "")
+		$content .= "<tr><td>".$reported."</td></tr>";
+	    
 	     
-	     $content .= "</table>";
+	    $content .= "</table>";
 	}
 	return $content;
     }
