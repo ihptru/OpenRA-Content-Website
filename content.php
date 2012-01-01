@@ -1594,7 +1594,7 @@ class profile
 	}
 	
 	// followed by is not shown for non logged in users
-	if (!user::online())
+	if (user::online())
 	{
 	    $query = "SELECT * FROM following WHERE whom = ".$id;
 	    $result = db::executeQuery($query);
