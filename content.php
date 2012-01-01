@@ -10,32 +10,6 @@ class content
 	echo lang::$lang['website_name'];
 	echo "</title>";
 
-	//include highslide (image viewer)
-	echo "<script type='text/javascript' src='libs/highslide/highslide-with-gallery.js'></script>
-	    <link rel='stylesheet' type='text/css' href='libs/highslide/highslide.css' />
-	    <script type='text/javascript'>
-	    hs.graphicsDir = '../highslide/graphics/';
-	    hs.align = 'center';
-	    hs.transitions = ['expand', 'crossfade'];
-	    hs.outlineType = 'glossy-dark';
-	    hs.wrapperClassName = 'dark';
-	    hs.fadeInOut = true;
-
-	    // Add the controlbar
-	    if (hs.addSlideshow) hs.addSlideshow({
-	    //slideshowGroup: 'group1',
-	    interval: 5000,
-	    repeat: false,
-	    useControls: true,
-	    fixedControls: 'fit',
-	    overlayOptions: {
-	    opacity: .6,
-	    position: 'bottom center',
-	    hideOnMouseOut: true
-	    }
-	    });
-	    </script>
-	";
 	echo "<script type='text/javascript'>
 	function confirmDelete(desc)
 	{
