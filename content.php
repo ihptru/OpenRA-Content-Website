@@ -682,6 +682,49 @@ class content
 	return $content;
     }
 
+    public static function displayEvents($result)
+    {
+	$data = array();
+	array_push($data, "Latest activity of users you follow:");
+	while ($row = db::nextRowFromQuery($result))
+	{
+	    $name = "<a href='index.php?profile=".$row["user_id"]."&p=profile'>".user::login_by_uid($row["user_id"])."</a>";
+	    $type = $row["type"];
+	    switch($type)
+	    {
+		case "add":
+		    $desc = " added new <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "delete_comment":
+		    $desc = " deleted comment on <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "report":
+		    $desc = " reported <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "fav":
+		    $desc = " favorited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "unfav":
+		    $desc = " unfavorited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "comment":
+		    $desc = " commented <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "login":
+		    $desc = " logged in";
+		    break;
+		case "logout":
+		    $desc = " logged out";
+		    break;
+		case "edit":
+		    $desc = " edited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+	    }
+	    array_push($data, $name . $desc . " at " . $row["posted"]);
+	}
+	return content::create_dynamic_list($data, 1, $name = "dyn",  11, true, true);
+    }
+
     public static function create_comment_section($result)
     {
 	$counter = 0;
@@ -1733,7 +1776,7 @@ class profile
     	}
     	else
     	{
-	    if ($usr["uid"] == user::uid())
+	    if (user::online() and $usr["uid"] == user::uid())
 	    {
 		$whos = "Your";
 	    }
@@ -1845,6 +1888,29 @@ class profile
 		    array_push($data,$row["item"],$amount);
 		}
 		echo content::create_dynamic_list($data,2,"dyn",15,true,false);
+	    }
+	    if (user::online())
+	    {
+		$query = "SELECT * FROM following WHERE who = ".user::uid();
+		$result = db::executeQuery($query);
+		$data = array();
+		while ($row = db::nextRowFromQuery($result))
+		{
+		    array_push($data, $row["whom"]);
+		}
+		if (count($data) >= 1)
+		{
+		    $queries = array();
+		    foreach ($data as $value)
+		    {
+			array_push($queries, "SELECT * FROM event_log WHERE user_id = ".$value);
+		    }
+		    $query = implode(" UNION ", $queries) . " ORDER BY posted DESC";
+		    $result = db::executeQuery($query);
+		    if (db::num_rows($result) > 0)
+			echo content::displayEvents($result);
+		}
+		
 	    }
     	}
     }
