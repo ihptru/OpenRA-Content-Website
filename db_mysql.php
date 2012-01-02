@@ -197,7 +197,7 @@
 			    image_id INTEGER NOT NULL);";
 	    db::executeQuery($query);
 	    
-	    //types: add,delete_item,delete_comment,report,fav,unfav,edit,login,logout,comment
+	    // types: add,delete_item,delete_comment,report,fav,unfav,edit,login,logout,comment,follow,unfollow
 	    $query = "CREATE TABLE IF NOT EXISTS event_log (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    type VARCHAR(80) NOT NULL,
 			    user_id INTEGER NOT NULL,

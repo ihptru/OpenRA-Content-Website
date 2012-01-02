@@ -430,7 +430,7 @@ class misc
     
     public static function event_log($user_id, $type, $table_name="", $table_id=0)
     {
-	// types: add,delete_item,delete_comment,report,fav,unfav,edit,login,logout,comment
+	// types: add,delete_item,delete_comment,report,fav,unfav,edit,login,logout,comment,follow,unfollow
 	// issue with `delete_item`: we can not show what user removed because it's removed completely (even basic info of item)
 	$query = "INSERT INTO event_log
 		(user_id, type, table_name, table_id)

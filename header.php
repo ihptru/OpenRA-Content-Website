@@ -132,6 +132,14 @@ class header
 	    setcookie("map_sort_by", $_POST["sort"], time()+3600*24*360, "/");
 	    setcookie("map_mod", $_POST["mod"], time()+3600*24*360, "/");
 	    setcookie("map_tileset", $_POST["tileset"], time()+3600*24*360, "/");
+	    $keys = array_keys($_GET);
+	    $gets = "";
+	    foreach($keys as $key)
+	    {
+		if($key != "current_grid_page_maps")
+		    $gets .= "&" . $key . "=" . $_GET[$key];
+	    }
+	    header("Location: /index.php?current_grid_page_maps=1".$gets);
 	}
     }
     
@@ -161,6 +169,7 @@ class header
 			    )
 		    ";
 		    db::executeQuery($query);
+		    misc::event_log(user::uid(), "follow", "", $id);
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
 	    }
@@ -181,6 +190,7 @@ class header
 		    {
 			$query = "DELETE FROM following WHERE who = ".user::uid()." AND whom = ".$id;
 			db::executeQuery($query);
+			misc::event_log(user::uid(), "unfollow", "", $id);
 			header("Location: {$_SERVER['HTTP_REFERER']}");
 		    }
 		}

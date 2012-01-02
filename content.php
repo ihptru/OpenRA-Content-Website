@@ -719,10 +719,16 @@ class content
 		case "edit":
 		    $desc = " edited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
+		case "follow":
+		    $desc = " started to follow <a href='index.php?&profile=".$row["table_id"]."&p=profile'>".user::login_by_uid($row["table_id"])."</a>";
+		    break;
+		case "unfollow":
+		    $desc = " stopped following <a href='index.php?&profile=".$row["table_id"]."&p=profile'>".user::login_by_uid($row["table_id"])."</a>";
+		    break;
 	    }
 	    array_push($data, $name . $desc . " at " . $row["posted"]);
 	}
-	return content::create_dynamic_list($data, 1, $name = "dyn",  11, true, true);
+	return content::create_dynamic_list($data, 1, "event_log",  11, true, true);
     }
 
     public static function create_comment_section($result)
