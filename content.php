@@ -768,7 +768,7 @@ class content
 	    $content .= "<p>" . strip_tags($comment["content"]) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
-		$content .= "<a style='float: right; margin: -129px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
+		$content .= "<a style='float: right; margin: -161px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
 	    }
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
@@ -854,7 +854,6 @@ class content
 		    $params .= ",\"header\":\"".$header."\"";
 		    $params .= ",\"use_pages\":\"1\"";
 		    $content .= "<tr><td colspan='".$columns."'><a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
-		    
 		}
 		$content .= "</table>";
 		$gets = "";
