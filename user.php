@@ -122,12 +122,22 @@ class user
 		    //destroy cookie var
 		    setcookie("remember", "", time()-60*60, "/");
 		}
-		//remove from cookie map filters if they are set
+		//remove from cookie filters if they are set
 		if (isset($_COOKIE["map_sort_by"]))
 		{
 		    setcookie("map_sort_by", "", time()-60*60, "/");
 		    setcookie("map_mod", "", time()-60*60, "/");
 		    setcookie("map_tileset", "", time()-60*60, "/");
+		}
+		elseif (isset($_COOKIE["unit_sort_by"]))
+		{
+		    setcookie("unit_sort_by", "", time()-60*60, "/");
+		    setcookie("unit_type", "", time()-60*60, "/");
+		}
+		elseif (isset($_COOKIE["guide_sort_by"]))
+		{
+		    setcookie("guide_sort_by", "", time()-60*60, "/");
+		    setcookie("guide_type", "", time()-60*60, "/");
 		}
 		//remove from db
 		$query = "DELETE FROM signed_in WHERE user_id = ".user::uid();

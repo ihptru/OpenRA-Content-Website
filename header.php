@@ -129,17 +129,34 @@ class header
     {
 	if (isset($_POST["apply_filter"]))
 	{
-	    setcookie("map_sort_by", $_POST["sort"], time()+3600*24*360, "/");
-	    setcookie("map_mod", $_POST["mod"], time()+3600*24*360, "/");
-	    setcookie("map_tileset", $_POST["tileset"], time()+3600*24*360, "/");
-	    $keys = array_keys($_GET);
-	    $gets = "";
-	    foreach($keys as $key)
+	    if ($_POST["apply_filter_type"] == "map")
 	    {
-		if($key != "current_grid_page_maps")
-		    $gets .= "&" . $key . "=" . $_GET[$key];
+		setcookie("map_sort_by", $_POST["sort"], time()+3600*24*360, "/");
+		setcookie("map_mod", $_POST["mod"], time()+3600*24*360, "/");
+		setcookie("map_tileset", $_POST["tileset"], time()+3600*24*360, "/");
+		$keys = array_keys($_GET);
+		$gets = "";
+		foreach($keys as $key)
+		{
+		    if($key != "current_grid_page_maps")
+			$gets .= "&" . $key . "=" . $_GET[$key];
+		}
+		header("Location: /index.php?current_grid_page_maps=1".$gets);
 	    }
-	    header("Location: /index.php?current_grid_page_maps=1".$gets);
+	    else
+	    {
+		$arg = $_POST["apply_filter_type"];
+		setcookie($arg."_sort_by", $_POST["sort"], time()+3600*24*360, "/");
+		setcookie($arg."_type", $_POST["type"], time()+3600*24*360, "/");
+		$keys = array_keys($_GET);
+		$gets = "";
+		foreach($keys as $key)
+		{
+		    if($key != "current_grid_page_maps")
+			$gets .= "&" . $key . "=" . $_GET[$key];
+		}
+		header("Location: /index.php?current_grid_page_maps=1".$gets);
+	    }
 	}
     }
     

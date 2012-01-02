@@ -1296,6 +1296,75 @@ class content
 	}
     }
     
+    public static function guide_unit_filters($arg)
+    {
+	$sort_by = "latest";
+	$type = "";
+	if (isset($_POST["apply_filter"]))
+	{
+	    $sort_by = $_POST["sort"];
+	    $type = $_POST["type"];
+	}
+	elseif (isset($_COOKIE[$arg."_sort_by"]))
+	{
+	    $sort_by = $_COOKIE[$arg."_sort_by"];
+	    $type = $_COOKIE[$arg."_type"];
+	}
+	//filters
+	echo "<form name='".$arg."_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>type:</th></tr><tr>";
+	echo "<td>";
+	echo "<select name='sort' id='sort'>";
+	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">latest first</option>";
+	echo "<option value='date' ".misc::option_selected("date",$sort_by).">date</option>";
+	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">title</option>";
+	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">title in reverse order</option>";
+    	echo "</select><br />";
+	echo "</td>";
+	echo "<td>";
+	echo "<select name='type' id='type'>";
+	if ($arg == "guide")
+	{
+	    echo "<option value='any_type' ".misc::option_selected("any_type",$type).">Any</option>";
+	    echo "<option value='design' ".misc::option_selected("design",$type).">Design (2D/3D)</option>";
+	    echo "<option value='mapping' ".misc::option_selected("mapping",$type).">Mapping</option>";
+	    echo "<option value='modding' ".misc::option_selected("modding",$type).">Modding</option>";
+	    echo "<option value='coding' ".misc::option_selected("nature",$type).">Coding</option>";
+	    echo "<option value='other' ".misc::option_selected("other",$type).">Other</option>";
+	}
+	elseif ($arg == "unit")
+	{	    
+	    echo "<option value='any_type' ".misc::option_selected("any_type",$type).">Any</option>";
+	    echo "<option value='structure' ".misc::option_selected("structure",$type).">Structure</option>";
+	    echo "<option value='infantry' ".misc::option_selected("infantry",$type).">Infantry</option>";
+	    echo "<option value='vehicle' ".misc::option_selected("vehicle",$type).">Vehicle</option>";
+	    echo "<option value='air-borne' ".misc::option_selected("air-borne",$type).">Air-borne</option>";
+	    echo "<option value='nature' ".misc::option_selected("nature",$type).">Nature</option>";
+	    echo "<option value='other' ".misc::option_selected("other",$type).">Other</option>";
+	}
+	echo "</select><br />";
+	echo "</td>";
+	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
+	    <input type='hidden' name='apply_filter_type' value='".$arg."'>
+	    </div></form><br><br>
+	";
+	// order by
+	if ($sort_by == "latest")
+	    $order_by = "posted DESC";
+	elseif ($sort_by == "date")
+	    $order_by = "posted";
+	elseif ($sort_by == "alpha")
+	    $order_by = "title";
+	elseif ($sort_by == "alpha_reverse")
+	    $order_by = "title DESC";
+	//type
+	if ($type == "any_type")
+	    $request_type = "";
+	else
+	    $request_type = $type;
+	
+	return array($order_by, $request_type);
+    }
+
     public static function map_filters()
     {
 	$sort_by = "latest";
@@ -1315,7 +1384,7 @@ class content
 	}
 
 	//filters
-	echo "<form onLoad='mod_tileset();' name='map_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>mod:</th><th>tileset:</th></tr><tr>";
+	echo "<form name='map_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>mod:</th><th>tileset:</th></tr><tr>";
 	echo "<td>";
 	echo "<select name='sort' id='sort'>";
 	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">latest first</option>";
@@ -1336,7 +1405,10 @@ class content
 	echo "<option value='any_tileset' ".misc::option_selected("any_tileset",$tileset).">Any</option>";
     	echo "</select><br />";
 	echo "</td>";
-	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'></div></form>";
+	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
+	    <input type='hidden' name='apply_filter_type' value='map'>
+	    </div></form>
+	";
 	
 	//next JS script is for generating Tileset list on fly depending on selected mod
 	echo "<script type='text/javascript'>
@@ -1370,39 +1442,23 @@ class content
 	</script>";
 	// order by
 	if ($sort_by == "latest")
-	{
 	    $order_by = "posted DESC";
-	}
 	elseif ($sort_by == "date")
-	{
 	    $order_by = "posted";
-	}
 	elseif ($sort_by == "alpha")
-	{
 	    $order_by = "title";
-	}
 	elseif ($sort_by == "alpha_reverse")
-	{
 	    $order_by = "title DESC";
-	}
 	//mod
 	if ($mod == "any_mod")
-	{
 	    $request_mod = "";
-	}
 	else
-	{
 	    $request_mod = $mod;
-	}
 	//tileset
 	if ($tileset == "any_tileset")
-	{
 	    $request_tileset = "";
-	}
 	else
-	{
 	    $request_tileset = $tileset;
-	}
 	
 	return array($order_by, $request_mod, $request_tileset);
     }
@@ -1421,14 +1477,16 @@ class objects
     public static function units()
     {
 	echo "<h3>".lang::$lang['units']."!</h3>";
-	$result = db::executeQuery("SELECT * FROM units");
+	list($order_by, $request_type) = content::guide_unit_filters("unit");
+	$result = db::executeQuery("SELECT * FROM units WHERE type LIKE ('%".$request_type."%') ORDER BY ".$order_by);
 	echo content::create_grid($result,"units");
     }
     
     public static function guides()
     {
 	echo "<h3>".lang::$lang['guides']."!</h3>";
-	$result = db::executeQuery("SELECT * FROM guides");
+	list($order_by, $request_type) = content::guide_unit_filters("guide");
+	$result = db::executeQuery("SELECT * FROM guides WHERE guide_type LIKE ('%".$request_type."%') ORDER BY ".$order_by);
 	echo content::create_grid($result,"guides");
     }
     
