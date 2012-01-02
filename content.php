@@ -1889,7 +1889,7 @@ class profile
 		}
 		echo content::create_dynamic_list($data,2,"dyn",15,true,false);
 	    }
-	    if (user::online())
+	    if (user::online() and $self == user::uid())
 	    {
 		$query = "SELECT * FROM following WHERE who = ".user::uid();
 		$result = db::executeQuery($query);
