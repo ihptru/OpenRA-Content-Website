@@ -36,8 +36,8 @@
 	// is for cron
         public static function clearOldRecords()
         {
-            $query = "DELETE FROM activation WHERE register_date < (CURRENT_TIMESTAMP-2629743)"; //one month
-            $query = "DELETE FROM recover WHERE date_time < (CURRENT_TIMESTAMP-2629743)";
+            $query = "DELETE FROM activation WHERE TIMESTAMPDIFF(DAY, register_date, CURRENT_TIMESTAMP) > 30"; //one month
+            $query = "DELETE FROM recover WHERE TIMESTAMPDIFF(DAY, date_time, CURRENT_TIMESTAMP) > 30";
             db::executeQuery($query);
         }
 

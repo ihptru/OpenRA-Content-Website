@@ -11,6 +11,8 @@ define("DB_DATABASE","oramod");
 ### website's path
 function site_path($path)
 {
+    if (trim($path) == "")
+	return;
     $last = $path[strlen($path)-1];
     if ($last == DIRECTORY_SEPARATOR)
     {
@@ -21,6 +23,7 @@ function site_path($path)
 	return $path . DIRECTORY_SEPARATOR;
     }
 }
+
 define("WEBSITE_PATH", site_path($_SERVER['DOCUMENT_ROOT']));	# with / at the end
 
 $use_db = "mysql";	//mysql or pgsql

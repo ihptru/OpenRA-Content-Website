@@ -21,15 +21,19 @@ class content
 	}
 	</script>
 	<script src='libs/multifile.js'>
-	//inlucde multi upload form
+	    //include multi upload form
 	</script>
 	<script src='libs/strip_tags.js'>
-	//inlucde strip_tags function
+	    //include strip_tags function
+	</script>
+	<script src='libs/functions.js'>
+	    //include other javascript functions
 	</script>
 	";
-	echo '<script type="text/javascript" src="libs/password/jquery.js"></script>
-		  <script type="text/javascript" src="libs/password/mocha.js"></script>';
-	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" /></head>";
+	echo "<script type='text/javascript' src='libs/password/jquery.js'></script>
+		  <script type='text/javascript' src='libs/password/mocha.js'></script>";
+	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" />
+	</head>";
     }
 		
     public static function body_head()
@@ -196,11 +200,6 @@ class content
 	return $content;
     }
     
-    public static function following($result, $condition)
-    {
-	
-    }
-
     //Create article items based on result (only accept articles)
     public static function createArticleItems($result)
     {
@@ -1978,15 +1977,6 @@ class profile
     	}
     }
     
-    public static function profile_bar()
-    {
-	$query = "SELECT uid,avatar,login FROM users WHERE uid = " . user::uid();
-	$result = db::executeQuery($query);
-	$row = db::nextRowFromQuery($result);
-	$avatar = misc::avatar($row["uid"]);
-	echo "<img src='".$avatar."' style='max-width:120px'>";
-    }
-
     public static function upload_map()
     {
 	if (!user::online())
@@ -2087,7 +2077,7 @@ class profile
 	$uploaded = upload::upload_unit($username);
 	echo $uploaded;
     }
-    
+
 }
 
 ?>
