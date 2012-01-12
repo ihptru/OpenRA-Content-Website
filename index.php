@@ -25,7 +25,12 @@ content::head();
 		      FROM fav_item
 		  WHERE table_name <> 'articles'
                   GROUP BY table_name,table_id
-		  HAVING (COUNT(table_name) > 1) 
+		  HAVING (COUNT(table_id) = 
+		    (SELECT MAX(user_id_amount) FROM
+			(SELECT COUNT(user_id) AS user_id_amount FROM fav_item GROUP BY table_id)
+			    AS amounts
+		    )
+			)
 		UNION ALL
 		  SELECT table_name,table_id,type FROM featured
 
