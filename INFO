@@ -1,2 +1,8 @@
 permissions:
+
 users/		:		0777
+
+
+
+#cron:
+*       *       5 * *   username  php /path/to/clearDB.php

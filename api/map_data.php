@@ -3,16 +3,11 @@
 include_once "../settings.php";
 
 if ( $use_db == 'mysql' )
-{
     include_once("../db_mysql.php");
-}
 elseif ( $use_db == 'pgsql' )
-{
     include_once("../db_pgsql.php");
-}
 
 db::connect();
-
 
 function map_data($result)
 {
@@ -36,6 +31,32 @@ function map_data($result)
     print(json_encode($json_result_array));
 }
 
+function map_link($result)
+{
+    while ($row = db::nextRowFromQuery($result))
+    {
+	$json_result_array = array();
+	$url = array();
+	$path = $row["path"];
+	$name = explode("-",basename($path),2);
+	$url["url"] = "http://".$_SERVER["SERVER_NAME"]."/".$path.$name[1].".oramap";
+	$json_result_array[] = $url;
+	if (isset($_GET["direct"]))
+	{
+	    $mimetype = "application/octet-stream";
+	    $data = file_get_contents($url["url"]);
+	    $size = strlen($data);
+	    header("Content-Disposition: attachment; filename = ".$name[1].".oramap");
+	    header("Content-Length: $size");
+	    header("Content-Type: $mimetype");
+	    echo $data;
+	    return;
+	}
+	print(json_encode($json_result_array));
+	return;
+    }
+    echo "-1";
+}
 
 function result($condition, $value)
 {
@@ -68,6 +89,14 @@ function result($condition, $value)
 	    ORDER BY RAND() LIMIT 1
 	";
     }
+    elseif ($condition == "load")
+    {
+	$query = "SELECT path FROM maps WHERE maphash = '".$value."'
+		    ORDER BY RAND() LIMIT 1
+	";
+	map_link(db::executeQuery($query));
+	return;
+    }
     $result = db::executeQuery($query);
     map_data($result);
 }
@@ -82,6 +111,9 @@ elseif (isset($_GET["title"]))
 {
     result("title",$_GET["title"]);
 }
-
+elseif (isset($_GET["load"]))
+{
+    result("load",$_GET["load"]);
+}
 
 ?>

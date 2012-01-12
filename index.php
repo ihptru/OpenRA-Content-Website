@@ -1,6 +1,7 @@
 <?PHP
 include_once("hub.php");
 include_once("content.php");
+include_once("header.php");
 
 content::head();
 ?>
@@ -24,7 +25,12 @@ content::head();
 		      FROM fav_item
 		  WHERE table_name <> 'articles'
                   GROUP BY table_name,table_id
-		  HAVING (COUNT(table_name) > 1) 
+		  HAVING (COUNT(table_id) = 
+		    (SELECT MAX(user_id_amount) FROM
+			(SELECT COUNT(user_id) AS user_id_amount FROM fav_item GROUP BY table_id)
+			    AS amounts
+		    )
+			)
 		UNION ALL
 		  SELECT table_name,table_id,type FROM featured
 
@@ -57,7 +63,7 @@ content::head();
 		<!-- sidebar -->
 		<div id="sidebar">
 		    <div class="sidemenu">
-			<?
+		    <?
 			if (user::online())
 			{
 			    if(isset($_GET["profile"]))
@@ -65,51 +71,47 @@ content::head();
 				if ($_GET["profile"] == user::uid())
 				{
 				    $id = user::uid();
-				    $profile = "Your avatar:";
+				    $profile = "You";
 				}
 				else
 				{
 				    $id = $_GET["profile"];
-				    $profile = user::login_by_uid($id)."'s avatar:";
+				    $profile = user::login_by_uid($id);
 				}
 			    }
 			    else
 			    {
 				$id = user::uid();
-				$profile = "Your avatar:";
+				$profile = "You";
 			    }
-			    $data = array();
-			    array_push($data,$profile);
-			    array_push($data,"<img src='".misc::avatar($id)."'>");
-			    echo content::create_dynamic_list($data,1,"dyn",2,true,true);
+			    profile::sidebar_data($profile, $id);
+			    echo "<br>";
+			    echo "<h3>";
+			    echo lang::$lang['sidebar menu']; 
+			
+			    echo "</h3>";
+			    echo "<ul>				
+				<li><a href='index.php?action=mymaps&p=profile'>maps</a></li>
+				<li><a href='index.php?action=myunits&p=profile'>units</a></li>
+				<li><a href='index.php?action=myguides&p=profile'>guides</a></li>
+				</ul>
+			    ";
 			}
 			else
 			{
 			    if(isset($_GET["profile"]))
 			    {
 				$id = $_GET["profile"];
-				$profile = user::login_by_uid($id)."'s avatar:";
-				$data = array();
-				array_push($data,$profile);
-				array_push($data,"<img src='".misc::avatar($id)."'>");
-				echo content::create_dynamic_list($data,1,"dyn",2,true,true);
+				$profile = user::login_by_uid($id);
+				profile::sidebar_data($profile, $id);
 			    }
 			}
-			
-			?>
-			<? if (user::online())
-			{ ?>
-			<h3><? echo lang::$lang['sidebar menu']; ?></h3>
-			<ul>				
-			    <li><a href="index.php?action=mymaps&p=profile"><? echo "maps"; ?></a></li>
-			    <li><a href="index.php?action=myunits&p=profile"><? echo "units"; ?></a></li>
-			    <li><a href="index.php?action=myguides&p=profile"><? echo "guides"; ?></a></li>
-			</ul>	
-			<? } ?>
+
+		    ?>
 		    </div>
 		    <h3><? echo lang::$lang['gallery']; ?></h3>
 
-		    <p class="thumbs">
+		    <p style='margin-left:5px;' class="thumbs">
 			<?PHP 
 			
 			$result = db::executeQuery("SELECT * FROM maps ORDER BY RAND() LIMIT 12");

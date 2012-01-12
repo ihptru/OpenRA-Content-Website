@@ -47,6 +47,8 @@ class upload
 		// 7  -  Database error
 		if ($return_code == 0)
 		    misc::increase_experiance(10);
+		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM maps WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
+		    misc::event_log(user::uid(), "add", "maps", $row["uid"]);
 		return code_match($return_code);
 	    }
 	    else
@@ -73,6 +75,8 @@ class upload
 		";
 	    db::executeQuery($query);
 	    misc::increase_experiance(50);
+	    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM units WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
+	    misc::event_log(user::uid(), "add", "units", $row["uid"]);
 	}
 	$unit_palette = "temperat.pal"; //Needed for shp extractor
 	if(isset($_POST['unit_palette']))
@@ -424,6 +428,20 @@ class misc
 	db::executeQuery($query);
     }
     
+    public static function event_log($user_id, $type, $table_name="", $table_id=0)
+    {
+	// types: add,delete_item,delete_comment,report,fav,unfav,edit,login,logout,comment,follow,unfollow
+	// issue with `delete_item`: we can not show what user removed because it's removed completely (even basic info of item)
+	$query = "INSERT INTO event_log
+		(user_id, type, table_name, table_id)
+		VALUES
+		(
+		".$user_id.",'".$type."','".$table_name."',".$table_id."
+		)
+	";
+	db::executeQuery($query);
+    }
+    
     public static function amount_rows($result, $value)
     {
 	if (db::num_rows($result) > $value)
@@ -460,15 +478,27 @@ class misc
 	}
     }
     
-    public static function option_selected($value, $in_db)
+    public static function option_selected($value, $request)
     {
-	if ($value == $in_db)
+	if ($value == $request)
 	{
 	    return "selected='selected'";
 	}
 	else
 	{
 	    return "";
+	}
+    }
+    
+    public static function option_selected_bool($value, $request)
+    {
+	if ($value == $request)
+	{
+	    return "true";
+	}
+	else
+	{
+	    return "false";
 	}
     }
 }

@@ -4,6 +4,7 @@
     {
 	public static $con = null; //Database connection
 
+	// connect to database
         public static function connect()
         {
             db::$con = mysql_connect(DB_HOST,DB_USERNAME,DB_PASSWORD);
@@ -14,28 +15,33 @@
             mysql_select_db(DB_DATABASE, db::$con);
         }
 
+	// check if we are connected to database
         public static function is_connected()
         {
             return (db::$con != null);
         }
 
+	// gets query SELECT result and returns 1 row per 1 loop iteration
         public static function nextRowFromQuery($result)
         {
             return mysql_fetch_assoc($result);
         }
 
-        public static function getTableNameFrom($row)
+	// get table name from executed query
+        public static function getTableNameFrom($result)
         {
-            return "maps";	//mysql_tablename($row);
+            return mysql_field_table($result,0);
         }
 
+	// is for cron
         public static function clearOldRecords()
         {
-            $query = "DELETE FROM activation WHERE register_date < (CURRENT_TIMESTAMP-2629743)"; //one month
-            $query = "DELETE FROM recover WHERE date_time < (CURRENT_TIMESTAMP-2629743)";
+            $query = "DELETE FROM activation WHERE TIMESTAMPDIFF(DAY, register_date, CURRENT_TIMESTAMP) > 30"; //one month
+            $query = "DELETE FROM recover WHERE TIMESTAMPDIFF(DAY, date_time, CURRENT_TIMESTAMP) > 30";
             db::executeQuery($query);
         }
 
+	// run function if at least one of the tables do not exist
         public static function setup()
         {
 	    $query = "CREATE TABLE IF NOT EXISTS activation (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -190,6 +196,22 @@
 			    group_id INTEGER NOT NULL,
 			    image_id INTEGER NOT NULL);";
 	    db::executeQuery($query);
+	    
+	    // types: add,delete_item,delete_comment,report,fav,unfav,edit,login,logout,comment,follow,unfollow
+	    $query = "CREATE TABLE IF NOT EXISTS event_log (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    type VARCHAR(80) NOT NULL,
+			    user_id INTEGER NOT NULL,
+			    table_name VARCHAR(80),
+			    table_id INTEGER,
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);			    
+	    ";
+	    db::executeQuery($query);
+	    
+	    $query = "CREATE TABLE IF NOT EXISTS following (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    who INTEGER NOT NULL,
+			    whom INTEGER NOT NULL);
+	    ";
+	    db::executeQuery($query);
 
 	    $query = "SELECT COUNT(*) as count FROM country";
 	    $result = db::executeQuery($query);
@@ -210,7 +232,7 @@
 	    }
 
         }
-        
+
         public static function executeQuery($q)
         {
             $result = mysql_query($q);
@@ -227,12 +249,14 @@
         {
 	    return mysql_fetch_array($result);
 	}
-	
+
+	// amount of rows from SELECT result
 	public static function num_rows($result)
 	{
 	    return mysql_num_rows($result);
 	}
 
+	// private function to check if table exists in database - unless: execute setup() function
         private static function table_exists($tablename, $emptyIsOK=true) 
         {
             $res = mysql_query("
@@ -256,10 +280,11 @@
             return mysql_result($res, 0) == 1;
         }
 
+	// check if all tables exist
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item","signed_in");
+	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item","signed_in","event_log","following");
 	    $checkNotEmpty = array("country");
 	    foreach ($tables as $table)
 	    {
@@ -287,5 +312,25 @@
             mysql_close(db::$con);
             db::$con = null;
         }
+	
+	/* 
+	 * Queries
+	 * This part is responsible for all website queries
+	 */
+	 
+	 // simple select queries
+	 public static function simpleselect($what, $from, $where, $after_where, $order_by)
+	 {
+	     if (isset($where))
+	     {
+		 $where = "WHERE ".$where;
+	     }
+	     if (isset($order_by))
+	     {
+		 $order_by = "ORDER BY ".$order_by;
+	     }
+	     return "SELECT ".$what." FROM ".$from." ".$where." ".$order_by;
+	     
+	 }
     }
 ?>

@@ -4,119 +4,16 @@ class content
 {
     public static function head()
     {
-	if( isset($_POST['message']))
-	{
-	    if (user::online())
-	    {
-		if (trim($_POST['message']) != "")
-		{
-		    db::executeQuery("INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES ('','".$_POST['message']."',".user::uid().",".$_GET['id'].",'".$_GET['table']."')");
-		    misc::increase_experiance(5);
-		}
-	    }
-	}
-	if ( isset($_GET['delete_comment']) and isset($_GET['user_comment']) )
-	{
-	    $id = $_GET['delete_comment'];
-	    $user = $_GET['user_comment'];
-	    misc::delete_comment($id, $user);
-	    header("Location: {$_SERVER['HTTP_REFERER']}");
-	}
-	if( isset($_POST['upload_guide_title']) && isset($_POST['upload_guide_text']) && isset($_POST['upload_guide_type']))
-	{
-	    if (user::online())
-	    {
-		if (trim($_POST['upload_guide_text']) != "" && trim($_POST['upload_guide_title']) != "" && trim($_POST['upload_guide_type'] != ""))
-		{
-		    $text = nl2br($_POST['upload_guide_text']);
-		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES ('".$_POST['upload_guide_title']."','".$text."','".$_POST['upload_guide_type']."',".user::uid().")");
-		    misc::increase_experiance(50);
-		}
-	    }
-	}
-	if( isset($_POST['edit_guide_title']) && isset($_POST['edit_guide_text']) && isset($_POST['edit_guide_type']) && isset($_POST['edit_guide_uid']))
-	{
-	    if (user::online())
-	    {
-		if (trim($_POST['edit_guide_text']) != "" && trim($_POST['edit_guide_title']) != "" && trim($_POST['edit_guide_type'] != "") && trim($_POST['edit_guide_uid'] != ""))
-		{
-		    $text = nl2br($_POST['edit_guide_text']);
-		    db::executeQuery("UPDATE guides SET title = '".$_POST['edit_guide_title']."' WHERE uid = " . $_POST['edit_guide_uid']);
-		    db::executeQuery("UPDATE guides SET html_content = '".$text."' WHERE uid = " . $_POST['edit_guide_uid']);
-		    db::executeQuery("UPDATE guides SET guide_type = '".$_POST['edit_guide_type']."' WHERE uid = " . $_POST['edit_guide_uid']);
-		    header("Location: {$_SERVER['HTTP_REFERER']}");
-		}
-	    }
-	}
-	if ( isset($_GET["table"]) && isset($_GET["id"]) )
-	{
-	    if (user::online())
-	    {
-		if(isset($_GET["fav"]))
-		{
-		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
-		    {
-			db::executeQuery("DELETE FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = ".user::uid());
-		    }
-		    else
-		    {
-			db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (".user::uid().",'".$_GET["table"]."','".$_GET["id"]."')");
-		    }
-		    header("Location: {$_SERVER['HTTP_REFERER']}");
-		}
-		else if(isset($_GET["report"]))
-		{
-		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
-		    { } else {
-			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id) VALUES ('".$_GET["table"]."', ".$_GET["id"].", ".user::uid() . ")");
-		    }
-		}
-	    }
-	}
-	
-	if ( isset($_GET['del_item']) and isset($_GET['del_item_table']) and isset($_GET['del_item_user']))
-	{
-	    $item_id = $_GET['del_item'];
-	    $table_name = $_GET['del_item_table'];
-	    $user_id = $_GET['del_item_user'];
-	    misc::delete_item($item_id, $table_name, $user_id);	//delete item and comments related to it
-	    header("Location: /index.php?p=$table_name");
-	}
+	header::main();
 
 	echo "<html><head><title>";
 	echo lang::$lang['website_name'];
 	echo "</title>";
 
-	//include highslide (image viewer)
-	echo "<script type='text/javascript' src='libs/highslide/highslide-with-gallery.js'></script>
-	    <link rel='stylesheet' type='text/css' href='libs/highslide/highslide.css' />
-	    <script type='text/javascript'>
-	    hs.graphicsDir = '../highslide/graphics/';
-	    hs.align = 'center';
-	    hs.transitions = ['expand', 'crossfade'];
-	    hs.outlineType = 'glossy-dark';
-	    hs.wrapperClassName = 'dark';
-	    hs.fadeInOut = true;
-
-	    // Add the controlbar
-	    if (hs.addSlideshow) hs.addSlideshow({
-	    //slideshowGroup: 'group1',
-	    interval: 5000,
-	    repeat: false,
-	    useControls: true,
-	    fixedControls: 'fit',
-	    overlayOptions: {
-	    opacity: .6,
-	    position: 'bottom center',
-	    hideOnMouseOut: true
-	    }
-	    });
-	    </script>
-	";
 	echo "<script type='text/javascript'>
-	function confirmDelete(item)
+	function confirmDelete(desc)
 	{
-	    var agree=confirm('Are you sure you want to delete this '+item+'?');
+	    var agree=confirm('Are you sure you want to '+desc+'?');
 	    if (agree)
 	    return true ;
 	    else
@@ -124,15 +21,19 @@ class content
 	}
 	</script>
 	<script src='libs/multifile.js'>
-	//inlucde multi upload form
+	    //include multi upload form
 	</script>
 	<script src='libs/strip_tags.js'>
-	//inlucde strip_tags function
+	    //include strip_tags function
+	</script>
+	<script src='libs/functions.js'>
+	    //include other javascript functions
 	</script>
 	";
-	echo '<script type="text/javascript" src="libs/password/jquery.js"></script>
-		  <script type="text/javascript" src="libs/password/mocha.js"></script>';
-	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" /></head>";
+	echo "<script type='text/javascript' src='libs/password/jquery.js'></script>
+		  <script type='text/javascript' src='libs/password/mocha.js'></script>";
+	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" />
+	</head>";
     }
 		
     public static function body_head()
@@ -236,14 +137,15 @@ class content
     }
 
     //Create image gallery items based on result
-    public static function createImageGallery($result)
+    public static function createImageGallery($result, $condition="")
     {
+	$follow = 0;
 	$content = "";
 	while ($row = db::nextRowFromQuery($result))
 	{
 	    $imagePath = "";
 
-	    $table = db::getTableNameFrom($row); //not sure at all if this works (not tested)
+	    $table = db::getTableNameFrom($result);
 	    switch($table)
 	    {
 		//Set title, image
@@ -256,13 +158,48 @@ class content
 		case "guides":
 		    $imagePath = "";
 		    break;
+		case "following":
+		    if ($condition == "follow")
+		    {
+			misc::avatar($row["whom"]);
+			$imagePath = misc::avatar($row["whom"]);
+		    }
+		    elseif ($condition == "followed")
+		    {
+			misc::avatar($row["who"]);
+			$imagePath = misc::avatar($row["who"]);
+		    }
+		    break;
 	    }
-
-	    $content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
+	    if ($table == "following")
+	    {
+		if ($condition == "follow")
+		{
+		    $show = $row["whom"];
+		    $end = "";
+		}
+		if ($condition == "followed")
+		{
+		    $show = $row["who"];
+		    $end = "ed";
+		}
+		$follow++;
+		if ($follow == 9)
+		{
+		    
+		    $content .= "<br><a href='index.php?action=show_user_follow".$end."&id=".$row["who"]."' style='float:right;margin-right:10px;'>Show all</a>";
+		    break;
+		}
+		$content .= "<a href='index.php?profile=".$show."&p=profile' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
+	    }
+	    else
+	    {
+		$content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
+	    }
 	}
 	return $content;
     }
-
+    
     //Create article items based on result (only accept articles)
     public static function createArticleItems($result)
     {
@@ -603,7 +540,7 @@ class content
 		if(isset($row["uid"]))
 		{
 		    $delete = "Delete ".rtrim($table,"s");
-		    $delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".rtrim($table,"s")."\")'>".$delete."</a>";
+		    $delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"delete this ".rtrim($table,"s")."\")'>".$delete."</a>";
 		    $edit = " | <a href='index.php?p=edit_item&table=".$table."&id=".$row["uid"]."'>Edit</a>";
 		}
 	    }
@@ -616,7 +553,7 @@ class content
 		else
 		{
 		    if(user::online())
-			$reported = "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&report'>Report Item</a>";
+			$reported = "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&report' onClick='return confirmDelete(\"report this item\")'>Report Item</a>";
 		}
 	    }
 	    $favIcon = "";
@@ -673,6 +610,8 @@ class content
 		    $content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
+		    if($reported != "")
+			$content .= $reported . " | ";
 		    if($delete != "")
 			$content .= $delete . " | ";
 		    if($favIcon != "")
@@ -682,44 +621,44 @@ class content
 		    $content .= "</div>";
 		    return $content;
 		    break;
-	     }
+	    }
 	     
-	     $content .= "<table>";
+	    $content .= "<table>";
+ 
+	    if($imagePath != "")
+	    {
+		$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
+	    }
 	     
-	     if($imagePath != "")
-	     {
-	     	$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
-	     }
+	    $content .= "<tr><td>" . strip_tags($title);
+	    if($subtitle != "")
+	    {
+		$content .= " " . $subtitle;
+	    }
+	    $content .= "</td>";
+
+	    if(user::online())
+	    {
+		$content .= "<td style='padding: .5em .5em;'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
+	    }
+	    $content .= "</tr>";
+
+	    if($text != "")
+	    {
+		$allow = '<table><tr><td><img><a><b><i><u><p>';
+		$text = strip_tags($text, $allow);
+		$content .= "<tr><td>".$text."</td></tr>";
+	    }
 	     
-	     $content .= "<tr><td>" . strip_tags($title);
-	     if($subtitle != "")
-	     {
-	     	$content .= " " . $subtitle;
-	     }
-	     $content .= "</td>";
-	     
-	     if(user::online())
-	     {
-	     	$content .= "<td style='padding: .5em .5em;'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
-	     }
-	     $content .= "</tr>";
-	     
-	     if($text != "")
-	     {
-	     	$allow = '<table><tr><td><img><a><b><i><u><p>';
-	     	$text = strip_tags($text, $allow);
-	     	$content .= "<tr><td>".$text."</td></tr>";
-	     }
-	     
-	     if($table == "maps")
-	     {
+	    if($table == "maps")
+	    {
 		$mapfile = explode("-", basename($row["path"]), 2);
 		$mapfile = $mapfile[1] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
 	     	$content .= '<tr><td><a href="'.$download.'">Download</a></tr></td>';
-	     }
-	     else if($table == "units")
-	     {
+	    }
+	    else if($table == "units")
+	    {
 	     	$content .= "<tr><td>Description: " . strip_tags($row["description"]) . "</td></tr>";
 	     	$content .= "<tr><td><br>Files (click to download):";
 	     	$directory = "users/".$user_name."/units/".$title."/";
@@ -729,28 +668,82 @@ class content
 		    $content .= "<br><a href='".$shape."'>".basename($shape)."</a>";
 		}
 		$content .= "</td></tr>";
-	     }
+	    }
 	     
-	     if ($delete != "")
+	    if ($delete != "")
 		$content .= "<tr><td>".$delete."</td></tr>";
+	    elseif ($reported != "")
+		$content .= "<tr><td>".$reported."</td></tr>";
+	    
 	     
-	     $content .= "</table>";
+	    $content .= "</table>";
 	}
 	return $content;
+    }
+
+    public static function displayEvents($result)
+    {
+	$data = array();
+	array_push($data, "Latest activity of users you follow:");
+	while ($row = db::nextRowFromQuery($result))
+	{
+	    $name = "<a href='index.php?profile=".$row["user_id"]."&p=profile'>".user::login_by_uid($row["user_id"])."</a>";
+	    $type = $row["type"];
+	    switch($type)
+	    {
+		case "add":
+		    $desc = " added new <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "delete_comment":
+		    $desc = " deleted comment on <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "report":
+		    $desc = " reported <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "fav":
+		    $desc = " favorited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "unfav":
+		    $desc = " unfavorited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "comment":
+		    $desc = " commented <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "login":
+		    $desc = " logged in";
+		    break;
+		case "logout":
+		    $desc = " logged out";
+		    break;
+		case "edit":
+		    $desc = " edited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    break;
+		case "follow":
+		    $desc = " started to follow <a href='index.php?&profile=".$row["table_id"]."&p=profile'>".user::login_by_uid($row["table_id"])."</a>";
+		    break;
+		case "unfollow":
+		    $desc = " stopped following <a href='index.php?&profile=".$row["table_id"]."&p=profile'>".user::login_by_uid($row["table_id"])."</a>";
+		    break;
+	    }
+	    array_push($data, $name . $desc . " at " . $row["posted"]);
+	}
+	return content::create_dynamic_list($data, 1, "event_log",  11, true, true);
     }
 
     public static function create_comment_section($result)
     {
 	$counter = 0;
 	$content = "";
+	$comment_page_id = 0;
 
 	$comments = db::num_rows($result);
 	$content .= "<h3 id='comments'>" . $comments . " Responses</h3>";
 	$content .= "<ol class='commentlist'>";
-
+	$table = db::getTableNameFrom($result);
 	while ($comment = db::nextRowFromQuery($result))
 	{
 	    $counter++;
+	    $comment_page_id++;
 	    $res = db::executeQuery("SELECT * FROM users WHERE uid = " . $comment["user_id"]);
 	    $author = db::nextRowFromQuery($res);
 
@@ -764,11 +757,11 @@ class content
 
 	    $avatarImg = misc::avatar($author["uid"]);
 		
-	    $content .= "<div class='comment-info'>";			
+	    $content .= "<a name=".$comment_page_id."></a><div class='comment-info'>";			
 	    $content .= "<a href='index.php?profile=".$comment["user_id"]."&p=profile'><img alt='' src='" . $avatarImg . "' style='margin-top:10px; max-width:50' /></a>";
 	    $content .= "<cite>";
 	    $content .= "<a href='index.php?profile=".$comment["user_id"]."&p=profile'>" . $author["login"] . "</a> Says: <br />";
-	    $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
+	    $content .= "<span class='comment-data'><a href='#".$comment_page_id."' title=''>" . $comment["posted"] . "</a></span>";
 	    $content .= "</cite>";
 	    $content .= "</div>";
                 
@@ -776,7 +769,7 @@ class content
 	    $content .= "<p>" . strip_tags($comment["content"]) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
-		$content .= "<a style='float: right; margin: -129px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."' onClick='return confirmDelete(\"comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
+		$content .= "<a style='float: right; margin: -161px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
 	    }
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
@@ -862,7 +855,6 @@ class content
 		    $params .= ",\"header\":\"".$header."\"";
 		    $params .= ",\"use_pages\":\"1\"";
 		    $content .= "<tr><td colspan='".$columns."'><a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
-		    
 		}
 		$content .= "</table>";
 		$gets = "";
@@ -1125,7 +1117,8 @@ class content
 		return;
 	    profile::upload_map();
 	    echo "<h3>Your maps</h3>";
-	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." ORDER BY posted DESC");
+	    list($order_by, $request_mod, $request_tileset) = content::map_filters();
+	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." AND g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
 	    $output = content::create_grid($result);
 	    if ($output == "")
 	    {
@@ -1217,6 +1210,257 @@ class content
 		echo content::create_list($result, $table);
 	    }
 	}
+	if ($request == "show_user_follow")
+	{
+	    if (isset($_GET["id"]))
+	    {
+		$id = $_GET["id"];
+		if ($id == user::uid())
+		{
+		    $name = "You";
+		    $who = $name." follow:";
+		}
+		else
+		{
+		    $name = user::login_by_uid($id);
+		    $who = "<a href='index.php?profile=".$id."&p=profile'>".$name."</a> follows:";
+		}
+		$query = "SELECT * FROM following WHERE who = ".$id;
+		$result = db::executeQuery($query);
+		if (db::num_rows($result) > 0)
+		{
+		    $data = array();
+		    array_push($data, "", $who);
+		    while ($row = db::nextRowFromQuery($result))
+		    {
+			$avatar = misc::avatar($row["whom"]);
+			array_push($data,"<a href='index.php?profile=".$row["whom"]."&p=profile'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["whom"]."&p=profile'>".user::login_by_uid($row["whom"])."</a>");
+		    }
+		    echo content::create_dynamic_list($data,2,"dyn",10,true,true);
+		}
+		else
+		{
+		    $verb = "does";
+		    if ($name == "You")
+			$verb = "do";
+		    echo "<table>
+			      <tr>
+				  <th>".$name." ".$verb." not follow anyone</th>
+			      </tr>
+			  </table>
+		    ";
+		}
+	    }
+	}
+	if ($request == "show_user_followed")
+	{
+	    if (isset($_GET["id"]))
+	    {
+		$id = $_GET["id"];
+		if ($id == user::uid())
+		{
+		    $name = "You";
+		    $who = $name." are followed by:";
+		}
+		else
+		{
+		    $name = user::login_by_uid($id);
+		    $who = "<a href='index.php?profile=".$id."&p=profile'>".$name."</a> is followed by:";
+		}
+		$query = "SELECT * FROM following WHERE whom = ".$id;
+		$result = db::executeQuery($query);
+		if (db::num_rows($result) > 0)
+		{
+		    $data = array();
+		    array_push($data, "", $who);
+		    while ($row = db::nextRowFromQuery($result))
+		    {
+			$avatar = misc::avatar($row["who"]);
+			array_push($data,"<a href='index.php?profile=".$row["who"]."&p=profile'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["who"]."&p=profile'>".user::login_by_uid($row["who"])."</a>");
+		    }
+		    echo content::create_dynamic_list($data,2,"dyn",10,true,true);
+		}
+		else
+		{
+		    $verb = "is";
+		    if ($name == "You")
+			$verb = "are";
+		    echo "<table>
+			      <tr>
+				  <th>".$name." ".$verb." not followed by anyone</th>
+			      </tr>
+			  </table>
+		    ";
+		}
+	    }
+	}
+    }
+    
+    public static function guide_unit_filters($arg)
+    {
+	$sort_by = "latest";
+	$type = "";
+	if (isset($_POST["apply_filter"]))
+	{
+	    $sort_by = $_POST["sort"];
+	    $type = $_POST["type"];
+	}
+	elseif (isset($_COOKIE[$arg."_sort_by"]))
+	{
+	    $sort_by = $_COOKIE[$arg."_sort_by"];
+	    $type = $_COOKIE[$arg."_type"];
+	}
+	//filters
+	echo "<form name='".$arg."_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>type:</th></tr><tr>";
+	echo "<td>";
+	echo "<select name='sort' id='sort'>";
+	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">latest first</option>";
+	echo "<option value='date' ".misc::option_selected("date",$sort_by).">date</option>";
+	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">title</option>";
+	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">title in reverse order</option>";
+    	echo "</select><br />";
+	echo "</td>";
+	echo "<td>";
+	echo "<select name='type' id='type'>";
+	if ($arg == "guide")
+	{
+	    echo "<option value='any_type' ".misc::option_selected("any_type",$type).">Any</option>";
+	    echo "<option value='design' ".misc::option_selected("design",$type).">Design (2D/3D)</option>";
+	    echo "<option value='mapping' ".misc::option_selected("mapping",$type).">Mapping</option>";
+	    echo "<option value='modding' ".misc::option_selected("modding",$type).">Modding</option>";
+	    echo "<option value='coding' ".misc::option_selected("nature",$type).">Coding</option>";
+	    echo "<option value='other' ".misc::option_selected("other",$type).">Other</option>";
+	}
+	elseif ($arg == "unit")
+	{	    
+	    echo "<option value='any_type' ".misc::option_selected("any_type",$type).">Any</option>";
+	    echo "<option value='structure' ".misc::option_selected("structure",$type).">Structure</option>";
+	    echo "<option value='infantry' ".misc::option_selected("infantry",$type).">Infantry</option>";
+	    echo "<option value='vehicle' ".misc::option_selected("vehicle",$type).">Vehicle</option>";
+	    echo "<option value='air-borne' ".misc::option_selected("air-borne",$type).">Air-borne</option>";
+	    echo "<option value='nature' ".misc::option_selected("nature",$type).">Nature</option>";
+	    echo "<option value='other' ".misc::option_selected("other",$type).">Other</option>";
+	}
+	echo "</select><br />";
+	echo "</td>";
+	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
+	    <input type='hidden' name='apply_filter_type' value='".$arg."'>
+	    </div></form><br><br>
+	";
+	// order by
+	if ($sort_by == "latest")
+	    $order_by = "posted DESC";
+	elseif ($sort_by == "date")
+	    $order_by = "posted";
+	elseif ($sort_by == "alpha")
+	    $order_by = "title";
+	elseif ($sort_by == "alpha_reverse")
+	    $order_by = "title DESC";
+	//type
+	if ($type == "any_type")
+	    $request_type = "";
+	else
+	    $request_type = $type;
+	
+	return array($order_by, $request_type);
+    }
+
+    public static function map_filters()
+    {
+	$sort_by = "latest";
+	$mod = "";
+	$tileset = "";
+	if (isset($_POST["apply_filter"]))
+	{
+	    $sort_by = $_POST["sort"];
+	    $mod = $_POST["mod"];
+	    $tileset = $_POST["tileset"];
+	}
+	elseif (isset($_COOKIE["map_sort_by"]))
+	{
+	    $sort_by = $_COOKIE["map_sort_by"];
+	    $mod = $_COOKIE["map_mod"];
+	    $tileset = $_COOKIE["map_tileset"];
+	}
+
+	//filters
+	echo "<form name='map_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>mod:</th><th>tileset:</th></tr><tr>";
+	echo "<td>";
+	echo "<select name='sort' id='sort'>";
+	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">latest first</option>";
+	echo "<option value='date' ".misc::option_selected("date",$sort_by).">date</option>";
+	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">title</option>";
+	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">title in reverse order</option>";
+    	echo "</select><br />";
+	echo "</td>";
+	echo "<td>";
+	echo "<select onChange='mod_tileset();' name='mod' id='mod'>";
+	echo "<option value='any_mod' ".misc::option_selected("any_mod",$mod).">Any</option>";
+	echo "<option value='ra' ".misc::option_selected("ra",$mod).">RA</option>";
+	echo "<option value='cnc' ".misc::option_selected("cnc",$mod).">CNC</option>";
+    	echo "</select><br />";
+	echo "</td>";
+	echo "<td>";
+	echo "<select name='tileset' id='tileset'>";
+	echo "<option value='any_tileset' ".misc::option_selected("any_tileset",$tileset).">Any</option>";
+    	echo "</select><br />";
+	echo "</td>";
+	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
+	    <input type='hidden' name='apply_filter_type' value='map'>
+	    </div></form>
+	";
+	
+	//next JS script is for generating Tileset list on fly depending on selected mod
+	echo "<script type='text/javascript'>
+	    function mod_tileset()
+	    {
+		var chosen_option=document.getElementById('mod').options[document.getElementById('mod').selectedIndex]
+		if (chosen_option.value == 'any_mod')
+		{
+		    document.map_filters.tileset.options.length=0
+		    document.map_filters.tileset.options[0] = new Option('Any','any_tileset')
+		}
+		if (chosen_option.value == 'ra')
+		{
+		    document.map_filters.tileset.options.length=0
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('Any','any_tileset',false,".misc::option_selected_bool("any_tileset",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('snow','snow',false,".misc::option_selected_bool("snow",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('interior','interior',false,".misc::option_selected_bool("interior",$tileset).")
+		}
+		if (chosen_option.value == 'cnc')
+		{
+		    document.map_filters.tileset.options.length=0
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('Any','any_tileset',false,".misc::option_selected_bool("any_tileset",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('desert','desert',false,".misc::option_selected_bool("desert",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('winter','winter',false,".misc::option_selected_bool("winter",$tileset).")
+		}
+	    }
+	    mod_tileset()
+
+	</script>";
+	// order by
+	if ($sort_by == "latest")
+	    $order_by = "posted DESC";
+	elseif ($sort_by == "date")
+	    $order_by = "posted";
+	elseif ($sort_by == "alpha")
+	    $order_by = "title";
+	elseif ($sort_by == "alpha_reverse")
+	    $order_by = "title DESC";
+	//mod
+	if ($mod == "any_mod")
+	    $request_mod = "";
+	else
+	    $request_mod = $mod;
+	//tileset
+	if ($tileset == "any_tileset")
+	    $request_tileset = "";
+	else
+	    $request_tileset = $tileset;
+	
+	return array($order_by, $request_mod, $request_tileset);
     }
 }
 
@@ -1225,21 +1469,24 @@ class objects
     public static function maps()
     {
 	echo "<h3>".lang::$lang['maps']."!</h3>";
-	$result = db::executeQuery("SELECT * FROM maps GROUP BY maphash ORDER BY posted DESC");
+	list($order_by, $request_mod, $request_tileset) = content::map_filters();
+	$result = db::executeQuery("SELECT * FROM maps WHERE g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
 	echo content::create_grid($result);
     }
     
     public static function units()
     {
 	echo "<h3>".lang::$lang['units']."!</h3>";
-	$result = db::executeQuery("SELECT * FROM units");
+	list($order_by, $request_type) = content::guide_unit_filters("unit");
+	$result = db::executeQuery("SELECT * FROM units WHERE type LIKE ('%".$request_type."%') ORDER BY ".$order_by);
 	echo content::create_grid($result,"units");
     }
     
     public static function guides()
     {
 	echo "<h3>".lang::$lang['guides']."!</h3>";
-	$result = db::executeQuery("SELECT * FROM guides");
+	list($order_by, $request_type) = content::guide_unit_filters("guide");
+	$result = db::executeQuery("SELECT * FROM guides WHERE guide_type LIKE ('%".$request_type."%') ORDER BY ".$order_by);
 	echo content::create_grid($result,"guides");
     }
     
@@ -1319,7 +1566,7 @@ class objects
 	$result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
 	echo content::displayItem($result, $_GET['table']);
     
-	$result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "'");
+	$result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "' ORDER by posted");
 	echo content::create_comment_section($result);
 	
 	echo content::create_comment_respond($_GET['table'],$_GET['id']);
@@ -1383,6 +1630,103 @@ class objects
 
 class profile
 {
+    public static function ifFollow($profile)
+    {
+	//-1	do not show
+	//0	follow
+	//1	unfollow
+	if ($profile != user::uid())
+	{
+	    $query = "SELECT * FROM following WHERE who = ".user::uid()." AND whom = ".$profile;
+	    $result = db::executeQuery($query);
+	    while (db::nextRowFromQuery($result))
+	    {
+		if (user::online())
+		{
+		    return 1;
+		}
+		return -1;
+	    }
+	    if (user::online())
+	    {
+		return 0;
+	    }
+	    return -1;
+	}
+	return -1;
+    }
+
+    public static function sidebar_data($profile,$id)
+    {
+	$data = array();
+	if ( $profile == "You" )
+	{
+	    $to_head = "You avatar:";
+	}
+	else
+	{
+	    $to_head = $profile."'s avatar:";
+	}
+	array_push($data,$to_head);
+	array_push($data,"<img src='".misc::avatar($id)."'>");
+	if (profile::ifFollow($id)==0)
+	{
+	    array_push($data,"<a href='index.php?follow=".$id."'>Follow user</a>");
+	}
+	elseif (profile::ifFollow($id)==1)
+	{
+	    array_push($data,"<a href='index.php?unfollow=".$id."'>Unfollow user</a>");
+	}
+	echo content::create_dynamic_list($data,1,"dyn",3,true,true);
+	$query = "SELECT * FROM following WHERE who = ".$id;
+	$result = db::executeQuery($query);
+	if (db::num_rows($result) > 0)
+	{
+	    if ( $profile == "You" )
+	    {
+		$to_head = "You follow ".db::num_rows($result)." people:";
+	    }
+	    else
+	    {
+		$to_head = $profile." follows ".db::num_rows($result)." people:";
+	    }
+	    echo "<table style='margin-left:9px;width:274px;'>
+		      <tr>
+			  <th>".$to_head."</th>
+		      </tr>
+		  </table>";
+	    echo "<p style='margin-left:5px;' class='thumbs'>";
+	    echo content::createImageGallery($result,"follow");
+	    echo "</p>";
+	}
+	
+	// followed by is not shown for non logged in users
+	if (user::online())
+	{
+	    $query = "SELECT * FROM following WHERE whom = ".$id;
+	    $result = db::executeQuery($query);
+	    if (db::num_rows($result) > 0)
+	    {
+		if ( $profile == "You" )
+		{
+		    $to_head = "You are followed by ".db::num_rows($result)." people:";
+		}
+		else
+		{
+		    $to_head = $profile." is followed by ".db::num_rows($result)." people:";
+		}
+		echo "<table style='margin-left:9px;width:274px;'>
+		      <tr>
+			  <th>".$to_head."</th>
+		      </tr>
+		  </table>";
+		echo "<p style='margin-left:5px;' class='thumbs'>";
+		echo content::createImageGallery($result,"followed");
+		echo "</p>";
+	    }
+	}
+    }
+
     public static function show_profile()
     {
     	//Get user id
@@ -1404,213 +1748,237 @@ class profile
     	
     	if(user::uid() == $self && user::online() && isset($_GET["edit"]))
     	{
-    		$didUpdate = false;
-    		if(isset($_POST["occupation"])) {
-    			db::executeQuery("UPDATE users SET occupation = '".$_POST["occupation"]."' WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		if(isset($_POST["real_name"])) {
-    			db::executeQuery("UPDATE users SET real_name = '".$_POST["real_name"]."' WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		if(isset($_POST["gender"])) {
-    			db::executeQuery("UPDATE users SET gender = ".$_POST["gender"]." WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		if(isset($_POST["fav_faction"])) {
-    			db::executeQuery("UPDATE users SET fav_faction = '".$_POST["fav_faction"]."' WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		if(isset($_POST["interests"])) {
-    			db::executeQuery("UPDATE users SET interests = '".$_POST["interests"]."' WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		if(isset($_POST["country"])) {
-    			db::executeQuery("UPDATE users SET country = '".$_POST["country"]."' WHERE uid = " . user::uid());
-    			$didUpdate = true;
-    		}
-    		
-    		if($didUpdate)
-    			echo "<u>profile updated!</u><br />";
-		$avatar = upload::avatar();
-		if ($avatar == "type error")
-		{
-		    echo "Image type is not supported!";
-		}
-		elseif ($avatar == "done")
-		{
-		    echo "Avatar is uploaded";
-		}
-    		$query = "SELECT * FROM users WHERE uid = " . user::uid();
-    		$result = db::executeQuery($query);
-    		$usr = db::nextRowFromQuery($result);
-    			
-    		echo "<table><tr><td><form action='index.php?p=profile&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
-	    	echo "<p>";
-		echo "<label>Change avatar</label><br />";
-		echo "<input type='file' name='avatar_upload'><br />";
-	    	echo "<label for='message'>Your occupation</label><br />";
-	    	echo "<input type='text' name='occupation' value='".$usr["occupation"]."'><br />";
-	    	echo "<label for='message'>Your real name</label><br />";
-	    	echo "<input type='text' name='real_name' value='".$usr["real_name"]."'><br />";
-	    	echo "<label for='message'>Your gender</label><br />";
-	    	echo "<select name='gender'>";
-		echo "<option value='1' ".misc::option_selected(1,$usr["gender"]).">Male</option>";
-		echo "<option value='0' ".misc::option_selected(0,$usr["gender"]).">Female</option>";
-	    	echo "</select><br />";
-	    	
-	    	echo "<label for='message'>Your favorite faction</label><br />";
-	    	echo "<select name='fav_faction'>";
-		echo "<option value='random' ".misc::option_selected("random",$usr["fav_faction"]).">Random</option>";
-		echo "<option value='soviet' ".misc::option_selected("soviet",$usr["fav_faction"]).">Soviet</option>";
-		echo "<option value='allies' ".misc::option_selected("allies",$usr["fav_faction"]).">Allies</option>";
-		echo "<option value='nod' ".misc::option_selected("nod",$usr["fav_faction"]).">NOD</option>";
-		echo "<option value='gda' ".misc::option_selected("gda",$usr["fav_faction"]).">GDA</option>";
+	    $didUpdate = false;
 
-	    	echo "</select><br />";
-	    	
-	    	echo "<label for='message'>Where do you come from?</label><br />";
-	    	echo "<select name='country'>";
-	    	echo "<option value='None'>None</option>";
-	    	$query = "SELECT * FROM country";
-    		$result = db::executeQuery($query);
-    		while($country = db::nextRowFromQuery($result))
-    		{
-    			if($country["name"] == $usr["country"])
-    				echo "<option value='".$country["name"]."' selected='selected'>".$country["title"]."</option>";
-    			else
-    				echo "<option value='".$country["name"]."'>".$country["title"]."</option>";
-    		}
-    		echo "</select><br />";
-	    	
-	    	echo "<label for='message'>Your interests</label><br />";
-	    	echo "<textarea id='interests' name='interests' rows='10' cols='20' tabindex='4'>".$usr["interests"]."</textarea>";
-	    	echo "</p>";
-	    	echo "<p class='no-border'>";
-	    	echo "<input class='button' type='submit' name'submit' value='Edit' tabindex='5'/>";      		
-	    	echo "</p>";
-	    	echo "</form></td></tr></table>";
+	    $avatar = upload::avatar();
+	    if ($avatar == "type error")
+	    {
+		echo "Image type is not supported!<br>";
+	    }
+	    elseif ($avatar == "done")
+	    {
+		echo "Avatar is uploaded<br>";
+		$didUpdate = true;
+	    }
+
+	    if(isset($_POST["occupation"])) {
+		db::executeQuery("UPDATE users SET occupation = '".$_POST["occupation"]."' WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+	    if(isset($_POST["real_name"])) {
+		db::executeQuery("UPDATE users SET real_name = '".$_POST["real_name"]."' WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+	    if(isset($_POST["gender"])) {
+		db::executeQuery("UPDATE users SET gender = ".$_POST["gender"]." WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+	    if(isset($_POST["fav_faction"])) {
+		db::executeQuery("UPDATE users SET fav_faction = '".$_POST["fav_faction"]."' WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+	    if(isset($_POST["interests"])) {
+		db::executeQuery("UPDATE users SET interests = '".$_POST["interests"]."' WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+	    if(isset($_POST["country"])) {
+		db::executeQuery("UPDATE users SET country = '".$_POST["country"]."' WHERE uid = " . user::uid());
+		$didUpdate = true;
+	    }
+
+	    if($didUpdate)
+		echo "<u>profile updated!</u><br />";
+	    $query = "SELECT * FROM users WHERE uid = " . user::uid();
+	    $result = db::executeQuery($query);
+	    $usr = db::nextRowFromQuery($result);
+
+	    echo "<table><tr><td><form action='index.php?p=profile&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
+	    echo "<p>";
+	    echo "<label>Change avatar</label><br />";
+	    echo "<input type='file' name='avatar_upload'><br />";
+	    echo "<label for='message'>Your occupation</label><br />";
+	    echo "<input type='text' name='occupation' value='".$usr["occupation"]."'><br />";
+	    echo "<label for='message'>Your real name</label><br />";
+	    echo "<input type='text' name='real_name' value='".$usr["real_name"]."'><br />";
+	    echo "<label for='message'>Your gender</label><br />";
+	    echo "<select name='gender'>";
+	    echo "<option value='1' ".misc::option_selected(1,$usr["gender"]).">Male</option>";
+	    echo "<option value='0' ".misc::option_selected(0,$usr["gender"]).">Female</option>";
+	    echo "</select><br />";
+	    
+	    echo "<label for='message'>Your favorite faction</label><br />";
+	    echo "<select name='fav_faction'>";
+	    echo "<option value='random' ".misc::option_selected("random",$usr["fav_faction"]).">Random</option>";
+	    echo "<option value='soviet' ".misc::option_selected("soviet",$usr["fav_faction"]).">Soviet</option>";
+	    echo "<option value='allies' ".misc::option_selected("allies",$usr["fav_faction"]).">Allies</option>";
+	    echo "<option value='nod' ".misc::option_selected("nod",$usr["fav_faction"]).">NOD</option>";
+	    echo "<option value='gda' ".misc::option_selected("gda",$usr["fav_faction"]).">GDA</option>";
+
+	    echo "</select><br />";
+	    
+	    echo "<label for='message'>Where do you come from?</label><br />";
+	    echo "<select name='country'>";
+	    echo "<option value='None'>None</option>";
+	    $query = "SELECT * FROM country";
+	    $result = db::executeQuery($query);
+	    while($country = db::nextRowFromQuery($result))
+	    {
+		if($country["name"] == $usr["country"])
+		    echo "<option value='".$country["name"]."' selected='selected'>".$country["title"]."</option>";
+		else
+		    echo "<option value='".$country["name"]."'>".$country["title"]."</option>";
+	    }
+	    echo "</select><br />";
+
+	    echo "<label for='message'>Your interests</label><br />";
+	    echo "<textarea id='interests' name='interests' rows='10' cols='20' tabindex='4'>".$usr["interests"]."</textarea>";
+	    echo "</p>";
+	    echo "<p class='no-border'>";
+	    echo "<input class='button' type='submit' name'submit' value='Edit' tabindex='5'/>";      		
+	    echo "</p>";
+	    echo "</form></td></tr></table>";
     	}
     	else
     	{
-    		//Display common info
-    		echo "<table>";
-    		echo "<tr><td><h1>".$usr["login"]."'s profile</h1></td>";
-    		$img = "";
-    		if($usr["country"] != "None" && $usr["country"] != "")
-    			$img = "<img style='float:center;border: 0px solid #261b15; padding: 0px;' src='images/country_flags/".$usr["country"]."'>";
-    		if(user::uid() == $usr["uid"] && user::online())
-    			echo "<td><a href='index.php?p=profile&edit=on'><h2>edit</h2></a>".$img."</td>";
-    		else
-    			echo "<td style='padding: .0em 0em;'><center>".$img."</center></td>";
-    		echo "</tr>";
-    		echo "<tr><td>Gender</td><td>".$gender."</td></tr>";
-    		echo "<tr><td>Occupation</td><td>".$usr["occupation"]."</td></tr>";
-    		echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
-    		echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
-    		echo "<tr><td>Favorite faction</td><td><a href='index.php?action=display_faction&faction=".$usr["fav_faction"]."'><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></a></td></tr>";
+	    if (user::online() and $usr["uid"] == user::uid())
+	    {
+		$whos = "Your";
+	    }
+	    else
+	    {
+		$whos = $usr["login"]."'s";
+	    }
+	    //Display common info
+	    echo "<table>";
+	    echo "<tr><td><h1>".$whos." profile</h1></td>";
+	    $img = "";
+	    if($usr["country"] != "None" && $usr["country"] != "")
+		$img = "<img style='float:center;border: 0px solid #261b15; padding: 0px;' src='images/country_flags/".$usr["country"]."'>";
+	    if(user::uid() == $usr["uid"] && user::online())
+		echo "<td><a href='index.php?p=profile&edit=on'><h2>edit</h2></a>".$img."</td>";
+	    else
+		echo "<td style='padding: .0em 0em;'><center>".$img."</center></td>";
+	    echo "</tr>";
+	    echo "<tr><td>Gender</td><td>".$gender."</td></tr>";
+	    echo "<tr><td>Occupation</td><td>".$usr["occupation"]."</td></tr>";
+	    echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
+	    echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
+	    echo "<tr><td>Favorite faction</td><td><a href='index.php?action=display_faction&faction=".$usr["fav_faction"]."'><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></a></td></tr>";
     		
-    		$query = "SELECT * FROM country WHERE name = '".$usr["country"]."'";
-    		$result = db::executeQuery($query);
-    		if($country = db::nextRowFromQuery($result))
-    			echo "<tr><td>Country</td><td>".$country["title"]."</td></tr>";
-    		else
-    			echo "<tr><td>Country</td><td>None</td></tr>";
-    		
-    		$x = $usr["experiance"];
-			$level = floor((25 + sqrt(625 + 100 * $x)) / 50);
-			$nextLevel = $level+1;
-			$expNeeded = 25 * $nextLevel * $nextLevel - 25 * $nextLevel;
-    		echo "<tr><td>Level</td><td>".$level."</td></tr>";
-    		echo "<tr><td>Experiance left to ".$nextLevel."</td><td>".($expNeeded - $x)."</td></tr>";
-    		echo "</table>";
-    		
-    		
-    		//Display latest favorited items
-		$show_more = "";
-    		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC");
-    		$fav_data = array();
-		if (db::num_rows($result) > 0) {
-		    array_push($fav_data,"",$usr["login"]."'s latest favorited items:");
-		    while ($row = db::nextRowFromQuery($result)) {
-			$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
-			if($item) {
-			    array_push($fav_data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
-			    array_push($fav_data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
-			}
+	    $query = "SELECT * FROM country WHERE name = '".$usr["country"]."'";
+	    $result = db::executeQuery($query);
+	    if($country = db::nextRowFromQuery($result))
+		echo "<tr><td>Country</td><td>".$country["title"]."</td></tr>";
+	    else
+		echo "<tr><td>Country</td><td>None</td></tr>";
+
+	    $x = $usr["experiance"];
+	    $level = floor((25 + sqrt(625 + 100 * $x)) / 50);
+	    $nextLevel = $level+1;
+	    $expNeeded = 25 * $nextLevel * $nextLevel - 25 * $nextLevel;
+	    echo "<tr><td>Level</td><td>".$level."</td></tr>";
+	    echo "<tr><td>Experiance left to ".$nextLevel."</td><td>".($expNeeded - $x)."</td></tr>";
+	    echo "</table>";
+
+	    //Display latest favorited items
+	    $show_more = "";
+	    $result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC");
+	    $fav_data = array();
+	    if (db::num_rows($result) > 0) {
+		array_push($fav_data,"",$whos." latest favorited items:");
+		while ($row = db::nextRowFromQuery($result)) {
+		    $item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
+		    if($item) {
+			array_push($fav_data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
+			array_push($fav_data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
 		    }
-		    if ($show_more != "")
-			array_push($fav_data, "", $show_more);
-		    echo content::create_dynamic_list($fav_data,2,"favorite items",10,true,false);
-    		}
-    		
-    		$result = db::executeQuery("
-		    SELECT 'Total amount of maps' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = " . $usr["uid"] . "
-		    UNION
-		    SELECT 'Total amount of units' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = ". $usr["uid"] . "
-		    UNION
-		    SELECT 'Total amount of guides' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
-		    UNION
-		    SELECT 'Total favorited items' as item, count(*) AS amount, 'fav_item' AS table_name FROM fav_item WHERE user_id = ". $usr["uid"] . "
-		    UNION
-		    SELECT 'Total amount of comments' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
-		    ");
-    		if (db::num_rows($result) > 0) {
-		    $data = array();
-		    array_push($data,$usr["login"]."'s progress:","");
-		    while ($row = db::nextRowFromQuery($result)) {
-			if ($row["amount"] == 0)
+		}
+		if ($show_more != "")
+		    array_push($fav_data, "", $show_more);
+		echo content::create_dynamic_list($fav_data,2,"favorite items",10,true,false);
+	    }
+
+	    $result = db::executeQuery("
+		SELECT 'Total amount of maps' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = " . $usr["uid"] . "
+		UNION
+		SELECT 'Total amount of units' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = ". $usr["uid"] . "
+		UNION
+		SELECT 'Total amount of guides' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
+		UNION
+		SELECT 'Total favorited items' as item, count(*) AS amount, 'fav_item' AS table_name FROM fav_item WHERE user_id = ". $usr["uid"] . "
+		UNION
+		SELECT 'Total amount of comments' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
+	    ");
+	    if (db::num_rows($result) > 0) {
+		$data = array();
+		array_push($data,$whos." progress:","");
+		while ($row = db::nextRowFromQuery($result)) {
+		    if ($row["amount"] == 0)
+		    {
+			$amount = $row["amount"];
+		    }
+		    else
+		    {
+			if($row["table_name"] == "fav_item")
 			{
-			    $amount = $row["amount"];
+			    $params = "\"data\":\"".pages::serialize_array($fav_data)."\"";
+			    $params .= ",\"columns\":\"2\"";
+			    $params .= ",\"name\":\"favorite items\"";
+			    $params .= ",\"maxItemsPerPage\":\"10\"";
+			    $params .= ",\"header\":\"1\"";
+			    $params .= ",\"use_pages\":\"1\"";
+			    $amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
+			}
+			else if($row["table_name"] == "comments")
+			{
+			    $comment_result = db::executeQuery("SELECT * FROM comments WHERE user_id = ".$usr["uid"]);
+			    $comment_data = array();
+			    array_push($comment_data,$usr["login"]."'s comments:");
+			    while($comment = db::nextRowFromQuery($comment_result))
+			    {
+				array_push($comment_data,$comment["content"]);
+			    }
+			    $params = "\"data\":\"".pages::serialize_array($comment_data)."\"";
+			    $params .= ",\"columns\":\"1\"";
+			    $params .= ",\"name\":\"comment items\"";
+			    $params .= ",\"maxItemsPerPage\":\"10\"";
+			    $params .= ",\"header\":\"1\"";
+			    $params .= ",\"use_pages\":\"1\"";
+			    $amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
 			}
 			else
-			{
-			    if($row["table_name"] == "fav_item")
-			    {
-				$params = "\"data\":\"".pages::serialize_array($fav_data)."\"";
-				$params .= ",\"columns\":\"2\"";
-				$params .= ",\"name\":\"favorite items\"";
-				$params .= ",\"maxItemsPerPage\":\"10\"";
-				$params .= ",\"header\":\"1\"";
-				$params .= ",\"use_pages\":\"1\"";
-				$amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
-			    }
-			    else if($row["table_name"] == "comments")
-			    {
-				$comment_result = db::executeQuery("SELECT * FROM comments WHERE user_id = ".$usr["uid"]);
-				$comment_data = array();
-				array_push($comment_data,$usr["login"]."'s comments:");
-				while($comment = db::nextRowFromQuery($comment_result))
-				{
-				    array_push($comment_data,$comment["content"]);
-				}
-				$params = "\"data\":\"".pages::serialize_array($comment_data)."\"";
-				$params .= ",\"columns\":\"1\"";
-				$params .= ",\"name\":\"comment items\"";
-				$params .= ",\"maxItemsPerPage\":\"10\"";
-				$params .= ",\"header\":\"1\"";
-				$params .= ",\"use_pages\":\"1\"";
-				$amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
-			    }
-			    else
-				$amount = "<a href='index.php?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
-			}
-			array_push($data,$row["item"],$amount);
+			    $amount = "<a href='index.php?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
 		    }
-		    echo content::create_dynamic_list($data,2,"dyn",15,true,false);
+		    array_push($data,$row["item"],$amount);
 		}
+		echo content::create_dynamic_list($data,2,"dyn",15,true,false);
+	    }
+	    if (user::online() and $self == user::uid())
+	    {
+		$query = "SELECT * FROM following WHERE who = ".user::uid();
+		$result = db::executeQuery($query);
+		$data = array();
+		while ($row = db::nextRowFromQuery($result))
+		{
+		    array_push($data, $row["whom"]);
+		}
+		if (count($data) >= 1)
+		{
+		    $queries = array();
+		    foreach ($data as $value)
+		    {
+			array_push($queries, "SELECT * FROM event_log WHERE user_id = ".$value);
+		    }
+		    $query = implode(" UNION ", $queries) . " ORDER BY posted DESC";
+		    $result = db::executeQuery($query);
+		    if (db::num_rows($result) > 0)
+			echo content::displayEvents($result);
+		}
+		
+	    }
     	}
     }
     
-    public static function profile_bar()
-    {
-	$query = "SELECT uid,avatar,login FROM users WHERE uid = " . user::uid();
-	$result = db::executeQuery($query);
-	$row = db::nextRowFromQuery($result);
-	$avatar = misc::avatar($row["uid"]);
-	echo "<img src='".$avatar."' style='max-width:120px'>";
-    }
-
     public static function upload_map()
     {
 	if (!user::online())
@@ -1716,7 +2084,7 @@ class profile
 	$uploaded = upload::upload_unit($username);
 	echo $uploaded;
     }
-    
+
 }
 
 ?>
