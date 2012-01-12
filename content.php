@@ -1,4 +1,4 @@
-<?PHP
+﻿<?PHP
 
 class content
 {
@@ -1691,8 +1691,13 @@ class profile
 		<option value='nature'>Nature</option>
 		<option value='other'>Other</option>
 		</select><br>
-	    <label>Frame (What frame of the unit you want to be displayed as a preview image):</label>
-		<input type='text' name='unit_frame'><br>
+	    <label>Palette:</label>
+		<select name='unit_palette'>
+		<option value='temperat.pal'>Temperat</option>
+		<option value='egopal.pal'>Egopal</option>
+		<option value='interior.pal'>Interior</option>
+		<option value='snow.pal'>Snow</option>
+		</select><br>
 	    <label>Unit description:<br> </label>
 		<textarea name='unit_description' cols='40' rows='5'></textarea><br>
 	    <label>Choose unit file:</label><br>

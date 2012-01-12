@@ -74,9 +74,9 @@ class upload
 	    db::executeQuery($query);
 	    misc::increase_experiance(50);
 	}
-	$frame = 0; //Needed for shp extractor
-	if(isset($_POST['unit_frame']))
-	    $frame = $_POST['unit_frame'];
+	$unit_palette = "temperat.pal"; //Needed for shp extractor
+	if(isset($_POST['unit_palette']))
+	    $unit_palette = $_POST['unit_palette'];
 	$count = 0;
 	$messages = "";
 	while (isset($_FILES["file_".$count]))
@@ -140,7 +140,7 @@ class upload
 	    }
 	    if (strtolower($name[1]) == "shp" and $run_shp == false)
 	    {
-		exec("mono mono/src/SHPExtractor/bin/Debug/SHPExtractor.exe  -filename=\"".$target_path."\" -frame=".$frame);
+		exec("mono mono/src/SHPExtractor/bin/Debug/SHPExtractor.exe  -filename=\"".$target_path."\" -palette=\"".$unit_palette."\"");
 		$run_shp = true;
 	    }
 	    $count++;
