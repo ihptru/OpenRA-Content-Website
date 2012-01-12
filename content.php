@@ -734,6 +734,7 @@ class content
     {
 	$counter = 0;
 	$content = "";
+	$comment_page_id = 0;
 
 	$comments = db::num_rows($result);
 	$content .= "<h3 id='comments'>" . $comments . " Responses</h3>";
@@ -742,6 +743,7 @@ class content
 	while ($comment = db::nextRowFromQuery($result))
 	{
 	    $counter++;
+	    $comment_page_id++;
 	    $res = db::executeQuery("SELECT * FROM users WHERE uid = " . $comment["user_id"]);
 	    $author = db::nextRowFromQuery($res);
 
@@ -755,11 +757,11 @@ class content
 
 	    $avatarImg = misc::avatar($author["uid"]);
 		
-	    $content .= "<div class='comment-info'>";			
+	    $content .= "<a name=".$comment_page_id."></a><div class='comment-info'>";			
 	    $content .= "<a href='index.php?profile=".$comment["user_id"]."&p=profile'><img alt='' src='" . $avatarImg . "' style='margin-top:10px; max-width:50' /></a>";
 	    $content .= "<cite>";
 	    $content .= "<a href='index.php?profile=".$comment["user_id"]."&p=profile'>" . $author["login"] . "</a> Says: <br />";
-	    $content .= "<span class='comment-data'><a href='#comment-63' title=''>" . $comment["posted"] . "</a></span>";
+	    $content .= "<span class='comment-data'><a href='#".$comment_page_id."' title=''>" . $comment["posted"] . "</a></span>";
 	    $content .= "</cite>";
 	    $content .= "</div>";
                 
