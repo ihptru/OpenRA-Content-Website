@@ -190,14 +190,8 @@
 			    email VARCHAR(80) NOT NULL,
 			    hash VARCHAR(500) NOT NULL,
 			    date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-			db::executeQuery($query);
+	    db::executeQuery($query);
             
-            $query = "CREATE TABLE IF NOT EXISTS image (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-			    path VARCHAR(500) NOT NULL,
-			    path_thumb VARCHAR(500) NOT NULL,
-			    description VARCHAR(500) NOT NULL);";
-			db::executeQuery($query);
-
             $query = "CREATE TABLE IF NOT EXISTS screenshot_group (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    group_id INTEGER NOT NULL,
 			    image_id INTEGER NOT NULL);";
@@ -292,7 +286,7 @@
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item","signed_in","event_log","following");
+	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","screenshot_group","country","fav_item","signed_in","event_log","following");
 	    
 	    foreach ($tables as $table)
 	    {
