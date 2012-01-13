@@ -7,12 +7,11 @@
 	// connect to database
         public static function connect()
         {
-            db::$con = mysql_connect(DB_HOST,DB_USERNAME,DB_PASSWORD);
+            db::$con = mysqli_connect(DB_HOST,DB_USERNAME,DB_PASSWORD, DB_DATABASE);
             if(!db::$con)
             {
-                die("Could not connect: " . mysql_error());
+                die("Could not connect: " . mysqli_connect_error());
             }
-            mysql_select_db(DB_DATABASE, db::$con);
         }
 
 	// check if we are connected to database
@@ -24,13 +23,14 @@
 	// gets query SELECT result and returns 1 row per 1 loop iteration
         public static function nextRowFromQuery($result)
         {
-            return mysql_fetch_assoc($result);
+            return mysqli_fetch_assoc($result);
         }
 
 	// get table name from executed query
         public static function getTableNameFrom($result)
         {
-            return mysql_field_table($result,0);
+            $finfo = mysqli_fetch_field_direct($result, 0);
+	    return $finfo->table;
         }
 
 	// is for cron
@@ -125,6 +125,7 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
 
+	    //units (modding)
             $query = "CREATE TABLE IF NOT EXISTS units (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
 			    description VARCHAR(500) NOT NULL,
@@ -143,7 +144,8 @@
 			    user_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
-            
+
+	    // featured, editor's choice, etc.
             $query = "CREATE TABLE IF NOT EXISTS featured (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    table_name VARCHAR(80) NOT NULL,
 			    table_id INTEGER NOT NULL,
@@ -158,6 +160,7 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
 	    
+	    //report `bad` item
 	    $query = "CREATE TABLE IF NOT EXISTS reported (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    table_name VARCHAR(80) NOT NULL,
 			    table_id INTEGER NOT NULL,
@@ -165,11 +168,13 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
+	    //country flags
             $query = "CREATE TABLE IF NOT EXISTS country (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    name VARCHAR(200) NOT NULL,
 			    title VARCHAR(500) NOT NULL DEFAULT 'none');";
             db::executeQuery($query);
             
+	    //comments
             $query = "CREATE TABLE IF NOT EXISTS comments (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
 			    content VARCHAR(500) NOT NULL,
@@ -179,6 +184,7 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
+	    //recover password/username
             $query = "CREATE TABLE IF NOT EXISTS recover (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    login VARCHAR(80) NOT NULL,
 			    email VARCHAR(80) NOT NULL,
@@ -207,16 +213,17 @@
 	    ";
 	    db::executeQuery($query);
 	    
+	    //follow user
 	    $query = "CREATE TABLE IF NOT EXISTS following (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    who INTEGER NOT NULL,
 			    whom INTEGER NOT NULL);
 	    ";
 	    db::executeQuery($query);
 
-	    $query = "SELECT COUNT(*) as count FROM country";
+	    $query = "SELECT COUNT(*) AS count FROM country";
 	    $result = db::executeQuery($query);
-	    $item = db::nextRowFromQuery($result);
-	    if($item["count"]==0)
+	    $row = db::nextRowFromQuery($result);
+	    if($row["count"] == 0)
 	    {
 		//Get all countries
 		$files = scandir("images/country_flags/");
@@ -230,15 +237,14 @@
 			db::executeQuery("INSERT INTO country (name, title) VALUES ('".$name."','".$title."')");
 		    }
 	    }
-
         }
 
         public static function executeQuery($q)
         {
-            $result = mysql_query($q);
+            $result = mysqli_query(db::$con, $q);
             if (!$result)
 	    {
-                $message  = "Invalid query: " . mysql_error() . "\n";
+                $message  = "Invalid query: " . mysqli_error(db::$con) . "\n";
                 $message .= "Whole query: " . $q;
                 die($message);
             }
@@ -247,69 +253,58 @@
 
         public static function fetch_array($result)
         {
-	    return mysql_fetch_array($result);
+	    return mysqli_fetch_array($result, MYSQLI_ASSOC);
 	}
 
 	// amount of rows from SELECT result
 	public static function num_rows($result)
 	{
-	    return mysql_num_rows($result);
+	    return mysqli_num_rows($result);
 	}
 
 	// private function to check if table exists in database - unless: execute setup() function
-        private static function table_exists($tablename, $emptyIsOK=true) 
+        private static function table_exists($tablename) 
         {
-            $res = mysql_query("
+            $return = true;
+	    $result = db::executeQuery("
                                SELECT COUNT(*) AS count 
                                FROM information_schema.tables 
                                WHERE table_schema = '".DB_DATABASE."' 
                                AND table_name = '$tablename'
                                ");
-                               
-	    if(!$emptyIsOK && mysql_result($res,0) == 1)
+            $row = db::nextRowFromQuery($result);
+	    if ($row["count"] == 0)
 	    {
-		$query = "SELECT COUNT(*) as count FROM " . $tablename;
-		$result = db::executeQuery($query);
-		$item = db::nextRowFromQuery($result);
-		if($item["count"]==0)
-		{
-		    $allSystemsGo = false;
-		}
+		$return = false;	//no such table in DB
 	    }
-                               
-            return mysql_result($res, 0) == 1;
+	    else
+	    {
+		$query = "SELECT COUNT(*) AS count FROM " . $tablename;
+		$result = db::executeQuery($query);
+		$row = db::nextRowFromQuery($result);
+		if ($row["count"] == 0)
+		    $return = false;	//table is empty
+	    }
+            return $return;
         }
 
-	// check if all tables exist
+	// check if all tables exist and they are not empty
         public static function check()
         {
             $allSystemsGo = true;
 	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","image","screenshot_group","country","fav_item","signed_in","event_log","following");
-	    $checkNotEmpty = array("country");
+	    
 	    foreach ($tables as $table)
 	    {
-	    	$checkHasContent = false;
-	    	foreach ($checkNotEmpty as $empty)
-	    	{
-		    if($empty == $table)
-		    {
-			$checkHasContent = true;
-			break;
-		    }
-	    	}
-	    	if($checkHasContent == true)
-		    if(!db::table_exists($table,false))
-			$allSystemsGo = false;
 		if(!db::table_exists($table))
 		    $allSystemsGo = false;
 	    }
-
             return $allSystemsGo;
         }
 
         public static function disconnect()
         {
-            mysql_close(db::$con);
+            mysqli_close(db::$con);
             db::$con = null;
         }
 	
