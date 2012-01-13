@@ -233,15 +233,38 @@
 	    }
         }
 
-        public static function executeQuery($q)
+        public static function executeQuery($q, $values=array())
         {
-            $result = mysqli_query(db::$con, $q);
+	    if (count($values)==0)
+	    {
+		$result = mysqli_query(db::$con, $q);
+	    }
+	    else
+	    {
+		$t = "";
+		$prepare = mysqli_prepare(db::$con, $q);
+		foreach ($values as $key => $value)
+		{
+		    $type = gettype($value);
+		    if ($type == "string")
+			$t = $t."s";
+		    elseif ($type == "integer")
+			$t = $t."i";
+		    elseif ($type == "double")
+			$t = $t."d";
+		    $values[$key] = mysqli_real_escape_string(db::$con, $values[$key]);
+		}
+		array_unshift($values, $t);
+		array_unshift($values, $prepare);
+		call_user_func_array("mysqli_stmt_bind_param", &$values);
+		$result = mysqli_stmt_result_metadata($prepare);
+	    }
             if (!$result)
 	    {
-                $message  = "Invalid query: " . mysqli_error(db::$con) . "\n";
-                $message .= "Whole query: " . $q;
-                die($message);
-            }
+		$message  = "Invalid query: " . mysqli_error(db::$con) . "\n";
+		$message .= "Whole query: " . $q;
+		die($message);
+	    }
             return $result;
         }
 

@@ -1132,7 +1132,7 @@ class content
 		return;
 	    profile::upload_guide();
 	    echo "<h3>Your guides</h3>";
-	    $result = db::executeQuery("SELECT * FROM guides WHERE user_id = ".user::uid());
+	    $result = db::executeQuery( "SELECT * FROM guides WHERE user_id = ?", array(user::uid()) );
 	    $output = content::create_grid($result, "guides");
 	    if ($output == "")
 	    {

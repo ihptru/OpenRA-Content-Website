@@ -22,7 +22,7 @@ class header
 	    {
 		if (trim($_POST['message']) != "")
 		{
-		    db::executeQuery("INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES ('','".$_POST['message']."',".user::uid().",".$_GET['id'].",'".$_GET['table']."')");
+		    db::executeQuery( "INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES (?,?,?,?,?)", array("", $_POST['message'], user::uid(), $_GET['id'], $_GET['table']) );
 		    misc::event_log(user::uid(), "comment", $_GET['table'], $_GET['id']);
 		    misc::increase_experiance(5);
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
