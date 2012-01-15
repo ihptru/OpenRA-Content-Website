@@ -724,8 +724,12 @@ class content
 		case "unfollow":
 		    $desc = " stopped following <a href='index.php?&profile=".$row["table_id"]."&p=profile'>".user::login_by_uid($row["table_id"])."</a>";
 		    break;
+		case "delete_item":
+		    $desc = false;
+		    break;
 	    }
-	    array_push($data, $name . $desc . " at " . $row["posted"]);
+	    if ($desc)
+		array_push($data, $name . $desc . " at " . $row["posted"]);
 	}
 	return content::create_dynamic_list($data, 1, "event_log",  11, true, true);
     }
