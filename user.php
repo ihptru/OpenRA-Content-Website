@@ -44,7 +44,7 @@ class user
 		    setcookie("remember", $current_session_id, time()+3600*24*360, "/");
 		    
 		    $query = "UPDATE signed_in SET sess_hash = '".$current_session_id."' WHERE user_id = ".$user_id;
-		    
+		    db::executeQuery($query);
 		    $_SESSION["sess_id"] = $current_session_id;
 		    $_SESSION["user_id"] = $user_id;
 		    return True;
