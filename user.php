@@ -47,6 +47,7 @@ class user
 		    db::executeQuery($query);
 		    $_SESSION["sess_id"] = $current_session_id;
 		    $_SESSION["user_id"] = $user_id;
+		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		    return True;
 		}
 	    }
