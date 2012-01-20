@@ -72,6 +72,9 @@ require_once("languages/".USER_LANGUAGE.".php");
 ###
 user::check_logout();
 user::login();
+# for cookie and db modifications in case of session is destroyed and `remember me` is set
+if ( user::online() )
+{}
 ###
 
 ?>

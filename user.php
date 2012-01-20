@@ -64,6 +64,7 @@ class user
 	    if (db::num_rows($result) == 0)
 	    {
 		session_destroy();	//tried to fake user's identities
+		header("Location: {$_SERVER['HTTP_REFERER']}");
 		return False;
 	    }
 	    $row = db::nextRowFromQuery($result);
@@ -74,6 +75,7 @@ class user
 	    else
 	    {
 		session_destroy();	// user_id matches but session_id is wrong: probably tried to fake user's identities
+		header("Location: {$_SERVER['HTTP_REFERER']}");
 		return False;
 	    }
 	}
@@ -187,6 +189,7 @@ class user
 		    if (db::num_rows($result) == 0)
 		    {
 			$query = "INSERT INTO signed_in
+				(user_id, sess_hash)
 				VALUES
 				(
 				".$user_id.",'".$sess_hash."'

@@ -37,8 +37,12 @@
         public static function clearOldRecords()
         {
             $query = "DELETE FROM activation WHERE TIMESTAMPDIFF(DAY, register_date, CURRENT_TIMESTAMP) > 30"; //one month
-            $query = "DELETE FROM recover WHERE TIMESTAMPDIFF(DAY, date_time, CURRENT_TIMESTAMP) > 30";
             db::executeQuery($query);
+	    $query = "DELETE FROM recover WHERE TIMESTAMPDIFF(DAY, date_time, CURRENT_TIMESTAMP) > 30";
+            db::executeQuery($query);
+	    //user set `remember me` but did not return to the website during the reported period, everything is expired, remove record from DB
+	    $query = "DELETE FROM signed_in WHERE TIMESTAMPDIFF(DAY, set_date, CURRENT_TIMESTAMP) > 100";
+	    db::executeQuery($query);
         }
 
 	// run function if at least one of the tables do not exist
@@ -70,7 +74,8 @@
             db::executeQuery($query);
             
 	    $query = "CREATE TABLE IF NOT EXISTS signed_in (user_id INTEGER PRIMARY KEY NOT NULL,
-			    sess_hash VARCHAR(80) NOT NULL);";
+			    sess_hash VARCHAR(80) NOT NULL,
+			    set_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
 	    db::executeQuery($query);
 
             $query = "CREATE TABLE IF NOT EXISTS fav_item (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
