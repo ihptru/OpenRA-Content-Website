@@ -2,21 +2,51 @@
 
 class user
 {
+    public static $cookie_hash = "";
+
+    public static function start_cookie_remember()
+    {
+	if (isset($_COOKIE["remember"]))
+	    user::$cookie_hash = $_COOKIE["remember"];
+    }
+
     // user online?
     public static function online()
     {
+	if (isset($_SESSION['sess_id']))
+	{
+	    $sess_id = $_SESSION["sess_id"];
+	    $user_id = $_SESSION["user_id"];
+
+	    //session is set: record in `signed_in` table must exist
+	    $query = "SELECT * FROM signed_in WHERE user_id = ".$user_id;
+	    $result = db::executeQuery($query);
+	    if (db::num_rows($result) == 0)
+	    {
+		session_destroy();	//tried to fake user's identities
+		header("Location: {$_SERVER['HTTP_REFERER']}");
+	    }
+	    $row = db::nextRowFromQuery($result);
+	    if ($row["sess_hash"] == $sess_id)
+	    {
+		return True;
+	    }
+	    else
+	    {
+		session_destroy();	// user_id matches but session_id is wrong: probably tried to fake user's identities
+		header("Location: {$_SERVER['HTTP_REFERER']}");
+	    }
+	}
+
 	if (misc::check_cookie_enabled())
 	{
 	    if(isset($_COOKIE["remember"]))
 	    {
-		$cookie_hash = $_COOKIE["remember"];
-		
-		$query = "SELECT * FROM signed_in WHERE sess_hash = '".$cookie_hash."'";
+		$query = "SELECT * FROM signed_in WHERE sess_hash = '".user::$cookie_hash."'";
 		$result = db::executeQuery($query);
 		if (db::num_rows($result) == 0)
 		{
 		    //cookie is set but hashes do not match: probably faking user's identities
-		    setcookie("remember", "", time()-60*60, "/");	//destroy cookie var
 		    return False;
 		}
 		$row = db::nextRowFromQuery($result);
@@ -40,43 +70,16 @@ class user
 		    //session is not set: expired; but `remember` in COOKIE is set
 		    $current_session_id = session_id();
 		    //update values in db and in cookie
-		    //we can not have same hash forever so change it in DB and in COOKIE when user is back after session was expired
-		    setcookie("remember", $current_session_id, time()+3600*24*360, "/");
 		    
 		    $query = "UPDATE signed_in SET sess_hash = '".$current_session_id."' WHERE user_id = ".$user_id;
 		    db::executeQuery($query);
 		    $_SESSION["sess_id"] = $current_session_id;
 		    $_SESSION["user_id"] = $user_id;
-		    header("Location: {$_SERVER['HTTP_REFERER']}");
+		    //we can not have same hash forever so change it in DB and in COOKIE when user is back after session was expired
+		    setcookie("remember", $current_session_id, time()+3600*24*360, "/");
+		    user::$cookie_hash = $current_session_id;
 		    return True;
 		}
-	    }
-	}
-	//remember me option was not set
-	if (isset($_SESSION['sess_id']))
-	{
-	    $sess_id = $_SESSION["sess_id"];
-	    $user_id = $_SESSION["user_id"];
-
-	    //session is set: record in `signed_in` table must exist
-	    $query = "SELECT * FROM signed_in WHERE user_id = ".$user_id;
-	    $result = db::executeQuery($query);
-	    if (db::num_rows($result) == 0)
-	    {
-		session_destroy();	//tried to fake user's identities
-		header("Location: {$_SERVER['HTTP_REFERER']}");
-		return False;
-	    }
-	    $row = db::nextRowFromQuery($result);
-	    if ($row["sess_hash"] == $sess_id)
-	    {
-		return True;
-	    }
-	    else
-	    {
-		session_destroy();	// user_id matches but session_id is wrong: probably tried to fake user's identities
-		header("Location: {$_SERVER['HTTP_REFERER']}");
-		return False;
 	    }
 	}
     }
