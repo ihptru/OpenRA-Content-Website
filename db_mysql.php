@@ -262,7 +262,7 @@
 		array_unshift($values, $t);
 		array_unshift($values, $prepare);
 		call_user_func_array("mysqli_stmt_bind_param", &$values);
-		$result = mysqli_stmt_result_metadata($prepare);
+		$result = mysqli_stmt_execute($prepare);
 	    }
             if (!$result)
 	    {

@@ -7,7 +7,7 @@ class content
 	header::main();
 
 	echo "<html><head><title>";
-	echo lang::$lang['website_name'];
+	echo header::pageTitle();
 	echo "</title>";
 
 	echo "<script type='text/javascript'>
@@ -1109,12 +1109,6 @@ class content
     
     public static function action($request)
     {
-	if ($request == "upload_map")
-	{
-	    if (!user::online())
-		return;
-	    profile::upload_map();
-	}
 	if ($request == "mymaps")
 	{
 	    if (!user::online())
@@ -1214,6 +1208,7 @@ class content
 		echo content::create_list($result, $table);
 	    }
 	}
+	//user follows
 	if ($request == "show_user_follow")
 	{
 	    if (isset($_GET["id"]))
@@ -1256,6 +1251,7 @@ class content
 		}
 	    }
 	}
+	//user followed by
 	if ($request == "show_user_followed")
 	{
 	    if (isset($_GET["id"]))

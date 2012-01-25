@@ -14,6 +14,64 @@ class header
 	header::following();
     }
 
+    public static function pageTitle()
+    {
+	$title = lang::$lang['website_name'];
+	if (count($_GET) == 0)
+	{
+	    return $title;
+	}
+	else
+	{
+	    if (isset($_GET["action"]))
+	    {
+		if ($_GET["action"] == "show_user_followed")
+		    return $title . " / User Followed By";
+		if ($_GET["action"] == "show_user_follow")
+		    return $title . " / User Follows";
+		if ($_GET["action"] == "users_items" and isset($_GET["id"]) and isset($_GET["table"]))
+		    return $title . " / " . user::login_by_uid($_GET["id"]) . "'s content - " . ucfirst($_GET["table"]);
+		if ($_GET["action"] == "show_favorited" and isset($_GET["favorited_id"]))
+		    return $title . " / " . user::login_by_uid($_GET["favorited_id"]) . "'s favorited items";
+		if ($_GET["action"] == "display_faction" and isset($_GET["faction"]))
+		    return $title . " / Faction - " . ucfirst($_GET["faction"]);
+		if ($_GET["action"] == "myunits")
+		    if (user::online())
+			return $title . " / My Units";
+		if ($_GET["action"] == "mymaps")
+		    if (user::online())
+			return $title . " / My Maps";
+		if ($_GET["action"] == "myguides")
+		    if (user::online())
+			return $title . " / My Guides";
+	    }
+	    if (isset($_GET["p"]))
+	    {
+		$title = $title . " / " . ucfirst($_GET["p"]);
+		if (isset($_GET["profile"]))
+		    return $title . " - " . user::login_by_uid($_GET["profile"]);
+		if (isset($_GET["edit"]))
+		    return $title . " - Edit";
+		if ($_GET["p"] == "detail" and isset($_GET["id"]) and isset($_GET["table"]))
+		    return $title . " - " . ucfirst(rtrim($_GET["table"],"s")) . " - " . misc::item_title_by_uid($_GET["id"], $_GET["table"]);
+		if ($_GET["p"] == "profile" and !user::online())
+		    return lang::$lang['website_name'];
+		return $title;
+	    }
+	    if (isset($_GET["register"]))
+		return $title . " / Registration";
+	    if (isset($_GET["recover"]))
+	    {
+		if (isset($_GET["recover_pass"]))
+		    return $title . " / Recover password";
+		if (isset($_GET["recover_user"]))
+		    return $title . " / Recover username";
+		return $title . " / Recover Account Information";
+	    }
+	}
+	return $title;
+    }
+
     public static function comment()
     {
 	if( isset($_POST['message']))

@@ -501,6 +501,15 @@ class misc
 	    return "false";
 	}
     }
+    
+    public static function item_title_by_uid($id, $table)
+    {
+	$query = "SELECT title FROM $table WHERE uid = $id";
+	$result = db::executeQuery($query);
+	while ($row = db::nextRowFromQuery($result))
+	    return $row["title"];
+	return "";
+    }
 }
 
 ?>
