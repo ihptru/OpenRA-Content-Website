@@ -69,11 +69,9 @@ class upload
 	    $query = "INSERT INTO units
 		(title,description,preview_image,user_id,screenshot_group_id,type)
 		VALUES
-		(
-		'".$dirname."','".$description."','users/".user::username()."/units/".$dirname."/preview.gif',".user::uid().",0,'".$type."'
-		)
+		(?,?,?,?,?,?)
 		";
-	    db::executeQuery($query);
+	    db::executeQuery($query, array($dirname, $description, "users/".user::username()."/units/".$dirname."/preview.gif", user::uid(), 0, $type));
 	    misc::increase_experiance(50);
 	    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM units WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
 	    misc::event_log(user::uid(), "add", "units", $row["uid"]);
@@ -169,8 +167,8 @@ class upload
 	    move_uploaded_file($source, "users/".user::username()."/avatar_original.jpg");
 	    misc::imageresize("users/".user::username()."/avatar.jpg","users/".user::username()."/avatar_original.jpg",200,400,100, $type);
 	    unlink("users/".user::username()."/avatar_original.jpg");
-	    $query = "UPDATE users SET avatar = 'Some' WHERE uid = ".user::uid();
-	    db::executeQuery($query);
+	    $query = "UPDATE users SET avatar = ? WHERE uid = ?";
+	    db::executeQuery($query, array("Some", user::uid()));
 	    return "done";
 	}
 	return "";
@@ -310,8 +308,8 @@ class misc
     {
 	if ( $user == user::uid() )
 	{
-	    $query = "DELETE FROM comments WHERE uid = " . $id;
-	    db::executeQuery($query);
+	    $query = "DELETE FROM comments WHERE uid = ?";
+	    db::executeQuery($query, array($id));
 	}
     }
     
@@ -360,15 +358,15 @@ class misc
 	    }
 	    
 	    //remove item from DB
-	    $query = "DELETE FROM ".$table_name." WHERE uid = ".$item_id;
-	    db::executeQuery($query);
+	    $query = "DELETE FROM $table_name WHERE uid = ?";
+	    db::executeQuery($query, array($item_id));
 	    //remove comments from DB
 	    //remove records from fav_item table related to current item for each user
 	    $tables = array("comments", "fav_item", "featured", "reported");
 	    foreach($tables as $table)
 	    {
-		$query = "DELETE FROM ".$table." WHERE table_name = '".$table_name."' AND table_id = ".$item_id;
-		db::executeQuery($query);
+		$query = "DELETE FROM $table WHERE table_name = ? AND table_id = ?";
+		db::executeQuery($query, array($table_name, $item_id));
 	    }
 	}
     }
@@ -424,8 +422,8 @@ class misc
 	$query = "SELECT experiance FROM users WHERE uid = ".user::uid();
 	$value = db::nextRowFromQuery(db::executeQuery($query));
 	$value = $value["experiance"] + $points;
-	$query = "UPDATE users SET experiance = ".$value." WHERE uid = ".user::uid();
-	db::executeQuery($query);
+	$query = "UPDATE users SET experiance = ? WHERE uid = ?";
+	db::executeQuery($query, array($value, user::uid()));
     }
     
     public static function event_log($user_id, $type, $table_name="", $table_id=0)
@@ -435,11 +433,9 @@ class misc
 	$query = "INSERT INTO event_log
 		(user_id, type, table_name, table_id)
 		VALUES
-		(
-		".$user_id.",'".$type."','".$table_name."',".$table_id."
-		)
+		(?,?,?,?)
 	";
-	db::executeQuery($query);
+	db::executeQuery($query, array($user_id, $type, $table_name, $table_id));
     }
     
     public static function amount_rows($result, $value)

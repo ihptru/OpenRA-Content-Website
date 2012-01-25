@@ -117,7 +117,7 @@ class header
 		if (trim($_POST['upload_guide_text']) != "" && trim($_POST['upload_guide_title']) != "" && trim($_POST['upload_guide_type'] != ""))
 		{
 		    $text = nl2br($_POST['upload_guide_text']);
-		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES ('".$_POST['upload_guide_title']."','".$text."','".$_POST['upload_guide_type']."',".user::uid().")");
+		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES (?,?,?,?)", array($_POST['upload_guide_title'], $text, $_POST['upload_guide_type'], user::uid()));
 		    misc::increase_experiance(50);
 		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM guides WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
 		    misc::event_log(user::uid(), "add", "guides", $row["uid"]);
@@ -136,9 +136,9 @@ class header
 		if (trim($_POST['edit_guide_text']) != "" && trim($_POST['edit_guide_title']) != "" && trim($_POST['edit_guide_type'] != "") && trim($_POST['edit_guide_uid'] != ""))
 		{
 		    $text = nl2br($_POST['edit_guide_text']);
-		    db::executeQuery("UPDATE guides SET title = '".$_POST['edit_guide_title']."' WHERE uid = " . $_POST['edit_guide_uid']);
-		    db::executeQuery("UPDATE guides SET html_content = '".$text."' WHERE uid = " . $_POST['edit_guide_uid']);
-		    db::executeQuery("UPDATE guides SET guide_type = '".$_POST['edit_guide_type']."' WHERE uid = " . $_POST['edit_guide_uid']);
+		    db::executeQuery("UPDATE guides SET title = ? WHERE uid = ?", array($_POST['edit_guide_title'], $_POST['edit_guide_uid']));
+		    db::executeQuery("UPDATE guides SET html_content = ? WHERE uid = ?", array($text, $_POST['edit_guide_uid']));
+		    db::executeQuery("UPDATE guides SET guide_type = ? WHERE uid = ?", array($_POST['edit_guide_type'], $_POST['edit_guide_uid']));
 		    misc::event_log(user::uid(), "edit", "guides", $_POST['edit_guide_uid']);
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
@@ -156,12 +156,12 @@ class header
 		{
 		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
 		    {
-			db::executeQuery("DELETE FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = ".user::uid());
+			db::executeQuery("DELETE FROM fav_item WHERE table_name = ? AND table_id = ? AND user_id = ?", array($_GET["table"], $_GET["id"], user::uid()));
 			misc::event_log(user::uid(), "unfav", $_GET["table"], $_GET["id"]);
 		    }
 		    else
 		    {
-			db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (".user::uid().",'".$_GET["table"]."','".$_GET["id"]."')");
+			db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (?,?,?)", array(user::uid(), $_GET["table"], $_GET["id"]));
 			misc::event_log(user::uid(), "fav", $_GET["table"], $_GET["id"]);
 		    }
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
@@ -170,7 +170,7 @@ class header
 		{
 		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
 		    { } else {
-			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id) VALUES ('".$_GET["table"]."', ".$_GET["id"].", ".user::uid() . ")");
+			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id) VALUES (?,?,?)", array($_GET["table"], $_GET["id"], user::uid()));
 			misc::event_log(user::uid(), "report", $_GET["table"], $_GET["id"]);
 		    }
 		}
@@ -247,11 +247,9 @@ class header
 		    $query = "INSERT INTO following
 				(who,whom)
 			    VALUES
-			    (
-			    ".user::uid().",".$id."
-			    )
+			    (?,?)
 		    ";
-		    db::executeQuery($query);
+		    db::executeQuery($query, array(user::uid(), $id));
 		    misc::event_log(user::uid(), "follow", "", $id);
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
@@ -271,8 +269,8 @@ class header
 		    $result = db::executeQuery($query);
 		    while (db::nextRowFromQuery($result))
 		    {
-			$query = "DELETE FROM following WHERE who = ".user::uid()." AND whom = ".$id;
-			db::executeQuery($query);
+			$query = "DELETE FROM following WHERE who = ? AND whom = ?";
+			db::executeQuery($query, array(user::uid(), $id));
 			misc::event_log(user::uid(), "unfollow", "", $id);
 			header("Location: {$_SERVER['HTTP_REFERER']}");
 		    }

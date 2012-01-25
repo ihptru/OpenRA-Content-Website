@@ -1765,27 +1765,27 @@ class profile
 	    }
 
 	    if(isset($_POST["occupation"])) {
-		db::executeQuery("UPDATE users SET occupation = '".$_POST["occupation"]."' WHERE uid = " . user::uid());
+		db::executeQuery("UPDATE users SET occupation = ? WHERE uid = ?", array($_POST["occupation"], user::uid()));
 		$didUpdate = true;
 	    }
 	    if(isset($_POST["real_name"])) {
-		db::executeQuery("UPDATE users SET real_name = '".$_POST["real_name"]."' WHERE uid = " . user::uid());
+		db::executeQuery("UPDATE users SET real_name = ? WHERE uid = ?", array($_POST["real_name"], user::uid()));
 		$didUpdate = true;
 	    }
 	    if(isset($_POST["gender"])) {
-		db::executeQuery("UPDATE users SET gender = ".$_POST["gender"]." WHERE uid = " . user::uid());
+		db::executeQuery("UPDATE users SET gender = ? WHERE uid = ?", array($_POST["gender"], user::uid()));
 		$didUpdate = true;
 	    }
 	    if(isset($_POST["fav_faction"])) {
-		db::executeQuery("UPDATE users SET fav_faction = '".$_POST["fav_faction"]."' WHERE uid = " . user::uid());
+		db::executeQuery("UPDATE users SET fav_faction = ? WHERE uid = ?", array($_POST["fav_faction"], user::uid()));
 		$didUpdate = true;
 	    }
 	    if(isset($_POST["interests"])) {
-		db::executeQuery("UPDATE users SET interests = '".$_POST["interests"]."' WHERE uid = " . user::uid());
+		db::executeQuery("UPDATE users SET interests = ? WHERE uid = ?", array($_POST["interests"], user::uid()));
 		$didUpdate = true;
 	    }
 	    if(isset($_POST["country"])) {
-		db::executeQuery("UPDATE users SET country = '".$_POST["country"]."' WHERE uid = " . user::uid());
+		db::executeQuery("UPDATE users SET country = ? WHERE uid = ?", array($_POST["country"], user::uid()));
 		$didUpdate = true;
 	    }
 

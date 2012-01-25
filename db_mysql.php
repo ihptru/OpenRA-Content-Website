@@ -233,7 +233,7 @@
 			$title = str_replace("-"," ",substr($value,0,strlen($value)-4));
 			$title = str_replace("(","",$title);
 			$title = str_replace(")","",$title);
-			db::executeQuery("INSERT INTO country (name, title) VALUES ('".$name."','".$title."')");
+			db::executeQuery("INSERT INTO country (name, title) VALUES (?,?)", array($name, $title));
 		    }
 	    }
         }

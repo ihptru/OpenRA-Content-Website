@@ -71,8 +71,8 @@ class user
 		    $current_session_id = session_id();
 		    //update values in db and in cookie
 		    
-		    $query = "UPDATE signed_in SET sess_hash = '".$current_session_id."' WHERE user_id = ".$user_id;
-		    db::executeQuery($query);
+		    $query = "UPDATE signed_in SET sess_hash = ? WHERE user_id = ?";
+		    db::executeQuery($query, array($current_session_id, $user_id));
 		    $_SESSION["sess_id"] = $current_session_id;
 		    $_SESSION["user_id"] = $user_id;
 		    //we can not have same hash forever so change it in DB and in COOKIE when user is back after session was expired
@@ -194,17 +194,16 @@ class user
 			$query = "INSERT INTO signed_in
 				(user_id, sess_hash)
 				VALUES
-				(
-				".$user_id.",'".$sess_hash."'
-				)";
-			db::executeQuery($query);
+				(?,?)
+			";
+			db::executeQuery($query, array($user_id, $sess_hash));
 		    }
 		    else
 		    {
 			$query = "UPDATE signed_in
-				    SET sess_hash = '".$sess_hash."'
-				    WHERE user_id = ".$user_id;
-			db::executeQuery($query);
+				    SET sess_hash = ?
+				    WHERE user_id = ?";
+			db::executeQuery($query, array($sess_hash, $user_id));
 		    }
 		    
 		    $_SESSION['sess_id'] = $sess_hash;	//start session
@@ -251,12 +250,11 @@ class user
 		$query = "INSERT INTO users
 			(email,pass,login,register_date)
 			VALUES
-			(
-			'".$email."','".$pass."','".$login."','".$date."'
-		);";
-		db::executeQuery($query);
-		$query = "DELETE FROM activation WHERE hash = '".$_GET['key']."'";
-		db::executeQuery($query);
+			(?,?,?,?)
+		;";
+		db::executeQuery($query, array($email, $pass, $login, $date));
+		$query = "DELETE FROM activation WHERE hash = ?";
+		db::executeQuery($query, array($_GET['key']));
 		echo "$login: ".lang::$lang['activated'];
 
 		user::prepare_account($login);
@@ -308,10 +306,9 @@ class user
 					$query = "INSERT INTO activation
 						(email,pass,login,hash)
 						VALUES
-						(
-						'".$_POST['email']."','".md5($_POST['rpass'])."','".$_POST['rlogin']."','".md5($_POST['email'])."'
-						);";
-					db::executeQuery($query);
+						(?,?,?,?)
+					;";
+					db::executeQuery($query, array($_POST['email'], md5($_POST['rpass']), $_POST['rlogin'], md5($_POST['email'])));
 					mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://oramod.lv-vl.net/index.php?register&key=".md5($_POST['email'])."",
 					    "From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
 					echo lang::$lang['ask to activate'];
@@ -406,10 +403,9 @@ class user
 	    $query = "INSERT INTO recover
 		    (login,email,hash)
 		    VALUES
-		    (
-		    '".$_POST['rpass_login']."','".$_POST['rpass_email']."','".md5($_POST['rpass_email'])."'
-		    )";
-	    db::executeQuery($query);
+		    (?,?,?)
+	    ";
+	    db::executeQuery($query, array($_POST['rpass_login'], $_POST['rpass_email'], md5($_POST['rpass_email'])));
 	    mail($_POST['rpass_email'], "recover password", "recover password: http://oramod.lv-vl.net/index.php?recover&recover_link=".md5($_POST['rpass_email'])."",
 		"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
 	}
@@ -461,11 +457,11 @@ class user
 		{
 		    $password = md5($_POST['rpass_new']);
 		    $query = "UPDATE users
-				SET pass = '".$password."'
-				WHERE login = '".$user."'";
-		    db::executeQuery($query);
-		    $query = "DELETE FROM recover WHERE login = '".$user."'";
-		    db::executeQuery($query);
+				SET pass = ?
+				WHERE login = ?";
+		    db::executeQuery($query, array($password, $user));
+		    $query = "DELETE FROM recover WHERE login = ?";
+		    db::executeQuery($query, array($user));
 		    echo lang::$lang['password updated'];
 		}
 		else
