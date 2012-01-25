@@ -74,16 +74,23 @@ class header
 
     public static function comment()
     {
-	if( isset($_POST['message']))
+	if( isset($_POST['message']) and isset($_GET['table']) and isset($_GET['id']) )
 	{
 	    if (user::online())
 	    {
 		if (trim($_POST['message']) != "")
 		{
-		    db::executeQuery( "INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES (?,?,?,?,?)", array("", $_POST['message'], user::uid(), $_GET['id'], $_GET['table']) );
-		    misc::event_log(user::uid(), "comment", $_GET['table'], $_GET['id']);
-		    misc::increase_experiance(5);
-		    header("Location: {$_SERVER['HTTP_REFERER']}");
+		    $table = $_GET['table'];
+		    $id = $_GET['id'];
+		    $query = "SELECT uid FROM $table WHERE uid = $id";
+		    $result = db::executeQuery($query);
+		    while (db::nextRowFromQuery($result))
+		    {
+			db::executeQuery( "INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES (?,?,?,?,?)", array("", $_POST['message'], user::uid(), $_GET['id'], $_GET['table']) );
+			misc::event_log(user::uid(), "comment", $_GET['table'], $_GET['id']);
+			misc::increase_experiance(5);
+			header("Location: {$_SERVER['HTTP_REFERER']}");
+		    }
 		}
 	    }
 	}
