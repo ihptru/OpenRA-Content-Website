@@ -1564,12 +1564,16 @@ class objects
     public static function detail()
     {
 	$result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
-	echo content::displayItem($result, $_GET['table']);
-    
-	$result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "' ORDER by posted");
-	echo content::create_comment_section($result);
+	while (db::nextRowFromQuery($result))
+	{
+	    $result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
+	    echo content::displayItem($result, $_GET['table']);
+
+	    $result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "' ORDER by posted");
+	    echo content::create_comment_section($result);
 	
-	echo content::create_comment_respond($_GET['table'],$_GET['id']);
+	    echo content::create_comment_respond($_GET['table'],$_GET['id']);
+	}
     }
     
     public static function search()
