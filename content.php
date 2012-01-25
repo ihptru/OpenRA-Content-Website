@@ -743,7 +743,6 @@ class content
 	$comments = db::num_rows($result);
 	$content .= "<h3 id='comments'>" . $comments . " Responses</h3>";
 	$content .= "<ol class='commentlist'>";
-	$table = db::getTableNameFrom($result);
 	while ($comment = db::nextRowFromQuery($result))
 	{
 	    $counter++;
@@ -770,7 +769,7 @@ class content
 	    $content .= "</div>";
                 
 	    $content .= "<div class='comment-text'>";
-	    $content .= "<p>" . strip_tags($comment["content"]) . "</p>";
+	    $content .= "<p>" . str_replace('\r\n', "<br />", strip_tags($comment["content"])) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
 		$content .= "<a style='float: right; margin: -161px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
@@ -793,7 +792,7 @@ class content
 	{
 	    $content .= "<div id='respond'>";
 	    $content .= "<h3>Leave a Reply</h3>";			
-	    $content .= "<form action='index.php?p=detail&table=".$table_name."&id=".$table_id."' method='post' id='commentform'>"; // index.html ?? (Need a page to take form data and put into comments table)
+	    $content .= "<form action='index.php?p=detail&table=".$table_name."&id=".$table_id."' method='post' id='commentform'>";
 	    $content .= "<p>";
 	    $content .= "<label for='message'>Your Message</label><br />";
 	    $content .= "<textarea id='message' name='message' rows='10' cols='20' tabindex='4'></textarea>";
