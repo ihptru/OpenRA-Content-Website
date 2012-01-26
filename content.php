@@ -769,7 +769,7 @@ class content
 	    $content .= "</div>";
                 
 	    $content .= "<div class='comment-text'>";
-	    $content .= "<p>" . str_replace('\r\n', "<br />", strip_tags($comment["content"])) . "</p>";
+	    $content .= "<p>" . stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
 		$content .= "<a style='float: right; margin: -161px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
@@ -1939,7 +1939,7 @@ class profile
 			    array_push($comment_data,$usr["login"]."'s comments:");
 			    while($comment = db::nextRowFromQuery($comment_result))
 			    {
-				array_push($comment_data,$comment["content"]);
+				array_push($comment_data,stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))));
 			    }
 			    $params = "\"data\":\"".pages::serialize_array($comment_data)."\"";
 			    $params .= ",\"columns\":\"1\"";
