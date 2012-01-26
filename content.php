@@ -374,10 +374,19 @@ class content
 	    if($counter == 0)
 		$content .= "<tr>";
 
-	    $content .= "<td id='map_grid'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>";
+	    $span_additional_info = "";
+	    $res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = ".$row["uid"]." AND table_name = '".$table."'"));
+	    if ($res_comments != 0)
+		$span_additional_info .= "$res_comments comments<br />";
+	    $res_fav = db::num_rows(db::executeQuery("SELECT uid FROM fav_item WHERE table_id = ".$row["uid"]." AND table_name = '".$table."'"));
+	    if ($res_fav != 0)
+		$span_additional_info .= "$res_fav peopled favorited";
+	    if ($span_additional_info != "")
+		$span_additional_info = "<span>".$span_additional_info."</span>";
+	    $content .= "<td id='map_grid'><a class='tooltip' href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>";
 	    if($imagePath != "")
 	    	$content .= "<img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'>";
-	    $content .= "</br>" . strip_tags($title) . "</a></td>";
+	    $content .= "</br>" . strip_tags($title) . $span_additional_info . "</a></td>";
 
 	    if($counter > 2)
 	    {
