@@ -506,6 +506,15 @@ class misc
 	    return $row["title"];
 	return "";
     }
+    
+    public static function paging($nrOfPages, $i, $current, $gets, $table)
+    {
+	if($current == $i)
+	    $pages = "<td>" . $i . "</td>";
+	else
+	    $pages = "<td id='page_count'><a href='index.php?current_grid_page_".$table."=".$i.$gets."'>" . $i . "</a></td>";
+	return $pages;
+    }
 }
 
 ?>

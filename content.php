@@ -406,15 +406,12 @@ class content
 	$keys = array_keys($_GET);
 	foreach($keys as $key)
 	{
-		if($key != "current_grid_page_".$table)
-			$gets .= "&" . $key . "=" . $_GET[$key];
+	    if($key != "current_grid_page_".$table)
+		$gets .= "&" . $key . "=" . $_GET[$key];
 	}
 	for($i = 1; $i < $nrOfPages+1; $i++)
 	{
-		if($current == $i)
-			$pages .= "<td>" . $i . "</td>";
-		else
-			$pages .= "<td id='page_count'><a href='index.php?current_grid_page_".$table."=".$i.$gets."'>" . $i . "</a></td>";
+	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table);
 	}
 	$pages .= "</tr></table>";
 	if ($nrOfPages == 1)
