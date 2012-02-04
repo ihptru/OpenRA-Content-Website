@@ -15,6 +15,7 @@ function map_data($result)
     while ($row = db::nextRowFromQuery($result))
     {
 	$map_result = array();
+	$map_result['id'] = $row['uid'];
 	$map_result['title'] = $row['title'];
 	$map_result['description'] = $row['description'];
 	$map_result['author'] = $row['author'];
