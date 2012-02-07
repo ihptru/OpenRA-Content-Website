@@ -1,4 +1,6 @@
 <?PHP
+date_default_timezone_set('Europe/Dublin');
+
 session_start();
 
 include_once "settings.php";

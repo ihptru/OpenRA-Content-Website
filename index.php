@@ -66,6 +66,16 @@ content::head();
 		    <?
 			if (user::online())
 			{
+			    echo "<h3>";
+			    echo lang::$lang['sidebar menu']; 
+			
+			    echo "</h3>";
+			    echo "<ul>				
+				<li><a href='index.php?action=mymaps&p=profile'>maps</a></li>
+				<li><a href='index.php?action=myunits&p=profile'>units</a></li>
+				<li><a href='index.php?action=myguides&p=profile'>guides</a></li>
+				</ul>
+			    ";
 			    if(isset($_GET["profile"]))
 			    {
 				if ($_GET["profile"] == user::uid())
@@ -85,17 +95,6 @@ content::head();
 				$profile = "You";
 			    }
 			    profile::sidebar_data($profile, $id);
-			    echo "<br>";
-			    echo "<h3>";
-			    echo lang::$lang['sidebar menu']; 
-			
-			    echo "</h3>";
-			    echo "<ul>				
-				<li><a href='index.php?action=mymaps&p=profile'>maps</a></li>
-				<li><a href='index.php?action=myunits&p=profile'>units</a></li>
-				<li><a href='index.php?action=myguides&p=profile'>guides</a></li>
-				</ul>
-			    ";
 			}
 			else
 			{
@@ -113,8 +112,19 @@ content::head();
 
 		    <p style='margin-left:5px;' class="thumbs">
 			<?PHP 
-			
-			$result = db::executeQuery("SELECT * FROM maps ORDER BY RAND() LIMIT 12");
+			$query = "SELECT 
+				    uid,
+				    path AS image,
+				    'maps' AS table_name
+				  FROM maps
+				  UNION ALL
+				  SELECT
+				    uid,
+				    preview_image AS image,
+				    'units' AS table_name
+				  FROM units
+				  ORDER BY RAND() LIMIT 12";
+			$result = db::executeQuery($query);
 			echo content::createImageGallery($result);
 			
 			?>

@@ -13,7 +13,7 @@ import shutil;
 WEBSITE_PATH = os.getcwd() + os.sep
 
 # Check if path exist
-# -f <source file> -u <user_id> -t <destination file>
+# -s <source file> -u <user_name> -i uid -t <target file>
 
 try:
     optlist,  args = getopt.getopt(sys.argv[1:], 's:i:u:t:')

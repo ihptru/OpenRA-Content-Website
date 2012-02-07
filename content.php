@@ -145,15 +145,15 @@ class content
 	{
 	    $imagePath = "";
 
-	    $table = db::getTableNameFrom($result);
+	    $table = $row["table_name"];
 	    switch($table)
 	    {
 		//Set title, image
 		case "maps":
-		    $imagePath = misc::minimap($row["path"]);
+		    $imagePath = misc::minimap($row["image"]);
 		    break;
 		case "units":
-		    $imagePath = $row["preview_image"];
+		    $imagePath = $row["image"];
 		    break;
 		case "guides":
 		    $imagePath = "";
@@ -1135,7 +1135,7 @@ class content
 		return;
 	    profile::upload_guide();
 	    echo "<h3>Your guides</h3>";
-	    $result = db::executeQuery( "SELECT * FROM guides WHERE user_id = ?", array(user::uid()) );
+	    $result = db::executeQuery( "SELECT * FROM guides WHERE user_id = ".user::uid() );
 	    $output = content::create_grid($result, "guides");
 	    if ($output == "")
 	    {
@@ -1687,7 +1687,11 @@ class profile
 	    array_push($data,"<a href='index.php?unfollow=".$id."'>Unfollow user</a>");
 	}
 	echo content::create_dynamic_list($data,1,"dyn",3,true,true);
-	$query = "SELECT * FROM following WHERE who = ".$id;
+	$query = "SELECT
+		    who,
+		    whom,
+		    'following' AS table_name
+		  FROM following WHERE who = ".$id;
 	$result = db::executeQuery($query);
 	if (db::num_rows($result) > 0)
 	{
@@ -1712,7 +1716,11 @@ class profile
 	// followed by is not shown for non logged in users
 	if (user::online())
 	{
-	    $query = "SELECT * FROM following WHERE whom = ".$id;
+	    $query = "SELECT
+			who,
+			whom,
+			'following' AS table_name
+		      FROM following WHERE whom = ".$id;
 	    $result = db::executeQuery($query);
 	    if (db::num_rows($result) > 0)
 	    {
@@ -2026,7 +2034,6 @@ class profile
 	    return;
     	
 	echo "Preview (Will only be updated if JavaScript is enabled):";
-	date_default_timezone_set('Europe/Dublin');
 	$arr = array("title" => "", "html_content" => "", "posted" => date("F d, Y"), "guide_type" => "", "user_id" => user::uid());
 	echo content::displayItem($arr,"guides",true);
 	
