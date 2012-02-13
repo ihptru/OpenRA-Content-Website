@@ -225,7 +225,8 @@ class pages
 	{
 	    echo "<h3>".lang::$lang['recent articles']."</h3>";
 	    $result = db::executeQuery("SELECT * FROM articles");
-		echo content::createArticleItems($result);
+	    echo content::createArticleItems($result);
+
 	    return;
 	}
 	

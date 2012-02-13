@@ -931,18 +931,16 @@ class content
 
 	$content .= '<div id="footer-bottom">';
 
-	$content .= '<p>';
 	$content .= '<strong><a href="index.php?p=members">Members</a></strong> |';
 	$content .= '<a href="/">'.lang::$lang['home'].'</a> |';
-	$content .= '<strong><a href="#top" class="back-to-top">'.lang::$lang['to top'].'</a></strong>';						
-	$content .= '</p>';
+	$content .= '<strong><a href="#top" class="back-to-top">'.lang::$lang['to top'].'</a></strong>';
 
 	$content .= '</div>';
-	$content .= "<div class='lang'>
+	$content .= "<div class='lang' style='padding-bottom:2px;'>
 		    <a id='".pages::cur_lang("en")."' href='index.php?lang=en' style='padding-right:3px;'>English</a>
 		    <a id='".pages::cur_lang("ru")."' href='index.php?lang=ru' style='padding-right:3px;'>Русский</a>
 		    <a id='".pages::cur_lang("sv")."' href='index.php?lang=sv' style='padding-right:3px;'>Swedish</a>
-		    </div><br />
+		    </div>
 	";
 	return $content;
     }
