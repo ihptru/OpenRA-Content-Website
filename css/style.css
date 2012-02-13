@@ -595,7 +595,7 @@ a.more-link:hover {
 	float: left;
 	width: 920px;
 	margin-left: 10px;	
-	padding-top: 20px;	
+	padding-top: 5px;	
 	display: inline;
 }
 #footer-wrap h3 {
@@ -657,9 +657,9 @@ a.more-link:hover {
 
 /* footer-bottom */
 #footer-bottom {
-	float: left;	
+	float: left;
 	width: 100%;
-	margin: 30px auto 15px auto;	
+	text-align: right;
 	font-family: 'Trebuchet MS', 'Helvetica Neue', Arial, Sans-Serif;			
 }
 #footer-bottom .bottom-left {	float: left; }		
