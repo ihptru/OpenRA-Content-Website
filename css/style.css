@@ -454,7 +454,7 @@ a.more-link:hover {
 
 /* Content */
 #content-wrap {
-	clear: both;	
+	clear: both;
 	width: 940px;
 	margin: 5px 0 0 0; padding: 0;			
 }
@@ -588,7 +588,7 @@ a.more-link:hover {
 	clear: both;
 	width: 940px;		
 	margin: 0 auto;
-	font-size: .9em;		
+	font-size: .9em;
 	text-align: left	
 }
 #footer-wrap {
