@@ -337,9 +337,9 @@ class content
 	$total = db::num_rows($result);
 	$i = 0;
 	if(isset($_GET["current_grid_page_".$table]))
-		$current = $_GET["current_grid_page_".$table];
+	    $current = $_GET["current_grid_page_".$table];
 	else
-		$current = 1;
+	    $current = 1;
 	if (db::num_rows($result) == 0)
 	    return "";
 	while ($row = db::nextRowFromQuery($result))
@@ -400,7 +400,7 @@ class content
 	    
 	//Print pages
 	$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
-	$pages = "<table><tr>";
+	$pages = "<table><tr><td>";
 	
 	$gets = "";
 	$keys = array_keys($_GET);
@@ -413,7 +413,7 @@ class content
 	{
 	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table);
 	}
-	$pages .= "</tr></table>";
+	$pages .= "</td></tr></table>";
 	if ($nrOfPages == 1)
 	{ $pages = ""; }
 
@@ -985,7 +985,7 @@ class content
 	    $result = db::executeQuery("SELECT * FROM users");
 	    if (db::num_rows($result) > 0)
 	    {
-		echo "<label>Members:</label>";
+		echo "<div class='sidemenu'><ul><li>Members:</li></ul></div>";
 	    	$data = array();
 		while ($row = db::nextRowFromQuery($result))
 		{
@@ -1571,7 +1571,7 @@ class profile
 	{
 	    array_push($data,"<a href='index.php?unfollow=".$id."'>Unfollow user</a>");
 	}
-	echo content::create_dynamic_list($data,1,"dyn",3,true,true);
+	echo "<p align='right'>" . content::create_dynamic_list($data,1,"dyn",3,true,true) . "</p>";
 	$query = "SELECT
 		    who,
 		    whom,
@@ -1582,20 +1582,20 @@ class profile
 	{
 	    if ( $profile == "You" )
 	    {
-		$to_head = "You follow ".db::num_rows($result)." people:";
+		$to_head = "You follow <u>".db::num_rows($result)."</u> people:";
 	    }
 	    else
 	    {
-		$to_head = $profile." follows ".db::num_rows($result)." people:";
+		$to_head = $profile." follows <u>".db::num_rows($result)."</u> people:";
 	    }
-	    echo "<table style='margin-left:9px;width:274px;'>
-		      <tr>
-			  <th>".$to_head."</th>
-		      </tr>
-		  </table>";
-	    echo "<p style='margin-left:5px;' class='thumbs'>";
+	    echo "<ul>
+		      <li>
+			 ".$to_head;
+	    echo "<p style='margin-left:-15px;' class='thumbs'>";
 	    echo content::createImageGallery($result,"follow");
 	    echo "</p>";
+	    echo "</li>
+		  </ul><br />";
 	}
 	
 	// followed by is not shown for non logged in users
@@ -1611,20 +1611,20 @@ class profile
 	    {
 		if ( $profile == "You" )
 		{
-		    $to_head = "You are followed by ".db::num_rows($result)." people:";
+		    $to_head = "You are followed by <u>".db::num_rows($result)."</u> people:";
 		}
 		else
 		{
-		    $to_head = $profile." is followed by ".db::num_rows($result)." people:";
+		    $to_head = $profile." is followed by <u>".db::num_rows($result)."</u> people:";
 		}
-		echo "<table style='margin-left:9px;width:274px;'>
-		      <tr>
-			  <th>".$to_head."</th>
-		      </tr>
-		  </table>";
-		echo "<p style='margin-left:5px;' class='thumbs'>";
+		echo "<ul>
+		      <li>
+			  ".$to_head;
+		echo "<p style='margin-left:-15px;' class='thumbs'>";
 		echo content::createImageGallery($result,"followed");
 		echo "</p>";
+		echo "</li>
+		  </ul><br />";
 	    }
 	}
     }

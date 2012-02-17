@@ -118,10 +118,16 @@ td {
 	border-color: #231A14;
 	padding: .7em 1em;	
 }	
-td#page_count {
-
+#page_count {
+    padding: 5px 10px 5px 10px;
+    border: 1px solid #251a14;
 }
-td#page_count:hover{
+#page_count_none {
+    padding: 5px 10px 5px 10px;
+    border: 1px solid #251a14;
+}
+
+#page_count:hover{
     background-color: #934A00;
     color:#fff;
 }

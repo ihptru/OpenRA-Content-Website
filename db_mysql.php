@@ -329,25 +329,5 @@
             mysqli_close(db::$con);
             db::$con = null;
         }
-	
-	/* 
-	 * Queries
-	 * This part is responsible for all website queries
-	 */
-	 
-	 // simple select queries
-	 public static function simpleselect($what, $from, $where, $after_where, $order_by)
-	 {
-	     if (isset($where))
-	     {
-		 $where = "WHERE ".$where;
-	     }
-	     if (isset($order_by))
-	     {
-		 $order_by = "ORDER BY ".$order_by;
-	     }
-	     return "SELECT ".$what." FROM ".$from." ".$where." ".$order_by;
-	     
-	 }
     }
 ?>

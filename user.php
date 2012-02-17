@@ -23,7 +23,8 @@ class user
 	    $result = db::executeQuery($query);
 	    if (db::num_rows($result) == 0)
 	    {
-		session_destroy();	//tried to fake user's identities
+		//tried to fake user's identities
+		session_destroy();
 		header("Location: {$_SERVER['HTTP_REFERER']}");
 	    }
 	    $row = db::nextRowFromQuery($result);
@@ -33,7 +34,8 @@ class user
 	    }
 	    else
 	    {
-		session_destroy();	// user_id matches but session_id is wrong: probably tried to fake user's identities
+		// user_id matches but session_id is wrong: probably tried to fake user's identities
+		session_destroy();
 		header("Location: {$_SERVER['HTTP_REFERER']}");
 	    }
 	}

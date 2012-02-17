@@ -285,7 +285,7 @@ class misc
 	$ava = db::nextRowFromQuery(db::executeQuery($query));
 	if ($ava["avatar"] == "None")
 	{
-	    return "images/noavatar.jpg";
+	    return "images/noavatar.png";
 	}
 	elseif ($ava["avatar"] == "Some")
 	{
@@ -511,9 +511,9 @@ class misc
     public static function paging($nrOfPages, $i, $current, $gets, $table)
     {
 	if($current == $i)
-	    $pages = "<td>" . $i . "</td>";
+	    $pages = "<span id='page_count_none'>" . $i . "</span>";
 	else
-	    $pages = "<td id='page_count'><a href='index.php?current_grid_page_".$table."=".$i.$gets."'>" . $i . "</a></td>";
+	    $pages = "<span id='page_count'><a href='index.php?current_grid_page_".$table."=".$i.$gets."' style='display:inline;'>" . $i . "</a></span>";
 	return $pages;
     }
 }
