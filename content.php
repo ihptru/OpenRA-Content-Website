@@ -229,7 +229,7 @@ class content
 	    }
 
 	    if(strlen($imagePath) > 0)
-		$content .= "<a title='' href='index.html'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
+		$content .= "<a title='' href='index.php'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
                 
     	$content .= "<div class='blk-top'>";
         $content .= "<h4><a href='index.php?p=detail&table=articles&id=".$row["uid"]."'>" . $title . "</a></h4>";

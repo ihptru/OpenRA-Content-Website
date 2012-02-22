@@ -219,6 +219,17 @@
 	    ";
 	    db::executeQuery($query);
 
+	    $query = "CREATE TABLE games_data (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    name VARCHAR(200) NOT NULL,
+			    address VARCHAR(50) NOT NULL,
+			    players VARCHAR(20) NOT NULL,
+			    version VARCHAR(80) NOT NULL,
+			    g_mod VARCHAR(80) NOT NULL,
+			    map VARCHAR(500) NOT NULL,
+			    date_time TIMESTAMP NOT NULL
+	    )";
+	    db::executeQuery($query);
+
 	    $query = "SELECT COUNT(*) AS count FROM country";
 	    $result = db::executeQuery($query);
 	    $row = db::nextRowFromQuery($result);
