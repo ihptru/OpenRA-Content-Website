@@ -137,7 +137,7 @@ class header
 		{
 		    $text = nl2br($_POST['edit_guide_text']);
 		    db::executeQuery("UPDATE guides SET title = ? WHERE uid = ?", array($_POST['edit_guide_title'], $_POST['edit_guide_uid']));
-		    db::executeQuery("UPDATE guides SET html_content = ? WHERE uid = ?", array($text, $_POST['edit_guide_uid']));
+		    db::executeQuery("UPDATE guides SET html_content = ? WHERE uid = ?", array(str_replace('\r\n', "<br />", $text), $_POST['edit_guide_uid']));
 		    db::executeQuery("UPDATE guides SET guide_type = ? WHERE uid = ?", array($_POST['edit_guide_type'], $_POST['edit_guide_uid']));
 		    misc::event_log(user::uid(), "edit", "guides", $_POST['edit_guide_uid']);
 		    header("Location: {$_SERVER['HTTP_REFERER']}");

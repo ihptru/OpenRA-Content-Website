@@ -23,9 +23,6 @@ class content
 	<script src='libs/multifile.js'>
 	    //include multi upload form
 	</script>
-	<script src='libs/strip_tags.js'>
-	    //include strip_tags function
-	</script>
 	<script src='libs/functions.js'>
 	    //include other javascript functions
 	</script>
@@ -585,13 +582,14 @@ class content
 		    $text = "";
 		    break;
 		case "guides":
-		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
+		    $imagePath = "images/guide_" . str_replace("\\\\\\", "", $row["guide_type"]) . ".png";
 		    $allow = "<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>";
-		    $text = strip_tags($row["html_content"], $allow);
+		    $text = strip_tags(str_replace("\\\\\\", "", "<p>". str_replace('\r\n', "", $row["html_content"])."</p>"), $allow);
 		    
 		    $content .= "<div class='post'>";
-		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";
-		    $content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."&p=profile' id='id_display_username'>". $user_name . "</a></p>";
+		    $content .= "<h2 id='id_display_title' style='margin-left: -2px;'><p>" . strip_tags($row["title"]) . "</p></h2>";
+		    if (!isset($row["no_additional_info"]))
+			$content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."&p=profile' id='id_display_username'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -600,7 +598,8 @@ class content
 			$content .= $delete . " | ";
 		    if($favIcon != "")
 			$content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a> | ";
-		    $content .= "<span class='date'>".$row["posted"]."</span>";
+		    if (isset($row["posted"]))
+			$content .= "<span class='date'>".$row["posted"]."</span>";
 		    $content .= $edit;
 		    $content .= "</p>";
 		    $content .= "</div>";
@@ -1004,7 +1003,7 @@ class content
 	    if (!user::online())
 		return;
 	    profile::upload_map();
-	    echo "<h3>Your maps</h3>";
+	    echo "<br /><br /><div class='sidemenu'><ul><li>Your maps:</li></ul></div>";
 	    list($order_by, $request_mod, $request_tileset) = content::map_filters();
 	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." AND g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
 	    $output = content::create_grid($result);
@@ -1019,7 +1018,7 @@ class content
 	    if (!user::online())
 		return;
 	    profile::upload_guide();
-	    echo "<h3>Your guides</h3>";
+	    echo "<br /><br /><div class='sidemenu'><ul><li>Your guides:</li></ul></div>";
 	    $result = db::executeQuery( "SELECT * FROM guides WHERE user_id = ".user::uid() );
 	    $output = content::create_grid($result, "guides");
 	    if ($output == "")
@@ -1033,7 +1032,7 @@ class content
 	    if (!user::online())
 		return;
 	    profile::upload_unit();
-	    echo "<h3>Your units</h3>";
+	    echo "<br /><br /><div class='sidemenu'><ul><li>Your units:</li></ul></div>";
 	    $result = db::executeQuery("SELECT * FROM units WHERE user_id = ".user::uid());
 	    $output = content::create_grid($result, "units");
 	    if ($output == "")
@@ -1421,17 +1420,15 @@ class objects
 		$row = db::nextRowFromQuery($result);
 		if($row["user_id"] == user::uid())
 		{
-		    echo "Preview (Will only be updated if JavaScript is enabled):";
-		    date_default_timezone_set('Europe/Dublin');
-		    $arr = array("title" => $row["title"], "html_content" => $row["html_content"], "posted" => date("F d, Y"), "guide_type" => "", "user_id" => user::uid());
+		    $arr = array("title" => str_replace("\\\\\\", "", $row["title"]), "html_content" => str_replace("\\\\\\", "",  str_replace('\r\n', "", $row["html_content"])), "posted" => "<a href='index.php?p=detail&table=guides&id=".$row["uid"]."'>Back to guide's page</a>", "guide_type" => "", "user_id" => user::uid(), "no_additional_info" => "");
 		    echo content::displayItem($arr,"guides",true);
 		    
 		    echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
 			    <label>Upload guide:</label>
 			    <br />
-			    <label>Title: <input id='id_guide_title' type='text' value='".$row["title"]."' name='edit_guide_title' onkeyup='updateContent(\"id_display_title\",\"id_guide_title\");' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>
+			    <label>Title: <input id='id_guide_title' type='text' value='".str_replace("\\\\\\", "", $row["title"])."' name='edit_guide_title' onkeyup='updateContent(\"id_display_title\",\"id_guide_title\");' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>
 			    <br />
-			    <label>Text: <textarea id='id_guide_text' name='edit_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");'>".$row["html_content"]."</textarea></label>
+			    <label>Text: <textarea id='id_guide_text' name='edit_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");'>".str_replace("\\\\\\", "",   str_replace("<br />", "\r\n", str_replace('\r\n', "", $row["html_content"])))."</textarea></label>
 			    <br />
 			    <select name='edit_guide_type'>";
 		    echo "<option value='other' ".misc::option_selected("other", $row["guide_type"]).">Other</option>";
@@ -1918,8 +1915,7 @@ class profile
     	if(!user::online())
 	    return;
     	
-	echo "Preview (Will only be updated if JavaScript is enabled):";
-	$arr = array("title" => "", "html_content" => "", "posted" => date("F d, Y"), "guide_type" => "", "user_id" => user::uid());
+	$arr = array("title" => "", "html_content" => "", "guide_type" => "", "user_id" => user::uid(), "no_additional_info" => "");
 	echo content::displayItem($arr,"guides",true);
 	
     	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
