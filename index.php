@@ -1,6 +1,7 @@
 <?PHP
 include_once("hub.php");
 include_once("content.php");
+include_once("profile.php");
 include_once("header.php");
 
 content::head();
