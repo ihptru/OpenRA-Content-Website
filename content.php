@@ -415,6 +415,7 @@ class content
 	{ $pages = ""; }
 
 	$content .= "</table>";
+	$pages = preg_replace("/(\.\.\.)+/", " ... ", $pages);
 	$content .= $pages;
 	return $content;
     }
@@ -486,22 +487,22 @@ class content
 	
 	$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
 	$gets = "";
-	$pages = "<table>";
+	$pages = "<table><tr><td>";
 	$keys = array_keys($_GET);
 	foreach($keys as $key)
 	    if($key != "current_list_page_".$table)
 		$gets .= "&" . $key . "=" . $_GET[$key];
 	for($i = 1; $i < $nrOfPages+1; $i++)
-	    if($current == $i)
-		$pages .= "<td>" . $i . "</td>";
-	    else
-		$pages .= "<td id='page_count'><a href='index.php?current_list_page_".$table."=".$i.$gets."'>" . $i . "</a></td>";
-	$pages .= "</tr></table>";
+	{
+	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "", "list");
+	}
+	$pages .= "</td></tr></table>";
 	
 	if ($nrOfPages == 1)
 	    $pages = "";
 	
 	$content .= "</table>";
+	$pages = preg_replace("/(\.\.\.)+/", " ... ", $pages);
 	$content .= $pages;
 	return $content;
     }
@@ -865,36 +866,36 @@ class content
 		    $content .= "<tr><td colspan='".$columns."'><a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
 		}
 		$content .= "</table>";
+		$params = "";
 		$gets = "";
-		$pages = "<table>";
+		$pages = "<table><tr><td>";
 		$keys = array_keys($_GET);
 		foreach($keys as $key)
 		{
 		    if($key != "current_dynamic_page_".$modifiedName)
 			$gets .= "&" . $key . "=" . $_GET[$key];
 		}
+		if (isset($_GET["p"]))
+		{
+		    if($_GET["p"] == "dynamic")
+		    {
+			$params = "\"data\":\"".pages::serialize_array($data)."\"";
+			$params .= ",\"columns\":\"".$columns."\"";
+			$params .= ",\"name\":\"".$modifiedName."\"";
+			$params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
+			$params .= ",\"header\":\"".$header."\"";
+			$params .= ",\"use_pages\":\"1\"";
+		    }
+		}
 		for($i = 1; $i < $nrOfPages+1; $i++)
 		{
-		    if($current == $i)
-			$pages .= "<td>" . $i . "</td>";
-		    else
-			if($_GET["p"] == "dynamic")
-			{
-			    $params = "\"data\":\"".pages::serialize_array($data)."\"";
-			    $params .= ",\"columns\":\"".$columns."\"";
-			    $params .= ",\"name\":\"".$modifiedName."\"";
-			    $params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
-			    $params .= ",\"header\":\"".$header."\"";
-			    $params .= ",\"use_pages\":\"1\"";
-			    $pages .= "<td id='page_count'><a href='javascript:post_to_url(\"index.php?current_dynamic_page_".$modifiedName."=".$i.$gets."\",{".$params."});'>" . $i . "</a></td>";
-			}
-			else
-			    $pages .= "<td id='page_count'><a href='index.php?current_dynamic_page_".$modifiedName."=".$i.$gets."'>" . $i . "</a></td>";
+		    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $modifiedName, $params, "dynamic");
 		}
-		$pages .= "</tr></table>";
+		$pages .= "</td></tr></table>";
 		if ($nrOfPages == 1)
 		    $pages = "";
 		if($use_pages)
+		    $pages = preg_replace("/(\.\.\.)+/", " ... ", $pages);
 		    $content .= $pages;
 	    }
     	}

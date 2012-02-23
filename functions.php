@@ -508,13 +508,23 @@ class misc
 	return "";
     }
     
-    public static function paging($nrOfPages, $i, $current, $gets, $table)
+    public static function paging($nrOfPages, $i, $current, $gets, $table, $params="", $type="grid")
     {
-	if($current == $i)
-	    $pages = "<span id='page_count_none'>" . $i . "</span>";
+	if( $i <= 3 || $i >= $nrOfPages - 3 || ( $i < $current + 3 && $i > $current - 3) )
+	{
+	    if($current == $i)
+		$pages = "<span id='page_count_none'>" . $i . "</span>";
+	    else
+		if ($params == "")
+		    $pages = "<span id='page_count'><a href='index.php?current_".$type."_page_".$table."=".$i.$gets."'>" . $i . "</a></span>";
+		else
+		    $pages .= "<span id='page_count'><a href='javascript:post_to_url(\"index.php?current_".$type."_".$table."=".$i.$gets."\",{".$params."});'>" . $i . "</a></span>";
+	    return $pages;
+	}
 	else
-	    $pages = "<span id='page_count'><a href='index.php?current_grid_page_".$table."=".$i.$gets."' style='display:inline;'>" . $i . "</a></span>";
-	return $pages;
+	{
+	    return "...";
+	}
     }
 }
 

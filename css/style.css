@@ -119,12 +119,14 @@ td {
 	padding: .7em 1em;	
 }	
 #page_count {
-    padding: 5px 10px 5px 10px;
+    padding: 6px 10px 6px 10px;
     border: 1px solid #251a14;
 }
 #page_count_none {
-    padding: 5px 10px 5px 10px;
+    padding: 6px 10px 6px 10px;
     border: 1px solid #251a14;
+    background-color: #934A00;
+    color: #fff;
 }
 
 #page_count:hover{
