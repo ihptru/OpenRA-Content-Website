@@ -43,6 +43,8 @@
 	    //user set `remember me` but did not return to the website during the reported period, everything is expired, remove record from DB
 	    $query = "DELETE FROM signed_in WHERE TIMESTAMPDIFF(DAY, set_date, CURRENT_TIMESTAMP) > 100";
 	    db::executeQuery($query);
+	    
+	    echo date("F j, Y, g:i a");
         }
 
 	// run function if at least one of the tables do not exist
@@ -219,14 +221,10 @@
 	    ";
 	    db::executeQuery($query);
 
-	    $query = "CREATE TABLE games_data (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-			    name VARCHAR(200) NOT NULL,
-			    address VARCHAR(50) NOT NULL,
-			    players VARCHAR(20) NOT NULL,
-			    version VARCHAR(80) NOT NULL,
-			    g_mod VARCHAR(80) NOT NULL,
-			    map VARCHAR(500) NOT NULL,
-			    date_time TIMESTAMP NOT NULL
+	    $query = "CREATE TABLE map_stats (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    map_hash VARCHAR(200) NOT NULL,
+			    amount_games VARCHAR(50) NOT NULL,
+			    avg_players VARCHAR(20) NOT NULL
 	    )";
 	    db::executeQuery($query);
 

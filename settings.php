@@ -4,9 +4,9 @@ ini_set("display_startup_errors","1");
 ini_set("error_reporting", E_ALL);
 
 define("DB_HOST","localhost");
-define("DB_USERNAME","oramod");
-define("DB_PASSWORD","iequeiR6");
-define("DB_DATABASE","oramod");
+define("DB_USERNAME","");
+define("DB_PASSWORD","");
+define("DB_DATABASE","");
 
 ### website's path
 function site_path($path)
