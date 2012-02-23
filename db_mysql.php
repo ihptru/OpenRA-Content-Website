@@ -221,7 +221,7 @@
 	    ";
 	    db::executeQuery($query);
 
-	    $query = "CREATE TABLE map_stats (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	    $query = "CREATE TABLE IF NOT EXISTS map_stats (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    map_hash VARCHAR(200) NOT NULL,
 			    amount_games VARCHAR(50) NOT NULL,
 			    avg_players VARCHAR(20) NOT NULL
@@ -296,7 +296,6 @@
 	// private function to check if table exists in database - unless: execute setup() function
         private static function table_exists($tablename) 
         {
-            $return = true;
 	    $result = db::executeQuery("
                                SELECT COUNT(*) AS count 
                                FROM information_schema.tables 
@@ -306,7 +305,7 @@
             $row = db::nextRowFromQuery($result);
 	    if ($row["count"] == 0)
 	    {
-		$return = false;	//no such table in DB
+		return false;	//no such table in DB
 	    }
 	    else
 	    {
@@ -314,16 +313,16 @@
 		$result = db::executeQuery($query);
 		$row = db::nextRowFromQuery($result);
 		if ($row["count"] == 0)
-		    $return = false;	//table is empty
+		    return false;	//table is empty
 	    }
-            return $return;
+            return true;
         }
 
 	// check if all tables exist and they are not empty
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","screenshot_group","country","fav_item","signed_in","event_log","following");
+	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","screenshot_group","country","fav_item","signed_in","event_log","following","map_stats","pm");
 	    
 	    foreach ($tables as $table)
 	    {
