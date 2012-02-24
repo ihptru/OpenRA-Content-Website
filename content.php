@@ -687,7 +687,7 @@ class content
 	return $content;
     }
 
-    public static function displayEvents($result)
+    public static function displayEvents($result, $pointer="")
     {
 	$data = array();
 	array_push($data, "Latest activity of users you follow:");
@@ -737,7 +737,7 @@ class content
 	    if ($desc)
 		array_push($data, $name . $desc . " at " . $row["posted"]);
 	}
-	return content::create_dynamic_list($data, 1, "event_log",  11, true, true);
+	return content::create_dynamic_list($data, 1, "event_log",  11, true, true, $pointer);
     }
 
     public static function create_comment_section($result)
@@ -778,7 +778,7 @@ class content
 	    $content .= "<p>" . stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
-		$content .= "<a style='float: right; margin: -161px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
+		$content .= "<a style='float: right; margin: -130px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
 	    }
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
@@ -817,7 +817,7 @@ class content
 	return $content;
     }
     
-    public static function create_dynamic_list($data, $columns, $name = "dyn", $maxItemsPerPage = 10, $header = false, $use_pages = true)
+    public static function create_dynamic_list($data, $columns, $name = "dyn", $maxItemsPerPage = 10, $header = false, $use_pages = true, $pointer = "")
     {
     	$content = "";
     	if($data && $columns > 0)
@@ -889,14 +889,16 @@ class content
 		}
 		for($i = 1; $i < $nrOfPages+1; $i++)
 		{
-		    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $modifiedName, $params, "dynamic");
+		    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $modifiedName, $params, "dynamic", $pointer);
 		}
 		$pages .= "</td></tr></table>";
 		if ($nrOfPages == 1)
 		    $pages = "";
 		if($use_pages)
+		{
 		    $pages = preg_replace("/(\.\.\.)+/", " ... ", $pages);
 		    $content .= $pages;
+		}
 	    }
     	}
     	return $content;

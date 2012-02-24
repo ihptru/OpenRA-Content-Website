@@ -352,7 +352,10 @@ class profile
 		    $query = implode(" UNION ", $queries) . " ORDER BY posted DESC";
 		    $result = db::executeQuery($query);
 		    if (db::num_rows($result) > 0)
-			echo content::displayEvents($result);
+		    {
+			echo "<a name='events'></a>";
+			echo content::displayEvents($result, "#events");
+		    }
 		}
 		
 	    }
