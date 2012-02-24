@@ -9,6 +9,7 @@ import getopt;
 import MySQLdb;
 import hashlib;
 import shutil;
+import config;
 
 WEBSITE_PATH = os.getcwd() + os.sep
 
@@ -222,7 +223,7 @@ text_file.close()
 #Put record into database
 try:
     print "Putting record into database..."
-    conn = MySQLdb.connect("localhost", "oramod", "iequeiR6", "oramod")
+    conn = MySQLdb.connect(config.host, config.user, config.password, config.database)
     cur = conn.cursor()
     sql = """INSERT INTO maps
             (title, description, author, type, players, g_mod, maphash, width, height, tileset, path, user_id, screenshot_group_id)
