@@ -571,13 +571,13 @@ class content
 	    switch($table)
 	    {
 		case "maps":
-		    $title = $row["title"];
+		    $title = strtoupper($row["g_mod"]) . " map: <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>";
 		    $imagePath = misc::minimap($row["path"]);
 		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
-		    $text = $row["description"];
+		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    break;
 		case "units":
-		    $title = $row["title"];
+		    $title = strip_tags($row["title"]);
 		    $imagePath = $row["preview_image"];
 		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
 		    $text = "";
@@ -636,7 +636,7 @@ class content
 		$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
 	    }
 	     
-	    $content .= "<tr><td>" . strip_tags($title);
+	    $content .= "<tr><td>" . $title;
 	    if($subtitle != "")
 	    {
 		$content .= " " . $subtitle;
@@ -658,10 +658,18 @@ class content
 	     
 	    if($table == "maps")
 	    {
+		$content .= "<tr><td><table><tr><td>author: ".$row["author"]."</td><td>size: ".$row["width"]."x".$row["height"]."</td><td>tileset: ".$row["tileset"]."</td></tr></table></td></tr>";
+		$players = "";
+		$res_p = db::executeQuery("SELECT * FROM map_stats WHERE map_hash = '".$row["maphash"]."'");
+		while ($res_p_r = db::nextRowFromQuery($res_p))
+		{
+		    $players = "; mostly played with " . round($res_p_r["avg_players"]) . " players";
+		}
+		$content .= "<tr><td>".$row["players"]." players map".$players."</td></tr>";
 		$mapfile = explode("-", basename($row["path"]), 2);
 		$mapfile = $mapfile[1] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
-	     	$content .= '<tr><td><a href="'.$download.'">Download</a></tr></td>';
+	     	$content .= "<tr><td><a href='".$download."'>Download</a></tr></td>";
 	    }
 	    else if($table == "units")
 	    {
