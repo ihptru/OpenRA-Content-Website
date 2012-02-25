@@ -97,6 +97,8 @@ class content
 	{
 	    $request = "";
 	}
+	if (isset($_GET['pg']))
+	    $request = $_GET['pg'];
 	echo "<li id='"; echo pages::current('', $request); echo"'><a href='/'>".lang::$lang['home']."</a></li>";
 	echo "<li id='"; echo pages::current('maps', $request); echo"'><a href='index.php?p=maps'>".lang::$lang['maps']."</a></li>";
 	echo "<li id='"; echo pages::current('units', $request); echo"'><a href='index.php?p=units'>".lang::$lang['units']."</a></li>";
@@ -252,6 +254,7 @@ class content
     //Creates featured items based on result
     public static function createFeaturedItems($result, $table = "featured")
     {
+	//types: featured, people, editors
 	$content = "";
 	while ($row = db::nextRowFromQuery($result))
 	{
@@ -269,23 +272,27 @@ class content
 		$res = db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]);
 		$username = db::nextRowFromQuery($res);
 	    }
+	    $comments = "";
+	    $res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = ".$row["uid"]." AND table_name = '".$table_item."'"));
+	    if ($res_comments != 0)
+		$comments = "<br />" . $res_comments ." comments";
 	    switch($table_item)
 	    {
 		case "maps":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>";
+		    $subtitle = "map posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>" . $comments;
 		    $text = $row["description"];
 		    $imagePath =  $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>";
+		    $subtitle = "unit posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>" . $comments;
 		    $text = "";
 		    $imagePath = $row["preview_image"];
 		    break;
 		case "guides":
 		    $title = $row["title"];
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>";
+		    $subtitle = "guide posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>" . $comments;
 		    $text = "";
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    break;
@@ -300,7 +307,6 @@ class content
                	$content .= "<div id='editors-ribbon'></div>";
 	    else
                	$content .= "<div id='featured-ribbon'></div>";
-	    $content .= "<a name='TemplateInfo'></a>";
 
 	    if(strlen($imagePath) > 0)
 	    {
@@ -314,7 +320,6 @@ class content
 	    $content .= "<p class='post-info'>" . $subtitle . "</p>";
 	    $content .= "<p>" . strip_tags($text) . "</p>";
 	    $content .= "<p><a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' class='more-link'>Read More</a></p>";
-											//All use read more button?
 	    $content .= "</div>";
 	    $content .= "</div>";
 	}
@@ -324,7 +329,7 @@ class content
 
     public static function create_grid($result, $table = "maps")
     {
-	//Setup\\
+	//Setup
 	$columns = 4;	//Amount of columns
 	$rows = 4;	//Amount of rows (before starting paging)
 	$counter = 0;
@@ -380,7 +385,7 @@ class content
 		$span_additional_info .= "$res_fav peopled favorited";
 	    if ($span_additional_info != "")
 		$span_additional_info = "<span>".$span_additional_info."</span>";
-	    $content .= "<td id='map_grid'><a class='tooltip' href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>";
+	    $content .= "<td id='map_grid'><a class='tooltip' href='index.php?p=detail&pg=".$table."&table=".$table."&id=".$row["uid"]."'>";
 	    if($imagePath != "")
 	    	$content .= "<img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'>";
 	    $content .= "</br>" . strip_tags($title) . $span_additional_info . "</a></td>";
