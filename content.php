@@ -578,13 +578,13 @@ class content
 		case "maps":
 		    $title = strtoupper($row["g_mod"]) . " map: <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>";
 		    $imagePath = misc::minimap($row["path"]);
-		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
+		    $subtitle = $title . " posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    break;
 		case "units":
 		    $title = strip_tags($row["title"]);
 		    $imagePath = $row["preview_image"];
-		    $subtitle = "posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
+		    $subtitle = "<font color='#d8ff00'>".$title."</font> posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
 		    $text = "";
 		    break;
 		case "guides":
@@ -594,8 +594,19 @@ class content
 		    
 		    $content .= "<div class='post'>";
 		    $content .= "<h2 id='id_display_title' style='margin-left: -2px;'><p>" . strip_tags($row["title"]) . "</p></h2>";
+		    
+		    $edited_by = "";
+		    if (isset($row["uid"]))
+		    {
+			$res_e = db::executeQuery("SELECT * FROM event_log WHERE table_id = ".$row["uid"]." AND table_name = 'guides' AND type = 'edit'");
+			while ($res_e_r = db::nextRowFromQuery($res_e))
+			{
+			    $edited_name = user::login_by_uid($res_e_r["user_id"]);
+			    $edited_by = " | last edited by <a href='index.php?profile=".$res_e_r["user_id"]."&p=profile' id='id_display_username'>".$edited_name."</a>";
+			}
+		    }
 		    if (!isset($row["no_additional_info"]))
-			$content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."&p=profile' id='id_display_username'>". $user_name . "</a></p>";
+			$content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."&p=profile' id='id_display_username'>". $user_name . "</a>".$edited_by."</p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -641,11 +652,7 @@ class content
 		$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
 	    }
 	     
-	    $content .= "<tr><td>" . $title;
-	    if($subtitle != "")
-	    {
-		$content .= " " . $subtitle;
-	    }
+	    $content .= "<tr><td>" . $subtitle;
 	    $content .= "</td>";
 
 	    if(user::online())
