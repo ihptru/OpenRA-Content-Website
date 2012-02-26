@@ -79,8 +79,6 @@ def Bytes2Int2(data):
     _byte2 = struct.unpack('B', data[1])[0]
     _byte2 = _byte2 * 256
     return _byte1 + _byte2
-    
-    return 
 
 # 4 bytes
 def Bytes2Int4(data):
@@ -424,10 +422,6 @@ if not tempType == "":
 
 def isdivideable(n):
     r = n / 2.0
-    print "n: " + str(n)
-    print type(n)
-    print "r: " + str(r)
-    print type(r)
     if(r%1 == 0):
         return True
     return False
@@ -499,4 +493,5 @@ for x in range(Left,Right+Left):
         img.plotPoint(x-Left,y-Top);
 
 img.saveFile(path + "minimap.bmp");
+print("minimap is saved")
 exit(0)
