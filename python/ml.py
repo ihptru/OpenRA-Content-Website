@@ -75,7 +75,12 @@ def Bytes2Int1(data):
 
 # 2 bytes
 def Bytes2Int2(data):
-    return struct.unpack('B', data[0])[0] + struct.unpack('B', data[1])[0]
+    _byte1 = struct.unpack('B', data[0])[0]
+    _byte2 = struct.unpack('B', data[1])[0]
+    _byte2 = _byte2 * 256
+    return _byte1 + _byte2
+    
+    return 
 
 # 4 bytes
 def Bytes2Int4(data):
