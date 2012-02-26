@@ -339,7 +339,8 @@ class content
 	$counter = 0;
 	$columns--;
 	$maxItemsPerPage = ($columns+1) * $rows;
-	$content = "<table>";
+	$pointer = "#".$table;
+	$content = "<a name='".$table."'></a><table>";
 	$total = db::num_rows($result);
 	$i = 0;
 	if(isset($_GET["current_grid_page_".$table]))
@@ -417,7 +418,7 @@ class content
 	}
 	for($i = 1; $i < $nrOfPages+1; $i++)
 	{
-	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table);
+	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "", "grid", $pointer);
 	}
 	$pages .= "</td></tr></table>";
 	if ($nrOfPages == 1)
@@ -439,7 +440,8 @@ class content
 		$current = 1;
 	$maxItemsPerPage = 10; //dynamic depending on table?
 	$total = db::num_rows($result);
-	$content = "<table>";
+	$pointer = "#".$table;
+	$content = "<a name='".$table."'></a><table>";
 	$i = 0;
 	while ($row = db::nextRowFromQuery($result))
 	{
@@ -503,7 +505,7 @@ class content
 		$gets .= "&" . $key . "=" . $_GET[$key];
 	for($i = 1; $i < $nrOfPages+1; $i++)
 	{
-	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "", "list");
+	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "", "list", $pointer);
 	}
 	$pages .= "</td></tr></table>";
 	
@@ -711,7 +713,7 @@ class content
 	return $content;
     }
 
-    public static function displayEvents($result, $pointer="")
+    public static function displayEvents($result)
     {
 	$data = array();
 	array_push($data, "Latest activity of users you follow:");
@@ -761,7 +763,7 @@ class content
 	    if ($desc)
 		array_push($data, $name . $desc . " at " . $row["posted"]);
 	}
-	return content::create_dynamic_list($data, 1, "event_log",  11, true, true, $pointer);
+	return content::create_dynamic_list($data, 1, "event_log",  11, true, true);
     }
 
     public static function create_comment_section($result)
@@ -841,7 +843,7 @@ class content
 	return $content;
     }
     
-    public static function create_dynamic_list($data, $columns, $name = "dyn", $maxItemsPerPage = 10, $header = false, $use_pages = true, $pointer = "")
+    public static function create_dynamic_list($data, $columns, $name = "dyn", $maxItemsPerPage = 10, $header = false, $use_pages = true)
     {
     	$content = "";
     	if($data && $columns > 0)
@@ -850,6 +852,7 @@ class content
 	    {
 		$total = count($data);
 		$modifiedName = str_replace(" ","_",$name);
+		$pointer = "#".$modifiedName;
 		if(isset($_GET["current_dynamic_page_".$modifiedName]))
 		    $current = $_GET["current_dynamic_page_".$modifiedName];
 		else
@@ -857,7 +860,7 @@ class content
 		$start = ($current-1) * $maxItemsPerPage * $columns;
 		$maxItemsPerPageOrg = $maxItemsPerPage; //original value
 		$maxItemsPerPage *= $columns;
-		$content .= "<table>";
+		$content .= "<a name='".$modifiedName."'></a><table>";
 		if($header)
 		{
 		    if($start < $columns)

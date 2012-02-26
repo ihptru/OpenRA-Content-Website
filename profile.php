@@ -353,8 +353,7 @@ class profile
 		    $result = db::executeQuery($query);
 		    if (db::num_rows($result) > 0)
 		    {
-			echo "<a name='events'></a>";
-			echo content::displayEvents($result, "#events");
+			echo content::displayEvents($result);
 		    }
 		}
 		
