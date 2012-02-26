@@ -16,7 +16,7 @@ if ( $use_db == 'mysql' )
 }
 elseif ( $use_db == 'pgsql' )
 {
-    include_once("db_pgsql.php");
+    include_once("db_pgsql.php");	//is not supported anymore
 }
 ################################################
 

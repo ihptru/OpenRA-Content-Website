@@ -26,6 +26,6 @@ function site_path($path)
 
 define("WEBSITE_PATH", site_path($_SERVER['DOCUMENT_ROOT']));	# with / at the end
 
-$use_db = "mysql";	//mysql or pgsql
+$use_db = "mysql";	//mysql or pgsql (pgsql is not supported anymore)
 
 ?>
