@@ -1,4 +1,5 @@
 <?PHP
+date_default_timezone_set('Europe/Dublin');
 
 if ( php_sapi_name() != "cli" )
     exit(1);
@@ -13,5 +14,9 @@ elseif ( $use_db == 'pgsql' )
 db::connect();
 db::clearOldRecords();
 db::disconnect();
+
+$fp = fopen(dirname(__FILE__)."/log", "a");
+fwrite($fp, date("F j, Y, g:i a")."\n");
+fclose($fp);
 
 ?>

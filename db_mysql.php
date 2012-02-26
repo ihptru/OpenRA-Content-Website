@@ -43,8 +43,6 @@
 	    //user set `remember me` but did not return to the website during the reported period, everything is expired, remove record from DB
 	    $query = "DELETE FROM signed_in WHERE TIMESTAMPDIFF(DAY, set_date, CURRENT_TIMESTAMP) > 100";
 	    db::executeQuery($query);
-	    
-	    echo date("F j, Y, g:i a");
         }
 
 	// run function if at least one of the tables do not exist
