@@ -223,7 +223,7 @@
 
 	    $query = "CREATE TABLE IF NOT EXISTS map_stats (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    map_hash VARCHAR(200) NOT NULL,
-			    amount_games VARCHAR(50) NOT NULL,
+			    amount_games INTEGER NOT NULL,
 			    avg_players VARCHAR(20) NOT NULL
 	    )";
 	    db::executeQuery($query);

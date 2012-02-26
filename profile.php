@@ -33,7 +33,7 @@ class profile
 	$data = array();
 	if ( $profile == "You" )
 	{
-	    $to_head = "You avatar:";
+	    $to_head = "Your avatar:";
 	}
 	else
 	{

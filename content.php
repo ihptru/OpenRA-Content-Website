@@ -281,13 +281,13 @@ class content
 		case "maps":
 		    $title = $row["title"];
 		    $subtitle = "map posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>" . $comments;
-		    $text = $row["description"];
+		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    $imagePath =  $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
 		    $title = $row["title"];
 		    $subtitle = "unit posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>" . $comments;
-		    $text = "";
+		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    $imagePath = $row["preview_image"];
 		    break;
 		case "guides":
@@ -305,6 +305,10 @@ class content
 		$content .= "<div id='peoples-ribbon'></div>";
 	    else if($t=="editors")
                	$content .= "<div id='editors-ribbon'></div>";
+	    else if($t=="played")
+		$content .= "<div id='played-ribbon'></div>";
+	    else if($t=="discussed")
+		$content .= "<div id='discussed-ribbon'></div>";
 	    else
                	$content .= "<div id='featured-ribbon'></div>";
 
@@ -625,7 +629,7 @@ class content
 		case "articles":
 		    $imagePath = $row["image"];
 		    $allow = "<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>";
-		    $text = strip_tags($row["content"], $allow);
+		    $text = strip_tags(str_replace("\\\\\\", "", "<p>". str_replace('\r\n', "", $row["content"])."</p>"), $allow);
 		    
 		    $content .= "<div class='post'>";
 		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";

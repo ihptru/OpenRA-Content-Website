@@ -21,20 +21,52 @@ content::head();
 
 	if (count($_GET) == 0)
 	{
-	    $query = "SELECT
-			table_name, table_id, 'people' as type
-		      FROM fav_item
-		  WHERE table_name <> 'articles'
-                  GROUP BY table_name,table_id
-		  HAVING (COUNT(table_id) = 
-		    (SELECT MAX(user_id_amount) FROM
-			(SELECT COUNT(user_id) AS user_id_amount FROM fav_item GROUP BY table_id)
-			    AS amounts
-		    )
-			)
+	    $query = "
+		-- most favourited
+		SELECT
+		    table_name,
+		    table_id,
+		    'people' as type
+		FROM fav_item
+		    WHERE table_name <> 'articles'
+		    GROUP BY table_name,table_id
+		    HAVING (COUNT(table_id) = 
+				(SELECT MAX(user_id_amount) FROM
+				    (SELECT COUNT(user_id) AS user_id_amount FROM fav_item GROUP BY table_id)
+				    AS amounts
+				)
+			   )
 		UNION ALL
-		  SELECT table_name,table_id,type FROM featured
-
+		-- featured, editors choice, etc from featured table
+		SELECT
+		    table_name,
+		    table_id,
+		    type
+		FROM featured
+		UNION ALL
+		-- mostly played maps
+		SELECT
+		    'maps' AS table_name,
+		    uid AS table_id,
+		    'played' AS type
+		FROM maps
+		    WHERE maphash = (SELECT map_hash FROM map_stats HAVING MAX(amount_games))
+		UNION ALL
+		-- most discussed
+		SELECT
+		    table_name,
+		    table_id,
+		    'discussed' as type
+		FROM comments
+		    WHERE table_name <> 'articles'
+		    GROUP BY table_name,table_id
+		    HAVING (COUNT(table_id) = 
+				(SELECT MAX(user_id_amount) FROM
+				    (SELECT COUNT(user_id) AS user_id_amount FROM comments GROUP BY table_id)
+				    AS amounts
+				)
+			   )
+			    
 		  ORDER BY RAND() LIMIT 1
 	    ";
 	    $res = db::executeQuery($query);
