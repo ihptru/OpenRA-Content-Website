@@ -97,8 +97,8 @@ class content
 	{
 	    $request = "";
 	}
-	if (isset($_GET['pg']))
-	    $request = $_GET['pg'];
+	if (isset($_GET['table']))
+	    $request = $_GET['table'];
 	echo "<li id='"; echo pages::current('', $request); echo"'><a href='/'>".lang::$lang['home']."</a></li>";
 	echo "<li id='"; echo pages::current('maps', $request); echo"'><a href='index.php?p=maps'>".lang::$lang['maps']."</a></li>";
 	echo "<li id='"; echo pages::current('units', $request); echo"'><a href='index.php?p=units'>".lang::$lang['units']."</a></li>";
@@ -390,7 +390,7 @@ class content
 		$span_additional_info .= "$res_fav peopled favorited";
 	    if ($span_additional_info != "")
 		$span_additional_info = "<span>".$span_additional_info."</span>";
-	    $content .= "<td id='map_grid'><a class='tooltip' href='index.php?p=detail&pg=".$table."&table=".$table."&id=".$row["uid"]."'>";
+	    $content .= "<td id='map_grid'><a class='tooltip' href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>";
 	    if($imagePath != "")
 	    	$content .= "<img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'>";
 	    $content .= "</br>" . strip_tags($title) . $span_additional_info . "</a></td>";
