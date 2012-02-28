@@ -13,11 +13,14 @@ import config;
 
 WEBSITE_PATH = os.getcwd() + os.sep
 
+conn = MySQLdb.connect(config.host, config.user, config.password, config.database)
+cur = conn.cursor()
+
 # Check if path exist
-# -s <source file> -u <user_name> -i uid -t <target file>
+# -s <source file> -u <user_name> -i uid -t <target file> -p <previous_version_uid>
 
 try:
-    optlist,  args = getopt.getopt(sys.argv[1:], 's:i:u:t:')
+    optlist,  args = getopt.getopt(sys.argv[1:], 's:i:u:t:p:')
 except getopt.GetoptError, err:
     print err
     exit()
@@ -35,6 +38,8 @@ for  i in range(len(optlist)):
         username = optlist[i][1]
     if optlist[i][0] == "-t":
         mapfile = optlist[i][1]
+    if optlist[i][0] == "-p":
+        pre_version = optlist[i][1]
 
 yamlData = "";
 bin = "";
@@ -197,8 +202,29 @@ if formatOK == 0:
 width = Bytes2Int2(b.read(2));
 height = Bytes2Int2(b.read(2));
 
+#Check if map with the same hash already exists for this user
+
+sql = """SELECT * FROM maps
+        WHERE user_id = %(uid)s AND maphash = '%(hash)s'
+""" % vars()
+cur.execute(sql)
+records = cur.fetchall()
+conn.commit()
+if len(records) != 0:
+    print "user already has such a map"
+    exit(8)
+tag = "rev1"
+if pre_version != '0':
+    sql = """SELECT uid,tag FROM maps
+                WHERE uid = %(pre_version)s
+    """ % vars()
+    cur.execute(sql)
+    records = cur.fetchall()
+    conn.commit()
+    tag = records[0][1][0:3] + str(int(records[0][1][3:]) + 1)
+
 # Move source file to correct place on disk
-mapfile_full_path = WEBSITE_PATH + "users/" + username + "/" + "maps/" + MapMod + "-" + mapfile.split('.')[0] + "/" + mapfile
+mapfile_full_path = WEBSITE_PATH + "users/" + username + "/" + "maps/" + MapMod + "-" + tag + "-" + mapfile.split('.')[0] + "/" + mapfile
 path = os.path.dirname(mapfile_full_path) + os.sep
 db_path = path.split(WEBSITE_PATH)[1]
 
@@ -226,10 +252,8 @@ text_file.close()
 #Put record into database
 try:
     print "Putting record into database..."
-    conn = MySQLdb.connect(config.host, config.user, config.password, config.database)
-    cur = conn.cursor()
     sql = """INSERT INTO maps
-            (title, description, author, type, players, g_mod, maphash, width, height, tileset, path, user_id, screenshot_group_id)
+            (title, description, author, type, players, g_mod, maphash, width, height, tileset, path, user_id, screenshot_group_id, tag, p_ver)
             VALUES
             (
             '%(MapTitle)s',
@@ -244,14 +268,29 @@ try:
             '%(MapTileset)s',
             '%(db_path)s',
             %(uid)s,
-            0
+            0,
+            '%(tag)s',
+            %(pre_version)s
             )
     """ % vars()
     cur.execute(sql)
     conn.commit()
-    cur.close()
+    sql = """SELECT uid FROM maps
+            WHERE user_id = %(uid)s AND maphash = '%(hash)s'
+    """ % vars()
+    cur.execute(sql)
+    records = cur.fetchall()
+    conn.commit()
+    new_uid = records[0][0]
+    sql = """UPDATE maps
+            SET n_ver = %(new_uid)s
+            WHERE uid = %(pre_version)s
+    """ % vars()
+    cur.execute(sql)
+    conn.commit()
 except:
     exit(7)
+cur.close()
 
 print "Generating minimap..."
 

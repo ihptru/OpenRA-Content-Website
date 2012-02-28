@@ -521,6 +521,7 @@ class content
     public static function displayItem($result, $table, $resultNotQuery = false)
     {
     	$content = "";
+	$map_version_content = "";
 	$flag = false;
 	
     	while (1 == 1)
@@ -684,10 +685,19 @@ class content
 		    $players = "; mostly played with " . round($res_p_r["avg_players"]) . " players";
 		}
 		$content .= "<tr><td>".$row["players"]." players map".$players."</td></tr>";
-		$mapfile = explode("-", basename($row["path"]), 2);
-		$mapfile = $mapfile[1] . ".oramap";
+		$mapfile = explode("-", basename($row["path"]), 3);
+		$mapfile = $mapfile[2] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
 	     	$content .= "<tr><td><a href='".$download."'>Download</a></tr></td>";
+		
+		if ($row["p_ver"] == 0 and $row["n_ver"] == 0)
+		    $vers = "<td>This is the only version</td>";
+		else
+		    $vers = "<td><a href='#'>Check other versions</a></td>";
+		if ($row["user_id"] == user::uid())
+		    if ($row["n_ver"] == 0)
+			$vers .= "<td><a href='index.php?action=new_version&id=".$row["uid"]."'>Upload new version</a></td>";
+		$map_version_content = "<table><tr><td>Rev: ".$row["tag"][strlen($row["tag"])-1]."</td>".$vers."</tr></table>";
 	    }
 	    else if($table == "units")
 	    {
@@ -709,6 +719,7 @@ class content
 	    
 	     
 	    $content .= "</table>";
+	    $content .= $map_version_content;
 	}
 	return $content;
     }
@@ -1034,7 +1045,7 @@ class content
 		return;
 	    profile::upload_map();
 	    echo "<br /><br /><div class='sidemenu'><ul><li>Your maps:</li></ul></div>";
-	    list($order_by, $request_mod, $request_tileset) = content::map_filters();
+	    list($order_by, $request_mod, $request_tileset, $my_items) = content::map_filters("no_show_my_content_filter");
 	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." AND g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
 	    $output = content::create_grid($result);
 	    if ($output == "")
@@ -1213,21 +1224,44 @@ class content
 		}
 	    }
 	}
+	//new map version
+	if ($request == "new_version")
+	{
+	    if (isset($_GET["id"]))
+	    {
+		$query = "SELECT n_ver FROM maps WHERE uid = ".$_GET["id"];
+		$result = db::executeQuery($query);
+		while ($row = db::nextRowFromQuery($result))
+		{
+		    if ($row["n_ver"] == 0)
+			profile::upload_map($_GET["id"]);
+		}
+	    }
+	}
     }
     
     public static function guide_unit_filters($arg)
     {
+	$my_items = false;
+	$my_checked = "";
 	$sort_by = "latest";
 	$type = "";
 	if (isset($_POST["apply_filter"]))
 	{
 	    $sort_by = $_POST["sort"];
 	    $type = $_POST["type"];
+	    if (isset($_POST[$arg."_my_items"]))
+		$my_items = true;
 	}
 	elseif (isset($_COOKIE[$arg."_sort_by"]))
 	{
 	    $sort_by = $_COOKIE[$arg."_sort_by"];
 	    $type = $_COOKIE[$arg."_type"];
+	    if (isset($_COOKIE[$arg."_my_items"]))
+	    {
+		$my_items = true;
+		$my_checked = "checked";
+	    }
 	}
 	//filters
 	echo "<form name='".$arg."_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>type:</th></tr><tr>";
@@ -1263,6 +1297,7 @@ class content
 	echo "</select><br />";
 	echo "</td>";
 	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
+	    <input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='".$arg."_my_items' ".$my_checked." title='only my content'>
 	    <input type='hidden' name='apply_filter_type' value='".$arg."'>
 	    </div></form><br><br>
 	";
@@ -1281,11 +1316,13 @@ class content
 	else
 	    $request_type = $type;
 	
-	return array($order_by, $request_type);
+	return array($order_by, $request_type, $my_items);
     }
 
-    public static function map_filters()
+    public static function map_filters($my_content="")
     {
+	$my_items = false;
+	$my_checked = "";
 	$sort_by = "latest";
 	$mod = "";
 	$tileset = "";
@@ -1294,13 +1331,24 @@ class content
 	    $sort_by = $_POST["sort"];
 	    $mod = $_POST["mod"];
 	    $tileset = $_POST["tileset"];
+	    if (isset($_POST["map_my_items"]))
+		$my_items = true;
 	}
 	elseif (isset($_COOKIE["map_sort_by"]))
 	{
 	    $sort_by = $_COOKIE["map_sort_by"];
 	    $mod = $_COOKIE["map_mod"];
 	    $tileset = $_COOKIE["map_tileset"];
+	    if (isset($_COOKIE["map_my_items"]))
+	    {
+		$my_items = true;
+		$my_checked = "checked";
+	    }
 	}
+	
+	$checkbox = "";
+	if ($my_content == "")
+	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='map_my_items' ".$my_checked." title='only my content'>";
 
 	//filters
 	echo "<form name='map_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>mod:</th><th>tileset:</th></tr><tr>";
@@ -1325,6 +1373,7 @@ class content
     	echo "</select><br />";
 	echo "</td>";
 	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
+	    ".$checkbox."
 	    <input type='hidden' name='apply_filter_type' value='map'>
 	    </div></form>
 	";
@@ -1379,7 +1428,7 @@ class content
 	else
 	    $request_tileset = $tileset;
 	
-	return array($order_by, $request_mod, $request_tileset);
+	return array($order_by, $request_mod, $request_tileset, $my_items);
     }
 }
 
@@ -1388,24 +1437,33 @@ class objects
     public static function maps()
     {
 	echo "<h3>".lang::$lang['maps']."!</h3>";
-	list($order_by, $request_mod, $request_tileset) = content::map_filters();
-	$result = db::executeQuery("SELECT * FROM maps WHERE g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
+	list($order_by, $request_mod, $request_tileset, $my_items) = content::map_filters();
+	$my = "";
+	if ($my_items == true)
+	    $my = " AND user_id = ".user::uid()." ";
+	$result = db::executeQuery("SELECT * FROM maps WHERE g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') ".$my."GROUP BY maphash ORDER BY ".$order_by);
 	echo content::create_grid($result);
     }
     
     public static function units()
     {
 	echo "<h3>".lang::$lang['units']."!</h3>";
-	list($order_by, $request_type) = content::guide_unit_filters("unit");
-	$result = db::executeQuery("SELECT * FROM units WHERE type LIKE ('%".$request_type."%') ORDER BY ".$order_by);
+	list($order_by, $request_type, $my_items) = content::guide_unit_filters("unit");
+	$my = "";
+	if ($my_items == true)
+	    $my = " AND user_id = ".user::uid()." ";
+	$result = db::executeQuery("SELECT * FROM units WHERE type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
 	echo content::create_grid($result,"units");
     }
     
     public static function guides()
     {
 	echo "<h3>".lang::$lang['guides']."!</h3>";
-	list($order_by, $request_type) = content::guide_unit_filters("guide");
-	$result = db::executeQuery("SELECT * FROM guides WHERE guide_type LIKE ('%".$request_type."%') ORDER BY ".$order_by);
+	list($order_by, $request_type, $my_items) = content::guide_unit_filters("guide");
+	$my = "";
+	if ($my_items == true)
+	    $my = " AND user_id = ".user::uid()." ";
+	$result = db::executeQuery("SELECT * FROM guides WHERE guide_type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
 	echo content::create_grid($result,"guides");
     }
     

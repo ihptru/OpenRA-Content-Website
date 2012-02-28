@@ -39,15 +39,15 @@ function map_link($result)
 	$json_result_array = array();
 	$url = array();
 	$path = $row["path"];
-	$name = explode("-",basename($path),2);
-	$url["url"] = "http://".$_SERVER["SERVER_NAME"]."/".$path.$name[1].".oramap";
+	$name = explode("-",basename($path),3);
+	$url["url"] = "http://".$_SERVER["SERVER_NAME"]."/".$path.$name[2].".oramap";
 	$json_result_array[] = $url;
 	if (isset($_GET["direct"]))
 	{
 	    $mimetype = "application/octet-stream";
 	    $data = file_get_contents($url["url"]);
 	    $size = strlen($data);
-	    header("Content-Disposition: attachment; filename = ".$name[1].".oramap");
+	    header("Content-Disposition: attachment; filename = ".$name[2].".oramap");
 	    header("Content-Length: $size");
 	    header("Content-Type: $mimetype");
 	    echo $data;

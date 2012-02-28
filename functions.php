@@ -2,7 +2,7 @@
 
 class upload
 {
-    public static function upload_oramap($username)
+    public static function upload_oramap($username, $pre_version="0")
     {
 	if(isset($_FILES["map_upload"]["name"]))
 	{
@@ -21,7 +21,7 @@ class upload
 		{
 		    return "Not supported file type";	// that's not a map file (map file must have `oramap` extention)
 		}
-		exec("python python/ml.py -s " . str_replace(" ", "\ ", $source) . " -i " . user::uid() . " -u " . user::username() . " -t " . str_replace(" ", "\ ", $filename), $output, $return_code);
+		exec("python python/ml.py -s " . str_replace(" ", "\ ", $source) . " -i " . user::uid() . " -u " . user::username() . " -t " . str_replace(" ", "\ ", $filename) . " -p " . $pre_version, $output, $return_code);
 		function code_match($code)
 		{
 		    $codes = array(
@@ -33,6 +33,7 @@ class upload
 			'5' => "Map already exists",
 			'6' => "Could not upload the map",
 			'7' => "Database error, try again later",
+			'8' => "You already have a map with the same hash",
 		    );
 		    return $codes[$code];
 		}
@@ -45,6 +46,7 @@ class upload
 		// 5  -  Map exists
 		// 6  -  Could not upload map
 		// 7  -  Database error
+		// 8  -  User already uploaded such a map
 		if ($return_code == 0)
 		    misc::increase_experiance(10);
 		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM maps WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
@@ -321,10 +323,14 @@ class misc
 	    //remove map directory and it's content from disk
 	    if ($table_name == "maps")
 	    {
-		$query = "SELECT path FROM maps WHERE uid = ".$item_id;
+		$p_ver = 0;
+		$n_ver = 0;
+		$query = "SELECT path,p_ver,n_ver FROM maps WHERE uid = ".$item_id;
 		$result = db::executeQuery($query);
 		while ($db_data = db::fetch_array($result))
 		{
+		    $p_ver = $db_data["p_ver"];
+		    $n_ver = $db_data["n_ver"];
 		    $path = WEBSITE_PATH . $db_data['path'];
 		}
 		foreach (scandir($path) as $item)
@@ -333,6 +339,17 @@ class misc
 		    unlink($path.$item);
 		}
 		rmdir($path);
+		
+		$query = "UPDATE maps
+			    SET n_ver = ?
+			    WHERE uid = ?
+		";
+		db::executeQuery($query, array($n_ver, $p_ver));
+		$query = "UPDATE maps
+			    SET p_ver = ?
+			    WHERE uid = ?
+		";
+		db::executeQuery($query, array($p_ver, $n_ver));
 	    }
 	    
 	    if ($table_name == "units")

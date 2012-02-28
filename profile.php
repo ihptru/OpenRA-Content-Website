@@ -361,7 +361,7 @@ class profile
     	}
     }
     
-    public static function upload_map()
+    public static function upload_map($prev_version_id="0")
     {
 	if (!user::online())
 	{
@@ -375,7 +375,7 @@ class profile
 	";
             
 	$username = user::username();
-	$uploaded = upload::upload_oramap($username);
+	$uploaded = upload::upload_oramap($username, $prev_version_id);
 	if ($uploaded != "")
 	{
 	    if ($uploaded == "0")
