@@ -222,7 +222,7 @@ class user
 			}
 		    }
 		    misc::event_log($user_id, "login");
-		    header("Location: /index.php?p=profile");
+		    header("Location: /index.php?profile=$user_id");
 		}
 	    }
 	}

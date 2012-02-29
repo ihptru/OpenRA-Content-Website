@@ -200,27 +200,15 @@ class pages
 	    return;
 	}
 	// other checks should be done before $_GET['p'], because it will override page
+	if (isset($_GET['profile']))
+	{
+	    profile::show_profile();
+	    return;
+	}
 	if (isset($_GET['p']))
 	{
-	    if ($_GET['p'] == "profile")
-	    {
-		if (user::online())
-		{
-		    profile::show_profile();
-		}
-		else
-		{
-		    if (isset($_GET["profile"]))
-		    {
-			profile::show_profile();
-		    }
-		}
-	    }
-	    else
-	    {
-		content::page($_GET['p']);
-		return;
-	    }
+	    content::page($_GET['p']);
+	    return;
 	}
 
 	if (count($_GET) == 0)

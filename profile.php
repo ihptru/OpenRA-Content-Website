@@ -77,33 +77,30 @@ class profile
 	}
 	
 	// followed by is not shown for non logged in users
-	if (user::online())
+	$query = "SELECT
+		    who,
+		    whom,
+		    'following' AS table_name
+		  FROM following WHERE whom = ".$id;
+	$result = db::executeQuery($query);
+	if (db::num_rows($result) > 0)
 	{
-	    $query = "SELECT
-			who,
-			whom,
-			'following' AS table_name
-		      FROM following WHERE whom = ".$id;
-	    $result = db::executeQuery($query);
-	    if (db::num_rows($result) > 0)
+	    if ( $profile == "You" )
 	    {
-		if ( $profile == "You" )
-		{
-		    $to_head = "You are followed by <u>".db::num_rows($result)."</u> people:";
-		}
-		else
-		{
-		    $to_head = $profile." is followed by <u>".db::num_rows($result)."</u> people:";
-		}
-		echo "<ul>
-		      <li>
-			  ".$to_head;
-		echo "<p style='margin-left:-15px;' class='thumbs'>";
-		echo content::createImageGallery($result,"followed");
-		echo "</p>";
-		echo "</li>
-		  </ul><br />";
+		$to_head = "You are followed by <u>".db::num_rows($result)."</u> people:";
 	    }
+	    else
+	    {
+		$to_head = $profile." is followed by <u>".db::num_rows($result)."</u> people:";
+	    }
+	    echo "<ul>
+		  <li>
+		      ".$to_head;
+	    echo "<p style='margin-left:-15px;' class='thumbs'>";
+	    echo content::createImageGallery($result,"followed");
+	    echo "</p>";
+	    echo "</li>
+	      </ul><br />";
 	}
     }
 
@@ -172,7 +169,7 @@ class profile
 	    $result = db::executeQuery($query);
 	    $usr = db::nextRowFromQuery($result);
 
-	    echo "<table><tr><td><form action='index.php?p=profile&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
+	    echo "<table><tr><td><form action='index.php?profile=".user::uid()."&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
 	    echo "<p>";
 	    echo "<label>Change avatar</label><br />";
 	    echo "<input type='file' name='avatar_upload'><br />";
@@ -235,7 +232,7 @@ class profile
 	    if($usr["country"] != "None" && $usr["country"] != "")
 		$img = "<img style='float:center;border: 0px solid #261b15; padding: 0px;' src='images/country_flags/".$usr["country"]."'>";
 	    if(user::uid() == $usr["uid"] && user::online())
-		echo "<td><a href='index.php?p=profile&edit=on'><h2>edit</h2></a>".$img."</td>";
+		echo "<td><a href='index.php?profile=".user::uid()."&edit=on'><h2>edit</h2></a>".$img."</td>";
 	    else
 		echo "<td style='padding: .0em 0em;'><center>".$img."</center></td>";
 	    echo "</tr>";

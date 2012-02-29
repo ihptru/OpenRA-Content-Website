@@ -104,9 +104,9 @@ content::head();
 			
 			    echo "</h3>";
 			    echo "<ul>				
-				<li><a href='index.php?action=mymaps&p=profile'>maps</a></li>
-				<li><a href='index.php?action=myunits&p=profile'>units</a></li>
-				<li><a href='index.php?action=myguides&p=profile'>guides</a></li>
+				<li><a href='index.php?action=mymaps&profile=".user::uid()."'>maps</a></li>
+				<li><a href='index.php?action=myunits&profile=".user::uid()."'>units</a></li>
+				<li><a href='index.php?action=myguides&profile=".user::uid()."'>guides</a></li>
 				</ul>
 			    ";
 			    if(isset($_GET["profile"]))
@@ -121,13 +121,9 @@ content::head();
 				    $id = $_GET["profile"];
 				    $profile = user::login_by_uid($id);
 				}
+				profile::sidebar_data($profile, $id);
 			    }
-			    else
-			    {
-				$id = user::uid();
-				$profile = "You";
-			    }
-			    profile::sidebar_data($profile, $id);
+			    
 			}
 			else
 			{

@@ -90,13 +90,11 @@ class content
     public static function createMenu()
     {
 	if (isset($_GET['p']))
-	{
 	    $request = $_GET['p'];
-	}
 	else
-	{
 	    $request = "";
-	}
+	if (isset($_GET['profile']))
+	    $request = "profile";
 	if (isset($_GET['table']))
 	    $request = $_GET['table'];
 	echo "<li id='"; echo pages::current('', $request); echo"'><a href='/'>".lang::$lang['home']."</a></li>";
@@ -108,7 +106,7 @@ class content
 	if (user::online())
 	{
 	    echo "<li style='float:right;' id=''><a href='index.php?logout'>".lang::$lang['logout']."</a></li>";
-	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='index.php?p=profile'>".lang::$lang['profile']."</a></li>";
+	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='index.php?profile=".user::uid()."'>".lang::$lang['profile']."</a></li>";
 	}
     }
 
@@ -189,7 +187,7 @@ class content
 		    $content .= "<br><a href='index.php?action=show_user_follow".$end."&id=".$row["who"]."' style='float:right;margin-right:10px;'>Show all</a>";
 		    break;
 		}
-		$content .= "<a href='index.php?profile=".$show."&p=profile' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
+		$content .= "<a href='index.php?profile=".$show."' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
 	    }
 	    else
 	    {
@@ -280,19 +278,19 @@ class content
 	    {
 		case "maps":
 		    $title = $row["title"];
-		    $subtitle = "map posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>" . $comments;
+		    $subtitle = "map posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    $imagePath =  $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $subtitle = "unit posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>" . $comments;
+		    $subtitle = "unit posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    $imagePath = $row["preview_image"];
 		    break;
 		case "guides":
 		    $title = $row["title"];
-		    $subtitle = "guide posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username["login"] . "</a>" . $comments;
+		    $subtitle = "guide posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&'>" . $username["login"] . "</a>" . $comments;
 		    $text = "";
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    break;
@@ -466,25 +464,25 @@ class content
 		case "maps":
 		    $title = $row["title"];
 		    $imagePath = misc::minimap($row["path"]);
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = $row["description"];
 		    break;
 		case "units":
 		    $title = $row["title"];
 		    $imagePath = $row["preview_image"];
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
 		case "guides":
 		    $title = $row["title"];
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
 		case "articles":
 		    $title = $row["title"];
 		    $imagePath = "";
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&p=profile'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
 	    }
@@ -585,13 +583,13 @@ class content
 		case "maps":
 		    $title = strtoupper($row["g_mod"]) . " map: <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>";
 		    $imagePath = misc::minimap($row["path"]);
-		    $subtitle = $title . " posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
+		    $subtitle = $title . " posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    break;
 		case "units":
 		    $title = strip_tags($row["title"]);
 		    $imagePath = $row["preview_image"];
-		    $subtitle = "<font color='#d8ff00'>".$title."</font> posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a>";
+		    $subtitle = "<font color='#d8ff00'>".$title."</font> posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = "";
 		    break;
 		case "guides":
@@ -609,11 +607,11 @@ class content
 			while ($res_e_r = db::nextRowFromQuery($res_e))
 			{
 			    $edited_name = user::login_by_uid($res_e_r["user_id"]);
-			    $edited_by = " | last edited by <a href='index.php?profile=".$res_e_r["user_id"]."&p=profile' id='id_display_username'>".$edited_name."</a>";
+			    $edited_by = " | last edited by <a href='index.php?profile=".$res_e_r["user_id"]."' id='id_display_username'>".$edited_name."</a>";
 			}
 		    }
 		    if (!isset($row["no_additional_info"]))
-			$content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."&p=profile' id='id_display_username'>". $user_name . "</a>".$edited_by."</p>";
+			$content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a>".$edited_by."</p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -636,7 +634,7 @@ class content
 		    
 		    $content .= "<div class='post'>";
 		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";
-		    $content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."&p=profile'>". $user_name . "</a></p>";
+		    $content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -730,7 +728,7 @@ class content
 	array_push($data, "Latest activity of users you follow:");
 	while ($row = db::nextRowFromQuery($result))
 	{
-	    $name = "<a href='index.php?profile=".$row["user_id"]."&p=profile'>".user::login_by_uid($row["user_id"])."</a>";
+	    $name = "<a href='index.php?profile=".$row["user_id"]."'>".user::login_by_uid($row["user_id"])."</a>";
 	    $type = $row["type"];
 	    switch($type)
 	    {
@@ -762,10 +760,10 @@ class content
 		    $desc = " edited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "follow":
-		    $desc = " started to follow <a href='index.php?&profile=".$row["table_id"]."&p=profile'>".user::login_by_uid($row["table_id"])."</a>";
+		    $desc = " started to follow <a href='index.php?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
 		    break;
 		case "unfollow":
-		    $desc = " stopped following <a href='index.php?&profile=".$row["table_id"]."&p=profile'>".user::login_by_uid($row["table_id"])."</a>";
+		    $desc = " stopped following <a href='index.php?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
 		    break;
 		case "delete_item":
 		    $desc = false;
@@ -804,9 +802,9 @@ class content
 	    $avatarImg = misc::avatar($author["uid"]);
 		
 	    $content .= "<a name=".$comment_page_id."></a><div class='comment-info'>";			
-	    $content .= "<a href='index.php?profile=".$comment["user_id"]."&p=profile'><img alt='' src='" . $avatarImg . "' style='margin-top:10px; max-width:50' /></a>";
+	    $content .= "<a href='index.php?profile=".$comment["user_id"]."'><img alt='' src='" . $avatarImg . "' style='margin-top:10px; max-width:50' /></a>";
 	    $content .= "<cite>";
-	    $content .= "<a href='index.php?profile=".$comment["user_id"]."&p=profile'>" . $author["login"] . "</a> Says: <br />";
+	    $content .= "<a href='index.php?profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
 	    $content .= "<span class='comment-data'><a href='#".$comment_page_id."' title=''>" . $comment["posted"] . "</a></span>";
 	    $content .= "</cite>";
 	    $content .= "</div>";
@@ -1030,7 +1028,7 @@ class content
 		while ($row = db::nextRowFromQuery($result))
 		{
 		    $avatar = misc::avatar($row["uid"]);
-		    array_push($data,"<a href='index.php?profile=".$row["uid"]."&p=profile'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["uid"]."&p=profile'>".$row["login"]."</a>");
+		    array_push($data,"<a href='index.php?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["uid"]."'>".$row["login"]."</a>");
 		}
 		echo content::create_dynamic_list($data,2);
 	    }
@@ -1052,7 +1050,7 @@ class content
 	    {
 		echo "<table><tr><th>No maps uploaded yet</th></tr></table>";
 	    }
-	    echo $output;
+	    echo "<br /><br />" . $output;
 	}
 	if ($request == "myguides")
 	{
@@ -1095,7 +1093,7 @@ class content
 		    while ($row = db::nextRowFromQuery($result))
 		    {
 			$avatar = misc::avatar($row["uid"]);
-			array_push($data,"<a href='index.php?profile=".$row["uid"]."&p=profile'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["uid"]."&p=profile'>".$row["login"]."</a>");
+			array_push($data,"<a href='index.php?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["uid"]."'>".$row["login"]."</a>");
 		    }
 		    echo content::create_dynamic_list($data,2,"dyn",10,true,true);
     		}
@@ -1115,7 +1113,7 @@ class content
 		$usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = ".$_GET["favorited_id"]));
     		if (db::num_rows($result) > 0) {
 		    $data = array();
-		    array_push($data,"","<a href='index.php?profile=".$_GET["favorited_id"]."&p=profile'>".$usr["login"]."</a>'s latest favorited items:");
+		    array_push($data,"","<a href='index.php?profile=".$_GET["favorited_id"]."'>".$usr["login"]."</a>'s latest favorited items:");
 		    while ($row = db::nextRowFromQuery($result)) {
 			$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
 			if($item) {
@@ -1152,7 +1150,7 @@ class content
 		else
 		{
 		    $name = user::login_by_uid($id);
-		    $who = "<a href='index.php?profile=".$id."&p=profile'>".$name."</a> follows:";
+		    $who = "<a href='index.php?profile=".$id."'>".$name."</a> follows:";
 		}
 		$query = "SELECT * FROM following WHERE who = ".$id;
 		$result = db::executeQuery($query);
@@ -1163,7 +1161,7 @@ class content
 		    while ($row = db::nextRowFromQuery($result))
 		    {
 			$avatar = misc::avatar($row["whom"]);
-			array_push($data,"<a href='index.php?profile=".$row["whom"]."&p=profile'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["whom"]."&p=profile'>".user::login_by_uid($row["whom"])."</a>");
+			array_push($data,"<a href='index.php?profile=".$row["whom"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["whom"]."'>".user::login_by_uid($row["whom"])."</a>");
 		    }
 		    echo content::create_dynamic_list($data,2,"dyn",10,true,true);
 		}
@@ -1195,7 +1193,7 @@ class content
 		else
 		{
 		    $name = user::login_by_uid($id);
-		    $who = "<a href='index.php?profile=".$id."&p=profile'>".$name."</a> is followed by:";
+		    $who = "<a href='index.php?profile=".$id."'>".$name."</a> is followed by:";
 		}
 		$query = "SELECT * FROM following WHERE whom = ".$id;
 		$result = db::executeQuery($query);
@@ -1206,7 +1204,7 @@ class content
 		    while ($row = db::nextRowFromQuery($result))
 		    {
 			$avatar = misc::avatar($row["who"]);
-			array_push($data,"<a href='index.php?profile=".$row["who"]."&p=profile'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["who"]."&p=profile'>".user::login_by_uid($row["who"])."</a>");
+			array_push($data,"<a href='index.php?profile=".$row["who"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["who"]."'>".user::login_by_uid($row["who"])."</a>");
 		    }
 		    echo content::create_dynamic_list($data,2,"dyn",10,true,true);
 		}
@@ -1589,7 +1587,7 @@ class objects
 		$content .= "<br><label>users found:</label>";
 	    	$data = array();
 			while ($row = db::nextRowFromQuery($result))
-		    	array_push($data,"<a href='index.php?profile=".$row["uid"]."&p=profile'>".$row["login"]."</a>");
+		    	array_push($data,"<a href='index.php?profile=".$row["uid"]."'>".$row["login"]."</a>");
 		    $content .= content::create_dynamic_list($data,1);
 	    }
 	    if ($content == "")

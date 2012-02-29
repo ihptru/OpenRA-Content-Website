@@ -248,43 +248,43 @@
 	    }
 	    
 	    // procedure to get a list of all map's versions by it's uid
-	    $query = "DELIMITER //
-		    CREATE PROCEDURE IF EXISTS map_versions (IN id INT)
+	    $query = "
+		    CREATE PROCEDURE map_versions (IN id INT)
 		    BEGIN
 			DECLARE save_id INT DEFAULT id;
 			DECLARE p_list VARCHAR(1000) DEFAULT id;
-			DECLARE n_list VARCHAR(1000) DEFAULT "";
+			DECLARE n_list VARCHAR(1000) DEFAULT \"\";
 			DECLARE amount INT DEFAULT 0;
 
 			loop_n: WHILE TRUE DO
 			    SET amount = (SELECT COUNT(n_ver) FROM maps WHERE uid = id);
 			    IF amount=0 THEN
-				SELECT "" AS list;
+				SELECT \"\" AS list;
 			    END IF;
 			    SET id=(SELECT n_ver FROM maps WHERE uid = id);
 			    IF id=0 THEN
 				LEAVE loop_n;
 			    END IF;
-			    SET n_list = CONCAT(n_list, ",", id);
+			    SET n_list = CONCAT(n_list, \",\", id);
 			END WHILE;
 
 			loop_p: WHILE TRUE DO
 			    SET amount = (SELECT COUNT(p_ver) FROM maps WHERE uid = save_id);
 			    IF amount=0 THEN
-				SELECT "" AS list;
+				SELECT \"\" AS list;
 			    END IF;
 			    SET save_id=(SELECT p_ver FROM maps WHERE uid = save_id);
 			    IF save_id=0 THEN
 				LEAVE loop_p;
 			    END IF;
-			    SET p_list = CONCAT(save_id, ",", p_list);
+			    SET p_list = CONCAT(save_id, \",\", p_list);
 			END WHILE;
 
 			SET p_list = CONCAT(p_list, n_list);
 
 			SELECT p_list AS list;
 		    END
-		    //
+		    ;
 	    ";
 	    db::executeQuery($query);
         }
@@ -349,14 +349,14 @@
 	    {
 		return false;	//no such table in DB
 	    }
-	    else
+	    /*else
 	    {
 		$query = "SELECT COUNT(*) AS count FROM " . $tablename;
 		$result = db::executeQuery($query);
 		$row = db::nextRowFromQuery($result);
 		if ($row["count"] == 0)
 		    return false;	//table is empty
-	    }
+	    }*/
             return true;
         }
 
