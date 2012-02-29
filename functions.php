@@ -531,6 +531,14 @@ class misc
 	    return "...";
 	}
     }
+    
+    public static function current_map_version($current, $id)
+    {
+	if ($current == $id)
+	    return "map_grid_current";
+	else
+	    return "map_grid";
+    }
 }
 
 ?>

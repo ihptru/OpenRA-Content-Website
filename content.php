@@ -329,7 +329,7 @@ class content
 	return $content;
     }
 
-    public static function create_grid($result, $table = "maps")
+    public static function create_grid($result, $table = "maps", $current_id = 0)
     {
 	//Setup
 	$columns = 4;	//Amount of columns
@@ -388,7 +388,7 @@ class content
 		$span_additional_info .= "$res_fav peopled favorited";
 	    if ($span_additional_info != "")
 		$span_additional_info = "<span>".$span_additional_info."</span>";
-	    $content .= "<td id='map_grid'><a class='tooltip' href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>";
+	    $content .= "<td id='".misc::current_map_version($row["uid"], $current_id)."'><a class='tooltip' href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>";
 	    if($imagePath != "")
 	    	$content .= "<img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'>";
 	    $content .= "</br>" . strip_tags($title) . $span_additional_info . "</a></td>";
@@ -691,7 +691,7 @@ class content
 		if ($row["p_ver"] == 0 and $row["n_ver"] == 0)
 		    $vers = "<td>This is the only version</td>";
 		else
-		    $vers = "<td><a href='#'>Check other versions</a></td>";
+		    $vers = "<td><a href='index.php?action=versions&table=maps&id=".$row["uid"]."'>Check other versions</a></td>";
 		if ($row["user_id"] == user::uid())
 		    if ($row["n_ver"] == 0)
 			$vers .= "<td><a href='index.php?action=new_version&id=".$row["uid"]."'>Upload new version</a></td>";
@@ -1079,6 +1079,29 @@ class content
 		echo "<table><tr><th>No units uploaded yet</th></tr></table>";
 	    }
 	    echo $output;
+	}
+	if ($request == "versions")
+	{
+	    if (isset($_GET["table"]) and isset($_GET["id"]))
+	    {
+		$ok = false;
+		$query = "CALL map_versions(".$_GET["id"].")";
+		$result = db::executeQuery($query);
+		while ($row = db::nextRowFromQuery($result))
+		{
+		    $list = $row["list"];
+		    if ($row["list"] == "")
+			return;
+		    $query = "SELECT * FROM maps WHERE uid IN (".$list.")";
+		    $ok = true;
+		    db::next_result();
+		}
+		if ($ok == true)
+		{
+		    $result = db::executeQuery($query);
+		    echo content::create_grid($result, "maps", $_GET["id"]);
+		}
+	    }
 	}
 	if ($request == "display_faction")
 	{

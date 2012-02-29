@@ -26,6 +26,12 @@
             return mysqli_fetch_assoc($result);
         }
 
+	// next result
+	public static function next_result()
+	{
+	    return mysqli_next_result(db::$con);
+	}
+
 	// get table name from executed query
         public static function getTableNameFrom($result)
         {

@@ -146,6 +146,15 @@ td#map_grid a {
     height: 100%;
     text-align:center;
 }
+td#map_grid_current {
+    background-color: #934A00;
+    color: #fff;
+    text-align:center;
+}
+td#map_grid_current a {
+    color: #fff;
+}
+
 input[type="file"]{
     border:1px solid #ccc;
     padding:5px;
