@@ -222,7 +222,7 @@ class user
 			}
 		    }
 		    misc::event_log($user_id, "login");
-		    header("Location: /index.php?profile=$user_id");
+		    header("Location: /?profile=$user_id");
 		}
 	    }
 	}
@@ -311,8 +311,8 @@ class user
 						(?,?,?,?)
 					;";
 					db::executeQuery($query, array($_POST['email'], md5($_POST['rpass']), $_POST['rlogin'], md5($_POST['email'])));
-					mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://oramod.lv-vl.net/index.php?register&key=".md5($_POST['email'])."",
-					    "From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
+					mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://".$_SERVER['HTTP_HOST']."/?register&key=".md5($_POST['email'])."",
+					    "From: noreply@".$_SERVER['HTTP_HOST']."\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
 					echo lang::$lang['ask to activate'];
 				    }
 				    else
@@ -408,8 +408,8 @@ class user
 		    (?,?,?)
 	    ";
 	    db::executeQuery($query, array($_POST['rpass_login'], $_POST['rpass_email'], md5($_POST['rpass_email'])));
-	    mail($_POST['rpass_email'], "recover password", "recover password: http://oramod.lv-vl.net/index.php?recover&recover_link=".md5($_POST['rpass_email'])."",
-		"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
+	    mail($_POST['rpass_email'], "recover password", "recover password: http://".$_SERVER['HTTP_HOST']."/?recover&recover_link=".md5($_POST['rpass_email'])."",
+		"From: noreply@".$_SERVER['HTTP_HOST']."\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
 	}
 	elseif (isset($_POST['ruser_pass']) && isset($_POST['ruser_email']))
 	{
@@ -426,7 +426,7 @@ class user
 		$user = $db_data['login'];
 	    }
 	    mail($_POST['ruser_email'], "recover username", "You username: ".$user,
-		"From: noreply@oramod.lv-vl.net\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
+		"From: noreply@".$_SERVER['HTTP_HOST']."\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
 	    header("Location: /");
 	}
 

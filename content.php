@@ -55,10 +55,10 @@ class content
 		<!-- / id='login_form' -->
 		</div>
 		<div id=\"register_link\">
-		    <a href=\"index.php?register\">".lang::$lang['register']."</a>
+		    <a href=\"?register\">".lang::$lang['register']."</a>
 		</div>
 		<div id=\"recover_link\">
-		    <a href=\"index.php?recover\">".lang::$lang['recover']."</a>
+		    <a href=\"?recover\">".lang::$lang['recover']."</a>
 		</div>
 	    ";
 	}
@@ -98,15 +98,15 @@ class content
 	if (isset($_GET['table']))
 	    $request = $_GET['table'];
 	echo "<li id='"; echo pages::current('', $request); echo"'><a href='/'>".lang::$lang['home']."</a></li>";
-	echo "<li id='"; echo pages::current('maps', $request); echo"'><a href='index.php?p=maps'>".lang::$lang['maps']."</a></li>";
-	echo "<li id='"; echo pages::current('units', $request); echo"'><a href='index.php?p=units'>".lang::$lang['units']."</a></li>";
-	echo "<li id='"; echo pages::current('guides', $request); echo"'><a href='index.php?p=guides'>".lang::$lang['guides']."</a></li>";
-	echo "<li id='"; echo pages::current('about', $request); echo"'><a href='index.php?p=about'>".lang::$lang['about']."</a></li>";
+	echo "<li id='"; echo pages::current('maps', $request); echo"'><a href='?p=maps'>".lang::$lang['maps']."</a></li>";
+	echo "<li id='"; echo pages::current('units', $request); echo"'><a href='?p=units'>".lang::$lang['units']."</a></li>";
+	echo "<li id='"; echo pages::current('guides', $request); echo"'><a href='?p=guides'>".lang::$lang['guides']."</a></li>";
+	echo "<li id='"; echo pages::current('about', $request); echo"'><a href='?p=about'>".lang::$lang['about']."</a></li>";
             
 	if (user::online())
 	{
-	    echo "<li style='float:right;' id=''><a href='index.php?logout'>".lang::$lang['logout']."</a></li>";
-	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='index.php?profile=".user::uid()."'>".lang::$lang['profile']."</a></li>";
+	    echo "<li style='float:right;' id=''><a href='?logout'>".lang::$lang['logout']."</a></li>";
+	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='?profile=".user::uid()."'>".lang::$lang['profile']."</a></li>";
 	}
     }
 
@@ -184,14 +184,14 @@ class content
 		if ($follow == 9)
 		{
 		    
-		    $content .= "<br><a href='index.php?action=show_user_follow".$end."&id=".$row["who"]."' style='float:right;margin-right:10px;'>Show all</a>";
+		    $content .= "<br><a href='?action=show_user_follow".$end."&id=".$row["who"]."' style='float:right;margin-right:10px;'>Show all</a>";
 		    break;
 		}
-		$content .= "<a href='index.php?profile=".$show."' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
+		$content .= "<a href='?profile=".$show."' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
 	    }
 	    else
 	    {
-		$content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
+		$content .= "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'><img src='" . $imagePath . "' width='40' height='40' alt='thumbnail' /></a>";
 	    }
 	}
 	return $content;
@@ -232,15 +232,15 @@ class content
 		$content .= "<a title='' href='index.php'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
                 
     	$content .= "<div class='blk-top'>";
-        $content .= "<h4><a href='index.php?p=detail&table=articles&id=".$row["uid"]."'>" . $title . "</a></h4>";
-        $content .= "<p><span class='datetime'>" . $date . "</span><a href='index.php?p=detail&table=articles&id=".$row["uid"]."' class='comment'>" . $comments . " Comments</a></p>";
+        $content .= "<h4><a href='?p=detail&table=articles&id=".$row["uid"]."'>" . $title . "</a></h4>";
+        $content .= "<p><span class='datetime'>" . $date . "</span><a href='?p=detail&table=articles&id=".$row["uid"]."' class='comment'>" . $comments . " Comments</a></p>";
         $content .= "</div>";
                 
         $content .= "<div class='blk-content'>";
         if(strlen($text) > 500)
         	$text = substr($text,0,500) . "...";
         $content .= "<p>" . $text . "</p>";			
-        $content .= "<p><a href='index.php?p=detail&table=articles&id=".$row["uid"]."' class='more-link'>continue reading &raquo;</a></p>"; 
+        $content .= "<p><a href='?p=detail&table=articles&id=".$row["uid"]."' class='more-link'>continue reading &raquo;</a></p>"; 
         $content .= "</div>";
         $content .= "</div>";
 	}
@@ -278,19 +278,19 @@ class content
 	    {
 		case "maps":
 		    $title = $row["title"];
-		    $subtitle = "map posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
+		    $subtitle = "map posted at " . $row["posted"] . " by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    $imagePath =  $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $subtitle = "unit posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
+		    $subtitle = "unit posted at " . $row["posted"] . " by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    $imagePath = $row["preview_image"];
 		    break;
 		case "guides":
 		    $title = $row["title"];
-		    $subtitle = "guide posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."&'>" . $username["login"] . "</a>" . $comments;
+		    $subtitle = "guide posted at " . $row["posted"] . " by <a href='?profile=".$row["user_id"]."&'>" . $username["login"] . "</a>" . $comments;
 		    $text = "";
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    break;
@@ -313,7 +313,7 @@ class content
 	    if(strlen($imagePath) > 0)
 	    {
 		$content .= "<div class='image-block'>";
-		$content .= "<a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' title=''><img src='" . $imagePath . "' alt='featured' style='max-height:350px;max-width:250px;'/></a>";
+		$content .= "<a href='?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' title=''><img src='" . $imagePath . "' alt='featured' style='max-height:350px;max-width:250px;'/></a>";
 		$content .= "</div>";
 	    }
 
@@ -321,7 +321,7 @@ class content
 	    $content .= "<h2>" . strip_tags($title) . "</h2>";
 	    $content .= "<p class='post-info'>" . $subtitle . "</p>";
 	    $content .= "<p>" . strip_tags($text) . "</p>";
-	    $content .= "<p><a href='index.php?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' class='more-link'>Read More</a></p>";
+	    $content .= "<p><a href='?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' class='more-link'>Read More</a></p>";
 	    $content .= "</div>";
 	    $content .= "</div>";
 	}
@@ -388,7 +388,7 @@ class content
 		$span_additional_info .= "$res_fav peopled favorited";
 	    if ($span_additional_info != "")
 		$span_additional_info = "<span>".$span_additional_info."</span>";
-	    $content .= "<td id='".misc::current_map_version($row["uid"], $current_id)."'><a class='tooltip' href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>";
+	    $content .= "<td id='".misc::current_map_version($row["uid"], $current_id)."'><a class='tooltip' href='?p=detail&table=".$table."&id=".$row["uid"]."'>";
 	    if($imagePath != "")
 	    	$content .= "<img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'>";
 	    $content .= "</br>" . strip_tags($title) . $span_additional_info . "</a></td>";
@@ -464,25 +464,25 @@ class content
 		case "maps":
 		    $title = $row["title"];
 		    $imagePath = misc::minimap($row["path"]);
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = $row["description"];
 		    break;
 		case "units":
 		    $title = $row["title"];
 		    $imagePath = $row["preview_image"];
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
 		case "guides":
 		    $title = $row["title"];
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
 		case "articles":
 		    $title = $row["title"];
 		    $imagePath = "";
-		    $subtitle = "posted at " . $row["posted"] . " by <a href='index.php?profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $subtitle = "posted at " . $row["posted"] . " by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
 	    }
@@ -491,7 +491,7 @@ class content
 	    $content .= "<tr>";
 	    if($imagePath != "")
 	    	$content .= "<td><img src='" . $imagePath . "'></td>";
-	    $content .= "<td><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
+	    $content .= "<td><a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
 	}
 	
 	$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
@@ -554,8 +554,8 @@ class content
 		if(isset($row["uid"]))
 		{
 		    $delete = "Delete ".rtrim($table,"s");
-		    $delete = "<a href='index.php?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"delete this ".rtrim($table,"s")."\")'>".$delete."</a>";
-		    $edit = " | <a href='index.php?p=edit_item&table=".$table."&id=".$row["uid"]."'>Edit</a>";
+		    $delete = "<a href='?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"delete this ".rtrim($table,"s")."\")'>".$delete."</a>";
+		    $edit = " | <a href='?p=edit_item&table=".$table."&id=".$row["uid"]."'>Edit</a>";
 		}
 	    }
 	    else
@@ -567,7 +567,7 @@ class content
 		else
 		{
 		    if(user::online())
-			$reported = "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&report' onClick='return confirmDelete(\"report this item\")'>Report Item</a>";
+			$reported = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."&report' onClick='return confirmDelete(\"report this item\")'>Report Item</a>";
 		}
 	    }
 	    $favIcon = "";
@@ -583,13 +583,13 @@ class content
 		case "maps":
 		    $title = strtoupper($row["g_mod"]) . " map: <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>";
 		    $imagePath = misc::minimap($row["path"]);
-		    $subtitle = $title . " posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."'>". $user_name . "</a>";
+		    $subtitle = $title . " posted at " . $row["posted"] . " by " . "<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    break;
 		case "units":
 		    $title = strip_tags($row["title"]);
 		    $imagePath = $row["preview_image"];
-		    $subtitle = "<font color='#d8ff00'>".$title."</font> posted at " . $row["posted"] . " by " . "<a href='index.php?profile=".$row["user_id"]."'>". $user_name . "</a>";
+		    $subtitle = "<font color='#d8ff00'>".$title."</font> posted at " . $row["posted"] . " by " . "<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = "";
 		    break;
 		case "guides":
@@ -607,11 +607,11 @@ class content
 			while ($res_e_r = db::nextRowFromQuery($res_e))
 			{
 			    $edited_name = user::login_by_uid($res_e_r["user_id"]);
-			    $edited_by = " | last edited by <a href='index.php?profile=".$res_e_r["user_id"]."' id='id_display_username'>".$edited_name."</a>";
+			    $edited_by = " | last edited by <a href='?profile=".$res_e_r["user_id"]."' id='id_display_username'>".$edited_name."</a>";
 			}
 		    }
 		    if (!isset($row["no_additional_info"]))
-			$content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a>".$edited_by."</p>";
+			$content .= "<p class='post-info'>Posted by <a href='?profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a>".$edited_by."</p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -619,7 +619,7 @@ class content
 		    if($delete != "")
 			$content .= $delete . " | ";
 		    if($favIcon != "")
-			$content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a> | ";
+			$content .= "<a href='?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a> | ";
 		    if (isset($row["posted"]))
 			$content .= "<span class='date'>".$row["posted"]."</span>";
 		    $content .= $edit;
@@ -634,7 +634,7 @@ class content
 		    
 		    $content .= "<div class='post'>";
 		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";
-		    $content .= "<p class='post-info'>Posted by <a href='index.php?profile=".$row["user_id"]."'>". $user_name . "</a></p>";
+		    $content .= "<p class='post-info'>Posted by <a href='?profile=".$row["user_id"]."'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -642,7 +642,7 @@ class content
 		    if($delete != "")
 			$content .= $delete . " | ";
 		    if($favIcon != "")
-			$content .= "<a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a> | ";
+			$content .= "<a href='?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a> | ";
 		    $content .= "<span class='date'>".$row["posted"]."</span>";
 		    $content .= "</p>";
 		    $content .= "</div>";
@@ -662,7 +662,7 @@ class content
 
 	    if(user::online())
 	    {
-		$content .= "<td style='padding: .5em .5em;'><a href='index.php?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
+		$content .= "<td style='padding: .5em .5em;'><a href='?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
 	    }
 	    $content .= "</tr>";
 
@@ -691,10 +691,10 @@ class content
 		if ($row["p_ver"] == 0 and $row["n_ver"] == 0)
 		    $vers = "<td>This is the only version</td>";
 		else
-		    $vers = "<td><a href='index.php?action=versions&table=maps&id=".$row["uid"]."'>Check other versions</a></td>";
+		    $vers = "<td><a href='?action=versions&table=maps&id=".$row["uid"]."'>Check other versions</a></td>";
 		if ($row["user_id"] == user::uid())
 		    if ($row["n_ver"] == 0)
-			$vers .= "<td><a href='index.php?action=new_version&id=".$row["uid"]."'>Upload new version</a></td>";
+			$vers .= "<td><a href='?action=new_version&id=".$row["uid"]."'>Upload new version</a></td>";
 		$map_version_content = "<table><tr><td>Rev: ".$row["tag"][strlen($row["tag"])-1]."</td>".$vers."</tr></table>";
 	    }
 	    else if($table == "units")
@@ -728,27 +728,27 @@ class content
 	array_push($data, "Latest activity of users you follow:");
 	while ($row = db::nextRowFromQuery($result))
 	{
-	    $name = "<a href='index.php?profile=".$row["user_id"]."'>".user::login_by_uid($row["user_id"])."</a>";
+	    $name = "<a href='?profile=".$row["user_id"]."'>".user::login_by_uid($row["user_id"])."</a>";
 	    $type = $row["type"];
 	    switch($type)
 	    {
 		case "add":
-		    $desc = " added new <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    $desc = " added new <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "delete_comment":
-		    $desc = " deleted comment on <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    $desc = " deleted comment on <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "report":
-		    $desc = " reported <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    $desc = " reported <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "fav":
-		    $desc = " favorited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    $desc = " favorited <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "unfav":
-		    $desc = " unfavorited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    $desc = " unfavorited <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "comment":
-		    $desc = " commented <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    $desc = " commented <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "login":
 		    $desc = " logged in";
@@ -757,13 +757,13 @@ class content
 		    $desc = " logged out";
 		    break;
 		case "edit":
-		    $desc = " edited <a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    $desc = " edited <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "follow":
-		    $desc = " started to follow <a href='index.php?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
+		    $desc = " started to follow <a href='?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
 		    break;
 		case "unfollow":
-		    $desc = " stopped following <a href='index.php?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
+		    $desc = " stopped following <a href='?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
 		    break;
 		case "delete_item":
 		    $desc = false;
@@ -802,9 +802,9 @@ class content
 	    $avatarImg = misc::avatar($author["uid"]);
 		
 	    $content .= "<a name=".$comment_page_id."></a><div class='comment-info'>";			
-	    $content .= "<a href='index.php?profile=".$comment["user_id"]."'><img alt='' src='" . $avatarImg . "' style='margin-top:10px; max-width:50' /></a>";
+	    $content .= "<a href='?profile=".$comment["user_id"]."'><img alt='' src='" . $avatarImg . "' style='margin-top:10px; max-width:50' /></a>";
 	    $content .= "<cite>";
-	    $content .= "<a href='index.php?profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
+	    $content .= "<a href='?profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
 	    $content .= "<span class='comment-data'><a href='#".$comment_page_id."' title=''>" . $comment["posted"] . "</a></span>";
 	    $content .= "</cite>";
 	    $content .= "</div>";
@@ -813,7 +813,7 @@ class content
 	    $content .= "<p>" . stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
-		$content .= "<a style='float: right; margin: -130px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='index.php?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
+		$content .= "<a style='float: right; margin: -130px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
 	    }
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; //index.html?? << need correct page
@@ -833,7 +833,7 @@ class content
 	{
 	    $content .= "<div id='respond'>";
 	    $content .= "<h3>Leave a Reply</h3>";			
-	    $content .= "<form action='index.php?p=detail&table=".$table_name."&id=".$table_id."' method='post' id='commentform'>";
+	    $content .= "<form action='?p=detail&table=".$table_name."&id=".$table_id."' method='post' id='commentform'>";
 	    $content .= "<p>";
 	    $content .= "<label for='message'>Your Message</label><br />";
 	    $content .= "<textarea id='message' name='message' rows='10' cols='20' tabindex='4'></textarea>";
@@ -899,7 +899,7 @@ class content
 		    $params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
 		    $params .= ",\"header\":\"".$header."\"";
 		    $params .= ",\"use_pages\":\"1\"";
-		    $content .= "<tr><td colspan='".$columns."'><a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
+		    $content .= "<tr><td colspan='".$columns."'><a href='javascript:post_to_url(\"?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
 		}
 		$content .= "</table>";
 		$params = "";
@@ -969,15 +969,15 @@ class content
 
 	$content .= '<div id="footer-bottom">';
 
-	$content .= '<strong><a href="index.php?p=members">Members</a></strong> |';
+	$content .= '<strong><a href="?p=members">Members</a></strong> |';
 	$content .= '<a href="/">'.lang::$lang['home'].'</a> |';
 	$content .= '<strong><a href="#top" class="back-to-top">'.lang::$lang['to top'].'</a></strong>';
 
 	$content .= '</div>';
 	$content .= "<div class='lang' style='padding-bottom:2px;'>
-		    <a id='".pages::cur_lang("en")."' href='index.php?lang=en' style='padding-right:3px;'>English</a>
-		    <a id='".pages::cur_lang("ru")."' href='index.php?lang=ru' style='padding-right:3px;'>Русский</a>
-		    <a id='".pages::cur_lang("sv")."' href='index.php?lang=sv' style='padding-right:3px;'>Swedish</a>
+		    <a id='".pages::cur_lang("en")."' href='?lang=en' style='padding-right:3px;'>English</a>
+		    <a id='".pages::cur_lang("ru")."' href='?lang=ru' style='padding-right:3px;'>Русский</a>
+		    <a id='".pages::cur_lang("sv")."' href='?lang=sv' style='padding-right:3px;'>Swedish</a>
 		    </div>
 	";
 	return $content;
@@ -1028,7 +1028,7 @@ class content
 		while ($row = db::nextRowFromQuery($result))
 		{
 		    $avatar = misc::avatar($row["uid"]);
-		    array_push($data,"<a href='index.php?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["uid"]."'>".$row["login"]."</a>");
+		    array_push($data,"<a href='?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>");
 		}
 		echo content::create_dynamic_list($data,2);
 	    }
@@ -1116,7 +1116,7 @@ class content
 		    while ($row = db::nextRowFromQuery($result))
 		    {
 			$avatar = misc::avatar($row["uid"]);
-			array_push($data,"<a href='index.php?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["uid"]."'>".$row["login"]."</a>");
+			array_push($data,"<a href='?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>");
 		    }
 		    echo content::create_dynamic_list($data,2,"dyn",10,true,true);
     		}
@@ -1136,12 +1136,12 @@ class content
 		$usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = ".$_GET["favorited_id"]));
     		if (db::num_rows($result) > 0) {
 		    $data = array();
-		    array_push($data,"","<a href='index.php?profile=".$_GET["favorited_id"]."'>".$usr["login"]."</a>'s latest favorited items:");
+		    array_push($data,"","<a href='?profile=".$_GET["favorited_id"]."'>".$usr["login"]."</a>'s latest favorited items:");
 		    while ($row = db::nextRowFromQuery($result)) {
 			$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
 			if($item) {
 			    array_push($data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
-			    array_push($data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
+			    array_push($data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
 			}
 		    }
 		    echo content::create_dynamic_list($data,2,"favorites",10,true,true);
@@ -1173,7 +1173,7 @@ class content
 		else
 		{
 		    $name = user::login_by_uid($id);
-		    $who = "<a href='index.php?profile=".$id."'>".$name."</a> follows:";
+		    $who = "<a href='?profile=".$id."'>".$name."</a> follows:";
 		}
 		$query = "SELECT * FROM following WHERE who = ".$id;
 		$result = db::executeQuery($query);
@@ -1184,7 +1184,7 @@ class content
 		    while ($row = db::nextRowFromQuery($result))
 		    {
 			$avatar = misc::avatar($row["whom"]);
-			array_push($data,"<a href='index.php?profile=".$row["whom"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["whom"]."'>".user::login_by_uid($row["whom"])."</a>");
+			array_push($data,"<a href='?profile=".$row["whom"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["whom"]."'>".user::login_by_uid($row["whom"])."</a>");
 		    }
 		    echo content::create_dynamic_list($data,2,"dyn",10,true,true);
 		}
@@ -1216,7 +1216,7 @@ class content
 		else
 		{
 		    $name = user::login_by_uid($id);
-		    $who = "<a href='index.php?profile=".$id."'>".$name."</a> is followed by:";
+		    $who = "<a href='?profile=".$id."'>".$name."</a> is followed by:";
 		}
 		$query = "SELECT * FROM following WHERE whom = ".$id;
 		$result = db::executeQuery($query);
@@ -1227,7 +1227,7 @@ class content
 		    while ($row = db::nextRowFromQuery($result))
 		    {
 			$avatar = misc::avatar($row["who"]);
-			array_push($data,"<a href='index.php?profile=".$row["who"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='index.php?profile=".$row["who"]."'>".user::login_by_uid($row["who"])."</a>");
+			array_push($data,"<a href='?profile=".$row["who"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["who"]."'>".user::login_by_uid($row["who"])."</a>");
 		    }
 		    echo content::create_dynamic_list($data,2,"dyn",10,true,true);
 		}
@@ -1529,7 +1529,7 @@ class objects
 		$row = db::nextRowFromQuery($result);
 		if($row["user_id"] == user::uid())
 		{
-		    $arr = array("title" => str_replace("\\\\\\", "", $row["title"]), "html_content" => str_replace("\\\\\\", "",  str_replace('\r\n', "", $row["html_content"])), "posted" => "<a href='index.php?p=detail&table=guides&id=".$row["uid"]."'>Back to guide's page</a>", "guide_type" => "", "user_id" => user::uid(), "no_additional_info" => "");
+		    $arr = array("title" => str_replace("\\\\\\", "", $row["title"]), "html_content" => str_replace("\\\\\\", "",  str_replace('\r\n', "", $row["html_content"])), "posted" => "<a href='?p=detail&table=guides&id=".$row["uid"]."'>Back to guide's page</a>", "guide_type" => "", "user_id" => user::uid(), "no_additional_info" => "");
 		    echo content::displayItem($arr,"guides",true);
 		    
 		    echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
@@ -1610,7 +1610,7 @@ class objects
 		$content .= "<br><label>users found:</label>";
 	    	$data = array();
 			while ($row = db::nextRowFromQuery($result))
-		    	array_push($data,"<a href='index.php?profile=".$row["uid"]."'>".$row["login"]."</a>");
+		    	array_push($data,"<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>");
 		    $content .= content::create_dynamic_list($data,1);
 	    }
 	    if ($content == "")

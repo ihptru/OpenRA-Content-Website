@@ -121,7 +121,7 @@ class header
 		    misc::increase_experiance(50);
 		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM guides WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
 		    misc::event_log(user::uid(), "add", "guides", $row["uid"]);
-		    header("Location: index.php?p=detail&table=guides&id=".$row["uid"]);
+		    header("Location: ?p=detail&table=guides&id=".$row["uid"]);
 		}
 	    }
 	}
@@ -187,7 +187,7 @@ class header
 	    $user_id = $_GET['del_item_user'];
 	    misc::delete_item($item_id, $table_name, $user_id);	//delete item and comments related to it
 	    misc::event_log(user::uid(), "delete_item", $table_name, $item_id);
-	    header("Location: /index.php?p=$table_name");
+	    header("Location: /?p=$table_name");
 	}
     }
     
@@ -212,7 +212,7 @@ class header
 		    if($key != "current_grid_page_maps")
 			$gets .= "&" . $key . "=" . $_GET[$key];
 		}
-		header("Location: /index.php?current_grid_page_maps=1".$gets);
+		header("Location: /?current_grid_page_maps=1".$gets);
 	    }
 	    else
 	    {
@@ -231,7 +231,7 @@ class header
 		    if($key != "current_grid_page_maps")
 			$gets .= "&" . $key . "=" . $_GET[$key];
 		}
-		header("Location: /index.php?current_grid_page_maps=1".$gets);
+		header("Location: /?current_grid_page_maps=1".$gets);
 	    }
 	}
     }

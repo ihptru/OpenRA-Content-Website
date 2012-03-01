@@ -188,8 +188,8 @@ class pages
 	}
 	if (isset($_GET['recover']) and (!user::online()))
 	{
-	    echo "<a href='index.php?recover&recover_pass'>".lang::$lang['recover pw']."</a><br>";
-	    echo "<a href='index.php?recover&recover_user'>".lang::$lang['recover usr']."</a><br>";
+	    echo "<a href='?recover&recover_pass'>".lang::$lang['recover pw']."</a><br>";
+	    echo "<a href='?recover&recover_user'>".lang::$lang['recover usr']."</a><br>";
 	    user::recover();
 	    return;
 	}
@@ -521,9 +521,9 @@ class misc
 		$pages = "<span id='page_count_none'>" . $i . "</span>";
 	    else
 		if ($params == "")
-		    $pages = "<span id='page_count'><a href='index.php?current_".$type."_page_".$table."=".$i.$gets.$pointer."'>" . $i . "</a></span>";
+		    $pages = "<span id='page_count'><a href='?current_".$type."_page_".$table."=".$i.$gets.$pointer."'>" . $i . "</a></span>";
 		else
-		    $pages = "<span id='page_count'><a href='javascript:post_to_url(\"index.php?current_".$type."_".$table."=".$i.$gets.$pointer."\",{".$params."});'>" . $i . "</a></span>";
+		    $pages = "<span id='page_count'><a href='javascript:post_to_url(\"?current_".$type."_".$table."=".$i.$gets.$pointer."\",{".$params."});'>" . $i . "</a></span>";
 	    return $pages;
 	}
 	else

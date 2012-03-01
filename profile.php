@@ -43,11 +43,11 @@ class profile
 	array_push($data,"<img src='".misc::avatar($id)."'>");
 	if (profile::ifFollow($id)==0)
 	{
-	    array_push($data,"<a href='index.php?follow=".$id."'>Follow user</a>");
+	    array_push($data,"<a href='?follow=".$id."'>Follow user</a>");
 	}
 	elseif (profile::ifFollow($id)==1)
 	{
-	    array_push($data,"<a href='index.php?unfollow=".$id."'>Unfollow user</a>");
+	    array_push($data,"<a href='?unfollow=".$id."'>Unfollow user</a>");
 	}
 	echo "<p align='right'>" . content::create_dynamic_list($data,1,"dyn",3,true,true) . "</p>";
 	$query = "SELECT
@@ -169,7 +169,7 @@ class profile
 	    $result = db::executeQuery($query);
 	    $usr = db::nextRowFromQuery($result);
 
-	    echo "<table><tr><td><form action='index.php?profile=".user::uid()."&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
+	    echo "<table><tr><td><form action='?profile=".user::uid()."&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
 	    echo "<p>";
 	    echo "<label>Change avatar</label><br />";
 	    echo "<input type='file' name='avatar_upload'><br />";
@@ -232,7 +232,7 @@ class profile
 	    if($usr["country"] != "None" && $usr["country"] != "")
 		$img = "<img style='float:center;border: 0px solid #261b15; padding: 0px;' src='images/country_flags/".$usr["country"]."'>";
 	    if(user::uid() == $usr["uid"] && user::online())
-		echo "<td><a href='index.php?profile=".user::uid()."&edit=on'><h2>edit</h2></a>".$img."</td>";
+		echo "<td><a href='?profile=".user::uid()."&edit=on'><h2>edit</h2></a>".$img."</td>";
 	    else
 		echo "<td style='padding: .0em 0em;'><center>".$img."</center></td>";
 	    echo "</tr>";
@@ -240,7 +240,7 @@ class profile
 	    echo "<tr><td>Occupation</td><td>".$usr["occupation"]."</td></tr>";
 	    echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
 	    echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
-	    echo "<tr><td>Favorite faction</td><td><a href='index.php?action=display_faction&faction=".$usr["fav_faction"]."'><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></a></td></tr>";
+	    echo "<tr><td>Favorite faction</td><td><a href='?action=display_faction&faction=".$usr["fav_faction"]."'><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></a></td></tr>";
     		
 	    $query = "SELECT * FROM country WHERE name = '".$usr["country"]."'";
 	    $result = db::executeQuery($query);
@@ -267,7 +267,7 @@ class profile
 		    $item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
 		    if($item) {
 			array_push($fav_data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
-			array_push($fav_data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='index.php?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
+			array_push($fav_data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
 		    }
 		}
 		if ($show_more != "")
@@ -304,7 +304,7 @@ class profile
 			    $params .= ",\"maxItemsPerPage\":\"10\"";
 			    $params .= ",\"header\":\"1\"";
 			    $params .= ",\"use_pages\":\"1\"";
-			    $amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
+			    $amount = "<a href='javascript:post_to_url(\"?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
 			}
 			else if($row["table_name"] == "comments")
 			{
@@ -321,10 +321,10 @@ class profile
 			    $params .= ",\"maxItemsPerPage\":\"10\"";
 			    $params .= ",\"header\":\"1\"";
 			    $params .= ",\"use_pages\":\"1\"";
-			    $amount = "<a href='javascript:post_to_url(\"index.php?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
+			    $amount = "<a href='javascript:post_to_url(\"?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
 			}
 			else
-			    $amount = "<a href='index.php?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
+			    $amount = "<a href='?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
 		    }
 		    array_push($data,$row["item"],$amount);
 		}
@@ -383,7 +383,7 @@ class profile
 		";
 		$row = db::nextRowFromQuery(db::executeQuery($query));
 		$imagePath = misc::minimap($row["path"]);
-		echo "<p><a href='index.php?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
+		echo "<p><a href='?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
 		return;
 	    }
 	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
