@@ -66,8 +66,29 @@ content::head();
 				    AS amounts
 				)
 			   )
-			    
-		  ORDER BY RAND() LIMIT 1
+		UNION ALL
+		-- new map
+		SELECT
+		    'maps' AS table_name,
+		    uid AS table_id,
+		    'new_map' AS type
+		FROM (SELECT * FROM maps ORDER BY posted DESC LIMIT 1) AS tmaps
+		UNION ALL
+		-- new guide
+		SELECT
+		    'guides' AS table_name,
+		    uid AS table_id,
+		    'new_guide' AS type
+		FROM (SELECT * FROM guides ORDER BY posted DESC LIMIT 1) AS tguides
+		UNION ALL
+		-- new unit
+		SELECT
+		    'units' AS table_name,
+		    uid AS table_id,
+		    'new_unit' AS type
+		FROM (SELECT * FROM units ORDER BY posted DESC LIMIT 1) AS tunits
+
+		ORDER BY RAND() LIMIT 1
 	    ";
 	    $res = db::executeQuery($query);
 	    echo content::createFeaturedItems($res);

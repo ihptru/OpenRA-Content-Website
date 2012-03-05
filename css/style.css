@@ -439,6 +439,33 @@ input.button {
 	right: -2px;
 	z-index: 99999;
 }
+#new_map-ribbon {
+	position: absolute;
+	background: url(../images/new_map.png) no-repeat;
+	width: 99px;
+	height: 98px;
+	top: -1px;
+	right: -2px;
+	z-index: 99999;
+}
+#new_guide-ribbon {
+	position: absolute;
+	background: url(../images/new_guide.png) no-repeat;
+	width: 99px;
+	height: 98px;
+	top: -1px;
+	right: -2px;
+	z-index: 99999;
+}
+#new_unit-ribbon {
+	position: absolute;
+	background: url(../images/new_unit.png) no-repeat;
+	width: 99px;
+	height: 98px;
+	top: -1px;
+	right: -2px;
+	z-index: 99999;
+}
 #featured h2 {
 	margin-bottom: 0;
 	padding-bottom: 0;	

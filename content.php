@@ -304,6 +304,12 @@ class content
 		$content .= "<div id='played-ribbon'></div>";
 	    else if($t=="discussed")
 		$content .= "<div id='discussed-ribbon'></div>";
+	    else if($t=="new_map")
+		$content .= "<div id='new_map-ribbon'></div>";
+	    else if($t=="new_guide")
+		$content .= "<div id='new_guide-ribbon'></div>";
+	    else if($t=="new_unit")
+		$content .= "<div id='new_unit-ribbon'></div>";
 	    else
                	$content .= "<div id='featured-ribbon'></div>";
 
