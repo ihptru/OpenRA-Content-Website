@@ -213,7 +213,7 @@ conn.commit()
 if len(records) != 0:
     print "user already has such a map"
     exit(8)
-tag = "rev1"
+tag = "r1"
 if pre_version != '0':
     sql = """SELECT uid,tag FROM maps
                 WHERE uid = %(pre_version)s
@@ -221,7 +221,7 @@ if pre_version != '0':
     cur.execute(sql)
     records = cur.fetchall()
     conn.commit()
-    tag = records[0][1][0:3] + str(int(records[0][1][3:]) + 1)
+    tag = records[0][1][0] + str(int(records[0][1][1:]) + 1)
 
 # Move source file to correct place on disk
 mapfile_full_path = WEBSITE_PATH + "users/" + username + "/" + "maps/" + MapMod + "-" + tag + "-" + mapfile.split('.')[0] + "/" + mapfile

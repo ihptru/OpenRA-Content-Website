@@ -269,6 +269,19 @@ class pages
 
 class misc
 {
+    public static function lang($key, $args=array())
+    {
+	$str = lang::$lang[$key];
+	if (count($args) != 0)
+	{
+	    foreach ($args as $key => $value)
+	    {
+		$str = preg_replace('/\\\\'.$key.'/', $value, $str);
+	    }
+	}
+	return $str;
+    }
+
     public static function avatar($user_id)
     {
 	$query = "SELECT avatar,login FROM users WHERE uid = ".$user_id;

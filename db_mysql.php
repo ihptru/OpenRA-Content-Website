@@ -116,7 +116,7 @@
 			    user_id INTEGER NOT NULL,
 			    screenshot_group_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			    tag VARCHAR(10) NOT NULL DEFAULT 'rev1',
+			    tag VARCHAR(10) NOT NULL DEFAULT 'r1',
 			    p_ver INTEGER NOT NULL DEFAULT 0,
 			    n_ver INTEGER NOT NULL DEFAULT 0);";
             db::executeQuery($query);
