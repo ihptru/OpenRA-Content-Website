@@ -1436,7 +1436,7 @@ class objects
 	$my = "";
 	if ($my_items == true)
 	    $my = " AND user_id = ".user::uid()." ";
-	$result = db::executeQuery("SELECT * FROM maps WHERE g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') ".$my."GROUP BY maphash ORDER BY ".$order_by);
+	$result = db::executeQuery("SELECT * FROM maps WHERE g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') AND n_ver = 0 ".$my."GROUP BY maphash ORDER BY ".$order_by);
 	echo content::create_grid($result);
     }
     
