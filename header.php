@@ -200,10 +200,10 @@ class header
 		setcookie("map_sort_by", $_POST["sort"], time()+3600*24*360, "/");
 		setcookie("map_mod", $_POST["mod"], time()+3600*24*360, "/");
 		setcookie("map_tileset", $_POST["tileset"], time()+3600*24*360, "/");
-		if (isset($_POST["map_my_items"]))
+		if (isset($_POST["map_my_items"]) and user::online())
 		    setcookie("map_my_items", "1", time()+3600*24*360, "/");
 		else
-		    if (isset($_COOKIE["map_my_items"]))
+		    if (isset($_COOKIE["map_my_items"]) and user::online())
 			setcookie("map_my_items", "", time()-60*60, "/");
 		$keys = array_keys($_GET);
 		$gets = "";
@@ -219,10 +219,10 @@ class header
 		$arg = $_POST["apply_filter_type"];
 		setcookie($arg."_sort_by", $_POST["sort"], time()+3600*24*360, "/");
 		setcookie($arg."_type", $_POST["type"], time()+3600*24*360, "/");
-		if (isset($_POST[$arg."_my_items"]))
+		if (isset($_POST[$arg."_my_items"]) and user::online())
 		    setcookie($arg."_my_items", "1", time()+3600*24*360, "/");
 		else
-		    if (isset($_COOKIE[$arg."_my_items"]))
+		    if (isset($_COOKIE[$arg."_my_items"]) and user::online())
 			setcookie($arg."_my_items", "", time()-60*60, "/");
 		$keys = array_keys($_GET);
 		$gets = "";

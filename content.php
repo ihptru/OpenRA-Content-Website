@@ -1261,6 +1261,9 @@ class content
 		$my_checked = "checked";
 	    }
 	}
+	$checkbox = "";
+	if (user::online())
+	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='".$arg."_my_items' ".$my_checked." title='".misc::lang("only my content")."'><label style='float:right; margin-top: 12px; margin-right: 5px;'>".misc::lang("only my content")."</label>";
 	//filters
 	echo "<form name='".$arg."_filters' method=POST action=''><table style='width:560px;'><tr><th>".misc::lang("sort by").":</th><th>".misc::lang("type").":</th></tr><tr>";
 	echo "<td>";
@@ -1295,7 +1298,7 @@ class content
 	echo "</select><br />";
 	echo "</td>";
 	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='".misc::lang("apply filters")."'>
-	    <input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='".$arg."_my_items' ".$my_checked." title='".misc::lang("only my content")."'><label style='float:right; margin-top: 12px; margin-right: 5px;'>".misc::lang("only my content")."</label>
+	    ".$checkbox."
 	    <input type='hidden' name='apply_filter_type' value='".$arg."'>
 	    </div></form><br><br>
 	";
@@ -1345,7 +1348,7 @@ class content
 	}
 	
 	$checkbox = "";
-	if ($my_content == "")
+	if ($my_content == "" and user::online())
 	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='map_my_items' ".$my_checked." title='".misc::lang("only my content")."'><label style='float:right; margin-top: 12px; margin-right: 5px;'>".misc::lang("only my content")."</label>";
 
 	//filters

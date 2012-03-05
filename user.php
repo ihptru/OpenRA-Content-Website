@@ -136,17 +136,24 @@ class user
 		    setcookie("map_sort_by", "", time()-60*60, "/");
 		    setcookie("map_mod", "", time()-60*60, "/");
 		    setcookie("map_tileset", "", time()-60*60, "/");
+		    if (isset($_COOKIE["map_my_items"]))
+			setcookie("map_my_items", "", time()-60*60, "/");
 		}
-		elseif (isset($_COOKIE["unit_sort_by"]))
+		if (isset($_COOKIE["unit_sort_by"]))
 		{
 		    setcookie("unit_sort_by", "", time()-60*60, "/");
 		    setcookie("unit_type", "", time()-60*60, "/");
+		    if (isset($_COOKIE["unit_my_items"]))
+			setcookie("unit_my_items", "", time()-60*60, "/");
 		}
-		elseif (isset($_COOKIE["guide_sort_by"]))
+		if (isset($_COOKIE["guide_sort_by"]))
 		{
 		    setcookie("guide_sort_by", "", time()-60*60, "/");
 		    setcookie("guide_type", "", time()-60*60, "/");
+		    if (isset($_COOKIE["guide_my_items"]))
+			setcookie("guide_my_items", "", time()-60*60, "/");
 		}
+		
 		//remove from db
 		$query = "DELETE FROM signed_in WHERE user_id = ".user::uid();
 		db::executeQuery($query);
