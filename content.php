@@ -376,7 +376,10 @@ class content
 	    if($counter == 0)
 		$content .= "<tr>";
 
-	    $span_additional_info = "";
+	    if($table == "maps")
+		$span_additional_info = "Rev: ".substr($row["tag"],1)."<br />";
+	    else
+		$span_additional_info = "";
 	    $res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = ".$row["uid"]." AND table_name = '".$table."'"));
 	    if ($res_comments != 0)
 		$span_additional_info .= misc::lang("amount comments", array($res_comments)) . "<br />";
