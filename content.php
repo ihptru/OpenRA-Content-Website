@@ -589,13 +589,13 @@ class content
 		case "maps":
 		    $title = misc::lang("game map", array(strtoupper($row["g_mod"]))) . ": <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>";
 		    $imagePath = misc::minimap($row["path"]);
-		    $subtitle = $title . " " . misc::lang("item posted", array($row["posted"], "<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>"));
+		    $subtitle = $title . " " . misc::lang("item posted", array("<i>".$row["posted"]."</i>", "<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>"));
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    break;
 		case "units":
 		    $title = strip_tags($row["title"]);
 		    $imagePath = $row["preview_image"];
-		    $subtitle = "<font color='#d8ff00'>".$title."</font> " . misc::lang("item posted", array($row["posted"], "<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>"));
+		    $subtitle = "<font color='#d8ff00'>".$title."</font> " . misc::lang("item posted", array("<i>".$row["posted"]."</i>", "<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>"));
 		    $text = "";
 		    break;
 		case "guides":
@@ -681,7 +681,7 @@ class content
 	     
 	    if($table == "maps")
 	    {
-		$content .= "<tr><td><table style='padding:auto;margin:auto;'><tr><td>".misc::lang("author").": ".$row["author"]."</td><td>".misc::lang("size").": ".$row["width"]."x".$row["height"]."</td><td>".misc::lang("tileset").": ".$row["tileset"]."</td></tr></table></td></tr>";
+		$content .= "<tr><td><table style='padding:auto;margin:auto;'><tr><td>".misc::lang("author").": ".$row["author"]."</td><td>".misc::lang("size").": ".$row["width"]."x".$row["height"]."</td><td>".misc::lang("tileset").": ".$row["tileset"]."</td><td>".misc::lang("type").": ".$row["type"]."</td></tr></table></td></tr>";
 		$players = "";
 		$res_p = db::executeQuery("SELECT * FROM map_stats WHERE map_hash = '".$row["maphash"]."'");
 		while ($res_p_r = db::nextRowFromQuery($res_p))
@@ -950,7 +950,7 @@ class content
     {
 	$content = '<div id="footer-outer" class="clear"><div id="footer-wrap">';
 	$content .= '<div id="footer-bottom">';
-	$content .= '<div style="float:left;"><img src="favicon.ico" style="position:absolute;width:16px;padding:0;margin:0;border:0;"/><strong><a style="padding-left:20px;" href="http://open-ra.org" target="_blank">OpenRA Official Website <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></strong> |<a href="http://logs.open-ra.org" target="_blank">IRC logs/stats <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://logs.open-ra.org/mapstats/index.html" target="_blank">Map stats <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://res0l.net/src/LiveORA/map.html" target="_blank">Live Players Map <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></div>';
+	$content .= '<div style="float:left;"><img src="favicon.ico" style="position:absolute;width:16px;padding:0;margin:0;border:0;"/><strong><a style="padding-left:20px;" href="http://open-ra.org" target="_blank">'.misc::lang("official site").' <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></strong> |<a href="http://logs.open-ra.org" target="_blank">'.misc::lang("irc stats").' <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://logs.open-ra.org/mapstats/index.html" target="_blank">'.misc::lang("map stats").' <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://res0l.net/src/LiveORA/map.html" target="_blank">'.misc::lang("live map").' <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></div>';
 	$content .= '<strong><a href="?p=members">'.misc::lang("members").'</a></strong> |';
 	$content .= '<a href="/">'.misc::lang("home").'</a> |';
 	$content .= '<strong><a href="#top" class="back-to-top">'.misc::lang("to top").'</a></strong>';
@@ -1025,14 +1025,14 @@ class content
 		return;
 	    profile::upload_map();
 	    echo "<br /><br /><div class='sidemenu'><ul><li>".misc::lang("your maps").":</li></ul></div>";
-	    list($order_by, $request_mod, $request_tileset, $my_items) = content::map_filters("no_show_my_content_filter");
-	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." AND g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
+	    list($order_by, $request_mod, $type, $request_tileset, $my_items) = content::map_filters("no_show_my_content_filter");
+	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." AND g_mod LIKE ('%".$request_mod."%') AND upper(type) LIKE upper('%".$type."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
 	    $output = content::create_grid($result);
 	    if ($output == "")
 	    {
 		echo "<table><tr><th>".misc::lang("no maps uploaded")."</th></tr></table>";
 	    }
-	    echo "<br /><br />" . $output;
+	    echo "<br />" . $output;
 	}
 	if ($request == "myguides")
 	{
@@ -1332,11 +1332,13 @@ class content
 	$sort_by = "latest";
 	$mod = "";
 	$tileset = "";
+	$type = "";
 	if (isset($_POST["apply_filter"]))
 	{
 	    $sort_by = $_POST["sort"];
 	    $mod = $_POST["mod"];
 	    $tileset = $_POST["tileset"];
+	    $type = $_POST["type"];
 	    if (isset($_POST["map_my_items"]))
 		$my_items = true;
 	}
@@ -1345,6 +1347,7 @@ class content
 	    $sort_by = $_COOKIE["map_sort_by"];
 	    $mod = $_COOKIE["map_mod"];
 	    $tileset = $_COOKIE["map_tileset"];
+	    $type = $_COOKIE["map_type"];
 	    if (isset($_COOKIE["map_my_items"]))
 	    {
 		$my_items = true;
@@ -1357,13 +1360,21 @@ class content
 	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='map_my_items' ".$my_checked." title='".misc::lang("only my content")."'><label style='float:right; margin-top: 12px; margin-right: 5px;'>".misc::lang("only my content")."</label>";
 
 	//filters
-	echo "<form name='map_filters' method=POST action=''><table style='width:560px;'><tr><th>".misc::lang("sort by").":</th><th>".misc::lang("mod").":</th><th>".misc::lang("tileset").":</th></tr><tr>";
+	echo "<form name='map_filters' method=POST action=''><table style='width:560px;'><tr><th>".misc::lang("sort by").":</th><th>".misc::lang("type").":</th><th>".misc::lang("mod").":</th><th>".misc::lang("tileset").":</th></tr><tr>";
 	echo "<td>";
 	echo "<select name='sort' id='sort'>";
 	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">".misc::lang("latest first")."</option>";
 	echo "<option value='date' ".misc::option_selected("date",$sort_by).">".misc::lang("date")."</option>";
 	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">".misc::lang("title")."</option>";
 	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">".misc::lang("title in reverse")."</option>";
+    	echo "</select><br />";
+	echo "</td>";
+	echo "<td>";
+	echo "<select name='type' id='type'>";
+	echo "<option value='any_type' ".misc::option_selected("any_type",$type).">".misc::lang("any")."</option>";
+	echo "<option value='conquest' ".misc::option_selected("conquest",$type).">".misc::lang("conquest")."</option>";
+	echo "<option value='koth' ".misc::option_selected("koth",$type).">".misc::lang("koth")."</option>";
+	echo "<option value='minigame' ".misc::option_selected("minigame",$type).">".misc::lang("minigame")."</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
@@ -1428,13 +1439,16 @@ class content
 	    $request_mod = "";
 	else
 	    $request_mod = $mod;
+	//type
+	if ($type == "any_type")
+	    $type = "";
 	//tileset
 	if ($tileset == "any_tileset")
 	    $request_tileset = "";
 	else
 	    $request_tileset = $tileset;
-	
-	return array($order_by, $request_mod, $request_tileset, $my_items);
+
+	return array($order_by, $request_mod, $type, $request_tileset, $my_items);
     }
 }
 
@@ -1443,12 +1457,12 @@ class objects
     public static function maps()
     {
 	echo "<h3>".ucfirst(misc::lang("maps"))."!</h3>";
-	list($order_by, $request_mod, $request_tileset, $my_items) = content::map_filters();
+	list($order_by, $request_mod, $type, $request_tileset, $my_items) = content::map_filters();
 	$my = "";
 	if ($my_items == true)
 	    $my = " AND user_id = ".user::uid()." ";
-	$result = db::executeQuery("SELECT * FROM maps WHERE g_mod LIKE ('%".$request_mod."%') AND tileset LIKE ('%".$request_tileset."%') AND n_ver = 0 ".$my."GROUP BY maphash ORDER BY ".$order_by);
-	echo content::create_grid($result);
+	$result = db::executeQuery("SELECT * FROM maps WHERE g_mod LIKE ('%".$request_mod."%') AND upper(type) LIKE upper('%".$type."%') AND tileset LIKE ('%".$request_tileset."%') AND n_ver = 0 ".$my."GROUP BY maphash ORDER BY ".$order_by);
+	echo "<br />".content::create_grid($result);
     }
     
     public static function units()

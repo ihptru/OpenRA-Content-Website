@@ -200,6 +200,7 @@ class header
 		setcookie("map_sort_by", $_POST["sort"], time()+3600*24*360, "/");
 		setcookie("map_mod", $_POST["mod"], time()+3600*24*360, "/");
 		setcookie("map_tileset", $_POST["tileset"], time()+3600*24*360, "/");
+		setcookie("map_type", $_POST["type"], time()+3600*24*360, "/");
 		if (isset($_POST["map_my_items"]) and user::online())
 		    setcookie("map_my_items", "1", time()+3600*24*360, "/");
 		else

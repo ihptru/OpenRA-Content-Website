@@ -178,6 +178,13 @@ class lang
 "found"			=> 'found',
 "nothing found"		=> 'Nothing found',
 "text"			=> 'text',
+"official site"		=> 'OpenRA Official Website',
+"irc stats"		=> 'IRC logs/stats',
+"map stats"		=> 'Map stats',
+"live map"		=> 'Live Players Map',
+"conquest"		=> 'conquest',
+"koth"			=> 'koth',
+"minigame"		=> 'minigame',
 
 
 

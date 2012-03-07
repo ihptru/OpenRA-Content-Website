@@ -136,6 +136,7 @@ class user
 		    setcookie("map_sort_by", "", time()-60*60, "/");
 		    setcookie("map_mod", "", time()-60*60, "/");
 		    setcookie("map_tileset", "", time()-60*60, "/");
+		    setcookie("map_type", "", time()-60*60, "/");
 		    if (isset($_COOKIE["map_my_items"]))
 			setcookie("map_my_items", "", time()-60*60, "/");
 		}
