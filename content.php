@@ -962,6 +962,21 @@ class content
 		    <a id='".pages::cur_lang("sv")."' href='?lang=sv' style='padding-right:3px;'>Swedish</a>
 		    </div>
 	";
+	$content .= '<!-- Start of StatCounter Code for Default Guide -->
+		    <script type="text/javascript">
+		    var sc_project=7756346; 
+		    var sc_invisible=1; 
+		    var sc_security="ba45e507"; 
+		    </script>
+		    <script type="text/javascript"
+		    src="http://www.statcounter.com/counter/counter.js"></script>
+		    <noscript><div class="statcounter"><a title="tumblr
+		    visitor" href="http://statcounter.com/tumblr/"
+		    target="_blank"><img class="statcounter"
+		    src="http://c.statcounter.com/7756346/0/ba45e507/1/"
+		    alt="tumblr visitor"></a></div></noscript>
+		    <!-- End of StatCounter Code for Default Guide -->
+	';
 	return $content;
     }
     
