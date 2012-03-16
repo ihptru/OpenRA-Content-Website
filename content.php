@@ -591,6 +591,8 @@ class content
 		    $imagePath = misc::minimap($row["path"]);
 		    $subtitle = $title . " " . misc::lang("item posted", array("<i>".$row["posted"]."</i>", "<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>"));
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
+		    if ($row["additional_desc"] != "")
+			$text_add = misc::lang("additional_desc") . ": " . str_replace("\r\n", "<br />", $row["additional_desc"]);
 		    break;
 		case "units":
 		    $title = strip_tags($row["title"]);
@@ -678,6 +680,8 @@ class content
 		$text = strip_tags($text, $allow);
 		$content .= "<tr><td>".$text."</td></tr>";
 	    }
+	    if (isset($text_add))
+		$content .= "<tr><td>".$text_add."</td></tr>";
 	     
 	    if($table == "maps")
 	    {

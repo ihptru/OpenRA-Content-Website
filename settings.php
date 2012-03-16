@@ -3,6 +3,7 @@ ini_set("display_errors","1");
 ini_set("display_startup_errors","1");
 ini_set("error_reporting", E_ALL);
 
+//mysql
 define("DB_HOST","localhost");
 define("DB_USERNAME","");
 define("DB_PASSWORD","");
@@ -25,7 +26,5 @@ function site_path($path)
 }
 
 define("WEBSITE_PATH", site_path($_SERVER['DOCUMENT_ROOT']));	# with / at the end
-
-$use_db = "mysql";	//mysql or pgsql (pgsql is not supported anymore)
 
 ?>

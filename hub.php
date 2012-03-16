@@ -10,14 +10,7 @@ include_once "functions.php";
 include_once "user.php";
 
 ############## database class ##################
-if ( $use_db == 'mysql' )
-{
-    include_once("db_mysql.php");
-}
-elseif ( $use_db == 'pgsql' )
-{
-    include_once("db_pgsql.php");	//is not supported anymore
-}
+include_once("db_mysql.php");
 ################################################
 
 ############# prepare database #################

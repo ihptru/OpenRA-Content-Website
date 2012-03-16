@@ -185,7 +185,7 @@ class lang
 "conquest"		=> 'conquest',
 "koth"			=> 'koth',
 "minigame"		=> 'minigame',
-
+"additional_desc"	=> 'Additional info',
 
 
 

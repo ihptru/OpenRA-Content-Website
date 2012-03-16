@@ -104,6 +104,7 @@
             $query = "CREATE TABLE IF NOT EXISTS maps (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
 			    description VARCHAR(500) NOT NULL,
+			    additional_desc VARCHAR(500) NOT NULL DEFAULT '',
 			    author VARCHAR(80) NOT NULL,
 			    type VARCHAR(80) NOT NULL,
 			    players INTEGER NOT NULL,
@@ -119,6 +120,7 @@
 			    tag VARCHAR(10) NOT NULL DEFAULT 'r1',
 			    p_ver INTEGER NOT NULL DEFAULT 0,
 			    n_ver INTEGER NOT NULL DEFAULT 0);";
+			    
             db::executeQuery($query);
 
             $query = "CREATE TABLE IF NOT EXISTS articles (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,

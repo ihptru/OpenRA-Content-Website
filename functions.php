@@ -49,8 +49,12 @@ class upload
 		// 8  -  User already uploaded such a map
 		if ($return_code == 0)
 		    misc::increase_experiance(10);
-		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM maps WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
+		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid,maphash FROM maps WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
 		    misc::event_log(user::uid(), "add", "maps", $row["uid"]);
+		    if (isset($_POST["additional_desc"]))
+		    {
+			db::executeQuery("UPDATE maps SET additional_desc = ? WHERE user_id = ? AND maphash = ?", array($_POST["additional_desc"], user::uid(), $row["maphash"]));
+		    }
 		return code_match($return_code);
 	    }
 	    else
