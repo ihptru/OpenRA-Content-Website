@@ -186,6 +186,7 @@ class lang
 "koth"			=> 'koth',
 "minigame"		=> 'minigame',
 "additional_desc"	=> 'Additional info',
+"favorited_times"	=> 'favorited \0 times',
 
 
 

@@ -580,9 +580,14 @@ class content
 	    if(isset($row["uid"]) && user::online())
 	    {
 		$favIcon = "notFav.png";
-		if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())) ) {
+		if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())) )
+		{
 		    $favIcon = "isFav.png";
 		}
+		$favTimes = "";
+		$row_f = db::nextRowFromQuery(db::executeQuery("SELECT COUNT(*) AS count FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]));
+		if ($row_f["count"] > 0)
+		    $favTimes = misc::lang("favorited_times", array($row_f["count"]));
 	    }
 	    switch($table)
 	    {
@@ -670,7 +675,7 @@ class content
 
 	    if(user::online())
 	    {
-		$content .= "<td style='padding: .5em .5em;'><a href='?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."'></a></td>";
+		$content .= "<td style='padding: .5em .5em;'><a href='?p=detail&table=".$table."&id=".$row["uid"]."&fav'><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/".$favIcon."' title='".$favTimes."'></a></td>";
 	    }
 	    $content .= "</tr>";
 

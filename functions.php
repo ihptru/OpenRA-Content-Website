@@ -52,9 +52,7 @@ class upload
 		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid,maphash FROM maps WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
 		    misc::event_log(user::uid(), "add", "maps", $row["uid"]);
 		    if (isset($_POST["additional_desc"]))
-		    {
-			db::executeQuery("UPDATE maps SET additional_desc = ? WHERE user_id = ? AND maphash = ?", array($_POST["additional_desc"], user::uid(), $row["maphash"]));
-		    }
+			db::executeQuery("UPDATE maps SET additional_desc = ? WHERE user_id = ? AND maphash = ?", array($_POST["additional_desc"], user::uid(), trim($row["maphash"])));
 		return code_match($return_code);
 	    }
 	    else
