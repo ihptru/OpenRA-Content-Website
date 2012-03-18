@@ -260,7 +260,7 @@ input.button {
 /* RSS Feed */
 #header #rss-feed {
 	position: absolute;
-	right: 5px; top: 18px;			
+	right: 5px; top: 130px;			
 	z-index: 99999; 
 }
 #header #rss-feed a.feed {
@@ -268,9 +268,8 @@ input.button {
 	background: url(../images/feed-icon16.gif) no-repeat 5px center;
 	font-weight: bold;
 	text-transform: lowercase;		
-	color: #f0e8e8;	
+	color: #f0e8e8;
 }
-
 /*  navigation  */
 #header #nav {
 	position: absolute;

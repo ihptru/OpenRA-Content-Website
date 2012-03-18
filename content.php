@@ -37,6 +37,7 @@ class content
     {
 	echo "
 	    <div id='header'>
+		<p id='rss-feed'><a href='libs/feed.php' class='feed'>RSS</a></p>
 		<a name='top'></a>
 		<h1 id='logo-text'><a href='/' title=''>".misc::lang("website_name")."</a></h1>		
 		<p id='slogan'>".misc::lang("website_slowgun")."</p>
