@@ -528,6 +528,15 @@ class misc
 	return "";
     }
     
+    public static function item_exists($id, $table)
+    {
+	$query = "SELECT uid FROM $table WHERE uid = $id";
+	$result = db::executeQuery($query);
+	while ($row = db::nextRowFromQuery($result))
+	    return True;
+	return False;
+    }
+    
     public static function paging($nrOfPages, $i, $current, $gets, $table, $params="", $type="grid", $pointer = "")
     {
 	if( $i <= 3 || $i >= $nrOfPages - 3 || ( $i < $current + 3 && $i > $current - 3) )
