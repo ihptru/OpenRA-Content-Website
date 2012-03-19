@@ -36,20 +36,14 @@ $query = "SELECT * FROM event_log WHERE type = 'add' GROUP BY user_id,table_name
 
 $result = db::executeQuery($query);
 
-$content = "<?xml version='1.0' encoding='UTF-8'?>";
-
-$content .= "<feed xml:lang='en-US' xmlns='http://www.w3.org/2005/Atom'>";
+$content = "<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>";
+$content .= "<channel>";
+$content .= "<atom:link href='http://content.open-ra.org/libs/feed.php' rel='self' type='application/rss+xml' />";
 $content .= "<title>OpenRA New Content</title>";
-$content .= "<subtitle>The latest content from OpenRA Content website</subtitle>";
-$content .= "<link href='http://content.open-ra.org' rel='self'/>";
-$content .= "<updated>";
-$content .= date3339();
-$content .= "</updated>";
-$content .= "<author>";
-$content .= "<name>ihptru</name>";
-$content .= "<email>ihptru@gmail.com</email>";
-$content .= "</author>";
-$content .= "<id>tag:content.open-ra.org,2012:http://content.open-ra.org/libs/feed.php</id>";
+$content .= "<link>http://content.open-ra.org</link>";
+$content .= "<description></description>";
+$content .= "<lastBuildDate>".date3339()."</lastBuildDate>";
+
 
 while($row = db::nextRowFromQuery($result))
 {
@@ -57,29 +51,49 @@ while($row = db::nextRowFromQuery($result))
 	continue;
     $articleDate = $row['posted'];
     $articleDateRfc3339 = date3339(strtotime($articleDate));
-    $content .= "<entry>";
+    $content .= "<item>";
+    $content .= "<guid isPermaLink='false'>http://content.open-ra.org/?p=detail&amp;table=".$row['table_name']."&amp;id=".$row['table_id']."</guid>";
     $content .= "<title>";
     $content .= "New ".ucfirst(rtrim($row["table_name"],'s')).": ".misc::item_title_by_uid($row['table_id'], $row['table_name']);
     $content .= "</title>";
-    $content .= "<link type='text/html' href='http://content.open-ra.org/?p=detail&amp;table=".$row['table_name']."&amp;id=".$row['table_id']."' />";
-    $content .= "<id>";
-    $content .= "tag:content.open-ra.org,2012:http://content.open-ra.org/?p=detail&amp;table=".$row['table_name']."&amp;id=".$row['table_id'];
-    $content .= "</id>";
-    $content .= "<updated>";
-    $content .= $articleDateRfc3339;
-    $content .= "</updated>";
+    $content .= "<link>http://content.open-ra.org/?p=detail&amp;table=".$row['table_name']."&amp;id=".$row['table_id']."</link>";
+    $content .= "<description>";
+    $desc = "";
+    $res_info = db::executeQuery("SELECT * FROM ".$row['table_name']." WHERE uid = ".$row['table_id']);
+    while ($row_info = db::nextRowFromQuery($res_info))
+    {
+	switch($row['table_name'])
+	{
+	    case "maps":
+		$add_info = $row_info['additional_desc'];
+		if ($add_info != '')
+		    $add_info = "<br />".$add_info;
+		$desc .= $row_info['description'].$add_info."<br />Mod: ".strtoupper($row_info['g_mod']);
+		break;
+	    case "guides":
+		$text = $row_info['html_content'];
+		if (strlen($text) > 500)
+		    $text = substr($text,0,500);
+		$text = str_replace("\\\\\\", "", str_replace("\\r\\n", "", $text));
+		$desc .= $text."<br />Type: ".$row_info['guide_type'];
+		break;
+	    case "units":
+		$desc .= $row_info['description']."<br />Type: ".$row_info['type'];
+		break;
+	}
+    }
+    $content .= $desc;
+    $content .= "</description>";
+    $content .= "<pubDate>".$articleDateRfc3339."</pubDate>";
     $content .= "<author>";
     $content .= "<name>";
     $content .= user::login_by_uid($row['user_id']);
     $content .= "</name>";
-    $content .= "</author>"; 
-    $content .= "<summary>";
-    $content .= "";
-    $content .= "</summary>";
-    $content .= "</entry>";
-}                       
-
-$content .= "</feed>";
+    $content .= "</author>";
+    $content .= "</item>";
+}
+$content .= "</channel>";
+$content .= "</rss>";
 echo $content;
 
 ?>
