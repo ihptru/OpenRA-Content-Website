@@ -356,14 +356,6 @@
 	    {
 		return false;	//no such table in DB
 	    }
-	    /*else
-	    {
-		$query = "SELECT COUNT(*) AS count FROM " . $tablename;
-		$result = db::executeQuery($query);
-		$row = db::nextRowFromQuery($result);
-		if ($row["count"] == 0)
-		    return false;	//table is empty
-	    }*/
             return true;
         }
 

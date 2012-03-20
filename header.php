@@ -12,11 +12,12 @@ class header
 	header::delete_item();
 	header::apply_filter();
 	header::following();
+	header::edit_map();
     }
 
     public static function pageTitle()
     {
-	$title = lang::$lang['website_name'];
+	$title = misc::lang("website_name");
 	if (count($_GET) == 0)
 	{
 	    return $title;
@@ -26,24 +27,24 @@ class header
 	    if (isset($_GET["action"]))
 	    {
 		if ($_GET["action"] == "show_user_followed")
-		    return $title . " | User Followed By";
+		    return $title . " | " . misc::lang("user followed by");
 		if ($_GET["action"] == "show_user_follow")
-		    return $title . " | User Follows";
+		    return $title . " | " . misc::lang("user follows");
 		if ($_GET["action"] == "users_items" and isset($_GET["id"]) and isset($_GET["table"]))
-		    return $title . " | " . user::login_by_uid($_GET["id"]) . "'s content - " . ucfirst($_GET["table"]);
+		    return $title . " | " . misc::lang("user content", array(user::login_by_uid($_GET["id"]))) . " - " . ucfirst(misc::lang($_GET["table"]));
 		if ($_GET["action"] == "show_favorited" and isset($_GET["favorited_id"]))
-		    return $title . " | " . user::login_by_uid($_GET["favorited_id"]) . "'s favorited items";
+		    return $title . " | " . misc::lang("user favorited items", array(user::login_by_uid($_GET["favorited_id"])));
 		if ($_GET["action"] == "display_faction" and isset($_GET["faction"]))
-		    return $title . " | Faction - " . ucfirst($_GET["faction"]);
+		    return $title . " | " . ucfirst(misc::lang("faction")) . " - " . strtoupper($_GET["faction"]);
 		if ($_GET["action"] == "myunits")
 		    if (user::online())
-			return $title . " | My Units";
+			return $title . " | " . misc::lang("my units");
 		if ($_GET["action"] == "mymaps")
 		    if (user::online())
-			return $title . " | My Maps";
+			return $title . " | " . misc::lang("my maps");
 		if ($_GET["action"] == "myguides")
 		    if (user::online())
-			return $title . " | My Guides";
+			return $title . " | " . misc::lang("my guides");
 	    }
 	    if (isset($_GET["p"]))
 	    {
@@ -51,22 +52,22 @@ class header
 		if (isset($_GET["profile"]))
 		    return $title . " - " . user::login_by_uid($_GET["profile"]);
 		if (isset($_GET["edit"]))
-		    return $title . " - Edit";
+		    return $title . " - " . misc::lang("edit");
 		if ($_GET["p"] == "detail" and isset($_GET["id"]) and isset($_GET["table"]))
 		    return $title . " - " . ucfirst(rtrim($_GET["table"],"s")) . " - " . misc::item_title_by_uid($_GET["id"], $_GET["table"]);
 		if ($_GET["p"] == "profile" and !user::online())
-		    return lang::$lang['website_name'];
+		    return misc::lang("website_name");
 		return $title;
 	    }
 	    if (isset($_GET["register"]))
-		return $title . " | Registration";
+		return $title . " | " . misc::lang("registration");
 	    if (isset($_GET["recover"]))
 	    {
 		if (isset($_GET["recover_pass"]))
-		    return $title . " | Recover password";
+		    return $title . " | " . misc::lang("recover pw");
 		if (isset($_GET["recover_user"]))
-		    return $title . " | Recover username";
-		return $title . " | Recover Account Information";
+		    return $title . " | " . misc::lang("recover usr");
+		return $title . " | " . misc::lang("recover account info");
 	    }
 	}
 	return $title;
@@ -287,6 +288,17 @@ class header
 		    }
 		}
 	    }
+	}
+    }
+    
+    public static function edit_map()
+    {
+	if (isset($_POST['add_map_info']))
+	{
+	    $map_id = $_POST['map_id'];
+	    $query = "UPDATE maps SET additional_desc = ? WHERE uid = ?";
+	    db::executeQuery($query, array(trim($_POST['add_map_info']), $map_id));
+	    header("Location: /?p=detail&table=maps&id=".$map_id);
 	}
     }
 }

@@ -1,53 +1,13 @@
 <?PHP
 # [key] must be in double quotes
 # [value] must be in single quotes
+# arguments are placed over \0 \1 \2 etc...
+# [key] should not be longer then 21 char
 
 class lang
 {
     public static $lang = array(
 
-
-"activation error" 	=> "Activation link is incorrect",
-"activated" 		=> "account activated!",
-"email in use" 		=> "someone already uses this email",
-"empty fields" 		=> "Empty fields found, try again",
-"register complete" 	=> "Registration complete",
-"activate" 		=> "Activate",
-"ask to activate" 	=> "Please Activate Your account",
-"user exists" 		=> "Account with this username already exists",
-"password not match" 	=> "Passwords do not match",
-"email error" 		=> "Email format error",
-"copyright" 		=> "No rights reserved. Site created by Holloweye and ihptru.",
-"already requested" 	=> "Already requested registration with such data",
-"recover nouser" 	=> "User with such data not found",
-"nothing to activate" 	=> "Nothing to activate",
-"password updated" 	=> "Password updated",
-"recover requested" 	=> "You've already requested password update",
-"recover pw"		=> "Recover password",
-"recover usr"		=> "Recover username",
-
-"not logged"		=> "You are not logged in",
-"link"			=> "Link",
-"gallery"		=> "Gallery",
-"sidebar menu"		=> "Your content",
-"recent articles"	=> "Recent Articles",
-
-"enter new pw"		=> "Enter new password",
-
-"contact_info"		=> "Contact Info",
-
-
-"map not uploaded"	=> "Map was not uploaded",
-"recent events" 	=> "Recent Events",
-"upload"		=> "Upload",
-"choose map upload" 	=> "Choose a map file to upload",
-"upload maps"		=> "Upload your maps",
-
-
-
-#############################
-######   content.php   ######
-#############################
 "js confirm"		=> 'Are you sure you want to',
 "featured posted"	=> '\0 posted at \1 by \2',
 "website_name"		=> 'OpenRA - Resources',
@@ -188,23 +148,60 @@ class lang
 "additional_desc"	=> 'Additional info',
 "favorited_times"	=> 'favorited \0 times',
 
+"user followed by"	=> 'User Followed By',
+"user follows"		=> 'User Follows',
+"user content"		=> '\0\'s content',
+"user favorited items"	=> '\0\'s favorited items',
+"faction"		=> 'faction',
+"my units"		=> 'My Units',
+"my maps"		=> 'My Maps',
+"my guides"		=> 'My Guides',
+"registration"		=> 'Registration',
+"recover pw"		=> 'Recover password',
+"recover usr"		=> 'Recover username',
+"recover account info"	=> 'Recover Account Information',
+"add additional info"	=> 'add additional info',
 
 
 
 
 
 #############################
-######   profile.php   ######
-#############################
 
-###############################
-######   functions.php   ######
-###############################
+"activation error" 	=> "Activation link is incorrect",
+"activated" 		=> "account activated!",
+"email in use" 		=> "someone already uses this email",
+"empty fields" 		=> "Empty fields found, try again",
+"register complete" 	=> "Registration complete",
+"activate" 		=> "Activate",
+"ask to activate" 	=> "Please Activate Your account",
+"user exists" 		=> "Account with this username already exists",
+"password not match" 	=> "Passwords do not match",
+"email error" 		=> "Email format error",
+"copyright" 		=> "No rights reserved. Site created by Holloweye and ihptru.",
+"already requested" 	=> "Already requested registration with such data",
+"recover nouser" 	=> "User with such data not found",
+"nothing to activate" 	=> "Nothing to activate",
+"password updated" 	=> "Password updated",
+"recover requested" 	=> "You've already requested password update",
 
-##########################
-######   user.php   ######
-##########################
 
+"not logged"		=> "You are not logged in",
+"link"			=> "Link",
+"gallery"		=> "Gallery",
+"sidebar menu"		=> "Your content",
+"recent articles"	=> "Recent Articles",
+
+"enter new pw"		=> "Enter new password",
+
+"contact_info"		=> "Contact Info",
+
+
+"map not uploaded"	=> "Map was not uploaded",
+"recent events" 	=> "Recent Events",
+"upload"		=> "Upload",
+"choose map upload" 	=> "Choose a map file to upload",
+"upload maps"		=> "Upload your maps",
     );
 }
 

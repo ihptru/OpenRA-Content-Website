@@ -596,9 +596,29 @@ class content
 		    $title = misc::lang("game map", array(strtoupper($row["g_mod"]))) . ": <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>";
 		    $imagePath = misc::minimap($row["path"]);
 		    $subtitle = $title . " " . misc::lang("item posted", array("<i>".$row["posted"]."</i>", "<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>"));
-		    $text = str_replace("\r\n", "<br />", $row["description"]);
+		    $add_add_info = "";
 		    if ($row["additional_desc"] != "")
-			$text_add = misc::lang("additional_desc") . ": " . str_replace("\r\n", "<br />", $row["additional_desc"]);
+		    {
+			$add_edit = "";
+			if ($row["user_id"] == user::uid())
+			    $add_edit = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&edit_map_info'>".strtolower(misc::lang("edit"))."</a>";
+			if (isset($_GET["edit_map_info"]) and user::uid() == $row["user_id"])
+			{
+			    $text_add = "<form method=POST><input type='text' name='add_map_info' value='".$row["additional_desc"]."'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'></form>";
+			}
+			else
+			    $text_add = misc::lang("additional_desc") . ": " . str_replace("\r\n", "<br />", $row["additional_desc"]) . $add_edit;
+		    }
+		    else
+		    {
+			if ($row["user_id"] == user::uid())
+			{
+			    $add_add_info = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&add_map_info'>".misc::lang("add additional info")."</a>";
+			    if (isset($_GET["add_map_info"]))
+				$text_add = "<form method=POST><input type='text' name='add_map_info'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'></form>";
+			}
+		    }
+		    $text = str_replace("\r\n", "<br />", $row["description"]) . $add_add_info;
 		    break;
 		case "units":
 		    $title = strip_tags($row["title"]);
