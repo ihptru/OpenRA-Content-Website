@@ -45,6 +45,8 @@ class header
 		if ($_GET["action"] == "myguides")
 		    if (user::online())
 			return $title . " | " . misc::lang("my guides");
+		if ($_GET["action"] == "versions" and isset($_GET["id"]))
+		    return $title . " | Versions of the map: " . misc::item_title_by_uid($_GET["id"], "maps");
 	    }
 	    if (isset($_GET["p"]))
 	    {

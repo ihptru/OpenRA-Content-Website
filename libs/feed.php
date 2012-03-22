@@ -67,18 +67,21 @@ while($row = db::nextRowFromQuery($result))
 	    case "maps":
 		$add_info = $row_info['additional_desc'];
 		if ($add_info != '')
-		    $add_info = "<br />".$add_info;
-		$desc .= $row_info['description'].$add_info."<br />Mod: ".strtoupper($row_info['g_mod']);
+		    $add_info = $add_info."&lt;br />";
+		$description = $row_info['description'];
+		if ($description != '')
+		    $description = $row_info['description']."&lt;br />";
+		$desc .= $description.$add_info."Mod: ".strtoupper($row_info['g_mod'])."&lt;br />Rev: ".ltrim($row_info["tag"], "r");
 		break;
 	    case "guides":
 		$text = $row_info['html_content'];
 		if (strlen($text) > 500)
 		    $text = substr($text,0,500);
 		$text = str_replace("\\\\\\", "", str_replace("\\r\\n", "", $text));
-		$desc .= $text."<br />Type: ".$row_info['guide_type'];
+		$desc .= $text."&lt;br />Type: ".$row_info['guide_type'];
 		break;
 	    case "units":
-		$desc .= $row_info['description']."<br />Type: ".$row_info['type'];
+		$desc .= $row_info['description']."&lt;br />Type: ".$row_info['type'];
 		break;
 	}
     }

@@ -384,7 +384,7 @@ class profile
 		";
 		$row = db::nextRowFromQuery(db::executeQuery($query));
 		$imagePath = misc::minimap($row["path"]);
-		echo "<p><a href='?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
+		echo "<p><a href='/?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
 		return;
 	    }
 	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
