@@ -1322,6 +1322,7 @@ class content
 	echo "<option value='date' ".misc::option_selected("date",$sort_by).">".misc::lang("date")."</option>";
 	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">".misc::lang("title")."</option>";
 	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">".misc::lang("title in reverse")."</option>";
+	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">".misc::lang("lately_commented")."</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
@@ -1361,6 +1362,8 @@ class content
 	    $order_by = "title";
 	elseif ($sort_by == "alpha_reverse")
 	    $order_by = "title DESC";
+	elseif ($sort_by == "lately_commented")
+	    $order_by = $sort_by;
 	//type
 	if ($type == "any_type")
 	    $request_type = "";
@@ -1520,7 +1523,7 @@ class objects
 	}
 	if ($my_items == true)
 	    $my = " AND user_id = ".user::uid()." ";
-	$query = "SELECT m.uid,m.title,m.description,m.additional_desc,m.author,m.type,m.players,m.g_mod,m.maphash,m.width,m.height,m.tileset,m.path,m.user_id,m.screenshot_group_id,m.posted,m.tag,m.n_ver,m.p_ver".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE g_mod LIKE ('%".$request_mod."%') AND upper(type) LIKE upper('%".$type."%') AND tileset LIKE ('%".$request_tileset."%') ".$n_ver_e." ".$my."GROUP BY maphash ORDER BY ".$order_by;
+	$query = "SELECT m.*".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE g_mod LIKE ('%".$request_mod."%') AND upper(type) LIKE upper('%".$type."%') AND tileset LIKE ('%".$request_tileset."%') ".$n_ver_e." ".$my."GROUP BY maphash ORDER BY ".$order_by;
 	
 	$result = db::executeQuery($query);
 	echo "<br />".content::create_grid($result);
@@ -1531,9 +1534,18 @@ class objects
 	echo "<h3>".ucfirst(misc::lang("units"))."!</h3>";
 	list($order_by, $request_type, $my_items) = content::guide_unit_filters("unit");
 	$my = "";
+	
+	$field_lc = "";
+	$ljoin_lc = "";
+	if ($order_by == "lately_commented")
+	{
+	    $order_by = "comment_posted DESC";
+	    $field_lc = ", c.posted AS comment_posted";
+	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = u.uid";
+	}
 	if ($my_items == true)
 	    $my = " AND user_id = ".user::uid()." ";
-	$result = db::executeQuery("SELECT * FROM units WHERE type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
+	$result = db::executeQuery("SELECT u.*".$field_lc." FROM units AS u ".$ljoin_lc." WHERE type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
 	echo content::create_grid($result,"units");
     }
     
@@ -1542,9 +1554,18 @@ class objects
 	echo "<h3>".ucfirst(misc::lang("guides"))."!</h3>";
 	list($order_by, $request_type, $my_items) = content::guide_unit_filters("guide");
 	$my = "";
+	
+	$field_lc = "";
+	$ljoin_lc = "";
+	if ($order_by == "lately_commented")
+	{
+	    $order_by = "comment_posted DESC";
+	    $field_lc = ", c.posted AS comment_posted";
+	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = g.uid";
+	}
 	if ($my_items == true)
 	    $my = " AND user_id = ".user::uid()." ";
-	$result = db::executeQuery("SELECT * FROM guides WHERE guide_type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
+	$result = db::executeQuery("SELECT g.*".$field_lc." FROM guides AS g ".$ljoin_lc." WHERE guide_type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
 	echo content::create_grid($result,"guides");
     }
     
