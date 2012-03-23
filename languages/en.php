@@ -113,6 +113,7 @@ class lang
 "date"			=> 'date',
 "title"			=> 'title',
 "title in reverse"	=> 'title in reverse order',
+"lately_commented"	=> 'lately commented',
 "any"			=> 'Any',
 "design filter"		=> 'Design (2D/3D)',
 "mapping"		=> 'Mapping',
@@ -161,7 +162,6 @@ class lang
 "recover usr"		=> 'Recover username',
 "recover account info"	=> 'Recover Account Information',
 "add additional info"	=> 'add additional info',
-
 
 
 
