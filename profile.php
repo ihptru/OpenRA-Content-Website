@@ -373,7 +373,7 @@ class profile
 	";
             
 	$username = user::username();
-	$uploaded = upload::upload_oramap($username, $prev_version_id);
+	$uploaded = upload::upload_oramap($username, $prev_version_id, user::uid());
 	if ($uploaded != "")
 	{
 	    if ($uploaded == "0")

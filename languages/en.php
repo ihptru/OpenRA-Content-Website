@@ -162,7 +162,7 @@ class lang
 "recover usr"		=> 'Recover username',
 "recover account info"	=> 'Recover Account Information',
 "add additional info"	=> 'add additional info',
-
+"versions of the map"	=> 'Versions of the map',
 
 
 

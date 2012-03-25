@@ -2,7 +2,7 @@
 
 class upload
 {
-    public static function upload_oramap($username, $pre_version="0")
+    public static function upload_oramap($username, $pre_version="0", $user_id)
     {
 	if(isset($_FILES["map_upload"]["name"]))
 	{
@@ -21,7 +21,7 @@ class upload
 		{
 		    return "Not supported file type";	// that's not a map file (map file must have `oramap` extention)
 		}
-		exec("python python/ml.py -s " . str_replace(" ", "\ ", $source) . " -i " . user::uid() . " -u " . user::username() . " -t " . str_replace(" ", "\ ", $filename) . " -p " . $pre_version, $output, $return_code);
+		exec("python python/ml.py -s " . str_replace(" ", "\ ", $source) . " -i " . $user_id . " -u " . $username . " -t " . str_replace(" ", "\ ", $filename) . " -p " . $pre_version, $output, $return_code);
 		function code_match($code)
 		{
 		    $codes = array(
@@ -50,10 +50,10 @@ class upload
 		if ($return_code == 0)
 		{
 		    misc::increase_experiance(10);
-		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid,maphash FROM maps WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
+		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid,maphash FROM maps WHERE user_id = ".$user_id." ORDER BY posted DESC LIMIT 1"));
 		    misc::event_log(user::uid(), "add", "maps", $row["uid"]);
 		    if (isset($_POST["additional_desc"]))
-			db::executeQuery("UPDATE maps SET additional_desc = ? WHERE user_id = ? AND maphash = ?", array($_POST["additional_desc"], user::uid(), trim($row["maphash"])));
+			db::executeQuery("UPDATE maps SET additional_desc = ? WHERE user_id = ? AND maphash = ?", array($_POST["additional_desc"], $user_id, trim($row["maphash"])));
 		}
 		return code_match($return_code);
 	    }
