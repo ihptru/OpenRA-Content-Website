@@ -1071,7 +1071,22 @@ class content
 	    profile::upload_map();
 	    echo "<br /><br /><div class='sidemenu'><ul><li>".misc::lang("your maps").":</li></ul></div>";
 	    list($order_by, $request_mod, $type, $request_tileset, $my_items) = content::map_filters("no_show_my_content_filter");
-	    $result = db::executeQuery("SELECT * FROM maps WHERE user_id = ".user::uid()." AND g_mod LIKE ('%".$request_mod."%') AND upper(type) LIKE upper('%".$type."%') AND tileset LIKE ('%".$request_tileset."%') GROUP BY maphash ORDER BY ".$order_by);
+	    
+	    $my = "";
+	
+	    $field_lc = "";
+	    $ljoin_lc = "";
+	    if ($order_by == "lately_commented")
+	    {
+		$order_by = "comment_posted DESC";
+		$field_lc = ", c.posted AS comment_posted";
+		$ljoin_lc = "LEFT JOIN comments AS c on c.table_id = m.uid";
+	    }
+	    if ($my_items == true)
+		$my = " AND m.user_id = ".user::uid()." ";
+	    $query = "SELECT m.*".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE m.g_mod LIKE ('%".$request_mod."%') AND upper(m.type) LIKE upper('%".$type."%') AND m.tileset LIKE ('%".$request_tileset."%') ".$my."GROUP BY m.maphash ORDER BY ".$order_by;
+	    
+	    $result = db::executeQuery($query);
 	    $output = content::create_grid($result);
 	    if ($output == "")
 	    {
@@ -1499,6 +1514,8 @@ class content
 	else
 	    $request_tileset = $tileset;
 
+	if ($my_content != "")
+	    $my_items = true;
 	return array($order_by, $request_mod, $type, $request_tileset, $my_items);
     }
 }
@@ -1510,7 +1527,7 @@ class objects
 	echo "<h3>".ucfirst(misc::lang("maps"))."!</h3>";
 	list($order_by, $request_mod, $type, $request_tileset, $my_items) = content::map_filters();
 	$my = "";
-	$n_ver_e = "AND n_ver = 0";
+	$n_ver_e = "AND m.n_ver = 0";
 	
 	$field_lc = "";
 	$ljoin_lc = "";
@@ -1522,8 +1539,8 @@ class objects
 	    $n_ver_e = "";
 	}
 	if ($my_items == true)
-	    $my = " AND user_id = ".user::uid()." ";
-	$query = "SELECT m.*".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE g_mod LIKE ('%".$request_mod."%') AND upper(type) LIKE upper('%".$type."%') AND tileset LIKE ('%".$request_tileset."%') ".$n_ver_e." ".$my."GROUP BY maphash ORDER BY ".$order_by;
+	    $my = " AND m.user_id = ".user::uid()." ";
+	$query = "SELECT m.*".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE m.g_mod LIKE ('%".$request_mod."%') AND upper(m.type) LIKE upper('%".$type."%') AND m.tileset LIKE ('%".$request_tileset."%') ".$n_ver_e." ".$my."GROUP BY m.maphash ORDER BY ".$order_by;
 	
 	$result = db::executeQuery($query);
 	echo "<br />".content::create_grid($result);
@@ -1544,8 +1561,8 @@ class objects
 	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = u.uid";
 	}
 	if ($my_items == true)
-	    $my = " AND user_id = ".user::uid()." ";
-	$result = db::executeQuery("SELECT u.*".$field_lc." FROM units AS u ".$ljoin_lc." WHERE type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
+	    $my = " AND u.user_id = ".user::uid()." ";
+	$result = db::executeQuery("SELECT u.*".$field_lc." FROM units AS u ".$ljoin_lc." WHERE u.type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
 	echo content::create_grid($result,"units");
     }
     
@@ -1564,8 +1581,8 @@ class objects
 	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = g.uid";
 	}
 	if ($my_items == true)
-	    $my = " AND user_id = ".user::uid()." ";
-	$result = db::executeQuery("SELECT g.*".$field_lc." FROM guides AS g ".$ljoin_lc." WHERE guide_type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
+	    $my = " AND g.user_id = ".user::uid()." ";
+	$result = db::executeQuery("SELECT g.*".$field_lc." FROM guides AS g ".$ljoin_lc." WHERE g.guide_type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
 	echo content::create_grid($result,"guides");
     }
     
