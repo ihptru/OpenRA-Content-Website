@@ -1707,10 +1707,20 @@ class objects
 	    {
 		$content .= "<br><label>".misc::lang("users")." ".misc::lang("found").":</label>";
 	    	$data = array();
-			while ($row = db::nextRowFromQuery($result))
-		    	array_push($data,"<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>");
-		    $content .= content::create_dynamic_list($data,1);
+		while ($row = db::nextRowFromQuery($result))
+		    array_push($data,"<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>");
+		$content .= content::create_dynamic_list($data,1,"users");
 	    }
+	    $result = db::executeQuery("SELECT * FROM comments WHERE content LIKE '%".$search."%'");
+	    if (db::num_rows($result) > 0)
+	    {
+		$content .= "<br><label>".misc::lang("comments")." ".misc::lang("found").":</label>";
+		$data = array();
+		while ($row = db::nextRowFromQuery($result))
+		    array_push($data,"<a href='/?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],"s"))."</a> is commented by <a href='/?profile=".$row["user_id"]."'>".user::login_by_uid($row["user_id"])."</a>", str_replace("\\\\\\", "", str_replace("\\r\\n", "", $row["content"])));
+		$content .= content::create_dynamic_list($data,2,"comments");
+	    }
+	    
 	    if ($content == "")
 	    {
 		echo "<table>
