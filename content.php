@@ -101,7 +101,7 @@ class content
 	echo "<li id='"; echo pages::current('maps', $request); echo"'><a href='?p=maps'>".misc::lang("maps")."</a></li>";
 	echo "<li id='"; echo pages::current('units', $request); echo"'><a href='?p=units'>".misc::lang("units")."</a></li>";
 	echo "<li id='"; echo pages::current('guides', $request); echo"'><a href='?p=guides'>".misc::lang("guides")."</a></li>";
-	echo "<li id='"; echo pages::current('about', $request); echo"'><a href='?p=about'>".misc::lang("about")."</a></li>";
+	echo "<li id='"; echo pages::current('replays', $request); echo"'><a href='?p=replays'>".misc::lang("replays")."</a></li>";
             
 	if (user::online())
 	{
@@ -1122,6 +1122,12 @@ class content
 	    }
 	    echo $output;
 	}
+	if ($request == "myreplays")
+	{
+	    if (!user::online())
+		return;
+	    profile::upload_replay();
+	}
 	if ($request == "versions")
 	{
 	    if (isset($_GET["table"]) and isset($_GET["id"]))
@@ -1717,7 +1723,7 @@ class objects
 		$content .= "<br><label>".misc::lang("comments")." ".misc::lang("found").":</label>";
 		$data = array();
 		while ($row = db::nextRowFromQuery($result))
-		    array_push($data,"<a href='/?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],"s"))."</a> is commented by <a href='/?profile=".$row["user_id"]."'>".user::login_by_uid($row["user_id"])."</a>", str_replace("\\\\\\", "", str_replace("\\r\\n", "", $row["content"])));
+		    array_push($data,"<a href='/?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],"s"))."</a> ".misc::lang("is commented by")." <a href='/?profile=".$row["user_id"]."'>".user::login_by_uid($row["user_id"])."</a>", str_replace("\\\\\\", "", str_replace("\\r\\n", "", $row["content"])));
 		$content .= content::create_dynamic_list($data,2,"comments");
 	    }
 	    

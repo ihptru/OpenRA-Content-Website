@@ -27,6 +27,7 @@ class lang
 "about"			=> 'About',
 "profile"		=> 'Profile',
 "logout"		=> 'Logout',
+"replays"		=> 'Replays',
 
 "registration"		=> 'Registration',
 "password security"	=> 'Password security',
@@ -163,6 +164,7 @@ class lang
 "recover account info"	=> 'Recover Account Information',
 "add additional info"	=> 'add additional info',
 "versions of the map"	=> 'Versions of the map',
+"is commented by"	=> 'is commented by',
 
 
 

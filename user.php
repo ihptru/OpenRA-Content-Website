@@ -368,6 +368,7 @@ class user
 	mkdir($path);
 	mkdir($path . "/maps");
 	mkdir($path . "/units");
+	mkdir($path . "/replays");
     }
 
     // is always run to check recover username or password action

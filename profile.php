@@ -462,6 +462,30 @@ class profile
 	$uploaded = upload::upload_unit($username);
 	echo $uploaded;
     }
+    
+    public static function upload_replay()
+    {
+	if (!user::online()) { return; }
+
+	$query = "SELECT COUNT(*) AS count FROM replays WHERE user_id = ".user::uid();
+	$row = db::nextRowFromQuery(db::executeQuery($query));
+	$can_upload = 50 - (int)$row["count"];
+	echo "<h4>You can upload ".(string)$can_upload." more replays!</h4><br />";
+	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
+		<label>Replay (.rep): <input type='file' size='30' name='replay_upload' /></label>
+		<br />
+		<label>Description: </label></lable><input type='text' name='description'><br />
+		<input type='submit' name='submit' value='submit' />
+		</form>
+	";
+            
+	$username = user::username();
+	$uploaded = upload::upload_replay($username, user::uid());
+	foreach ($uploaded as $value)
+	{
+	    echo $value."<br>";
+	}
+    }
 
 }
 

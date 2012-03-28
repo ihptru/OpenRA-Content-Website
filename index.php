@@ -128,6 +128,7 @@ content::head();
 				<li><a href='index.php?action=mymaps&profile=".user::uid()."'>maps</a></li>
 				<li><a href='index.php?action=myunits&profile=".user::uid()."'>units</a></li>
 				<li><a href='index.php?action=myguides&profile=".user::uid()."'>guides</a></li>
+				<li><a href='index.php?action=myreplays&profile=".user::uid()."'>replays</a></li>
 				</ul>
 			    ";
 			    if(isset($_GET["profile"]))

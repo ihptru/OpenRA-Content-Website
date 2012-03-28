@@ -21,7 +21,7 @@ class upload
 		{
 		    return "Not supported file type";	// that's not a map file (map file must have `oramap` extention)
 		}
-		exec("python python/ml.py -s " . str_replace(" ", "\ ", $source) . " -i " . $user_id . " -u " . $username . " -t " . str_replace(" ", "\ ", $filename) . " -p " . $pre_version, $output, $return_code);
+		exec("python python/maps.py -s " . str_replace(" ", "\ ", $source) . " -i " . $user_id . " -u " . $username . " -t " . str_replace(" ", "\ ", $filename) . " -p " . $pre_version, $output, $return_code);
 		function code_match($code)
 		{
 		    $codes = array(
@@ -154,6 +154,69 @@ class upload
 	    $count++;
 	}
 	return $messages;
+    }
+    
+    public static function upload_replay($username, $user_id)
+    {
+	if(isset($_FILES["replay_upload"]["name"]))
+	{
+	    if (is_uploaded_file($_FILES["replay_upload"]["tmp_name"]))
+	    {
+		$filename = $_FILES["replay_upload"]["name"];
+		$source = $_FILES["replay_upload"]["tmp_name"];
+		$type = $_FILES["replay_upload"]["type"];
+		$name = explode(".", $filename);
+		$accepted_type = "application/octet-stream";
+		if ($type != $accepted_type)
+		{
+		    return "Not supported file type";	// that's not a replay file
+		}
+		if (strtolower($name[1]) != "rep")
+		{
+		    return "Not supported file type";	// that's not a replay file (replay file must have `rep` extention)
+		}
+		$query = "SELECT COUNT(*) AS count FROM replays WHERE user_id = ".$user_id;
+		$row = db::nextRowFromQuery(db::executeQuery($query));
+		if ($row["count"] > 50)
+		{
+		    return "You have reached your limit!"; // can't upload more then 50 replays
+		}
+		exec("python python/replay.py -s " . str_replace(" ", "\ ", $source) . " -i " . $user_id . " -u " . $username . " -t " . str_replace(" ", "\ ", $filename), $output, $return_code);
+		function code_match($code)
+		{
+		    $codes = array(
+			'0' => "0",
+			'1' => "Error's while uploading replay, contact administrator",
+			'2' => "Incorrect options",
+			'3' => "StartGame point is not detected",
+		    );
+		    return $codes[$code];
+		}
+		//return codes:
+		// 0  -  Success
+		// 1  -  Other errors
+		// 2  -  Incorrect options
+		// 3  -  StartGame point is not detected
+		if ($return_code == 0)
+		{
+		    misc::increase_experiance(10);
+		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM replays WHERE user_id = ".$user_id." ORDER BY posted DESC LIMIT 1"));
+		    misc::event_log(user::uid(), "add", "replays", $row["uid"]);
+		    if (isset($_POST["description"]))
+			db::executeQuery("UPDATE replays SET description = ? WHERE user_id = ? AND uid = ?", array($_POST["description"], $user_id, $row["uid"]));
+		}
+		//return code_match($return_code);
+		return $output;
+	    }
+	    else
+	    {
+		return "";
+	    }
+	}
+	else
+	{
+	    return "";	// file is not choosen
+	}
     }
     
     public static function avatar()
@@ -380,6 +443,17 @@ class misc
 		rmdir($path);
 	    }
 	    
+	    if ($table_name == "replays")
+	    {
+		$query = "SELECT path FROM replays WHERE uid = ".$item_id;
+		$result = db::executeQuery($query);
+		while ($db_data = db::fetch_array($result))
+		{
+		    $path = WEBSITE_PATH . $db_data['path'];
+		}
+		unlink($path);
+	    }
+
 	    //remove item from DB
 	    $query = "DELETE FROM $table_name WHERE uid = ?";
 	    db::executeQuery($query, array($item_id));

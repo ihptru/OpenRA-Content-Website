@@ -121,6 +121,29 @@
 			    p_ver INTEGER NOT NULL DEFAULT 0,
 			    n_ver INTEGER NOT NULL DEFAULT 0);";
             db::executeQuery($query);
+	    
+	    $query = "CREATE TABLE IF NOT EXISTS replays (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    title VARCHAR(80) NOT NULL,
+			    description VARCHAR(500),
+			    path VARCHAR(80) NOT NULL,
+			    user_id INTEGER NOT NULL,
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			    date_time TIMESTAMP NOT NULL,
+			    duration VARCHAR(50) NOT NULL,
+			    server_name VARCHAR(80) NOT NULL,
+			    maphash VARCHAR(80) NOT NULL,
+			    mods VARCHAR(30) NOT NULL);";
+	    db::executeQuery($query);
+	    
+	    $query = "CREATE TABLE IF NOT EXISTS replay_players (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    id_replays INTEGER NOT NULL,
+
+			    name VARCHAR(80) NOT NULL,
+			    colorramp VARCHAR(80) NOT NULL,
+			    country VARCHAR(80) NOT NULL,
+			    team SMALLINT NOT NULL,
+			    winner SMALLINT NOT NULL);";
+	    db::executeQuery($query);
 
             $query = "CREATE TABLE IF NOT EXISTS articles (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
