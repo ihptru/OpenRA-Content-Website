@@ -435,18 +435,31 @@ class content
 	return $content;
     }
 
-    public static function create_list($result, $table)
+    public static function create_list($result, $table, $maxItemsPerPage=10, $u_id=-1)
     {
-	if (db::num_rows($result) == 0)
+	$num_rows = db::num_rows($result);
+	if ( $num_rows == 0)
 	    return "";
 	if(isset($_GET["current_list_page_".$table]))
 		$current = $_GET["current_list_page_".$table];
 	else
 		$current = 1;
-	$maxItemsPerPage = 10; //dynamic depending on table?
 	$total = db::num_rows($result);
 	$pointer = "#".$table;
 	$content = "<a name='".$table."'></a><table>";
+	if ($u_id != -1)
+	{
+	    if ($u_id == user::uid())
+		if ($table == "fav_item")
+		    $content .= "<th></th><th>Your latest favorited items (".$num_rows.")</th>";
+		else
+		    $content .= "<th>Your ".$table." (".$num_rows.")</th><th></th>";
+	    else
+		if ($table == "fav_item")
+		    $content .= "<th></th><th>".user::login_by_uid($u_id)."'s latest favorited items (".$num_rows.")</th>";
+		else
+		    $content .= "<th>".user::login_by_uid($u_id)."'s ".$table." (".$num_rows.")</th><th></th>";
+	}
 	$i = 0;
 	while ($row = db::nextRowFromQuery($result))
 	{
@@ -470,35 +483,69 @@ class content
 		//Set title, image
 		case "maps":
 		    $title = $row["title"];
-		    $imagePath = misc::minimap($row["path"]);
-		    $subtitle = misc::lang("item posted", array($row["posted"], "<a href='?profile=".$row["user_id"]."'>" . $username . "</a>"));
-		    $text = $row["description"];
+		    $title = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>";
+		    $imagePath = "<td><a href='?p=detail&table=maps&id=".$row["uid"]."'><img src='" . misc::minimap($row["path"]) . "'></a></td>";
+		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $text = "Description: ".$row["description"];
+		    if ($row["additional_desc"] != "")
+			$text .= "<br />Additional info: ".$row["additional_desc"];
+		    $text .= "<br />Rev: ".ltrim($row["tag"], "r");
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $imagePath = $row["preview_image"];
-		    $subtitle = misc::lang("item posted", array($row["posted"], "<a href='?profile=".$row["user_id"]."'>" . $username . "</a>"));
-		    $text = "";
+		    $title = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>";
+		    $imagePath = "<td><a href='?p=detail&table=units&id=".$row["uid"]."'><img src='" . $row["preview_image"] . "'></a></td>";
+		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $text = "Description: ".$row["description"];
 		    break;
 		case "guides":
 		    $title = $row["title"];
-		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
-		    $subtitle = misc::lang("item posted", array($row["posted"], "<a href='?profile=".$row["user_id"]."'>" . $username . "</a>"));
+		    $title = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>";
+		    $imagePath = "<td><a href='?p=detail&table=guides&id=".$row["uid"]."'><img src='images/guide_" . $row["guide_type"] . ".png'></a></td>";
+		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
 		case "articles":
 		    $title = $row["title"];
+		    $title = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>";
 		    $imagePath = "";
-		    $subtitle = misc::lang("item posted", array($row["posted"], "<a href='?profile=".$row["user_id"]."'>" . $username . "</a>"));
+		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
+		    break;
+		case "fav_item":
+		    $title = "favorited the ".rtrim($row["table_name"],"s")." \"<a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::item_title_by_uid($row["table_id"], $row["table_name"])."</a>\" at <i>".$row["posted"]."</i>";
+		    $imagePath = "<td><img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'></td>";
+		    $subtitle = "";
+		    $text = "";
+		    break;
+		case "comments":
+		    $title = "";
+		    $subtitle = "<i>commented on ".$row["posted"]."</i><br />";
+		    $inner_result = db::executeQuery("SELECT * FROM ".$row["table_name"]." WHERE uid = ".$row["table_id"]);
+		    while ($inner_row = db::nextRowFromQuery($inner_result))
+		    {
+			switch($row["table_name"])
+			{
+			    case "maps":
+				$imagePath = "<td><a href='?p=detail&table=maps&id=".$inner_row["uid"]."'><img src='" . misc::minimap($inner_row["path"]) . "' style='max-width:60px;'></a></td>";
+				break;
+			    case "units":
+				$imagePath = "<td><a href='?p=detail&table=units&id=".$inner_row["uid"]."'><img src='" . $inner_row["preview_image"] . "'></a></td>";
+				break;
+			    case "guides":
+				$imagePath = "<td><a href='?p=detail&table=guides&id=".$inner_row["uid"]."'><img src='images/guide_" . $inner_row["guide_type"] . ".png'></a></td>";
+				break;
+			}
+		    }
+		    $text = stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($row["content"]))));
 		    break;
 	    }
 	    
 	    //TODO: Text should truncate if too large
 	    $content .= "<tr>";
 	    if($imagePath != "")
-	    	$content .= "<td><img src='" . $imagePath . "'></td>";
-	    $content .= "<td><a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>" . $subtitle . "</br>" . strip_tags($text) . "</td></tr>";
+	    	$content .= $imagePath;
+	    $content .= "<td style='margin-top: 0; vertical-align: top;'>" . $title . $subtitle . "</br>" . strip_tags($text, "<br><i>") . "</td></tr>";
 	}
 	
 	$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
@@ -1196,15 +1243,15 @@ class content
     		}
 	    }
 	}
-	if ($request == "users_items")
+	if ($request == "user_items")
 	{
 	    if (isset($_GET["table"]) and isset($_GET["id"]))
 	    {
 		$table = $_GET["table"];
 		$id = $_GET["id"];
-		$query = "SELECT * FROM ".$table." WHERE user_id = ".$id;
+		$query = "SELECT * FROM ".$table." WHERE user_id = ".$id." ORDER BY posted DESC";
 		$result = db::executeQuery($query);
-		echo content::create_list($result, $table);
+		echo content::create_list($result, $table, 15, $id);
 	    }
 	}
 	//user follows

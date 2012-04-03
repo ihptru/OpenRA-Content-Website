@@ -21,13 +21,12 @@ class lang
 "sign in"		=> 'sign in',
 
 //menu:
-"maps"			=> 'Maps',
-"units"			=> 'Units',
-"guides"		=> 'Guides',
-"about"			=> 'About',
-"profile"		=> 'Profile',
-"logout"		=> 'Logout',
-"replays"		=> 'Replays',
+"maps"			=> 'maps',
+"units"			=> 'mnits',
+"guides"		=> 'muides',
+"profile"		=> 'profile',
+"logout"		=> 'logout',
+"replays"		=> 'replays',
 
 "registration"		=> 'Registration',
 "password security"	=> 'Password security',

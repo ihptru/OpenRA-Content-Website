@@ -276,15 +276,15 @@ class profile
 	    }
 
 	    $result = db::executeQuery("
-		SELECT 'Total amount of maps' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = " . $usr["uid"] . "
+		SELECT 'Total amount of <u>maps</u>' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = " . $usr["uid"] . "
 		UNION
-		SELECT 'Total amount of units' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = ". $usr["uid"] . "
+		SELECT 'Total amount of <u>units</u>' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = ". $usr["uid"] . "
 		UNION
-		SELECT 'Total amount of guides' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
+		SELECT 'Total amount of <u>guides</u>' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
 		UNION
-		SELECT 'Total favorited items' as item, count(*) AS amount, 'fav_item' AS table_name FROM fav_item WHERE user_id = ". $usr["uid"] . "
+		SELECT 'Total <u>favorited</u> items' as item, count(*) AS amount, 'fav_item' AS table_name FROM fav_item WHERE user_id = ". $usr["uid"] . "
 		UNION
-		SELECT 'Total amount of comments' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
+		SELECT 'Total amount of <u>comments</u>' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
 	    ");
 	    if (db::num_rows($result) > 0) {
 		$data = array();
@@ -296,35 +296,7 @@ class profile
 		    }
 		    else
 		    {
-			if($row["table_name"] == "fav_item")
-			{
-			    $params = "\"data\":\"".pages::serialize_array($fav_data)."\"";
-			    $params .= ",\"columns\":\"2\"";
-			    $params .= ",\"name\":\"favorite items\"";
-			    $params .= ",\"maxItemsPerPage\":\"10\"";
-			    $params .= ",\"header\":\"1\"";
-			    $params .= ",\"use_pages\":\"1\"";
-			    $amount = "<a href='javascript:post_to_url(\"?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
-			}
-			else if($row["table_name"] == "comments")
-			{
-			    $comment_result = db::executeQuery("SELECT * FROM comments WHERE user_id = ".$usr["uid"]);
-			    $comment_data = array();
-			    array_push($comment_data,$usr["login"]."'s comments:");
-			    while($comment = db::nextRowFromQuery($comment_result))
-			    {
-				array_push($comment_data,stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))));
-			    }
-			    $params = "\"data\":\"".pages::serialize_array($comment_data)."\"";
-			    $params .= ",\"columns\":\"1\"";
-			    $params .= ",\"name\":\"comment items\"";
-			    $params .= ",\"maxItemsPerPage\":\"10\"";
-			    $params .= ",\"header\":\"1\"";
-			    $params .= ",\"use_pages\":\"1\"";
-			    $amount = "<a href='javascript:post_to_url(\"?p=dynamic\",{".$params."});'>".$row["amount"]."</a>";
-			}
-			else
-			    $amount = "<a href='?action=users_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
+			$amount = "<a href='?action=user_items&table=".$row["table_name"]."&id=".$self."'>".$row["amount"]."</a>";
 		    }
 		    array_push($data,$row["item"],$amount);
 		}
