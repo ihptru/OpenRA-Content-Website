@@ -26,7 +26,7 @@ content::head();
 		SELECT
 		    table_name,
 		    table_id,
-		    'people' as type
+		    'peoples' as type
 		FROM fav_item
 		    WHERE table_name <> 'articles'
 		    GROUP BY table_name,table_id
@@ -87,6 +87,13 @@ content::head();
 		    uid AS table_id,
 		    'new_unit' AS type
 		FROM (SELECT * FROM units ORDER BY posted DESC LIMIT 1) AS tunits
+		UNION ALL
+		-- new replay
+		SELECT
+		    'replays' AS table_name,
+		    uid AS table_id,
+		    'new_replay' AS type
+		FROM (SELECT * FROM replays ORDER BY posted DESC LIMIT 1) AS treplays
 
 		ORDER BY RAND() LIMIT 1
 	    ";

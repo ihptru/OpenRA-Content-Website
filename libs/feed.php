@@ -83,6 +83,18 @@ while($row = db::nextRowFromQuery($result))
 	    case "units":
 		$desc .= $row_info['description']."&lt;br />Type: ".$row_info['type'];
 		break;
+	    case "replays":
+		$query = "SELECT * FROM replay_players WHERE id_replays = ".$row_info["uid"]." ORDER BY team";
+		$res_players = db::executeQuery($query);
+		$players = "";
+		while ($inner_row = db::nextRowFromQuery($res_players))
+		{
+		    $players .= $inner_row["name"] . ", ";
+		}
+		if ($players != "")
+		    $players = "Players: ".rtrim($players,", ");
+		$desc .= "Version: ".$row_info["version"]."&lt;br />Mods: ".$row_info["mods"]."&lt;br />Server name: ".$row_info["server_name"]."&lt;br />".$players;
+		break;
 	}
     }
     $content .= $desc;

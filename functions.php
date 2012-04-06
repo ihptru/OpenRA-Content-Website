@@ -189,6 +189,7 @@ class upload
 			'1' => "Error's while uploading replay, contact administrator",
 			'2' => "Incorrect options",
 			'3' => "StartGame point is not detected",
+			'4' => "You already have this replay uploaded",
 		    );
 		    return $codes[$code];
 		}
@@ -197,6 +198,7 @@ class upload
 		// 1  -  Other errors
 		// 2  -  Incorrect options
 		// 3  -  StartGame point is not detected
+		// 4  -  User already has an identical replay uploaded
 		if ($return_code == 0)
 		{
 		    misc::increase_experiance(10);
@@ -205,8 +207,7 @@ class upload
 		    if (isset($_POST["description"]))
 			db::executeQuery("UPDATE replays SET description = ? WHERE user_id = ? AND uid = ?", array($_POST["description"], $user_id, $row["uid"]));
 		}
-		//return code_match($return_code);
-		return $output;
+		return code_match($return_code);
 	    }
 	    else
 	    {
@@ -452,6 +453,8 @@ class misc
 		    $path = WEBSITE_PATH . $db_data['path'];
 		}
 		unlink($path);
+		$query = "DELETE FROM replay_players WHERE id_replays = ?";
+		db::executeQuery($query, array($item_id));
 	    }
 
 	    //remove item from DB

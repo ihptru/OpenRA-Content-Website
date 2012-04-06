@@ -282,6 +282,8 @@ class profile
 		UNION
 		SELECT 'Total amount of <u>guides</u>' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
 		UNION
+		SELECT 'Total amount of <u>replays</u>' as item, count(*) AS amount, 'replays' AS table_name FROM replays WHERE user_id = ".$usr["uid"] . "
+		UNION
 		SELECT 'Total <u>favorited</u> items' as item, count(*) AS amount, 'fav_item' AS table_name FROM fav_item WHERE user_id = ". $usr["uid"] . "
 		UNION
 		SELECT 'Total amount of <u>comments</u>' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
@@ -442,7 +444,7 @@ class profile
 	$query = "SELECT COUNT(*) AS count FROM replays WHERE user_id = ".user::uid();
 	$row = db::nextRowFromQuery(db::executeQuery($query));
 	$can_upload = 50 - (int)$row["count"];
-	echo "<h4>You can upload ".(string)$can_upload." more replays!</h4><br />";
+	echo "<h4>You can upload ".(string)$can_upload." more replays!</h4><br /><p><i>version 2012-0315 and newer only supported</i></p>";
 	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
 		<label>Replay (.rep): <input type='file' size='30' name='replay_upload' /></label>
 		<br />
@@ -453,9 +455,18 @@ class profile
             
 	$username = user::username();
 	$uploaded = upload::upload_replay($username, user::uid());
-	foreach ($uploaded as $value)
+	if ($uploaded != "")
 	{
-	    echo $value."<br>";
+	    if ($uploaded == "0")
+	    {
+		$query = "SELECT uid FROM replays WHERE user_id = ".user::uid()."
+			    ORDER BY posted DESC LIMIT 1
+		";
+		$row = db::nextRowFromQuery(db::executeQuery($query));
+		echo "<table><tr><th>Successfully uploaded! (<a href='?p=detail&table=replays&id=".$row["uid"]."'>check replay's page</a>)</th></tr></table>";
+		return;
+	    }
+	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
 	}
     }
 

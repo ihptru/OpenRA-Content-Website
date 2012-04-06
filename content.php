@@ -292,27 +292,25 @@ class content
 		    $text = "";
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    break;
+		case "replays":
+		    $title = $row["title"];
+		    $subtitle = misc::lang("featured posted", array("replay", $row["posted"], "<a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>")) . $comments;
+		    $query = "SELECT * FROM replay_players WHERE id_replays = ".$row["uid"]." ORDER BY team";
+		    $res_players = db::executeQuery($query);
+		    $players = "";
+		    while ($inner_row = db::nextRowFromQuery($res_players))
+		    {
+			$players .= $inner_row["name"] . ", ";
+		    }
+		    if ($players != "")
+		    $players = "Players: ".rtrim($players,", ");
+		    $text = "Version: ".$row["version"]."<br />Mods: ".$row["mods"]."<br />Server name: ".$row["server_name"]."<br />".$players;
+		    $imagePath = "images/replay.png";
+		    break;
 	    }
-	    //Should get these from db
+	    
 	    $content .= "<div id='featured-block' class='clear'>";
-	    if($t=="featured")
-              	$content .= "<div id='featured-ribbon'></div>";
-	    else if($t=="people")
-		$content .= "<div id='peoples-ribbon'></div>";
-	    else if($t=="editors")
-               	$content .= "<div id='editors-ribbon'></div>";
-	    else if($t=="played")
-		$content .= "<div id='played-ribbon'></div>";
-	    else if($t=="discussed")
-		$content .= "<div id='discussed-ribbon'></div>";
-	    else if($t=="new_map")
-		$content .= "<div id='new_map-ribbon'></div>";
-	    else if($t=="new_guide")
-		$content .= "<div id='new_guide-ribbon'></div>";
-	    else if($t=="new_unit")
-		$content .= "<div id='new_unit-ribbon'></div>";
-	    else
-               	$content .= "<div id='featured-ribbon'></div>";
+	    $content .= "<div id='featured-ribbon' style='background: url(../images/".$t."-ribbon.png) no-repeat;'></div>";
 
 	    if(strlen($imagePath) > 0)
 	    {
@@ -324,7 +322,7 @@ class content
 	    $content .= "<div class='text-block'>";
 	    $content .= "<h2>" . strip_tags($title) . "</h2>";
 	    $content .= "<p class='post-info'>" . $subtitle . "</p>";
-	    $content .= "<p>" . strip_tags($text) . "</p>";
+	    $content .= "<p>" . strip_tags($text, "<br>") . "</p>";
 	    $content .= "<p><a href='?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' class='more-link'>".misc::lang("read more")."</a></p>";
 	    $content .= "</div>";
 	    $content .= "</div>";
@@ -333,11 +331,9 @@ class content
 	return $content;
     }
 
-    public static function create_grid($result, $table = "maps", $current_id = 0)
+    public static function create_grid($result, $table = "maps", $current_id=0, $columns=4, $rows=4)
     {
 	//Setup
-	$columns = 4;	//Amount of columns
-	$rows = 4;	//Amount of rows (before starting paging)
 	$counter = 0;
 	$columns--;
 	$maxItemsPerPage = ($columns+1) * $rows;
@@ -378,6 +374,10 @@ class content
 		    $title = $row["title"];
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    break;
+		case "replays":
+		    $title = $row["title"]."</a> by <a>".user::login_by_uid($row["user_id"]);
+		    $imagePath = "images/replay.png";
+		    break;
 	    }
 
 	    if($counter == 0)
@@ -400,7 +400,7 @@ class content
 	    	$content .= "<img src='" . $imagePath . "' style='max-height:96px;max-width:96px;'>";
 	    $content .= "</br>" . strip_tags($title) . $span_additional_info . "</a></td>";
 
-	    if($counter > 2)
+	    if($counter > $columns - 1)
 	    {
 		$content .= "</tr>";
 		$counter = -1;
@@ -504,6 +504,29 @@ class content
 		    $imagePath = "<td><a href='?p=detail&table=guides&id=".$row["uid"]."'><img src='images/guide_" . $row["guide_type"] . ".png'></a></td>";
 		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
+		    break;
+		case "replays":
+		    $title = $row["title"];
+		    $title = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>";
+		    $query = "SELECT maphash,path FROM maps WHERE maphash = '".$row["maphash"]."' GROUP BY maphash";
+		    $res = db::executeQuery($query);
+		    $path = "";
+		    while ($inner_row = db::nextRowFromQuery($res))
+		    {
+			$path = $inner_row["path"];
+		    }
+		    $imagePath = "<td><img src='" . misc::minimap($path) . "'></td>";
+		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
+		    $query = "SELECT * FROM replay_players WHERE id_replays = ".$row["uid"]." ORDER BY team";
+		    $res_players = db::executeQuery($query);
+		    $players = "";
+		    while ($inner_row = db::nextRowFromQuery($res_players))
+		    {
+			$players .= $inner_row["name"] . ", ";
+		    }
+		    if ($players != "")
+			$players = "Players: ".rtrim($players,", ");
+		    $text = "<br />Version: ".$row["version"]."<br />Mods: ".$row["mods"]."<br />Server name: ".$row["server_name"]."<br />".$players;
 		    break;
 		case "articles":
 		    $title = $row["title"];
@@ -729,6 +752,37 @@ class content
 		    $content .= "</div>";
 		    return $content;
 		    break;
+		case "replays":
+		    $add_description = "";
+		    $desc_edit = "";
+		    if ($row["description"] != "")
+		    {
+			if ($row["user_id"] == user::uid())
+			    $desc_edit = "<a style='float:right;' href='?p=detail&table=replays&id=".$row["uid"]."&edit_replay_info'>edit</a>";
+			if (isset($_GET["edit_replay_info"]) and user::uid() == $row["user_id"])
+			    $text_desc = "<form method=POST><input type='text' name='add_replay_info' value='".$row["description"]."'><input type='hidden' name='replay_id' value='".$row["uid"]."'> <input type='submit' value='submit'></form>";
+		    }
+		    else
+		    {
+			if ($row["user_id"] == user::uid())
+			{
+			    $add_description = "<a style='float:right;padding-left: 7px;' href='?p=detail&table=replays&id=".$row["uid"]."&add_replay_info'>add description</a>";
+			    if (isset($_GET["add_replay_info"]))
+				$text_desc = "<form method=POST><input type='text' name='add_replay_info'><input type='hidden' name='replay_id' value='".$row["uid"]."'> <input type='submit' value='submit'></form>";
+			}
+		    }
+		    $title = "Replay: <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>   $add_description</td></tr><tr>";
+		    $subtitle = $title . "<td>Posted at <i>" . $row["posted"] . "</i> by <a href='?profile=".$row["user_id"]."'>" . $user_name . "</a>";
+		    $text = "";
+		    if (isset($text_desc))
+			$description = "<tr><td>".$text_desc."</td></tr>";
+		    else
+		    {
+			$description = "";
+			if ($row["description"] != "")
+			    $description = "<tr><td>Description: " . str_replace("\r\n", "<br />", $row["description"]) . $desc_edit . "</td></tr>";
+		    }
+		    break;
 	    }
 	     
 	    $content .= "<table>";
@@ -791,6 +845,40 @@ class content
 		    $content .= "<br><a href='".$shape."'>".basename($shape)."</a>";
 		}
 		$content .= "</td></tr>";
+	    }
+	    else if ($table == "replays")
+	    {
+		$content .= $description;
+		$content .= "<tr><td>Version: " . $row["version"] . "</td></tr>";
+		$content .= "<tr><td>Mods: " . $row["mods"] . "</td></tr>";
+		$content .= "<tr><td>Server name: " . $row["server_name"] . "</td></tr>";
+		
+		$query = "SELECT * FROM maps WHERE maphash = '".$row["maphash"]."' GROUP BY maphash";
+		$result = db::executeQuery($query);
+		while ($inner_row = db::nextRowFromQuery($result))
+		{
+		    $content .= "<tr><td>Played on map: <a href='?p=detail&table=maps&id=".$inner_row["uid"]."'>" . misc::item_title_by_uid($inner_row["uid"], "maps") . "</a>";
+		    $content .= "<br /><br /><center><a href='?p=detail&table=maps&id=".$inner_row["uid"]."'><img src='".misc::minimap($inner_row["path"])."'></a></center></td></tr>";
+		}
+		$query = "SELECT * FROM replay_players WHERE id_replays = ".$row["uid"]." ORDER BY team";
+		$result = db::executeQuery($query);
+		
+		if (db::num_rows($result) != 0)
+		    $content .= "<tr><td><table align='center'>";
+		$i = 0;
+		$team = -1;
+		while ($inner_row = db::nextRowFromQuery($result))
+		{
+		    if (($team != $inner_row["team"] and $i != 0) or ($team == 0 and $i != 0))
+			$content .= "</table><table align='center'><tr><td> vs </td></tr></table><table align='center'>";
+		    $content .= "<tr><td><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$inner_row["country"].".png'> ".$inner_row["name"]."</td></tr>";
+		    $team = $inner_row["team"];
+		    $i++;
+		}
+		
+		if (db::num_rows($result) != 0)
+		    $content .= "</table></td></tr>";
+		$content .= "<tr><td><a href='".$row["path"]."'>Download</a></tr></td>";
 	    }
 	     
 	    if ($delete != "")
@@ -982,7 +1070,7 @@ class content
 		    $params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
 		    $params .= ",\"header\":\"".$header."\"";
 		    $params .= ",\"use_pages\":\"1\"";
-		    $content .= "<tr><td colspan='".$columns."'><a href='javascript:post_to_url(\"?p=dynamic\",{".$params."});'>".misc::lang("show more")." ".$name."</a></td></tr>";
+		    $content .= "<tr><td colspan='".$columns."'><a href='javascript:post_to_url(\"?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
 		}
 		$content .= "</table>";
 		$params = "";
@@ -1072,9 +1160,9 @@ class content
 	{
 	    objects::guides();
 	}
-	elseif ($page == "about")
+	elseif ($page == "replays")
 	{
-	    objects::about();
+	    objects::replays();
 	}
 	elseif ($page == "edit_item")
 	{
@@ -1147,7 +1235,7 @@ class content
 		return;
 	    profile::upload_guide();
 	    echo "<br /><br /><div class='sidemenu'><ul><li>".misc::lang("your guides").":</li></ul></div>";
-	    $result = db::executeQuery( "SELECT * FROM guides WHERE user_id = ".user::uid() );
+	    $result = db::executeQuery( "SELECT * FROM guides WHERE user_id = ".user::uid()." ORDER BY posted DESC" );
 	    $output = content::create_grid($result, "guides");
 	    if ($output == "")
 	    {
@@ -1161,7 +1249,7 @@ class content
 		return;
 	    profile::upload_unit();
 	    echo "<br /><br /><div class='sidemenu'><ul><li>".misc::lang("your units").":</li></ul></div>";
-	    $result = db::executeQuery("SELECT * FROM units WHERE user_id = ".user::uid());
+	    $result = db::executeQuery("SELECT * FROM units WHERE user_id = ".user::uid()." ORDER BY posted DESC");
 	    $output = content::create_grid($result, "units");
 	    if ($output == "")
 	    {
@@ -1174,6 +1262,31 @@ class content
 	    if (!user::online())
 		return;
 	    profile::upload_replay();
+	    echo "<br /><br /><div class='sidemenu'><ul><li>Your replays:</li></ul></div>";
+	    
+	    list($order_by, $my_items) = content::replay_filters("no_show_my_content_filter");
+	    
+	    $my = "";
+	
+	    $field_lc = "";
+	    $ljoin_lc = "";
+	    if ($order_by == "lately_commented")
+	    {
+		$order_by = "comment_posted DESC";
+		$field_lc = ", c.posted AS comment_posted";
+		$ljoin_lc = "LEFT JOIN comments AS c on c.table_id = r.uid";
+	    }
+	    if ($my_items == true)
+		$my = " WHERE r.user_id = ".user::uid()." ";
+	    $query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." ".$my." ORDER BY ".$order_by;
+	    
+	    $result = db::executeQuery($query);
+	    $output = content::create_grid($result,"replays",0,3,4);
+	    if ($output == "")
+	    {
+		echo "<table><tr><th>No replays uploaded yet</th></tr></table>";
+	    }
+	    echo "<br />" . $output;
 	}
 	if ($request == "versions")
 	{
@@ -1356,6 +1469,62 @@ class content
 	}
     }
     
+    public static function replay_filters($my_content="")
+    {
+	$my_items = false;
+	$my_checked = "";
+	$sort_by = "latest";
+	if (isset($_POST["apply_filter"]))
+	{
+	    $sort_by = $_POST["sort"];
+	    if (isset($_POST["replay_my_items"]))
+		$my_items = true;
+	}
+	elseif (isset($_COOKIE["replay_sort_by"]))
+	{
+	    $sort_by = $_COOKIE["replay_sort_by"];
+	    if (isset($_COOKIE["replay_my_items"]))
+	    {
+		$my_items = true;
+		$my_checked = "checked";
+	    }
+	}
+	$checkbox = "";
+	if ($my_content == "" and user::online())
+	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='replay_my_items' ".$my_checked." title='".misc::lang("only my content")."'><label style='float:right; margin-top: 12px; margin-right: 5px;'>".misc::lang("only my content")."</label>";
+	//filters
+	echo "<form name='replay_filters' method=POST action=''><table style='width:560px;'><tr><th>".misc::lang("sort by").":</th></tr><tr>";
+	echo "<td>";
+	echo "<select name='sort' id='sort'>";
+	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">".misc::lang("latest first")."</option>";
+	echo "<option value='date' ".misc::option_selected("date",$sort_by).">".misc::lang("date")."</option>";
+	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">".misc::lang("title")."</option>";
+	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">".misc::lang("title in reverse")."</option>";
+	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">".misc::lang("lately_commented")."</option>";
+    	echo "</select><br />";
+	echo "</td>";
+	echo "</select><br />";
+	echo "</td>";
+	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='".misc::lang("apply filters")."'>
+	    ".$checkbox."
+	    <input type='hidden' name='apply_filter_type' value='replay'>
+	    </div></form><br><br>
+	";
+	// order by
+	if ($sort_by == "latest")
+	    $order_by = "posted DESC";
+	elseif ($sort_by == "date")
+	    $order_by = "posted";
+	elseif ($sort_by == "alpha")
+	    $order_by = "title";
+	elseif ($sort_by == "alpha_reverse")
+	    $order_by = "title DESC";
+	elseif ($sort_by == "lately_commented")
+	    $order_by = $sort_by;
+	
+	return array($order_by, $my_items);
+    }
+
     public static function guide_unit_filters($arg)
     {
 	$my_items = false;
@@ -1639,9 +1808,28 @@ class objects
 	echo content::create_grid($result,"guides");
     }
     
-    public static function about()
+    public static function replays()
     {
-	echo "<h3>".ucfirst(misc::lang("about"))."!</h3>";
+	echo "<h3>Replays!</h3>";
+	
+	list($order_by, $my_items) = content::replay_filters();
+	    
+	$my = "";
+
+	$field_lc = "";
+	$ljoin_lc = "";
+	if ($order_by == "lately_commented")
+	{
+	    $order_by = "comment_posted DESC";
+	    $field_lc = ", c.posted AS comment_posted";
+	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = r.uid";
+	}
+	if ($my_items == true)
+	    $my = " WHERE r.user_id = ".user::uid()." ";
+	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." ".$my." ORDER BY ".$order_by;
+	
+	$result = db::executeQuery($query);
+	echo content::create_grid($result,"replays",0,3,4);
     }
     
     public static function dynamic()

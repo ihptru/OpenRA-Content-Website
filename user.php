@@ -154,6 +154,12 @@ class user
 		    if (isset($_COOKIE["guide_my_items"]))
 			setcookie("guide_my_items", "", time()-60*60, "/");
 		}
+		if (isset($_COOKIE["replay_sort_by"]))
+		{
+		    setcookie("replay_sort_by", "", time()-60*60, "/");
+		    if (isset($_COOKIE["replay_my_items"]))
+			setcookie("replay_my_items", "", time()-60*60, "/");
+		}
 		
 		//remove from db
 		$query = "DELETE FROM signed_in WHERE user_id = ".user::uid();

@@ -12,7 +12,7 @@ class header
 	header::delete_item();
 	header::apply_filter();
 	header::following();
-	header::edit_map();
+	header::edit_item_info();
     }
 
     public static function pageTitle()
@@ -218,6 +218,23 @@ class header
 		}
 		header("Location: /?current_grid_page_maps=1".$gets);
 	    }
+	    else if ($_POST["apply_filter_type"] == "replay")
+	    {
+		setcookie("replay_sort_by", $_POST["sort"], time()+3600*24*360, "/");
+		if (isset($_POST["replay_my_items"]) and user::online())
+		    setcookie("replay_my_items", "1", time()+3600*24*360, "/");
+		else
+		    if (isset($_COOKIE["replay_my_items"]) and user::online())
+			setcookie("replay_my_items", "", time()-60*60, "/");
+		$keys = array_keys($_GET);
+		$gets = "";
+		foreach($keys as $key)
+		{
+		    if($key != "current_grid_page_replays")
+			$gets .= "&" . $key . "=" . $_GET[$key];
+		}
+		header("Location: /?current_grid_page_replays=1".$gets);
+	    }
 	    else
 	    {
 		$arg = $_POST["apply_filter_type"];
@@ -293,7 +310,7 @@ class header
 	}
     }
     
-    public static function edit_map()
+    public static function edit_item_info()
     {
 	if (isset($_POST['add_map_info']))
 	{
@@ -301,6 +318,13 @@ class header
 	    $query = "UPDATE maps SET additional_desc = ? WHERE uid = ?";
 	    db::executeQuery($query, array(trim($_POST['add_map_info']), $map_id));
 	    header("Location: /?p=detail&table=maps&id=".$map_id);
+	}
+	if (isset($_POST['add_replay_info']))
+	{
+	    $replay_id = $_POST['replay_id'];
+	    $query = "UPDATE replays SET description = ? WHERE uid = ?";
+	    db::executeQuery($query, array(trim($_POST['add_replay_info']), $replay_id));
+	    header("Location: /?p=detail&table=replays&id=".$replay_id);
 	}
     }
 }

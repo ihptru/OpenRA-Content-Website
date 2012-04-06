@@ -62,8 +62,6 @@ h = hashlib.sha1()
 h.update(concat_bytes)
 hash = h.hexdigest()
 
-yamlTemp = yamlData;
-
 MapMod = "";
 MapTitle = "";
 MapAuthor = "";

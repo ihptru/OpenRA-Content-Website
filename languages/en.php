@@ -27,6 +27,8 @@ class lang
 "profile"		=> 'profile',
 "logout"		=> 'logout',
 "replays"		=> 'replays',
+"replay"		=> 'replay',
+"article"		=> 'article',
 
 "registration"		=> 'Registration',
 "password security"	=> 'Password security',
