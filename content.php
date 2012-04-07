@@ -1012,25 +1012,28 @@ class content
 	}
 	$content .= "</ol>";
 	
-	$nrOfPages = floor(($comments-0.01) / $maxItemsPerPage) + 1;
-	$gets = "";
-	$pages = "<table><tr><td>";
-	$keys = array_keys($_GET);
-	foreach($keys as $key)
-	    if($key != "current_comment_page_".$table)
-		$gets .= "&" . $key . "=" . $_GET[$key];
-	for($i = 1; $i < $nrOfPages+1; $i++)
+	if ($comments != 0)
 	{
-	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "", "comment", $pointer);
+	    $nrOfPages = floor(($comments-0.01) / $maxItemsPerPage) + 1;
+	    $gets = "";
+	    $pages = "<table><tr><td>";
+	    $keys = array_keys($_GET);
+	    foreach($keys as $key)
+		if($key != "current_comment_page_".$table)
+		    $gets .= "&" . $key . "=" . $_GET[$key];
+	    for($i = 1; $i < $nrOfPages+1; $i++)
+	    {
+		$pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "", "comment", $pointer);
+	    }
+	    $pages .= "</td></tr></table>";
+	    
+	    if ($nrOfPages == 1)
+		$pages = "";
+	    
+	    $content .= "</table>";
+	    $pages = preg_replace("/(\.\.\.)+/", " ... ", $pages);
+	    $content .= $pages;
 	}
-	$pages .= "</td></tr></table>";
-	
-	if ($nrOfPages == 1)
-	    $pages = "";
-	
-	$content .= "</table>";
-	$pages = preg_replace("/(\.\.\.)+/", " ... ", $pages);
-	$content .= $pages;
 	return $content;
     }
 
