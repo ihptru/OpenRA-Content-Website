@@ -952,11 +952,28 @@ class content
 	$content = "";
 	$comment_page_id = 0;
 
+	$content .= "<a name='comments'></a>";
+	$pointer = "#comments";
+	$table = "";
+	$maxItemsPerPage = 15;
+	if(isset($_GET["current_comment_page_".$table]))
+		$current = $_GET["current_comment_page_".$table];
+	else
+		$current = 1;
+
 	$comments = db::num_rows($result);
 	$content .= "<h3 id='comments'>" . $comments . " ".misc::lang("responses")."</h3>";
 	$content .= "<ol class='commentlist'>";
+	$i = 0;
 	while ($comment = db::nextRowFromQuery($result))
 	{
+	    if( !($i >= ($current-1) * $maxItemsPerPage && $i < $current * $maxItemsPerPage ) )
+	    {
+		$i++;
+		continue;
+	    }
+	    $i++;
+
 	    $counter++;
 	    $comment_page_id++;
 	    $res = db::executeQuery("SELECT * FROM users WHERE uid = " . $comment["user_id"]);
@@ -984,7 +1001,7 @@ class content
 	    $content .= "<p>" . stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
-		$content .= "<a style='float: right; margin: -130px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"".misc::lang("delete comment")."\")' title='".misc::lang("delete")."'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
+		$content .= "<a style='float: right; margin: -142px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"".misc::lang("delete comment")."\")' title='".misc::lang("delete")."'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
 	    }
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; // << need correct page
@@ -994,6 +1011,26 @@ class content
 	    $content .= "</li>";
 	}
 	$content .= "</ol>";
+	
+	$nrOfPages = floor(($comments-0.01) / $maxItemsPerPage) + 1;
+	$gets = "";
+	$pages = "<table><tr><td>";
+	$keys = array_keys($_GET);
+	foreach($keys as $key)
+	    if($key != "current_comment_page_".$table)
+		$gets .= "&" . $key . "=" . $_GET[$key];
+	for($i = 1; $i < $nrOfPages+1; $i++)
+	{
+	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "", "comment", $pointer);
+	}
+	$pages .= "</td></tr></table>";
+	
+	if ($nrOfPages == 1)
+	    $pages = "";
+	
+	$content .= "</table>";
+	$pages = preg_replace("/(\.\.\.)+/", " ... ", $pages);
+	$content .= $pages;
 	return $content;
     }
 
