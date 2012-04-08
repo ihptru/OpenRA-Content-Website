@@ -442,13 +442,9 @@ class user
     
     public static function login_by_uid($uid)
     {
-	$id = -1;
 	$query = "SELECT login FROM users WHERE uid = ".$uid;
-	while ($row = db::nextRowFromQuery(db::executeQuery($query)))
-	{
-	    $id = $row["login"];
-	}
-	return $id;
+	$row = db::nextRowFromQuery(db::executeQuery($query));
+	return $row["login"];
     }
 }
 
