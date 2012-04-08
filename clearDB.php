@@ -6,10 +6,7 @@ if ( php_sapi_name() != "cli" )
 
 include_once "settings.php";
 
-if ( $use_db == 'mysql' )
-    include_once("db_mysql.php");
-elseif ( $use_db == 'pgsql' )
-    include_once("db_pgsql.php");
+include_once("db_mysql.php");
 
 db::connect();
 db::clearOldRecords();

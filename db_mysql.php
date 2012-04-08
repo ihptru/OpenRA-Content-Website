@@ -42,8 +42,6 @@
 	// is for cron
         public static function clearOldRecords()
         {
-            $query = "DELETE FROM activation WHERE TIMESTAMPDIFF(DAY, register_date, CURRENT_TIMESTAMP) > 30"; //one month
-            db::executeQuery($query);
 	    $query = "DELETE FROM recover WHERE TIMESTAMPDIFF(DAY, date_time, CURRENT_TIMESTAMP) > 30";
             db::executeQuery($query);
 	    //user set `remember me` but did not return to the website during the reported period, everything is expired, remove record from DB
@@ -54,29 +52,21 @@
 	// run function if at least one of the tables do not exist
         public static function setup()
         {
-	    $query = "CREATE TABLE IF NOT EXISTS activation (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-			    pass VARCHAR(80) NOT NULL,
-			    login VARCHAR(80) NOT NULL,
-			    email VARCHAR(80) NOT NULL,
-			    register_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			    hash VARCHAR(500) NOT NULL);";
-	    db::executeQuery($query);
-
 	    $query = "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    pass VARCHAR(80) NOT NULL,
 			    login VARCHAR(80) NOT NULL,
 			    experiance INTEGER NOT NULL DEFAULT 0,
 			    gender INTEGER NOT NULL DEFAULT 1,
 			    permission INTEGER NOT NULL DEFAULT 0,
-			    occupation VARCHAR(80) NOT NULL,
-			    interests VARCHAR(500) NOT NULL,
-			    real_name VARCHAR(200) NOT NULL,
+			    occupation VARCHAR(80),
+			    interests VARCHAR(500),
+			    real_name VARCHAR(200),
 			    fav_faction VARCHAR(80) NOT NULL DEFAULT 'random',
 			    country VARCHAR(200) NOT NULL DEFAULT 'None',
 			    birth_date DATE,
 			    email VARCHAR(80) NOT NULL,
 			    avatar VARCHAR(500) NOT NULL DEFAULT 'None',
-			    register_date TIMESTAMP NOT NULL);";
+			    register_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
 	    $query = "CREATE TABLE IF NOT EXISTS signed_in (user_id INTEGER PRIMARY KEY NOT NULL,
@@ -388,7 +378,7 @@
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("reported","rated","trophy","activation","users","maps","articles","units","guides","featured","comments","recover","screenshot_group","country","fav_item","signed_in","event_log","following","map_stats","pm");
+	    $tables = array("reported","rated","trophy","users","maps","articles","units","guides","featured","comments","recover","screenshot_group","country","fav_item","signed_in","event_log","following","map_stats","pm");
 	    
 	    foreach ($tables as $table)
 	    {

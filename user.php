@@ -242,128 +242,74 @@ class user
 	}
     }
 
-    // is always executed to check register or activation action
+    // is always executed to check register action
     public static function register_actions()
     {
-	if(isset($_GET['key']))
-	{
-	    $query = "SELECT hash FROM activation WHERE hash = '".$_GET['key']."'";
-	    if (db::num_rows(db::executeQuery($query)) == 0)
-	    {
-		echo lang::$lang['activation error'];
-	    }
-	    else
-	    {
-		$query = "SELECT email,pass,login,register_date FROM activation WHERE hash = '".$_GET['key']."'";
-		$result = db::executeQuery($query);
-		while ($db_data = db::fetch_array($result))
-		{
-		    $email = $db_data['email'];
-		    $pass = $db_data['pass'];
-		    $login = $db_data['login'];
-		    $date = $db_data['register_date'];
-		}
-		$query = "INSERT INTO users
-			(email,pass,login,register_date)
-			VALUES
-			(?,?,?,?)
-		;";
-		db::executeQuery($query, array($email, $pass, $login, $date));
-		$query = "DELETE FROM activation WHERE hash = ?";
-		db::executeQuery($query, array($_GET['key']));
-		echo "$login: ".lang::$lang['activated'];
-
-		user::prepare_account($login);
-	    }
-	}
-	elseif(isset($_POST['act']))
-	{
-	    require_once('libs/recaptchalib.php');
-	    $privatekey = "6Ldq-soSAAAAAJnSn1-Gi9CBbuFQ3O-SLw1f0scW";
-	    $resp = recaptcha_check_answer ($privatekey,
-                                $_SERVER["REMOTE_ADDR"],
-                                $_POST["recaptcha_challenge_field"],
-                                $_POST["recaptcha_response_field"]);
-
-	    if (!$resp->is_valid)
-	    {
-		// What happens when the CAPTCHA was entered incorrectly
-		echo "The reCAPTCHA wasn't entered correctly. Go back and try it again." .
-		"(reCAPTCHA said: " . $resp->error . ")";
-		content::create_register_form();
-	    }
-	    else
-	    {
-		if(!empty($_POST['rlogin']) && !empty($_POST['rpass']) && !empty($_POST['verpass']) && !empty($_POST['email'])) 
-		{
-		    if ($_POST['rpass'] == $_POST['verpass'])
-		    {
-			$query = "SELECT email FROM users WHERE email = '".$_POST['email']."'";
-			if (db::num_rows(db::executeQuery($query)) == 0)
-			{
-			    $query = "SELECT login FROM users WHERE login = '".$_POST['rlogin']."'";
-			    if (db::num_rows(db::executeQuery($query)) == 0)
-			    {
-				if ( strpos($_POST['email'], '@') )
-				{
-				    $already_requested = false;
-				    $query = "SELECT login FROM activation WHERE login = '".$_POST['rlogin']."'";
-				    if (db::num_rows(db::executeQuery($query)) != 0)
-				    {
-					$already_requested = true;
-				    }
-				    $query = "SELECT email FROM activation WHERE email = '".$_POST['email']."'";
-				    if (db::num_rows(db::executeQuery($query)) != 0)
-				    {
-					$already_requested = true;
-				    }
-				    if ($already_requested == false)
-				    {
-					$query = "INSERT INTO activation
-						(email,pass,login,hash)
-						VALUES
-						(?,?,?,?)
-					;";
-					db::executeQuery($query, array($_POST['email'], md5($_POST['rpass']), $_POST['rlogin'], md5($_POST['email'])));
-					mail($_POST['email'], lang::$lang['register complete'], lang::$lang['activate'].": http://".$_SERVER['HTTP_HOST']."/?register&key=".md5($_POST['email'])."",
-					    "From: noreply@".$_SERVER['HTTP_HOST']."\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
-					echo lang::$lang['ask to activate'];
-				    }
-				    else
-				    {
-					echo lang::$lang['already requested'];
-				    }
-				}
-				else
-				{
-				    echo lang::$lang['email error'];
-				}
-			    }
-			    else
-			    {
-				echo lang::$lang['user exists'];
-			    }
-			}
-			else
-			{
-			    echo lang::$lang['email in use']; 
-			}
-		    }
-		    else
-		    {
-			echo lang::$lang['password not match']; 
-		    }
-		}
-		else
-		{
-		    echo lang::$lang['empty fields']."<br><br>";
-		    content::create_register_form();
-		}
-	    }
-	}
-	else
+	if(!isset($_POST['act']))
 	{
 	    content::create_register_form();
+	    return;
+	}
+	
+	require_once('libs/recaptchalib.php');
+	$privatekey = "6Ldq-soSAAAAAJnSn1-Gi9CBbuFQ3O-SLw1f0scW";
+	$resp = recaptcha_check_answer ($privatekey,
+			    $_SERVER["REMOTE_ADDR"],
+			    $_POST["recaptcha_challenge_field"],
+			    $_POST["recaptcha_response_field"]);
+
+	if (!$resp->is_valid)
+	{
+	    // What happens when the CAPTCHA was entered incorrectly
+	    echo "The reCAPTCHA wasn't entered correctly. Go back and try it again." .
+	    "(reCAPTCHA said: " . $resp->error . ")";
+	    content::create_register_form();
+	    return;
+	}
+	
+	if(empty($_POST['rlogin']) && empty($_POST['rpass']) && empty($_POST['verpass']) && empty($_POST['email'])) 
+	{
+	    echo lang::$lang['empty fields']."<br><br>";
+	    content::create_register_form();
+	    return;
+	}
+	
+	if ($_POST['rpass'] != $_POST['verpass'])
+	{
+	    echo lang::$lang['password not match']; 
+	    return;
+	}
+	
+	$query = "SELECT email FROM users WHERE email = '".$_POST['email']."'";
+	if (db::num_rows(db::executeQuery($query)) != 0)
+	{
+	    echo lang::$lang['email in use'];
+	    return;
+	}
+	
+	$query = "SELECT login FROM users WHERE login = '".$_POST['rlogin']."'";
+	if (db::num_rows(db::executeQuery($query)) != 0)
+	{
+	    echo lang::$lang['user exists'];
+	    return;
+	}
+
+	if ( !strpos($_POST['email'], '@') )
+	{
+	    echo lang::$lang['email error'];
+	    return;
+	}
+
+	$query = "INSERT INTO users
+		(email,pass,login)
+		VALUES
+		(?,?,?)
+	;";
+	$result = db::executeQuery($query, array($_POST['email'], md5($_POST['rpass']), $_POST['rlogin']));
+	if ($result)
+	{
+	    user::prepare_account($_POST['rlogin']);
+	    echo "Successfully registered!";
 	}
     }
 
@@ -423,8 +369,10 @@ class user
 		    (?,?,?)
 	    ";
 	    db::executeQuery($query, array($_POST['rpass_login'], $_POST['rpass_email'], md5($_POST['rpass_email'])));
-	    mail($_POST['rpass_email'], "recover password", "recover password: http://".$_SERVER['HTTP_HOST']."/?recover&recover_link=".md5($_POST['rpass_email'])."",
+	    mail($_POST['rpass_email'], "recover password", "recover password: http://".$_SERVER['HTTP_HOST']."/?recover&recover_link=".md5($_POST['rpass_email']),
 		"From: noreply@".$_SERVER['HTTP_HOST']."\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
+	    echo "Sent a mail";
+	    return;
 	}
 	elseif (isset($_POST['ruser_pass']) && isset($_POST['ruser_email']))
 	{
@@ -442,7 +390,8 @@ class user
 	    }
 	    mail($_POST['ruser_email'], "recover username", "You username: ".$user,
 		"From: noreply@".$_SERVER['HTTP_HOST']."\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
-	    header("Location: /");
+	    echo "Sent a mail";
+	    return;
 	}
 
 	if (isset($_GET['recover_link']))
@@ -480,20 +429,26 @@ class user
 		    $query = "DELETE FROM recover WHERE login = ?";
 		    db::executeQuery($query, array($user));
 		    echo lang::$lang['password updated'];
+		    echo "<script>location.href='http://".$_SERVER["HTTP_HOST"]."/'</script>";
 		}
 		else
 		{
 		    echo lang::$lang['password not match'];
 		}
 	    }
+	    return;
 	}
     }
     
     public static function login_by_uid($uid)
     {
+	$id = -1;
 	$query = "SELECT login FROM users WHERE uid = ".$uid;
-	$row = db::nextRowFromQuery(db::executeQuery($query));
-	return $row["login"];
+	while ($row = db::nextRowFromQuery(db::executeQuery($query)))
+	{
+	    $id = $row["login"];
+	}
+	return $id;
     }
 }
 
