@@ -642,6 +642,24 @@ class misc
 	else
 	    return "map_grid";
     }
+    
+    public static function send_mail($email, $subject, $body, Array $headers = array(), $additional_parameters = NULL)
+    {
+	// Make sure we set Content-Type and charset
+	if ( !isset( $headers['Content-Type'] ) )
+	{
+	    $headers['Content-Type'] = 'text/plain; charset=utf-8';
+	}
+  
+	$headers_str = '';
+	foreach( $headers as $key => $val )
+	{
+	    $headers_str .= sprintf( "%s: %s\r\n", $key, $val );
+	}
+
+	// Use mb_send_mail() function instead of mail() so that headers, including subject are properly encoded
+	return mb_send_mail( $email, $subject, $body, $headers_str, $additional_parameters );
+    }
 }
 
 ?>

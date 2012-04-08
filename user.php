@@ -369,9 +369,8 @@ class user
 		    (?,?,?)
 	    ";
 	    db::executeQuery($query, array($_POST['rpass_login'], $_POST['rpass_email'], md5($_POST['rpass_email'])));
-	    mail($_POST['rpass_email'], "recover password", "recover password: http://".$_SERVER['HTTP_HOST']."/?recover&recover_link=".md5($_POST['rpass_email']),
-		"From: noreply@".$_SERVER['HTTP_HOST']."\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
-	    echo "Sent a mail";
+	    misc::send_mail( $_POST['rpass_email'], 'recover password', 'recover password: http://'.$_SERVER['HTTP_HOST'].'/?recover&recover_link='.md5($_POST['rpass_email']), array( 'From' => 'noreplay@'.$_SERVER['HTTP_HOST'] ) );
+	    echo "Sent an email";
 	    return;
 	}
 	elseif (isset($_POST['ruser_pass']) && isset($_POST['ruser_email']))
@@ -388,9 +387,8 @@ class user
 	    {
 		$user = $db_data['login'];
 	    }
-	    mail($_POST['ruser_email'], "recover username", "You username: ".$user,
-		"From: noreply@".$_SERVER['HTTP_HOST']."\n"."Reply-To:"."X-Mailer: PHP/".phpversion());
-	    echo "Sent a mail";
+	    misc::send_mail( $_POST['ruser_email'], 'recover username', 'Your username: '.$user, array( 'From' => 'noreplay@'.$_SERVER['HTTP_HOST'] ) );
+	    echo "Sent an email";
 	    return;
 	}
 
