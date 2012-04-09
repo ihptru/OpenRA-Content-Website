@@ -269,34 +269,34 @@ class user
 	
 	if(empty($_POST['rlogin']) && empty($_POST['rpass']) && empty($_POST['verpass']) && empty($_POST['email'])) 
 	{
-	    echo lang::$lang['empty fields']."<br><br>";
+	    echo "Empty fields found, try again<br><br>";
 	    content::create_register_form();
 	    return;
 	}
 	
 	if ($_POST['rpass'] != $_POST['verpass'])
 	{
-	    echo lang::$lang['password not match']; 
+	    echo "Passwords do not match"; 
 	    return;
 	}
 	
 	$query = "SELECT email FROM users WHERE email = '".$_POST['email']."'";
 	if (db::num_rows(db::executeQuery($query)) != 0)
 	{
-	    echo lang::$lang['email in use'];
+	    echo "someone already uses this email";
 	    return;
 	}
 	
 	$query = "SELECT login FROM users WHERE login = '".$_POST['rlogin']."'";
 	if (db::num_rows(db::executeQuery($query)) != 0)
 	{
-	    echo lang::$lang['user exists'];
+	    echo "Account with this username already exists";
 	    return;
 	}
 
 	if ( !strpos($_POST['email'], '@') )
 	{
-	    echo lang::$lang['email error'];
+	    echo "Email format error";
 	    return;
 	}
 
@@ -328,24 +328,24 @@ class user
     {
 	if (isset($_GET['recover_pass']))
 	{
-	    echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
-	    echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
-	    echo lang::$lang['recover'];
+	    echo "<form id='register_form' method='POST' action=''>";
+	    echo "<table style='text-align:right;'><tr><td collspan='2'><b>";
+	    echo "recover";
 	    echo "</b></td></tr><tr><td>";
-	    echo lang::$lang['login']."</td><td><input type=\"text\" name=\"rpass_login\"></td></tr><tr><td>";
-	    echo "E-mail</td><td><input type=\"text\" name=\"rpass_email\"></td></tr><tr><td>";
-	    echo "<input type=\"submit\" value=\"".lang::$lang['confirm']."\">
+	    echo "Login</td><td><input type='text' name='rpass_login'></td></tr><tr><td>";
+	    echo "E-mail</td><td><input type='text' name='rpass_email'></td></tr><tr><td>";
+	    echo "<input type='submit' value='Confirm'>
 		</td></tr></table></form>";
 	}
 	elseif(isset($_GET['recover_user']))
 	{
-	    echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
-	    echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
-	    echo lang::$lang['recover'];
+	    echo "<form id='register_form' method='POST' action=''>";
+	    echo "<table style='text-align:right;'><tr><td collspan='2'><b>";
+	    echo "recover";
 	    echo "</b></td></tr><tr><td>";
-	    echo lang::$lang['password']."</td><td><input type=\"password\" name=\"ruser_pass\"></td></tr><tr><td>";
-	    echo "E-mail</td><td><input type=\"text\" name=\"ruser_email\"></td></tr><tr><td>";
-	    echo "<input type=\"submit\" value=\"".lang::$lang['confirm']."\">
+	    echo "Password</td><td><input type='password' name='ruser_pass'></td></tr><tr><td>";
+	    echo "E-mail</td><td><input type='text' name='ruser_email'></td></tr><tr><td>";
+	    echo "<input type='submit' value='Confirm'>
 	    </td></tr></table></form>";
 	}
 
@@ -354,13 +354,13 @@ class user
 	    $query = "SELECT login,email FROM users WHERE login = '".$_POST['rpass_login']."' AND email = '".$_POST['rpass_email']."'";
 	    if (db::num_rows(db::executeQuery($query)) == 0)
 	    {
-		echo lang::$lang['recover nouser'];
+		echo "User with such data not found";
 		return;
 	    }
 	    $query = "SELECT login FROM recover WHERE login = '".$_POST['rpass_login']."'";
 	    if (db::num_rows(db::executeQuery($query)) != 0)
 	    {
-		echo lang::$lang['recover requested'];
+		echo "You've already requested password update";
 		return;
 	    }
 	    $query = "INSERT INTO recover
@@ -378,7 +378,7 @@ class user
 	    $query = "SELECT pass,email FROM users WHERE pass = '".md5($_POST['ruser_pass'])."' AND email = '".$_POST['ruser_email']."'";
 	    if (db::num_rows(db::executeQuery($query)) == 0)
 	    {
-		echo lang::$lang['recover nouser'];
+		echo "User with such data not found";
 		return;
 	    }
 	    $query = "SELECT login FROM users WHERE pass = '".md5($_POST['ruser_pass'])."' AND email = '".$_POST['ruser_email']."'";
@@ -398,7 +398,7 @@ class user
 	    $query = "SELECT hash FROM recover WHERE hash = '".$hash."'";
 	    if (db::num_rows(db::executeQuery($query)) == 0)
 	    {
-		echo lang::$lang['nothing to activate'];
+		echo "Nothing to activate";
 		return;
 	    }
 	    $query = "SELECT login FROM recover WHERE hash = '".$hash."'";
@@ -407,13 +407,13 @@ class user
 	    {
 		$user = $db_data['login'];
 	    }
-	    echo "<form id=\"register_form\" method=\"POST\" action=\"\">";
-	    echo "<table style=\"text-align:right;\"><tr><td collspan=\"2\"><b>";
-	    echo lang::$lang['enter new pw'].":";
+	    echo "<form id='register_form' method='POST' action=''>";
+	    echo "<table style='text-align:right;'><tr><td collspan='2'><b>";
+	    echo "Enter new password:";
 	    echo "</b></td></tr><tr><td>";
-	    echo lang::$lang['password']."</td><td><input type=\"password\" name=\"rpass_new\"></td></tr><tr><td>";
-	    echo lang::$lang['reenter pw']."</td><td><input type=\"password\" name=\"rpass_new_check\"></td></tr><tr><td>";
-	    echo "<input type=\"submit\" value=\"".lang::$lang['confirm']."\">
+	    echo "Password</td><td><input type='password' name='rpass_new'></td></tr><tr><td>";
+	    echo "Re-enter password</td><td><input type='password' name='rpass_new_check'></td></tr><tr><td>";
+	    echo "<input type='submit' value='Confirm'>
 		</td></tr></table></form>";
 	    if (isset($_POST['rpass_new']) && isset($_POST['rpass_new_check']))
 	    {
@@ -426,12 +426,12 @@ class user
 		    db::executeQuery($query, array($password, $user));
 		    $query = "DELETE FROM recover WHERE login = ?";
 		    db::executeQuery($query, array($user));
-		    echo lang::$lang['password updated'];
+		    echo "Password updated";
 		    echo "<script>location.href='http://".$_SERVER["HTTP_HOST"]."/'</script>";
 		}
 		else
 		{
-		    echo lang::$lang['password not match'];
+		    echo "Passwords do not match";
 		}
 	    }
 	    return;

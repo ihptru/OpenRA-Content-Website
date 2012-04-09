@@ -256,8 +256,8 @@ class pages
 	}
 	if (isset($_GET['recover']) and (!user::online()))
 	{
-	    echo "<a href='?recover&recover_pass'>".lang::$lang['recover pw']."</a><br>";
-	    echo "<a href='?recover&recover_user'>".lang::$lang['recover usr']."</a><br>";
+	    echo "<a href='?recover&recover_pass'>Recover password</a><br>";
+	    echo "<a href='?recover&recover_user'>Recover username</a><br>";
 	    user::recover();
 	    return;
 	}
@@ -281,7 +281,7 @@ class pages
 
 	if (count($_GET) == 0)
 	{
-	    echo "<h3>".lang::$lang['recent articles']."</h3>";
+	    echo "<h3>Recent Articles</h3>";
 	    $result = db::executeQuery("SELECT * FROM articles");
 	    echo content::createArticleItems($result);
 
@@ -337,19 +337,6 @@ class pages
 
 class misc
 {
-    public static function lang($key, $args=array())
-    {
-	$str = lang::$lang[$key];
-	if (count($args) != 0)
-	{
-	    foreach ($args as $key => $value)
-	    {
-		$str = preg_replace('/\\\\'.$key.'/', $value, $str);
-	    }
-	}
-	return $str;
-    }
-
     public static function avatar($user_id)
     {
 	$query = "SELECT avatar,login FROM users WHERE uid = ".$user_id;

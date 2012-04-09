@@ -13,7 +13,7 @@ class content
 	echo "<script type='text/javascript'>
 	function confirmDelete(desc)
 	{
-	    var agree=confirm('".misc::lang("js confirm")." '+desc+'?');
+	    var agree=confirm('Are you sure you want to'+desc+'?');
 	    if (agree)
 	    return true ;
 	    else
@@ -29,7 +29,7 @@ class content
 	";
 	echo "<script type='text/javascript' src='libs/password/jquery.js'></script>
 		  <script type='text/javascript' src='libs/password/mocha.js'></script>";
-	echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"css/screen.css\" />
+	echo "<link rel='stylesheet' type='text/css' media='screen' href='css/screen.css' />
 	</head>";
     }
 		
@@ -39,8 +39,8 @@ class content
 	    <div id='header'>
 		<p id='rss-feed'><a href='libs/feed.php' class='feed'>RSS</a></p>
 		<a name='top'></a>
-		<h1 id='logo-text'><a href='/' title=''>".misc::lang("website_name")."</a></h1>		
-		<p id='slogan'>".misc::lang("website_slowgun")."</p>
+		<h1 id='logo-text'><a href='/' title=''>OpenRA - Resources</a></h1>		
+		<p id='slogan'>Brings your content</p>
 		<div id='nav'>
 		<ul>
 	";
@@ -56,17 +56,17 @@ class content
 		<!-- / id='login_form' -->
 		</div>
 		<div id='register_link'>
-		    <a href='?register'>".misc::lang("register")."</a>
+		    <a href='?register'>register</a>
 		</div>
 		<div id='recover_link'>
-		    <a href=\"?recover\">".misc::lang("recover")."</a>
+		    <a href=\"?recover\">recover</a>
 		</div>
 	    ";
 	}
 	echo "<form id='quick-search' action='index.php' method='GET'>
 		<p>
-		<input class='tbox' id='qsearch' type='text' name='qsearch' onclick=\"this.value='';\" onfocus=\"this.select()\" onblur=\"this.value=!this.value?'".misc::lang("search")."...':this.value;\" value='".misc::lang("search")."...' />
-		<input class='btn' alt='".misc::lang("search")."' type='image' name='searchsubmit' title='".misc::lang("search")."' src='images/search.png' />
+		<input class='tbox' id='qsearch' type='text' name='qsearch' onclick=\"this.value='';\" onfocus=\"this.select()\" onblur=\"this.value=!this.value?'Search...':this.value;\" value='Search...' />
+		<input class='btn' alt='Search' type='image' name='searchsubmit' title='Search' src='images/search.png' />
 		<input type='hidden' name='p' value='search'>
 		</p>
 		</form>	
@@ -78,10 +78,10 @@ class content
     public static function login_form()
     {
 	echo "<form method='POST' action=''>
-	    ".misc::lang("login").": <input type='text' name='login'>
-	    ".misc::lang("password").": <input type='password' name='pass'>
-	    <input style='position:absolute; right: -25px; top: 15px;' type='checkbox' name='remember' value='yes' checked title='".misc::lang("remember me")."'>
-	    <input type='submit' value='".misc::lang("sign in")."'>
+	    Login: <input type='text' name='login'>
+	    Password: <input type='password' name='pass'>
+	    <input style='position:absolute; right: -25px; top: 15px;' type='checkbox' name='remember' value='yes' checked title='remember me'>
+	    <input type='submit' value='sign in'>
 	    <br>
 	    </form>
 	";
@@ -97,16 +97,16 @@ class content
 	    $request = "profile";
 	if (isset($_GET['table']))
 	    $request = $_GET['table'];
-	echo "<li id='"; echo pages::current('', $request); echo"'><a href='/'>".misc::lang("home")."</a></li>";
-	echo "<li id='"; echo pages::current('maps', $request); echo"'><a href='?p=maps'>".misc::lang("maps")."</a></li>";
-	echo "<li id='"; echo pages::current('units', $request); echo"'><a href='?p=units'>".misc::lang("units")."</a></li>";
-	echo "<li id='"; echo pages::current('guides', $request); echo"'><a href='?p=guides'>".misc::lang("guides")."</a></li>";
-	echo "<li id='"; echo pages::current('replays', $request); echo"'><a href='?p=replays'>".misc::lang("replays")."</a></li>";
+	echo "<li id='"; echo pages::current('', $request); echo"'><a href='/'>home</a></li>";
+	echo "<li id='"; echo pages::current('maps', $request); echo"'><a href='?p=maps'>maps</a></li>";
+	echo "<li id='"; echo pages::current('units', $request); echo"'><a href='?p=units'>units</a></li>";
+	echo "<li id='"; echo pages::current('guides', $request); echo"'><a href='?p=guides'>guides</a></li>";
+	echo "<li id='"; echo pages::current('replays', $request); echo"'><a href='?p=replays'>replays</a></li>";
             
 	if (user::online())
 	{
-	    echo "<li style='float:right;' id=''><a href='?logout'>".misc::lang("logout")."</a></li>";
-	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='?profile=".user::uid()."'>".misc::lang("profile")."</a></li>";
+	    echo "<li style='float:right;' id=''><a href='?logout'>logout</a></li>";
+	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='?profile=".user::uid()."'>profile</a></li>";
 	}
     }
 
@@ -114,13 +114,13 @@ class content
     {
 	echo "<form id='register_form' method='POST' action=''>
 	    <table style='text-align:right;'><tr><td collspan='2'><b>
-	    ".misc::lang("registration")."
+	    Registration
 	    </b></td></tr><tr><td>
-	    ".misc::lang("login")."</td><td><input type='text' name='rlogin'></td></tr><tr><td>
-	    ".misc::lang("password")."</td><td><input type='password' id='inputPassword' name='rpass'>
-	    <div id='complexity' class='default'>".misc::lang("password security")."</div></td></tr><tr><td>
-	    ".misc::lang("reenter pw")."</td><td><input type='password' name='verpass'></td></tr><tr><td>
-	    ".misc::lang("e-mail")."</td><td><input type='text' name='email'></td></tr><tr><td>
+	    Login</td><td><input type='text' name='rlogin'></td></tr><tr><td>
+	    Password</td><td><input type='password' id='inputPassword' name='rpass'>
+	    <div id='complexity' class='default'>Password security</div></td></tr><tr><td>
+	    Re-enter password</td><td><input type='password' name='verpass'></td></tr><tr><td>
+	    E-mail</td><td><input type='text' name='email'></td></tr><tr><td>
 	    <input type='hidden' name='act'>
 	    <td>
 	";
@@ -128,7 +128,7 @@ class content
 	$publickey = "6Ldq-soSAAAAADuu6iGZoCiTSOzBcoKXBwlhjM5u";
 	echo recaptcha_get_html($publickey);
 	
-	echo "</td></tr><tr><td><input type='submit' value='".misc::lang("confirm")."'
+	echo "</td></tr><tr><td><input type='submit' value='Confirm'
 	</td></tr></table></form>
 	";
     }
@@ -182,7 +182,7 @@ class content
 		if ($follow == 9)
 		{
 		    
-		    $content .= "<br><a href='?action=show_user_follow".$end."&id=".$row["who"]."' style='float:right;margin-right:10px;'>".misc::lang("show all")."</a>";
+		    $content .= "<br><a href='?action=show_user_follow".$end."&id=".$row["who"]."' style='float:right;margin-right:10px;'>Show all</a>";
 		    break;
 		}
 		$content .= "<a href='?profile=".$show."' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' height='40' /></a>";
@@ -231,14 +231,14 @@ class content
                 
     	$content .= "<div class='blk-top'>";
         $content .= "<h4><a href='?p=detail&table=articles&id=".$row["uid"]."'>" . $title . "</a></h4>";
-        $content .= "<p><span class='datetime'>" . $date . "</span><a href='?p=detail&table=articles&id=".$row["uid"]."' class='comment'>" . $comments . " ".ucfirst(misc::lang("comments"))."</a></p>";
+        $content .= "<p><span class='datetime'>" . $date . "</span><a href='?p=detail&table=articles&id=".$row["uid"]."' class='comment'>" . $comments . " Comments</a></p>";
         $content .= "</div>";
                 
         $content .= "<div class='blk-content'>";
         if(strlen($text) > 500)
         	$text = substr($text,0,500) . "...";
         $content .= "<p>" . $text . "</p>";			
-        $content .= "<p><a href='?p=detail&table=articles&id=".$row["uid"]."' class='more-link'>".misc::lang("continue reading")." &raquo;</a></p>"; 
+        $content .= "<p><a href='?p=detail&table=articles&id=".$row["uid"]."' class='more-link'>continue reading &raquo;</a></p>"; 
         $content .= "</div>";
         $content .= "</div>";
 	}
@@ -271,30 +271,30 @@ class content
 	    $comments = "";
 	    $res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = ".$row["uid"]." AND table_name = '".$table_item."'"));
 	    if ($res_comments != 0)
-		$comments = "<br />" . misc::lang("amount comments", array($res_comments));
+		$comments = "<br />".$res_comments." comments";
 	    switch($table_item)
 	    {
 		case "maps":
 		    $title = $row["title"];
-		    $subtitle = misc::lang("featured posted", array("map", $row["posted"], "<a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>")) . $comments;
+		    $subtitle = "map posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    $imagePath =  $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
 		    $title = $row["title"];
-		    $subtitle = misc::lang("featured posted", array("unit", $row["posted"], "<a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>")) . $comments;
+		    $subtitle = "unit posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    $imagePath = $row["preview_image"];
 		    break;
 		case "guides":
 		    $title = $row["title"];
-		    $subtitle = misc::lang("featured posted", array("guide", $row["posted"], "<a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>")) . $comments;
+		    $subtitle = "guide posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
 		    $text = "";
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    break;
 		case "replays":
 		    $title = $row["title"];
-		    $subtitle = misc::lang("featured posted", array("replay", $row["posted"], "<a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>")) . $comments;
+		    $subtitle = "replay posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
 		    $query = "SELECT * FROM replay_players WHERE id_replays = ".$row["uid"]." ORDER BY team";
 		    $res_players = db::executeQuery($query);
 		    $players = "";
@@ -323,7 +323,7 @@ class content
 	    $content .= "<h2>" . strip_tags($title) . "</h2>";
 	    $content .= "<p class='post-info'>" . $subtitle . "</p>";
 	    $content .= "<p>" . strip_tags($text, "<br>") . "</p>";
-	    $content .= "<p><a href='?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' class='more-link'>".misc::lang("read more")."</a></p>";
+	    $content .= "<p><a href='?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' class='more-link'>Read More</a></p>";
 	    $content .= "</div>";
 	    $content .= "</div>";
 	}
@@ -389,10 +389,10 @@ class content
 		$span_additional_info = "";
 	    $res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = ".$row["uid"]." AND table_name = '".$table."'"));
 	    if ($res_comments != 0)
-		$span_additional_info .= misc::lang("amount comments", array($res_comments)) . "<br />";
+		$span_additional_info .= $res_comments . " comments<br />";
 	    $res_fav = db::num_rows(db::executeQuery("SELECT uid FROM fav_item WHERE table_id = ".$row["uid"]." AND table_name = '".$table."'"));
 	    if ($res_fav != 0)
-		$span_additional_info .= misc::lang("people favorited", array($res_fav));
+		$span_additional_info .= $res_fav . " people favorited";
 	    if ($span_additional_info != "")
 		$span_additional_info = "<span>".$span_additional_info."</span>";
 	    $content .= "<td id='".misc::current_map_version($row["uid"], $current_id)."'><a class='tooltip' href='?p=detail&table=".$table."&id=".$row["uid"]."'>";
@@ -630,21 +630,21 @@ class content
 	    {
 		if(isset($row["uid"]))
 		{
-		    $delete = misc::lang("delete") . " " . misc::lang(rtrim($table,"s"));
-		    $delete = "<a href='?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"".misc::lang("delete this")." ".misc::lang(rtrim($table,"s"))."\")'>".$delete."</a>";
-		    $edit = " | <a href='?p=edit_item&table=".$table."&id=".$row["uid"]."'>".misc::lang("edit")."</a>";
+		    $delete = "Delete " . rtrim($table,"s");
+		    $delete = "<a href='?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\"delete this ".rtrim($table,"s")."\")'>".$delete."</a>";
+		    $edit = " | <a href='?p=edit_item&table=".$table."&id=".$row["uid"]."'>Edit</a>";
 		}
 	    }
 	    else
 	    {
 		if(db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())))
 		{
-		    $reported = misc::lang("already reported");
+		    $reported = "You've already reported this item";
 		}
 		else
 		{
 		    if(user::online())
-			$reported = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."&report' onClick='return confirmDelete(\"".misc::lang("report this item")."\")'>".misc::lang("report item")."</a>";
+			$reported = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."&report' onClick='return confirmDelete(\"report this item\")'>Report Item</a>";
 		}
 	    }
 	    $favIcon = "";
@@ -658,32 +658,32 @@ class content
 		$favTimes = "";
 		$row_f = db::nextRowFromQuery(db::executeQuery("SELECT COUNT(*) AS count FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]));
 		if ($row_f["count"] > 0)
-		    $favTimes = misc::lang("favorited_times", array($row_f["count"]));
+		    $favTimes = "favorited ".$row_f["count"]." times";
 	    }
 	    switch($table)
 	    {
 		case "maps":
-		    $title = misc::lang("game map", array(strtoupper($row["g_mod"]))) . ": <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>";
+		    $title = strtoupper($row["g_mod"])." map: <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>";
 		    $imagePath = misc::minimap($row["path"]);
-		    $subtitle = $title . " " . misc::lang("item posted", array("<i>".$row["posted"]."</i>", "<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>"));
+		    $subtitle = $title . " posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $add_add_info = "";
 		    if ($row["additional_desc"] != "")
 		    {
 			$add_edit = "";
 			if ($row["user_id"] == user::uid())
-			    $add_edit = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&edit_map_info'>".strtolower(misc::lang("edit"))."</a>";
+			    $add_edit = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&edit_map_info'>edit</a>";
 			if (isset($_GET["edit_map_info"]) and user::uid() == $row["user_id"])
 			{
 			    $text_add = "<form method=POST><input type='text' name='add_map_info' value='".$row["additional_desc"]."'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'></form>";
 			}
 			else
-			    $text_add = misc::lang("additional_desc") . ": " . str_replace("\r\n", "<br />", $row["additional_desc"]) . $add_edit;
+			    $text_add = "Additional info: " . str_replace("\r\n", "<br />", $row["additional_desc"]) . $add_edit;
 		    }
 		    else
 		    {
 			if ($row["user_id"] == user::uid())
 			{
-			    $add_add_info = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&add_map_info'>".misc::lang("add additional info")."</a>";
+			    $add_add_info = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&add_map_info'>add additional info</a>";
 			    if (isset($_GET["add_map_info"]))
 				$text_add = "<form method=POST><input type='text' name='add_map_info'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'></form>";
 			}
@@ -693,7 +693,7 @@ class content
 		case "units":
 		    $title = strip_tags($row["title"]);
 		    $imagePath = $row["preview_image"];
-		    $subtitle = "<font color='#d8ff00'>".$title."</font> " . misc::lang("item posted", array("<i>".$row["posted"]."</i>", "<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>"));
+		    $subtitle = "<font color='#d8ff00'>".$title."</font> posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $text = "";
 		    break;
 		case "guides":
@@ -711,11 +711,11 @@ class content
 			while ($res_e_r = db::nextRowFromQuery($res_e))
 			{
 			    $edited_name = user::login_by_uid($res_e_r["user_id"]);
-			    $edited_by = " | ".misc::lang("last edited by", array("<a href='?profile=".$res_e_r["user_id"]."' id='id_display_username'>".$edited_name."</a>"));
+			    $edited_by = " | last edited by <a href='?profile=".$res_e_r["user_id"]."' id='id_display_username'>".$edited_name."</a>";
 			}
 		    }
 		    if (!isset($row["no_additional_info"]))
-			$content .= "<p class='post-info'>".misc::lang("posted by", array("<a href='?profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a>")) . $edited_by . "</p>";
+			$content .= "<p class='post-info'>Posted by <a href='?profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a>" . $edited_by . "</p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -738,7 +738,7 @@ class content
 		    
 		    $content .= "<div class='post'>";
 		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";
-		    $content .= "<p class='post-info'>".misc::lang("posted by", array("<a href='?profile=".$row["user_id"]."'>". $user_name . "</a>")) . "</p>";
+		    $content .= "<p class='post-info'>Posted by <a href='?profile=".$row["user_id"]."'>". $user_name . "</a></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -812,32 +812,32 @@ class content
 	     
 	    if($table == "maps")
 	    {
-		$content .= "<tr><td><table style='padding:auto;margin:auto;'><tr><td>".misc::lang("author").": ".$row["author"]."</td><td>".misc::lang("size").": ".$row["width"]."x".$row["height"]."</td><td>".misc::lang("tileset").": ".$row["tileset"]."</td><td>".misc::lang("type").": ".$row["type"]."</td></tr></table></td></tr>";
+		$content .= "<tr><td><table style='padding:auto;margin:auto;'><tr><td>author: ".$row["author"]."</td><td>size: ".$row["width"]."x".$row["height"]."</td><td>tileset: ".$row["tileset"]."</td><td>type: ".$row["type"]."</td></tr></table></td></tr>";
 		$players = "";
 		$res_p = db::executeQuery("SELECT * FROM map_stats WHERE map_hash = '".$row["maphash"]."'");
 		while ($res_p_r = db::nextRowFromQuery($res_p))
 		{
-		    $players = "; ".misc::lang("mostly played", array(round($res_p_r["avg_players"])));
+		    $players = "; mostly played with ".round($res_p_r["avg_players"])." players";
 		}
-		$content .= "<tr><td>".misc::lang("map for players", array($row["players"])).$players."</td></tr>";
+		$content .= "<tr><td>".$row["players"]." players map".$players."</td></tr>";
 		$mapfile = explode("-", basename($row["path"]), 3);
 		$mapfile = $mapfile[2] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
-	     	$content .= "<tr><td><a href='".$download."'>".misc::lang("download")."</a></tr></td>";
+	     	$content .= "<tr><td><a href='".$download."'>Download</a></tr></td>";
 		
 		if ($row["p_ver"] == 0 and $row["n_ver"] == 0)
-		    $vers = "<td>".misc::lang("only version")."</td>";
+		    $vers = "<td>This is the only version</td>";
 		else
-		    $vers = "<td><a href='?action=versions&table=maps&id=".$row["uid"]."'>".misc::lang("check versions")."</a></td>";
+		    $vers = "<td><a href='?action=versions&table=maps&id=".$row["uid"]."'>Check other versions</a></td>";
 		if ($row["user_id"] == user::uid())
 		    if ($row["n_ver"] == 0)
-			$vers .= "<td><a href='?action=new_version&id=".$row["uid"]."'>".misc::lang("upload new")."</a></td>";
-		$map_version_content = "<table><tr><td>".misc::lang("rev").": ".ltrim($row["tag"], "r")."</td>".$vers."</tr></table>";
+			$vers .= "<td><a href='?action=new_version&id=".$row["uid"]."'>Upload new version</a></td>";
+		$map_version_content = "<table><tr><td>Rev: ".ltrim($row["tag"], "r")."</td>".$vers."</tr></table>";
 	    }
 	    else if($table == "units")
 	    {
-	     	$content .= "<tr><td>".misc::lang("description").": " . strip_tags($row["description"]) . "</td></tr>";
-	     	$content .= "<tr><td><br>".misc::lang("download files").":";
+	     	$content .= "<tr><td>Description: " . strip_tags($row["description"]) . "</td></tr>";
+	     	$content .= "<tr><td><br>Files (click to download):";
 	     	$directory = "users/".$user_name."/units/".$title."/";
 		$shapes = glob($directory . "*.*");
 		foreach($shapes as $shape)
@@ -896,7 +896,7 @@ class content
     public static function displayEvents($result)
     {
 	$data = array();
-	array_push($data, misc::lang("latest activity").":");
+	array_push($data, "Latest activity of users you follow:");
 	while ($row = db::nextRowFromQuery($result))
 	{
 	    $name = "<a href='?profile=".$row["user_id"]."'>".user::login_by_uid($row["user_id"])."</a>";
@@ -904,44 +904,44 @@ class content
 	    switch($type)
 	    {
 		case "add":
-		    $desc = " ".misc::lang("added new")." <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],'s'))."</a>";
+		    $desc = " added new <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "delete_comment":
-		    $desc = " ".misc::lang("deleted comment")." <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],'s'))."</a>";
+		    $desc = " deleted comment on <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "report":
-		    $desc = " ".misc::lang("reported")." <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],'s'))."</a>";
+		    $desc = " reported <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "fav":
-		    $desc = " ".misc::lang("favorited")." <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],'s'))."</a>";
+		    $desc = " favorited <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "unfav":
-		    $desc = " ".misc::lang("unfavorited")." <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],'s'))."</a>";
+		    $desc = " unfavorited <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "comment":
-		    $desc = " ".misc::lang("commented")." <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],'s'))."</a>";
+		    $desc = " commented <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "login":
-		    $desc = " ".misc::lang("logged in");
+		    $desc = " logged in";
 		    break;
 		case "logout":
-		    $desc = " ".misc::lang("logged out");
+		    $desc = " logged out";
 		    break;
 		case "edit":
-		    $desc = " ".misc::lang("edited")." <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],'s'))."</a>";
+		    $desc = " edited <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "follow":
-		    $desc = " ".misc::lang("started to follow")." <a href='?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
+		    $desc = " started to follow <a href='?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
 		    break;
 		case "unfollow":
-		    $desc = " ".misc::lang("stopped following")." <a href='?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
+		    $desc = " stopped following <a href='?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
 		    break;
 		case "delete_item":
 		    $desc = false;
 		    break;
 	    }
 	    if ($desc)
-		array_push($data, $name . $desc . " ".misc::lang("at")." " . $row["posted"]);
+		array_push($data, $name . $desc . " at " . $row["posted"]);
 	}
 	return content::create_dynamic_list($data, 1, "event_log",  11, true, true);
     }
@@ -962,7 +962,7 @@ class content
 		$current = 1;
 
 	$comments = db::num_rows($result);
-	$content .= "<h3 id='comments'>" . $comments . " ".misc::lang("responses")."</h3>";
+	$content .= "<h3 id='comments'>" . $comments . " Responses</h3>";
 	$content .= "<ol class='commentlist'>";
 	$i = 0;
 	while ($comment = db::nextRowFromQuery($result))
@@ -992,7 +992,7 @@ class content
 	    $content .= "<a name=".$comment_page_id."></a><div class='comment-info'>";			
 	    $content .= "<a href='?profile=".$comment["user_id"]."'><img alt='' src='" . $avatarImg . "' style='margin-top:10px; max-width:50' /></a>";
 	    $content .= "<cite>";
-	    $content .= "<a href='?profile=".$comment["user_id"]."'>" . $author["login"] . "</a> ".misc::lang("says").": <br />";
+	    $content .= "<a href='?profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
 	    $content .= "<span class='comment-data'><a href='#".$comment_page_id."' title=''>" . $comment["posted"] . "</a></span>";
 	    $content .= "</cite>";
 	    $content .= "</div>";
@@ -1001,7 +1001,7 @@ class content
 	    $content .= "<p>" . stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
-		$content .= "<a style='float: right; margin: -142px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"".misc::lang("delete comment")."\")' title='".misc::lang("delete")."'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
+		$content .= "<a style='float: right; margin: -142px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\"delete comment\")' title='Delete'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
 	    }
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; // << need correct page
@@ -1043,14 +1043,14 @@ class content
 	if(user::online())
 	{
 	    $content .= "<div id='respond'>";
-	    $content .= "<h3>".misc::lang("leave a reply")."</h3>";			
+	    $content .= "<h3>Leave a Reply</h3>";			
 	    $content .= "<form action='?p=detail&table=".$table_name."&id=".$table_id."' method='post' id='commentform'>";
 	    $content .= "<p>";
-	    $content .= "<label for='message'>".misc::lang("your message")."</label><br />";
+	    $content .= "<label for='message'>Your Message</label><br />";
 	    $content .= "<textarea id='message' name='message' rows='10' cols='20' tabindex='4'></textarea>";
 	    $content .= "</p>";
 	    $content .= "<p class='no-border'>";
-	    $content .= "<input class='button' type='submit' value='".misc::lang("submit comment")."' tabindex='5'/>";      		
+	    $content .= "<input class='button' type='submit' value='Submit Comment' tabindex='5'/>";      		
 	    $content .= "</p>";
 
 	    $content .= "<input type='hidden' name='user_id' value='" . user::uid() . "'>";
@@ -1132,10 +1132,10 @@ class content
     {
 	$content = '<div id="footer-outer" class="clear"><div id="footer-wrap">';
 	$content .= '<div id="footer-bottom">';
-	$content .= '<div style="float:left;"><img src="favicon.ico" style="position:absolute;width:16px;padding:0;margin:0;border:0;"/><strong><a style="padding-left:20px;" href="http://open-ra.org" target="_blank">'.misc::lang("official site").' <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></strong> |<a href="http://logs.open-ra.org" target="_blank">'.misc::lang("irc stats").' <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://logs.open-ra.org/mapstats/index.html" target="_blank">'.misc::lang("map stats").' <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://res0l.net/src/LiveORA/map.html" target="_blank">'.misc::lang("live map").' <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></div>';
-	$content .= '<strong><a href="?p=members">'.misc::lang("members").'</a></strong> |';
-	$content .= '<a href="/">'.misc::lang("home").'</a> |';
-	$content .= '<strong><a href="#top" class="back-to-top">'.misc::lang("to top").'</a></strong>';
+	$content .= '<div style="float:left;"><img src="favicon.ico" style="position:absolute;width:16px;padding:0;margin:0;border:0;"/><strong><a style="padding-left:20px;" href="http://open-ra.org" target="_blank">OpenRA Official Website <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></strong> |<a href="http://logs.open-ra.org" target="_blank">IRC logs/stats <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://logs.open-ra.org/mapstats/index.html" target="_blank">Map stats <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://res0l.net/src/LiveORA/map.html" target="_blank">Live Players Map <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></div>';
+	$content .= '<strong><a href="?p=members">Members</a></strong> |';
+	$content .= '<a href="/">Home</a> |';
+	$content .= '<strong><a href="#top" class="back-to-top">Back to Top</a></strong>';
 
 	$content .= '</div><br />';
 	$content .= '<!-- Start of StatCounter Code for Default Guide -->
@@ -1196,7 +1196,7 @@ class content
 	    $result = db::executeQuery("SELECT * FROM users");
 	    if (db::num_rows($result) > 0)
 	    {
-		echo "<div class='sidemenu'><ul><li>".misc::lang("members").":</li></ul></div>";
+		echo "<div class='sidemenu'><ul><li>Members:</li></ul></div>";
 	    	$data = array();
 		while ($row = db::nextRowFromQuery($result))
 		{
@@ -1215,7 +1215,7 @@ class content
 	    if (!user::online())
 		return;
 	    profile::upload_map();
-	    echo "<br /><br /><div class='sidemenu'><ul><li>".misc::lang("your maps").":</li></ul></div>";
+	    echo "<br /><br /><div class='sidemenu'><ul><li>Your maps:</li></ul></div>";
 	    list($order_by, $request_mod, $type, $request_tileset, $my_items) = content::map_filters("no_show_my_content_filter");
 	    
 	    $my = "";
@@ -1236,7 +1236,7 @@ class content
 	    $output = content::create_grid($result);
 	    if ($output == "")
 	    {
-		echo "<table><tr><th>".misc::lang("no maps uploaded")."</th></tr></table>";
+		echo "<table><tr><th>No maps uploaded yet</th></tr></table>";
 	    }
 	    echo "<br />" . $output;
 	}
@@ -1245,12 +1245,12 @@ class content
 	    if (!user::online())
 		return;
 	    profile::upload_guide();
-	    echo "<br /><br /><div class='sidemenu'><ul><li>".misc::lang("your guides").":</li></ul></div>";
+	    echo "<br /><br /><div class='sidemenu'><ul><li>Your guides:</li></ul></div>";
 	    $result = db::executeQuery( "SELECT * FROM guides WHERE user_id = ".user::uid()." ORDER BY posted DESC" );
 	    $output = content::create_grid($result, "guides");
 	    if ($output == "")
 	    {
-		echo "<table><tr><th>".misc::lang("no guides uploaded")."</th></tr></table>";
+		echo "<table><tr><th>No guides uploaded yet</th></tr></table>";
 	    }
 	    echo $output;
 	}
@@ -1259,12 +1259,12 @@ class content
 	    if (!user::online())
 		return;
 	    profile::upload_unit();
-	    echo "<br /><br /><div class='sidemenu'><ul><li>".misc::lang("your units").":</li></ul></div>";
+	    echo "<br /><br /><div class='sidemenu'><ul><li>Your units:</li></ul></div>";
 	    $result = db::executeQuery("SELECT * FROM units WHERE user_id = ".user::uid()." ORDER BY posted DESC");
 	    $output = content::create_grid($result, "units");
 	    if ($output == "")
 	    {
-		echo "<table><tr><th>".misc::lang("no units uploaded")."</th></tr></table>";
+		echo "<table><tr><th>No units uploaded yet</th></tr></table>";
 	    }
 	    echo $output;
 	}
@@ -1331,7 +1331,7 @@ class content
 		if (db::num_rows($result) > 0)
 		{
 		    $data = array();
-		    array_push($data,"",misc::lang("people like faction", array("<u>".$faction."</u>")).":");
+		    array_push($data,"","This people like <u>".$faction."</u> faction:");
 		    while ($row = db::nextRowFromQuery($result))
 		    {
 			$avatar = misc::avatar($row["uid"]);
@@ -1342,7 +1342,7 @@ class content
 		else
 		{
 		    $data = array();
-		    array_push($data,misc::lang("no one likes faction", array("<u>".$faction."</u>")));
+		    array_push($data,"No one likes <u>".$faction."</u> faction");
 		    echo content::create_dynamic_list($data,1,"dyn",1,true,true);
 		}
 	    }
@@ -1366,13 +1366,13 @@ class content
 		$id = $_GET["id"];
 		if ($id == user::uid())
 		{
-		    $name = misc::lang("you");
-		    $who = misc::lang("follow", array($name)).":";
+		    $name = "You";
+		    $who = $name." follow:";
 		}
 		else
 		{
 		    $name = user::login_by_uid($id);
-		    $who = misc::lang("follows", array("<a href='?profile=".$id."'>".$name."</a>")).":";
+		    $who = "<a href='?profile=".$id."'>".$name."</a> follows:";
 		}
 		$query = "SELECT * FROM following WHERE who = ".$id;
 		$result = db::executeQuery($query);
@@ -1389,12 +1389,12 @@ class content
 		}
 		else
 		{
-		    $verb = misc::lang("does");
-		    if ($name == misc::lang("you"))
-			$verb = misc::lang("do");
+		    $verb = "does";
+		    if ($name == "You")
+			$verb = "do";
 		    echo "<table>
 			      <tr>
-				  <th>".misc::lang("not follow anyone", array($name, $verb))."</th>
+				  <th>".$name." ".$verb." not follow anyone</th>
 			      </tr>
 			  </table>
 		    ";
@@ -1409,13 +1409,13 @@ class content
 		$id = $_GET["id"];
 		if ($id == user::uid())
 		{
-		    $name = misc::lang("you");
-		    $who = misc::lang("are followed by", array($name)).":";
+		    $name = "You";
+		    $who = $name." are followed by:";
 		}
 		else
 		{
 		    $name = user::login_by_uid($id);
-		    $who = misc::lang("is followed by", array("<a href='?profile=".$id."'>".$name."</a>")).":";
+		    $who = "<a href='?profile=".$id."'>".$name."</a> is followed by:";
 		}
 		$query = "SELECT * FROM following WHERE whom = ".$id;
 		$result = db::executeQuery($query);
@@ -1432,12 +1432,12 @@ class content
 		}
 		else
 		{
-		    $verb = misc::lang("is");
-		    if ($name == misc::lang("you"))
-			$verb = misc::lang("are");
+		    $verb = "is";
+		    if ($name == "You")
+			$verb = "are";
 		    echo "<table>
 			      <tr>
-				  <th>".misc::lang("not followed by", array($name, $verb))."</th>
+				  <th>".$name." ".$verb." not followed by anyone</th>
 			      </tr>
 			  </table>
 		    ";
@@ -1482,21 +1482,21 @@ class content
 	}
 	$checkbox = "";
 	if ($my_content == "" and user::online())
-	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='replay_my_items' ".$my_checked." title='".misc::lang("only my content")."'><label style='float:right; margin-top: 12px; margin-right: 5px;'>".misc::lang("only my content")."</label>";
+	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='replay_my_items' ".$my_checked." title='only my content'><label style='float:right; margin-top: 12px; margin-right: 5px;'>only my content</label>";
 	//filters
-	echo "<form name='replay_filters' method=POST action=''><table style='width:560px;'><tr><th>".misc::lang("sort by").":</th></tr><tr>";
+	echo "<form name='replay_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th></tr><tr>";
 	echo "<td>";
 	echo "<select name='sort' id='sort'>";
-	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">".misc::lang("latest first")."</option>";
-	echo "<option value='date' ".misc::option_selected("date",$sort_by).">".misc::lang("date")."</option>";
-	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">".misc::lang("title")."</option>";
-	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">".misc::lang("title in reverse")."</option>";
-	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">".misc::lang("lately_commented")."</option>";
+	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">latest first</option>";
+	echo "<option value='date' ".misc::option_selected("date",$sort_by).">oldest first</option>";
+	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">title</option>";
+	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">title in reverse order</option>";
+	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">lately commented</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "</select><br />";
 	echo "</td>";
-	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='".misc::lang("apply filters")."'>
+	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
 	    ".$checkbox."
 	    <input type='hidden' name='apply_filter_type' value='replay'>
 	    </div></form><br><br>
@@ -1541,42 +1541,42 @@ class content
 	}
 	$checkbox = "";
 	if (user::online())
-	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='".$arg."_my_items' ".$my_checked." title='".misc::lang("only my content")."'><label style='float:right; margin-top: 12px; margin-right: 5px;'>".misc::lang("only my content")."</label>";
+	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='".$arg."_my_items' ".$my_checked." title='only my content'><label style='float:right; margin-top: 12px; margin-right: 5px;'>only my content</label>";
 	//filters
-	echo "<form name='".$arg."_filters' method=POST action=''><table style='width:560px;'><tr><th>".misc::lang("sort by").":</th><th>".misc::lang("type").":</th></tr><tr>";
+	echo "<form name='".$arg."_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>type:</th></tr><tr>";
 	echo "<td>";
 	echo "<select name='sort' id='sort'>";
-	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">".misc::lang("latest first")."</option>";
-	echo "<option value='date' ".misc::option_selected("date",$sort_by).">".misc::lang("date")."</option>";
-	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">".misc::lang("title")."</option>";
-	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">".misc::lang("title in reverse")."</option>";
-	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">".misc::lang("lately_commented")."</option>";
+	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">latest first</option>";
+	echo "<option value='date' ".misc::option_selected("date",$sort_by).">oldest first</option>";
+	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">title</option>";
+	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">title in reverse order</option>";
+	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">lately commented</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
 	echo "<select name='type' id='type'>";
 	if ($arg == "guide")
 	{
-	    echo "<option value='any_type' ".misc::option_selected("any_type",$type).">".misc::lang("any")."</option>";
-	    echo "<option value='design' ".misc::option_selected("design",$type).">".misc::lang("design filter")."</option>";
-	    echo "<option value='mapping' ".misc::option_selected("mapping",$type).">".misc::lang("mapping")."</option>";
-	    echo "<option value='modding' ".misc::option_selected("modding",$type).">".misc::lang("modding")."</option>";
-	    echo "<option value='coding' ".misc::option_selected("nature",$type).">".misc::lang("coding")."</option>";
-	    echo "<option value='other' ".misc::option_selected("other",$type).">".misc::lang("other")."</option>";
+	    echo "<option value='any_type' ".misc::option_selected("any_type",$type).">Any</option>";
+	    echo "<option value='design' ".misc::option_selected("design",$type).">Design (2D/3D)</option>";
+	    echo "<option value='mapping' ".misc::option_selected("mapping",$type).">Mapping</option>";
+	    echo "<option value='modding' ".misc::option_selected("modding",$type).">Modding</option>";
+	    echo "<option value='coding' ".misc::option_selected("nature",$type).">Coding</option>";
+	    echo "<option value='other' ".misc::option_selected("other",$type).">Other</option>";
 	}
 	elseif ($arg == "unit")
 	{	    
-	    echo "<option value='any_type' ".misc::option_selected("any_type",$type).">".misc::lang("any")."</option>";
-	    echo "<option value='structure' ".misc::option_selected("structure",$type).">".misc::lang("structure")."</option>";
-	    echo "<option value='infantry' ".misc::option_selected("infantry",$type).">".misc::lang("infantry")."</option>";
-	    echo "<option value='vehicle' ".misc::option_selected("vehicle",$type).">".misc::lang("vehicle")."</option>";
-	    echo "<option value='air-borne' ".misc::option_selected("air-borne",$type).">".misc::lang("air-borne")."</option>";
-	    echo "<option value='nature' ".misc::option_selected("nature",$type).">".misc::lang("nature")."</option>";
-	    echo "<option value='other' ".misc::option_selected("other",$type).">".misc::lang("other")."</option>";
+	    echo "<option value='any_type' ".misc::option_selected("any_type",$type).">Any</option>";
+	    echo "<option value='structure' ".misc::option_selected("structure",$type).">Structure</option>";
+	    echo "<option value='infantry' ".misc::option_selected("infantry",$type).">Infantry</option>";
+	    echo "<option value='vehicle' ".misc::option_selected("vehicle",$type).">Vehicle</option>";
+	    echo "<option value='air-borne' ".misc::option_selected("air-borne",$type).">Air-borne</option>";
+	    echo "<option value='nature' ".misc::option_selected("nature",$type).">Nature</option>";
+	    echo "<option value='other' ".misc::option_selected("other",$type).">Other</option>";
 	}
 	echo "</select><br />";
 	echo "</td>";
-	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='".misc::lang("apply filters")."'>
+	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
 	    ".$checkbox."
 	    <input type='hidden' name='apply_filter_type' value='".$arg."'>
 	    </div></form><br><br>
@@ -1633,40 +1633,40 @@ class content
 	
 	$checkbox = "";
 	if ($my_content == "" and user::online())
-	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='map_my_items' ".$my_checked." title='".misc::lang("only my content")."'><label style='float:right; margin-top: 12px; margin-right: 5px;'>".misc::lang("only my content")."</label>";
+	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='map_my_items' ".$my_checked." title='only my content'><label style='float:right; margin-top: 12px; margin-right: 5px;'>only my content</label>";
 
 	//filters
-	echo "<form name='map_filters' method=POST action=''><table style='width:560px;'><tr><th>".misc::lang("sort by").":</th><th>".misc::lang("type").":</th><th>".misc::lang("mod").":</th><th>".misc::lang("tileset").":</th></tr><tr>";
+	echo "<form name='map_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>type:</th><th>mod:</th><th>tileset:</th></tr><tr>";
 	echo "<td>";
 	echo "<select name='sort' id='sort'>";
-	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">".misc::lang("latest first")."</option>";
-	echo "<option value='date' ".misc::option_selected("date",$sort_by).">".misc::lang("date")."</option>";
-	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">".misc::lang("title")."</option>";
-	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">".misc::lang("title in reverse")."</option>";
-	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">".misc::lang("lately_commented")."</option>";
+	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">latest first</option>";
+	echo "<option value='date' ".misc::option_selected("date",$sort_by).">oldest first</option>";
+	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">title</option>";
+	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">title in reverse order</option>";
+	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">lately commented</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
 	echo "<select name='type' id='type'>";
-	echo "<option value='any_type' ".misc::option_selected("any_type",$type).">".misc::lang("any")."</option>";
-	echo "<option value='conquest' ".misc::option_selected("conquest",$type).">".misc::lang("conquest")."</option>";
-	echo "<option value='koth' ".misc::option_selected("koth",$type).">".misc::lang("koth")."</option>";
-	echo "<option value='minigame' ".misc::option_selected("minigame",$type).">".misc::lang("minigame")."</option>";
+	echo "<option value='any_type' ".misc::option_selected("any_type",$type).">Any</option>";
+	echo "<option value='conquest' ".misc::option_selected("conquest",$type).">conquest</option>";
+	echo "<option value='koth' ".misc::option_selected("koth",$type).">koth</option>";
+	echo "<option value='minigame' ".misc::option_selected("minigame",$type).">minigame</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
 	echo "<select onChange='mod_tileset();' name='mod' id='mod'>";
-	echo "<option value='any_mod' ".misc::option_selected("any_mod",$mod).">".misc::lang("any")."</option>";
+	echo "<option value='any_mod' ".misc::option_selected("any_mod",$mod).">Any</option>";
 	echo "<option value='ra' ".misc::option_selected("ra",$mod).">RA</option>";
 	echo "<option value='cnc' ".misc::option_selected("cnc",$mod).">CNC</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
 	echo "<select name='tileset' id='tileset'>";
-	echo "<option value='any_tileset' ".misc::option_selected("any_tileset",$tileset).">".misc::lang("any")."</option>";
+	echo "<option value='any_tileset' ".misc::option_selected("any_tileset",$tileset).">Any</option>";
     	echo "</select><br />";
 	echo "</td>";
-	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='".misc::lang("apply filters")."'>
+	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
 	    ".$checkbox."
 	    <input type='hidden' name='apply_filter_type' value='map'>
 	    </div></form>
@@ -1680,12 +1680,12 @@ class content
 		if (chosen_option.value == 'any_mod')
 		{
 		    document.map_filters.tileset.options.length=0
-		    document.map_filters.tileset.options[0] = new Option('".misc::lang("any")."','any_tileset')
+		    document.map_filters.tileset.options[0] = new Option('Any','any_tileset')
 		}
 		if (chosen_option.value == 'ra')
 		{
 		    document.map_filters.tileset.options.length=0
-		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('".misc::lang("any")."','any_tileset',false,".misc::option_selected_bool("any_tileset",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('Any','any_tileset',false,".misc::option_selected_bool("any_tileset",$tileset).")
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('snow','snow',false,".misc::option_selected_bool("snow",$tileset).")
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('interior','interior',false,".misc::option_selected_bool("interior",$tileset).")
@@ -1693,7 +1693,7 @@ class content
 		if (chosen_option.value == 'cnc')
 		{
 		    document.map_filters.tileset.options.length=0
-		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('".misc::lang("any")."','any_tileset',false,".misc::option_selected_bool("any_tileset",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('Any','any_tileset',false,".misc::option_selected_bool("any_tileset",$tileset).")
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('desert','desert',false,".misc::option_selected_bool("desert",$tileset).")
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('winter','winter',false,".misc::option_selected_bool("winter",$tileset).")
@@ -1737,7 +1737,7 @@ class objects
 {
     public static function maps()
     {
-	echo "<h3>".ucfirst(misc::lang("maps"))."!</h3>";
+	echo "<h3>Maps!</h3>";
 	list($order_by, $request_mod, $type, $request_tileset, $my_items) = content::map_filters();
 	$my = "";
 	$n_ver_e = "AND m.n_ver = 0";
@@ -1761,7 +1761,7 @@ class objects
     
     public static function units()
     {
-	echo "<h3>".ucfirst(misc::lang("units"))."!</h3>";
+	echo "<h3>Units!</h3>";
 	list($order_by, $request_type, $my_items) = content::guide_unit_filters("unit");
 	$my = "";
 	
@@ -1781,7 +1781,7 @@ class objects
     
     public static function guides()
     {
-	echo "<h3>".ucfirst(misc::lang("guides"))."!</h3>";
+	echo "<h3>Guides!</h3>";
 	list($order_by, $request_type, $my_items) = content::guide_unit_filters("guide");
 	$my = "";
 	
@@ -1845,21 +1845,21 @@ class objects
 		    echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
 			    <label>Upload guide:</label>
 			    <br />
-			    <label>".ucfirst(misc::lang("title")).": <input id='id_guide_title' type='text' value='".str_replace("\\\\\\", "", $row["title"])."' name='edit_guide_title' onkeyup='updateContent(\"id_display_title\",\"id_guide_title\");' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>
+			    <label>Title: <input id='id_guide_title' type='text' value='".str_replace("\\\\\\", "", $row["title"])."' name='edit_guide_title' onkeyup='updateContent(\"id_display_title\",\"id_guide_title\");' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>
 			    <br />
-			    <label>".ucfirst(misc::lang("text")).": <textarea id='id_guide_text' name='edit_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");'>".str_replace("\\\\\\", "",   str_replace("<br />", "\r\n", str_replace('\r\n', "", $row["html_content"])))."</textarea></label>
+			    <label>Text: <textarea id='id_guide_text' name='edit_guide_text' cols='40' rows='5' onkeyup='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onchange='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");' onkeypress='updateContent(\"id_display_text\",\"id_guide_text\",\"<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>\");'>".str_replace("\\\\\\", "",   str_replace("<br />", "\r\n", str_replace('\r\n', "", $row["html_content"])))."</textarea></label>
 			    <br />
 			    <select name='edit_guide_type'>";
-		    echo "<option value='other' ".misc::option_selected("other", $row["guide_type"]).">".misc::lang("other")."</option>";
-		    echo "<option value='design' ".misc::option_selected("design", $row["guide_type"]).">".misc::lang("design filter")."</option>";
-		    echo "<option value='mapping' ".misc::option_selected("mapping", $row["guide_type"]).">".misc::lang("mapping")."</option>";
-		    echo "<option value='modding' ".misc::option_selected("modding", $row["guide_type"]).">".misc::lang("modding")."</option>";
-		    echo "<option value='coding' ".misc::option_selected("coding", $row["guide_type"]).">".misc::lang("coding")."</option>";
+		    echo "<option value='other' ".misc::option_selected("other", $row["guide_type"]).">Other</option>";
+		    echo "<option value='design' ".misc::option_selected("design", $row["guide_type"]).">Design (2D/3D)</option>";
+		    echo "<option value='mapping' ".misc::option_selected("mapping", $row["guide_type"]).">Mapping</option>";
+		    echo "<option value='modding' ".misc::option_selected("modding", $row["guide_type"]).">Modding</option>";
+		    echo "<option value='coding' ".misc::option_selected("coding", $row["guide_type"]).">Coding</option>";
 
 		    echo "</select>
 			    <br />
-			    <input type=\"hidden\" name=\"edit_guide_uid\" value=\"".$row["uid"]."\" />
-			    <input type=\"submit\" name=\"submit\" value=\"".misc::lang("edit")."\" />
+			    <input type='hidden' name='edit_guide_uid' value='".$row["uid"]."' />
+			    <input type='submit' name='submit' value='Edit' />
 			    </form>
 		    ";
 		}
@@ -1890,7 +1890,7 @@ class objects
 	    {
 		echo "<table>
 			  <tr>
-			      <th>".misc::lang("empty request")."</th>
+			      <th>Empty request</th>
 			  </tr>
 		      </table>
 		";
@@ -1909,7 +1909,7 @@ class objects
 		$output = content::create_list($result, $value);
 		if ($output != "")
 		{
-		    $content .= "<br><label>".misc::lang($value)." ".misc::lang("found").":</label>";
+		    $content .= "<br><label>".$value." found:</label>";
 		    $content .= $output;
 		}
 	    }
@@ -1917,7 +1917,7 @@ class objects
 	    $result = db::executeQuery("SELECT * FROM users WHERE login LIKE '%".$search."%'");
 	    if (db::num_rows($result) > 0)
 	    {
-		$content .= "<br><label>".misc::lang("users")." ".misc::lang("found").":</label>";
+		$content .= "<br><label>users found:</label>";
 	    	$data = array();
 		while ($row = db::nextRowFromQuery($result))
 		    array_push($data,"<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>");
@@ -1926,10 +1926,10 @@ class objects
 	    $result = db::executeQuery("SELECT * FROM comments WHERE content LIKE '%".$search."%'");
 	    if (db::num_rows($result) > 0)
 	    {
-		$content .= "<br><label>".misc::lang("comments")." ".misc::lang("found").":</label>";
+		$content .= "<br><label>comments found:</label>";
 		$data = array();
 		while ($row = db::nextRowFromQuery($result))
-		    array_push($data,"<a href='/?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".misc::lang(rtrim($row["table_name"],"s"))."</a> ".misc::lang("is commented by")." <a href='/?profile=".$row["user_id"]."'>".user::login_by_uid($row["user_id"])."</a>", str_replace("\\\\\\", "", str_replace("\\r\\n", "", $row["content"])));
+		    array_push($data,"<a href='/?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],"s")."</a> is commented by <a href='/?profile=".$row["user_id"]."'>".user::login_by_uid($row["user_id"])."</a>", str_replace("\\\\\\", "", str_replace("\\r\\n", "", $row["content"])));
 		$content .= content::create_dynamic_list($data,2,"comments");
 	    }
 	    
@@ -1937,7 +1937,7 @@ class objects
 	    {
 		echo "<table>
 			  <tr>
-			      <th>".misc::lang("nothing found")."</th>
+			      <th>Nothing found</th>
 			  </tr>
 		      </table>
 		";

@@ -30,8 +30,13 @@ class header
 		    return $title . " | User Followed By";
 		if ($_GET["action"] == "show_user_follow")
 		    return $title . " | User Follows";
-		if ($_GET["action"] == "users_items" and isset($_GET["id"]) and isset($_GET["table"]))
-		    return $title . " | " . user::login_by_uid($_GET["id"]) . "'s content - " . ucfirst($_GET["table"]);
+		if ($_GET["action"] == "user_items" and isset($_GET["id"]) and isset($_GET["table"]))
+		{
+		    $what = $_GET["table"];
+		    if ($what == "fav_item")
+			$what = "favorited items";
+		    return $title . " | " . user::login_by_uid($_GET["id"]) . "'s " . ucfirst($what);
+		}
 		if ($_GET["action"] == "show_favorited" and isset($_GET["favorited_id"]))
 		    return $title . " | " . user::login_by_uid($_GET["favorited_id"]) . "'s favorited items";
 		if ($_GET["action"] == "display_faction" and isset($_GET["faction"]))
@@ -60,22 +65,22 @@ class header
 		if (isset($_GET["profile"]))
 		    return $title . " - " . user::login_by_uid($_GET["profile"]);
 		if (isset($_GET["edit"]))
-		    return $title . " - " . misc::lang("edit");
+		    return $title . " - Edit";
 		if ($_GET["p"] == "detail" and isset($_GET["id"]) and isset($_GET["table"]))
 		    return $title . " - " . ucfirst(rtrim($_GET["table"],"s")) . " - " . misc::item_title_by_uid($_GET["id"], $_GET["table"]);
 		if ($_GET["p"] == "profile" and !user::online())
-		    return misc::lang("website_name");
+		    return "OpenRA - Resources";
 		return $title;
 	    }
 	    if (isset($_GET["register"]))
-		return $title . " | " . misc::lang("registration");
+		return $title . " | Registration";
 	    if (isset($_GET["recover"]))
 	    {
 		if (isset($_GET["recover_pass"]))
-		    return $title . " | " . misc::lang("recover pw");
+		    return $title . " | Recover password";
 		if (isset($_GET["recover_user"]))
-		    return $title . " | " . misc::lang("recover usr");
-		return $title . " | " . misc::lang("recover account info");
+		    return $title . " | Recover username";
+		return $title . " | Recover Account Information";
 	    }
 	}
 	return $title;

@@ -282,7 +282,7 @@ class profile
 		    if($item != "")
 		    {
 			array_push($data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
-			array_push($data,misc::lang("favorited the", array(substr($row["table_name"],0,strlen($row["table_name"])-1), "<a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item."</a>", $row["posted"])));
+			array_push($data,"favorited the ".substr($row["table_name"],0,strlen($row["table_name"])-1)." \"<a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item."</a>\" at ".$row["posted"]);
 		    }
 		}
 		echo content::create_dynamic_list($data,2,"favorites",11,true,false);
@@ -349,11 +349,11 @@ class profile
 	{
 	    return;
 	}
-	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
-		<label>".lang::$lang['choose map upload']." (.oramap): <input type=\"file\" size='30' name=\"map_upload\" /></label>
+	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
+		<label>Choose a map file to upload</label> (.oramap): <input type='file' size='30' name='map_upload' /></label>
 		<br />
 		<label>Additional info (optional): </label></lable><input type='text' name='additional_desc'><br />
-		<input type=\"submit\" name=\"submit\" value=\"".lang::$lang['upload']."\" />
+		<input type='submit' name='submit' value='Upload' />
 		</form>
 	";
             
@@ -384,7 +384,7 @@ class profile
 	$arr = array("title" => "", "html_content" => "", "guide_type" => "", "user_id" => user::uid(), "no_additional_info" => "");
 	echo content::displayItem($arr,"guides",true);
 	
-    	echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
+    	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
 		<label>Upload guide:</label>
 		<br />
 		<label>Title: <input id='id_guide_title' type='text' name='upload_guide_title' onkeyup='updateContent(\"id_display_title\",\"id_guide_title\");' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>
@@ -399,7 +399,7 @@ class profile
 		<option value='coding'>Coding</option>
 		</select>
 		<br />
-		<input type=\"submit\" name=\"submit\" value=\"".lang::$lang['upload']."\" />
+		<input type='submit' name='submit' value='Upload' />
 		</form>
 	";
     }
@@ -440,7 +440,7 @@ class profile
 		    var multi_selector = new MultiSelector( document.getElementById( 'files_list' ), 8 );
 		    multi_selector.addElement( document.getElementById( 'my_file_element' ) );
 		</script>
-	    <input type='submit' value='".lang::$lang['upload']."'>
+	    <input type='submit' value='Upload'>
 	    </form>
 	";
 	$username = user::username();
