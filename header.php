@@ -17,7 +17,7 @@ class header
 
     public static function pageTitle()
     {
-	$title = misc::lang("website_name");
+	$title = "OpenRA - Resources";
 	if (count($_GET) == 0)
 	{
 	    return $title;
@@ -27,26 +27,32 @@ class header
 	    if (isset($_GET["action"]))
 	    {
 		if ($_GET["action"] == "show_user_followed")
-		    return $title . " | " . misc::lang("user followed by");
+		    return $title . " | User Followed By";
 		if ($_GET["action"] == "show_user_follow")
-		    return $title . " | " . misc::lang("user follows");
+		    return $title . " | User Follows";
 		if ($_GET["action"] == "users_items" and isset($_GET["id"]) and isset($_GET["table"]))
-		    return $title . " | " . misc::lang("user content", array(user::login_by_uid($_GET["id"]))) . " - " . ucfirst(misc::lang($_GET["table"]));
+		    return $title . " | " . user::login_by_uid($_GET["id"]) . "'s content - " . ucfirst($_GET["table"]);
 		if ($_GET["action"] == "show_favorited" and isset($_GET["favorited_id"]))
-		    return $title . " | " . misc::lang("user favorited items", array(user::login_by_uid($_GET["favorited_id"])));
+		    return $title . " | " . user::login_by_uid($_GET["favorited_id"]) . "'s favorited items";
 		if ($_GET["action"] == "display_faction" and isset($_GET["faction"]))
-		    return $title . " | " . ucfirst(misc::lang("faction")) . " - " . strtoupper($_GET["faction"]);
+		    return $title . " | Faction - " . strtoupper($_GET["faction"]);
 		if ($_GET["action"] == "myunits")
 		    if (user::online())
-			return $title . " | " . misc::lang("my units");
+			return $title . " | My Units";
 		if ($_GET["action"] == "mymaps")
 		    if (user::online())
-			return $title . " | " . misc::lang("my maps");
+			return $title . " | My Maps";
 		if ($_GET["action"] == "myguides")
 		    if (user::online())
-			return $title . " | " . misc::lang("my guides");
+			return $title . " | My Guides";
+		if ($_GET["action"] == "myreplays")
+		    if (user::online())
+			return $title . " | My Replays";
+		if ($_GET["action"] == "new_version")
+		    if (user::online())
+			return $title . " | Upload a new version of \"".misc::item_title_by_uid($_GET["id"], "maps")."\"";
 		if ($_GET["action"] == "versions" and isset($_GET["id"]))
-		    return $title . " | " . misc::lang("versions of the map") . ": " . misc::item_title_by_uid($_GET["id"], "maps");
+		    return $title . " | Versions of the map: " . misc::item_title_by_uid($_GET["id"], "maps");
 	    }
 	    if (isset($_GET["p"]))
 	    {

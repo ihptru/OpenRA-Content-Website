@@ -616,17 +616,14 @@ class misc
 	return False;
     }
     
-    public static function paging($nrOfPages, $i, $current, $gets, $table, $params="", $type="grid", $pointer = "")
+    public static function paging($nrOfPages, $i, $current, $gets, $table, $type="grid", $pointer = "")
     {
 	if( $i <= 3 || $i >= $nrOfPages - 3 || ( $i < $current + 3 && $i > $current - 3) )
 	{
 	    if($current == $i)
 		$pages = "<span id='page_count_none'>" . $i . "</span>";
 	    else
-		if ($params == "")
-		    $pages = "<span id='page_count'><a href='?current_".$type."_page_".$table."=".$i.$gets.$pointer."'>" . $i . "</a></span>";
-		else
-		    $pages = "<span id='page_count'><a href='javascript:post_to_url(\"?current_".$type."_".$table."=".$i.$gets.$pointer."\",{".$params."});'>" . $i . "</a></span>";
+		$pages = "<span id='page_count'><a href='?current_".$type."_page_".$table."=".$i.$gets.$pointer."'>" . $i . "</a></span>";
 	    return $pages;
 	}
 	else

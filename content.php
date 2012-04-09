@@ -423,7 +423,7 @@ class content
 	}
 	for($i = 1; $i < $nrOfPages+1; $i++)
 	{
-	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "", "grid", $pointer);
+	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "grid", $pointer);
 	}
 	$pages .= "</td></tr></table>";
 	if ($nrOfPages == 1)
@@ -580,7 +580,7 @@ class content
 		$gets .= "&" . $key . "=" . $_GET[$key];
 	for($i = 1; $i < $nrOfPages+1; $i++)
 	{
-	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "", "list", $pointer);
+	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "list", $pointer);
 	}
 	$pages .= "</td></tr></table>";
 	
@@ -1023,7 +1023,7 @@ class content
 		    $gets .= "&" . $key . "=" . $_GET[$key];
 	    for($i = 1; $i < $nrOfPages+1; $i++)
 	    {
-		$pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "", "comment", $pointer);
+		$pages .= misc::paging($nrOfPages, $i, $current, $gets, $table, "comment", $pointer);
 	    }
 	    $pages .= "</td></tr></table>";
 	    
@@ -1102,18 +1102,7 @@ class content
 		    $content .= "</tr>";
 		}
 		$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
-		if($nrOfPages > 1 && $use_pages == false)
-		{
-		    $params = "\"data\":\"".pages::serialize_array($data)."\"";
-		    $params .= ",\"columns\":\"".$columns."\"";
-		    $params .= ",\"name\":\"".$modifiedName."\"";
-		    $params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
-		    $params .= ",\"header\":\"".$header."\"";
-		    $params .= ",\"use_pages\":\"1\"";
-		    $content .= "<tr><td colspan='".$columns."'><a href='javascript:post_to_url(\"?p=dynamic\",{".$params."});'>Show more ".$name."</a></td></tr>";
-		}
 		$content .= "</table>";
-		$params = "";
 		$gets = "";
 		$pages = "<table><tr><td>";
 		$keys = array_keys($_GET);
@@ -1122,21 +1111,9 @@ class content
 		    if($key != "current_dynamic_page_".$modifiedName)
 			$gets .= "&" . $key . "=" . $_GET[$key];
 		}
-		if (isset($_GET["p"]))
-		{
-		    if($_GET["p"] == "dynamic")
-		    {
-			$params = "\"data\":\"".pages::serialize_array($data)."\"";
-			$params .= ",\"columns\":\"".$columns."\"";
-			$params .= ",\"name\":\"".$modifiedName."\"";
-			$params .= ",\"maxItemsPerPage\":\"".$maxItemsPerPageOrg."\"";
-			$params .= ",\"header\":\"".$header."\"";
-			$params .= ",\"use_pages\":\"1\"";
-		    }
-		}
 		for($i = 1; $i < $nrOfPages+1; $i++)
 		{
-		    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $modifiedName, $params, "dynamic", $pointer);
+		    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $modifiedName, "dynamic", $pointer);
 		}
 		$pages .= "</td></tr></table>";
 		if ($nrOfPages == 1)
@@ -1160,13 +1137,7 @@ class content
 	$content .= '<a href="/">'.misc::lang("home").'</a> |';
 	$content .= '<strong><a href="#top" class="back-to-top">'.misc::lang("to top").'</a></strong>';
 
-	$content .= '</div>';
-	$content .= "<div class='lang' style='padding-bottom:2px;'>
-		    <a id='".pages::cur_lang("en")."' href='?lang=en' style='padding-right:3px;'>English</a>
-		    <a id='".pages::cur_lang("ru")."' href='?lang=ru' style='padding-right:3px;'>Русский</a>
-		    <a id='".pages::cur_lang("sv")."' href='?lang=sv' style='padding-right:3px;'>Swedish</a>
-		    </div>
-	";
+	$content .= '</div><br />';
 	$content .= '<!-- Start of StatCounter Code for Default Guide -->
 		    <script type="text/javascript">
 		    var sc_project=7756346; 
@@ -1374,26 +1345,6 @@ class content
 		    array_push($data,misc::lang("no one likes faction", array("<u>".$faction."</u>")));
 		    echo content::create_dynamic_list($data,1,"dyn",1,true,true);
 		}
-	    }
-	}
-	if ($request == "show_favorited")
-	{
-	    if (isset($_GET["favorited_id"]))
-	    {
-		$result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $_GET["favorited_id"] . " ORDER BY posted DESC");
-		$usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = ".$_GET["favorited_id"]));
-    		if (db::num_rows($result) > 0) {
-		    $data = array();
-		    array_push($data,"",misc::lang("latest favorited", array("<a href='?profile=".$_GET["favorited_id"]."'>".$usr["login"]."</a>'s")).":");
-		    while ($row = db::nextRowFromQuery($result)) {
-			$item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
-			if($item) {
-			    array_push($data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
-			    array_push($data,misc::lang("favorited the", array(substr($row["table_name"],0,strlen($row["table_name"])-1), "<a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>", $row["posted"])));
-			}
-		    }
-		    echo content::create_dynamic_list($data,2,"favorites",10,true,true);
-    		}
 	    }
 	}
 	if ($request == "user_items")
@@ -1870,26 +1821,6 @@ class objects
 	
 	$result = db::executeQuery($query);
 	echo content::create_grid($result,"replays",0,3,4);
-    }
-    
-    public static function dynamic()
-    {
-	$arr = array();
-	array_push($arr,"data");
-	array_push($arr,"columns");
-	array_push($arr,"name");
-	array_push($arr,"maxItemsPerPage");
-	array_push($arr,"header");
-	array_push($arr,"use_pages");
-	if( pages::allISSet($arr) )
-	{
-	    $data = pages::deserialize_array($_POST["data"]);
-	    echo content::create_dynamic_list($data, $_POST["columns"], $_POST["name"], $_POST["maxItemsPerPage"], $_POST["header"], $_POST["use_pages"]);
-	}
-	else
-	{
-	    echo misc::lang("missing data");
-	}
     }
     
     public static function edit()

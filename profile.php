@@ -49,7 +49,7 @@ class profile
 	{
 	    array_push($data,"<a href='?unfollow=".$id."'>Unfollow user</a>");
 	}
-	echo "<p align='right'>" . content::create_dynamic_list($data,1,"dyn",3,true,true) . "</p>";
+	echo "<p align='right'>" . content::create_dynamic_list($data,1,"dyn",3,true,false) . "</p>";
 	$query = "SELECT
 		    who,
 		    whom,
@@ -75,7 +75,7 @@ class profile
 	    echo "</li>
 		  </ul><br />";
 	}
-	
+
 	// followed by is not shown for non logged in users
 	$query = "SELECT
 		    who,
@@ -258,21 +258,34 @@ class profile
 	    echo "</table>";
 
 	    //Display latest favorited items
-	    $show_more = "";
-	    $result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $usr["uid"] . " ORDER BY posted DESC");
-	    $fav_data = array();
-	    if (db::num_rows($result) > 0) {
-		array_push($fav_data,"",$whos." latest favorited items:");
-		while ($row = db::nextRowFromQuery($result)) {
-		    $item = db::nextRowFromQuery(db::executeQuery("SELECT * FROM " . $row["table_name"] . " WHERE uid = " . $row["table_id"]));
-		    if($item) {
-			array_push($fav_data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
-			array_push($fav_data,"favorited the ". substr($row["table_name"],0,strlen($row["table_name"])-1) ." \"<a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item["title"]."</a>\" at ".$row["posted"]."");
+	    
+	    $result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $_GET["profile"] . " ORDER BY posted DESC");
+	    if (db::num_rows($result) > 0)
+	    {
+		$data = array();
+		$usr_fav = user::login_by_uid($_GET["profile"]);
+		if ($usr_fav == user::username())
+		    $usr_fav = "Your";
+		else
+		    $usr_fav .= "'s";
+		array_push($data,"",$usr_fav." latest favorited items:");
+		$i_fav = 0;
+		while ($row = db::nextRowFromQuery($result))
+		{
+		    $i_fav++;
+		    if ($i_fav == 11)
+		    {
+			array_push($data,"","<a href='?action=user_items&table=fav_item&id=".$self."'>Show more favorites</a>");
+			break;
+		    }
+		    $item = misc::item_title_by_uid($row["table_id"], $row["table_name"]);
+		    if($item != "")
+		    {
+			array_push($data,"<img width=20 height=20 style='border: 0px solid #261b15; padding: 0px;' src='images/isFav.png'>");
+			array_push($data,misc::lang("favorited the", array(substr($row["table_name"],0,strlen($row["table_name"])-1), "<a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".$item."</a>", $row["posted"])));
 		    }
 		}
-		if ($show_more != "")
-		    array_push($fav_data, "", $show_more);
-		echo content::create_dynamic_list($fav_data,2,"favorite items",10,true,false);
+		echo content::create_dynamic_list($data,2,"favorites",11,true,false);
 	    }
 
 	    $result = db::executeQuery("
@@ -283,8 +296,6 @@ class profile
 		SELECT 'Total amount of <u>guides</u>' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
 		UNION
 		SELECT 'Total amount of <u>replays</u>' as item, count(*) AS amount, 'replays' AS table_name FROM replays WHERE user_id = ".$usr["uid"] . "
-		UNION
-		SELECT 'Total <u>favorited</u> items' as item, count(*) AS amount, 'fav_item' AS table_name FROM fav_item WHERE user_id = ". $usr["uid"] . "
 		UNION
 		SELECT 'Total amount of <u>comments</u>' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
 	    ");
