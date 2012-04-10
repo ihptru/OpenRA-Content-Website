@@ -55,7 +55,7 @@
 	    $query = "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    pass VARCHAR(80) NOT NULL,
 			    login VARCHAR(80) NOT NULL,
-			    experiance INTEGER NOT NULL DEFAULT 0,
+			    experience INTEGER NOT NULL DEFAULT 0,
 			    gender INTEGER NOT NULL DEFAULT 1,
 			    permission INTEGER NOT NULL DEFAULT 0,
 			    occupation VARCHAR(80),

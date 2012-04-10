@@ -249,12 +249,12 @@ class profile
 	    else
 		echo "<tr><td>Country</td><td>None</td></tr>";
 
-	    $x = $usr["experiance"];
+	    $x = $usr["experience"];
 	    $level = floor((25 + sqrt(625 + 100 * $x)) / 50);
 	    $nextLevel = $level+1;
 	    $expNeeded = 25 * $nextLevel * $nextLevel - 25 * $nextLevel;
 	    echo "<tr><td>Level</td><td>".$level."</td></tr>";
-	    echo "<tr><td>Experiance left to ".$nextLevel."</td><td>".($expNeeded - $x)."</td></tr>";
+	    echo "<tr><td>Experience left to ".$nextLevel."</td><td>".($expNeeded - $x)."</td></tr>";
 	    echo "</table>";
 
 	    //Display latest favorited items

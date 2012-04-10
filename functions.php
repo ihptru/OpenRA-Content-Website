@@ -49,7 +49,7 @@ class upload
 		// 8  -  User already uploaded such a map
 		if ($return_code == 0)
 		{
-		    misc::increase_experiance(10);
+		    misc::increase_experience(10);
 		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid,maphash FROM maps WHERE user_id = ".$user_id." ORDER BY posted DESC LIMIT 1"));
 		    misc::event_log(user::uid(), "add", "maps", $row["uid"]);
 		    if (isset($_POST["additional_desc"]))
@@ -78,7 +78,7 @@ class upload
 		(?,?,?,?,?)
 		";
 	    db::executeQuery($query, array($dirname, $description, "users/".user::username()."/units/".$dirname."/preview.gif", user::uid(), $type));
-	    misc::increase_experiance(50);
+	    misc::increase_experience(50);
 	    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM units WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
 	    misc::event_log(user::uid(), "add", "units", $row["uid"]);
 	}
@@ -201,7 +201,7 @@ class upload
 		// 4  -  User already has an identical replay uploaded
 		if ($return_code == 0)
 		{
-		    misc::increase_experiance(10);
+		    misc::increase_experience(10);
 		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM replays WHERE user_id = ".$user_id." ORDER BY posted DESC LIMIT 1"));
 		    misc::event_log(user::uid(), "add", "replays", $row["uid"]);
 		    if (isset($_POST["description"]))
@@ -442,7 +442,7 @@ class misc
 			    WHERE uid = ?
 		";
 		db::executeQuery($query, array($p_ver, $n_ver));
-		misc::decrease_experiance(10);
+		misc::decrease_experience(10);
 	    }
 	    
 	    if ($table_name == "units")
@@ -466,7 +466,7 @@ class misc
 		    unlink($path.$item);
 		}
 		rmdir($path);
-		misc::decrease_experiance(50);
+		misc::decrease_experience(50);
 	    }
 	    
 	    if ($table_name == "replays")
@@ -480,7 +480,7 @@ class misc
 		unlink($path);
 		$query = "DELETE FROM replay_players WHERE id_replays = ?";
 		db::executeQuery($query, array($item_id));
-		misc::decrease_experiance(10);
+		misc::decrease_experience(10);
 	    }
 	    
 	    if ($table_name == "screenshot_group")
@@ -499,7 +499,7 @@ class misc
 	    }
 	    
 	    if ($table_name == "guides")
-		misc::decrease_experiance(50);
+		misc::decrease_experience(50);
 
 	    //remove item from DB
 	    $query = "DELETE FROM $table_name WHERE uid = ?";
@@ -561,21 +561,21 @@ class misc
 	imagedestroy($im1);
     }
 
-    public static function increase_experiance($points)
+    public static function increase_experience($points)
     {
-	$query = "SELECT experiance FROM users WHERE uid = ".user::uid();
+	$query = "SELECT experience FROM users WHERE uid = ".user::uid();
 	$value = db::nextRowFromQuery(db::executeQuery($query));
-	$value = $value["experiance"] + $points;
-	$query = "UPDATE users SET experiance = ? WHERE uid = ?";
+	$value = $value["experience"] + $points;
+	$query = "UPDATE users SET experience = ? WHERE uid = ?";
 	db::executeQuery($query, array($value, user::uid()));
     }
     
-    public static function decrease_experiance($points)
+    public static function decrease_experience($points)
     {
-	$query = "SELECT experiance FROM users WHERE uid = ".user::uid();
+	$query = "SELECT experience FROM users WHERE uid = ".user::uid();
 	$value = db::nextRowFromQuery(db::executeQuery($query));
-	$value = $value["experiance"] - $points;
-	$query = "UPDATE users SET experiance = ? WHERE uid = ?";
+	$value = $value["experience"] - $points;
+	$query = "UPDATE users SET experience = ? WHERE uid = ?";
 	db::executeQuery($query, array($value, user::uid()));
     }
     

@@ -103,7 +103,7 @@ class header
 		    {
 			db::executeQuery( "INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES (?,?,?,?,?)", array("", $_POST['message'], user::uid(), $_GET['id'], $_GET['table']) );
 			misc::event_log(user::uid(), "comment", $_GET['table'], $_GET['id']);
-			misc::increase_experiance(5);
+			misc::increase_experience(5);
 			header("Location: {$_SERVER['HTTP_REFERER']}");
 		    }
 		}
@@ -119,7 +119,7 @@ class header
 	    $user = $_GET['user_comment'];
 	    misc::delete_comment($id, $user);
 	    misc::event_log($user, "delete_comment", $_GET["table_name"], $_GET["table_id"]);
-	    misc::decrease_experiance(5);
+	    misc::decrease_experience(5);
 	    header("Location: ?p=detail&table=".$_GET["table_name"]."&id=".$_GET["table_id"]);
 	}
     }
@@ -134,7 +134,7 @@ class header
 		{
 		    $text = nl2br($_POST['upload_guide_text']);
 		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES (?,?,?,?)", array($_POST['upload_guide_title'], $text, $_POST['upload_guide_type'], user::uid()));
-		    misc::increase_experiance(50);
+		    misc::increase_experience(50);
 		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM guides WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
 		    misc::event_log(user::uid(), "add", "guides", $row["uid"]);
 		    header("Location: ?p=detail&table=guides&id=".$row["uid"]);
