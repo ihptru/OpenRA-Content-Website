@@ -251,7 +251,7 @@ text_file.close()
 try:
     print "Putting record into database..."
     sql = """INSERT INTO maps
-            (title, description, author, type, players, g_mod, maphash, width, height, tileset, path, user_id, screenshot_group_id, tag, p_ver)
+            (title, description, author, type, players, g_mod, maphash, width, height, tileset, path, user_id, tag, p_ver)
             VALUES
             (
             '%(MapTitle)s',
@@ -266,7 +266,6 @@ try:
             '%(MapTileset)s',
             '%(db_path)s',
             %(uid)s,
-            0,
             '%(tag)s',
             %(pre_version)s
             )

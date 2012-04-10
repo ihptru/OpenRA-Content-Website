@@ -163,27 +163,24 @@ content::head();
 
 		    ?>
 		    </div>
-		    <h3><? echo "Gallery"; ?></h3>
 
-		    <p style='margin-left:5px;' class="thumbs">
 			<?PHP 
 			$query = "SELECT 
 				    uid,
-				    path AS image,
-				    'maps' AS table_name
-				  FROM maps
-				  UNION ALL
-				  SELECT
-				    uid,
-				    preview_image AS image,
-				    'units' AS table_name
-				  FROM units
+				    image_path AS image,
+				    'screenshot_group' AS table_name
+				  FROM screenshot_group
 				  ORDER BY RAND() LIMIT 12";
 			$result = db::executeQuery($query);
-			echo content::createImageGallery($result);
+			if (db::num_rows($result) > 0)
+			{
+			    echo "<h3>Gallery</h3>";
+			    echo "<p style='margin-left:5px;' class='thumbs'>";
+			    echo content::createImageGallery($result);
+			    echo "</p>";
+			}
 			
 			?>
-		    </p>			
 
 		<!-- /sidebar -->				
 		</div>		

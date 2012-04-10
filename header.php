@@ -13,6 +13,7 @@ class header
 	header::apply_filter();
 	header::following();
 	header::edit_item_info();
+	header::upload_screenshot();
     }
 
     public static function pageTitle()
@@ -201,6 +202,11 @@ class header
 	    $user_id = $_GET['del_item_user'];
 	    misc::delete_item($item_id, $table_name, $user_id);	//delete item and comments related to it
 	    misc::event_log(user::uid(), "delete_item", $table_name, $item_id);
+	    if ($table_name == "screenshot_group")
+	    {
+		header("Location: {$_SERVER['HTTP_REFERER']}");
+		return;
+	    }
 	    header("Location: /?p=$table_name");
 	}
     }
@@ -336,6 +342,14 @@ class header
 	    $query = "UPDATE replays SET description = ? WHERE uid = ?";
 	    db::executeQuery($query, array(trim($_POST['add_replay_info']), $replay_id));
 	    header("Location: /?p=detail&table=replays&id=".$replay_id);
+	}
+    }
+    
+    public static function upload_screenshot()
+    {
+	if(isset($_FILES["screenshot_upload"]["name"]))
+	{
+	    header("Location: {$_SERVER['HTTP_REFERER']}");
 	}
     }
 }

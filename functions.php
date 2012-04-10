@@ -73,11 +73,11 @@ class upload
 	function insert_unit($dirname,$description,$type)
 	{
 	    $query = "INSERT INTO units
-		(title,description,preview_image,user_id,screenshot_group_id,type)
+		(title,description,preview_image,user_id,type)
 		VALUES
-		(?,?,?,?,?,?)
+		(?,?,?,?,?)
 		";
-	    db::executeQuery($query, array($dirname, $description, "users/".user::username()."/units/".$dirname."/preview.gif", user::uid(), 0, $type));
+	    db::executeQuery($query, array($dirname, $description, "users/".user::username()."/units/".$dirname."/preview.gif", user::uid(), $type));
 	    misc::increase_experiance(50);
 	    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM units WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
 	    misc::event_log(user::uid(), "add", "units", $row["uid"]);
@@ -218,6 +218,39 @@ class upload
 	{
 	    return "";	// file is not choosen
 	}
+    }
+    
+    public static function screenshot()
+    {
+	if(isset($_FILES["screenshot_upload"]["name"]))
+	{
+	    if (!is_uploaded_file($_FILES["screenshot_upload"]["tmp_name"]))
+		return "";
+	    if ( !(isset($_POST["table_name"]) and isset($_POST["table_id"])) )
+		return "";
+	    $id = $_POST["table_id"];
+	    $table = $_POST["table_name"];
+	    
+	    $query = "SELECT * FROM screenshot_group WHERE table_name = '".$table."' AND table_id = ".$id." AND user_id = ".user::uid();
+	    $res = db::executeQuery($query);
+	    if (db::num_rows($res) >= 4)
+		return "";
+	    $filename = $_FILES["screenshot_upload"]["name"];
+	    $name = explode(".", $filename);
+	    $source = $_FILES["screenshot_upload"]["tmp_name"];
+	    $type = $_FILES["screenshot_upload"]["type"];
+	    $accepted_types = array("image/jpeg","image/png","image/gif","image/bmp","image/x-png");
+	    if(!in_array($type, $accepted_types))
+		return "";
+	    $path = "images/screenshots/".$table."_".$id."_".user::uid()."_".chr(97 + mt_rand(0, 25)).chr(97 + mt_rand(0, 25)).".".$name[1];
+	    move_uploaded_file($source, $path);
+	    $query = "INSERT INTO screenshot_group
+		    (table_id,table_name,user_id,image_path)
+		    VALUES (?,?,?,?)
+	    ";
+	    db::executeQuery($query, array($id,$table,user::uid(),$path));
+	}
+	return "";
     }
     
     public static function avatar()
@@ -443,6 +476,21 @@ class misc
 		$query = "DELETE FROM replay_players WHERE id_replays = ?";
 		db::executeQuery($query, array($item_id));
 	    }
+	    
+	    if ($table_name == "screenshot_group")
+	    {
+		$query = "SELECT image_path FROM screenshot_group WHERE uid = ".$item_id;
+		$result = db::executeQuery($query);
+		$path = False;
+		while ($db_data = db::fetch_array($result))
+		{
+		    $path = WEBSITE_PATH . $db_data['image_path'];
+		}
+		if ($path)
+		{
+		    unlink($path);
+		}
+	    }
 
 	    //remove item from DB
 	    $query = "DELETE FROM $table_name WHERE uid = ?";
@@ -600,6 +648,18 @@ class misc
 	$result = db::executeQuery($query);
 	while ($row = db::nextRowFromQuery($result))
 	    return True;
+	return False;
+    }
+    
+    public static function item_owner($id, $table, $user_id)
+    {
+	$query = "SELECT user_id FROM $table WHERE uid = $id";
+	$result = db::executeQuery($query);
+	while ($row = db::nextRowFromQuery($result))
+	{
+	    if ($row["user_id"] == $user_id)
+		return True;
+	}
 	return False;
     }
     

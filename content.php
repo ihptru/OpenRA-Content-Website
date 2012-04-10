@@ -165,6 +165,9 @@ class content
 			$imagePath = misc::avatar($row["who"]);
 		    }
 		    break;
+		case "screenshot_group":
+		    $imagePath = $row["image"];
+		    break;
 	    }
 	    if ($table == "following")
 	    {
@@ -186,6 +189,10 @@ class content
 		    break;
 		}
 		$content .= "<a href='?profile=".$show."' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' height='40' /></a>";
+	    }
+	    else if ($table == "screenshot_group")
+	    {
+		$content .= "<a href='".$imagePath."' target=_blank><img src='" . $imagePath . "' width='40' height='40' /></a>";
 	    }
 	    else
 	    {
@@ -597,6 +604,7 @@ class content
     {
     	$content = "";
 	$map_version_content = "";
+	$screenshots = "";
 	$flag = false;
 	
     	while (1 == 1)
@@ -824,6 +832,8 @@ class content
 		$mapfile = $mapfile[2] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
 	     	$content .= "<tr><td><a href='".$download."'>Download</a></tr></td>";
+		if (user::uid() == $row["user_id"])
+		    $content .= "<tr><td><a href='?action=manage_screenshots&table=maps&id=".$row["uid"]."'>Manage screenshots</a></td></tr>";
 		
 		if ($row["p_ver"] == 0 and $row["n_ver"] == 0)
 		    $vers = "<td>This is the only version</td>";
@@ -833,6 +843,28 @@ class content
 		    if ($row["n_ver"] == 0)
 			$vers .= "<td><a href='?action=new_version&id=".$row["uid"]."'>Upload new version</a></td>";
 		$map_version_content = "<table><tr><td>Rev: ".ltrim($row["tag"], "r")."</td>".$vers."</tr></table>";
+		
+		//screenshots
+		$query = "SELECT * FROM screenshot_group WHERE table_name = 'maps' AND table_id = ".$row["uid"]." AND user_id = ".$row["user_id"];
+		$res_sc = db::executeQuery($query);
+		$data = array();
+		while ($row_sc = db::nextRowFromQuery($res_sc))
+		{
+		    array_push($data,"<a href='".$row_sc["image_path"]."' target=_blank><img style='max-width:150px;' src='".$row_sc["image_path"]."'></a>");
+		}
+		if (count($data) > 0)
+		{
+		    $screenshots = "<table><tr>";
+		    $i_sc = 0;
+		    foreach ($data as $value)
+		    {
+			$i_sc++;
+			if ($i_sc > 2)
+			    $screenshots .= "</tr><tr>";
+			$screenshots .= "<td>".$value."</td>";
+		    }
+		    $screenshots .= "</tr></table>";
+		}
 	    }
 	    else if($table == "units")
 	    {
@@ -845,6 +877,29 @@ class content
 		    $content .= "<br><a href='".$shape."'>".basename($shape)."</a>";
 		}
 		$content .= "</td></tr>";
+		if (user::uid() == $row["user_id"])
+		    $content .= "<tr><td><a href='?action=manage_screenshots&table=units&id=".$row["uid"]."'>Manage screenshots</a></td></tr>";
+		//screenshots
+		$query = "SELECT * FROM screenshot_group WHERE table_name = 'units' AND table_id = ".$row["uid"]." AND user_id = ".$row["user_id"];
+		$res_sc = db::executeQuery($query);
+		$data = array();
+		while ($row_sc = db::nextRowFromQuery($res_sc))
+		{
+		    array_push($data,"<a href='".$row_sc["image_path"]."' target=_blank><img style='max-width:150px;' src='".$row_sc["image_path"]."'></a>");
+		}
+		if (count($data) > 0)
+		{
+		    $screenshots = "<table><tr>";
+		    $i_sc = 0;
+		    foreach ($data as $value)
+		    {
+			$i_sc++;
+			if ($i_sc > 2)
+			    $screenshots .= "</tr><tr>";
+			$screenshots .= "<td>".$value."</td>";
+		    }
+		    $screenshots .= "</tr></table>";
+		}
 	    }
 	    else if ($table == "replays")
 	    {
@@ -889,6 +944,7 @@ class content
 	     
 	    $content .= "</table>";
 	    $content .= $map_version_content;
+	    $content .= $screenshots;
 	}
 	return $content;
     }
@@ -1456,6 +1512,43 @@ class content
 		    if ($row["n_ver"] == 0)
 			profile::upload_map($_GET["id"]);
 		}
+	    }
+	}
+	//manage screenshots
+	if ($request == "manage_screenshots")
+	{
+	    if ( !(isset($_GET["table"]) and isset($_GET["id"])))
+		return;
+	    if (!user::online())
+		return;
+	    if (!misc::item_owner($_GET["id"], $_GET["table"], user::uid()))
+		return;
+	    $query = "SELECT * FROM screenshot_group WHERE table_id = ".$_GET["id"]." AND table_name = '".$_GET["table"]."' AND user_id = ".user::uid();
+	    $result = db::executeQuery($query);
+	    $can_upload = 4 - (int)db::num_rows($result);
+	    if ($can_upload == 0)
+		echo "<h4>You have reached your limit for this ".rtrim($_GET["table"],"s")."!</h4>";
+	    else
+		echo "<h4>You can upload ".(string)$can_upload." more screenshots for this ".rtrim($_GET["table"],"s")."!</h4>";
+	    
+	    $data = array();
+	    while ($row = db::nextRowFromQuery($result))
+	    {
+		array_push($data,"<a href='".$row["image_path"]."' target=_blank><img style='max-width:150;border: 0px solid #261b15; padding: 0px;' src='".$row["image_path"]."'></a>");
+		array_push($data,"<a href='?del_item=".$row["uid"]."&del_item_table=screenshot_group&del_item_user=".user::uid()."' onClick='return confirmDelete(\" delete this screenshot\")'>Delete</a>");
+	    }
+	    echo content::create_dynamic_list($data,2,"screenshots",5,false,false);
+	    if (db::num_rows($result) < 4)
+	    {
+		echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
+		    <label>Choose an image (jpeg,png,gif): <input type='file' size='30' name='screenshot_upload' /></label>
+		    <br />
+		    <input type='hidden' name='table_id' value='" . $_GET["id"] . "'>
+		    <input type='hidden' name='table_name' value='" . $_GET["table"] . "'>
+		    <input type='submit' name='submit' value='submit' />
+		    </form>
+		";
+		upload::screenshot();
 	    }
 	}
     }

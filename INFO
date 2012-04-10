@@ -1,7 +1,7 @@
 permissions:
 
 users/		:		0777
-
+images/screenshots/	:	0777
 
 
 #cron:

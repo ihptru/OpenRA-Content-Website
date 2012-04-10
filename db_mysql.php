@@ -105,7 +105,6 @@
 			    tileset VARCHAR(80) NOT NULL,
 			    path VARCHAR(80) NOT NULL,
 			    user_id INTEGER NOT NULL,
-			    screenshot_group_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			    tag VARCHAR(10) NOT NULL DEFAULT 'r1',
 			    p_ver INTEGER NOT NULL DEFAULT 0,
@@ -145,8 +144,9 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
-            //Used for example: User create's a map that makes huge success. A entry could be made in this table
+            // Used for example: User create's a map that makes huge success. A entry could be made in this table
             // it should show a trophy on his profile with some info. (Maybe could be auto generated some how)
+	    // edit: probably when user achives a high experience level with minimun of item reports?
             $query = "CREATE TABLE IF NOT EXISTS trophy (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
 			    content VARCHAR(9000) NOT NULL,
@@ -162,7 +162,6 @@
 			    preview_image VARCHAR(500) NOT NULL,
 			    type VARCHAR(80) NOT NULL DEFAULT 'other',
 			    user_id INTEGER NOT NULL,
-			    screenshot_group_id INTEGER NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
@@ -223,8 +222,10 @@
 	    db::executeQuery($query);
             
             $query = "CREATE TABLE IF NOT EXISTS screenshot_group (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-			    group_id INTEGER NOT NULL,
-			    image_id INTEGER NOT NULL);";
+			    table_id INTEGER NOT NULL,
+			    table_name VARCHAR(80) NOT NULL,
+			    user_id INTEGER NOT NULL,
+			    image_path VARCHAR(800) NOT NULL);";
 	    db::executeQuery($query);
 	    
 	    // types: add,delete_item,delete_comment,report,fav,unfav,edit,login,logout,comment,follow,unfollow
