@@ -119,6 +119,7 @@ class header
 	    $user = $_GET['user_comment'];
 	    misc::delete_comment($id, $user);
 	    misc::event_log($user, "delete_comment", $_GET["table_name"], $_GET["table_id"]);
+	    misc::decrease_experiance(5);
 	    header("Location: ?p=detail&table=".$_GET["table_name"]."&id=".$_GET["table_id"]);
 	}
     }

@@ -442,6 +442,7 @@ class misc
 			    WHERE uid = ?
 		";
 		db::executeQuery($query, array($p_ver, $n_ver));
+		misc::decrease_experiance(10);
 	    }
 	    
 	    if ($table_name == "units")
@@ -465,6 +466,7 @@ class misc
 		    unlink($path.$item);
 		}
 		rmdir($path);
+		misc::decrease_experiance(50);
 	    }
 	    
 	    if ($table_name == "replays")
@@ -478,6 +480,7 @@ class misc
 		unlink($path);
 		$query = "DELETE FROM replay_players WHERE id_replays = ?";
 		db::executeQuery($query, array($item_id));
+		misc::decrease_experiance(10);
 	    }
 	    
 	    if ($table_name == "screenshot_group")
@@ -494,6 +497,9 @@ class misc
 		    unlink($path);
 		}
 	    }
+	    
+	    if ($table_name == "guides")
+		misc::decrease_experiance(50);
 
 	    //remove item from DB
 	    $query = "DELETE FROM $table_name WHERE uid = ?";
@@ -560,6 +566,15 @@ class misc
 	$query = "SELECT experiance FROM users WHERE uid = ".user::uid();
 	$value = db::nextRowFromQuery(db::executeQuery($query));
 	$value = $value["experiance"] + $points;
+	$query = "UPDATE users SET experiance = ? WHERE uid = ?";
+	db::executeQuery($query, array($value, user::uid()));
+    }
+    
+    public static function decrease_experiance($points)
+    {
+	$query = "SELECT experiance FROM users WHERE uid = ".user::uid();
+	$value = db::nextRowFromQuery(db::executeQuery($query));
+	$value = $value["experiance"] - $points;
 	$query = "UPDATE users SET experiance = ? WHERE uid = ?";
 	db::executeQuery($query, array($value, user::uid()));
     }
