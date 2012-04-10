@@ -859,7 +859,7 @@ class content
 		    foreach ($data as $value)
 		    {
 			$i_sc++;
-			if ($i_sc > 2)
+			if ($i_sc == 3)
 			    $screenshots .= "</tr><tr>";
 			$screenshots .= "<td>".$value."</td>";
 		    }
@@ -894,7 +894,7 @@ class content
 		    foreach ($data as $value)
 		    {
 			$i_sc++;
-			if ($i_sc > 2)
+			if ($i_sc == 3)
 			    $screenshots .= "</tr><tr>";
 			$screenshots .= "<td>".$value."</td>";
 		    }
@@ -960,7 +960,14 @@ class content
 	    switch($type)
 	    {
 		case "add":
-		    $desc = " added new <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    if ($row["table_name"] == "screenshot")
+		    {
+			$q = "SELECT * FROM screenshot_group WHERE uid = ".$row["table_id"];
+			$row_sc = db::nextRowFromQuery(db::executeQuery($q));
+			$desc = " added new <a href='".$row_sc["image_path"]."' target=_blank>screenshot</a> for <a href='?p=detail&table=".$row_sc["table_name"]."&id=".$row_sc["table_id"]."'>".rtrim($row_sc["table_name"],"s")."</a>";
+		    }
+		    else
+			$desc = " added new <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    break;
 		case "delete_comment":
 		    $desc = " deleted comment on <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";

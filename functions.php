@@ -249,6 +249,9 @@ class upload
 		    VALUES (?,?,?,?)
 	    ";
 	    db::executeQuery($query, array($id,$table,user::uid(),$path));
+	    $query = "SELECT uid FROM screenshot_group WHERE table_id = ".$id." AND table_name = '".$table."' AND user_id = ".user::uid()." ORDER BY posted DESC";
+	    $row_sc = db::nextRowFromQuery(db::executeQuery($query));
+	    misc::event_log(user::uid(), "add", "screenshot", $row_sc["uid"]);
 	}
 	return "";
     }

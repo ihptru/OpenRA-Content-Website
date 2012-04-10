@@ -225,7 +225,8 @@
 			    table_id INTEGER NOT NULL,
 			    table_name VARCHAR(80) NOT NULL,
 			    user_id INTEGER NOT NULL,
-			    image_path VARCHAR(800) NOT NULL);";
+			    image_path VARCHAR(800) NOT NULL,
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
 	    db::executeQuery($query);
 	    
 	    // types: add,delete_item,delete_comment,report,fav,unfav,edit,login,logout,comment,follow,unfollow
