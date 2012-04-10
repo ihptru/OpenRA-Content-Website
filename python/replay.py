@@ -17,7 +17,7 @@ try:
     optlist,  args = getopt.getopt(sys.argv[1:], 's:i:u:t:')
 except getopt.GetoptError, err:
     print err
-    exit()
+    exit(1)
 
 if optlist == []:
     print "Incorrect options"
