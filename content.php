@@ -1115,11 +1115,11 @@ class content
 	    $content .= "</div>";
                 
 	    $content .= "<div class='comment-text'>";
-	    $content .= "<p>" . stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))) . "</p>";
 	    if (misc::comment_owner($comment["user_id"]))
 	    {
-		$content .= "<a style='float: right; margin: -142px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\" delete comment\")' title='Delete'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
+		$content .= "<a style='float: right; margin: -101px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\" delete comment\")' title='Delete'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
 	    }
+	    $content .= "<p>" . stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))) . "</p>";
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; // << need correct page
 	    $content .= "</div>";

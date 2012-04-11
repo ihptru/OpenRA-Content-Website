@@ -6,3 +6,12 @@ images/screenshots/	:	0777
 
 #cron:
 *       *       5 * *   username  php /path/to/clearDB.php
+
+###
+# set webserver to allow override by .htaccess
+
+
+###
+# requires:
+#          python2
+#          mono (tested with mono-2.10.6)

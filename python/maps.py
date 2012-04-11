@@ -1,15 +1,16 @@
-import sys;
-import zipfile;
-import string;
-import struct;
-import io;
-import bmp;
-import os;
-import getopt;
-import MySQLdb;
-import hashlib;
-import shutil;
-import config;
+import sys
+import zipfile
+import string
+import struct
+import io
+import bmp
+import os
+import getopt
+import MySQLdb
+import hashlib
+import shutil
+import config
+import subprocess
 
 WEBSITE_PATH = os.getcwd() + os.sep
 
@@ -289,6 +290,13 @@ except:
     exit(7)
 cur.close()
 
+if MapMod == "ra":
+    print "Generating full size preview..."
+    return_code = subprocess.Popen(['mono', 'mono/src/fullsize_upload/bin/ImageMapGenerator.exe', '-filename="'+mapfile_full_path+'"']).wait()
+    text_file = open(path + "info.txt", "a")
+    text_file.write("\n"+str(return_code))
+    text_file.close()
+    
 print "Generating minimap..."
 
 print "Width: " + str(width);
