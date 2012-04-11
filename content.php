@@ -682,7 +682,7 @@ class content
 			    $add_edit = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&edit_map_info'>edit</a>";
 			if (isset($_GET["edit_map_info"]) and user::uid() == $row["user_id"])
 			{
-			    $text_add = "<form method=POST><input type='text' name='add_map_info' value='".$row["additional_desc"]."'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'></form>";
+			    $text_add = "<form method=POST><input type='text' name='add_map_info' value='".$row["additional_desc"]."'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 			}
 			else
 			    $text_add = "Additional info: " . str_replace("\r\n", "<br />", $row["additional_desc"]) . $add_edit;
@@ -693,16 +693,46 @@ class content
 			{
 			    $add_add_info = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&add_map_info'>add additional info</a>";
 			    if (isset($_GET["add_map_info"]))
-				$text_add = "<form method=POST><input type='text' name='add_map_info'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'></form>";
+				$text_add = "<form method=POST><input type='text' name='add_map_info'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 			}
 		    }
 		    $text = str_replace("\r\n", "<br />", $row["description"]) . $add_add_info;
 		    break;
 		case "units":
-		    $title = strip_tags($row["title"]);
+		    $title_origin = strip_tags($row["title"]);
 		    $imagePath = $row["preview_image"];
-		    $subtitle = "<font color='#d8ff00'>".$title."</font> posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>". $user_name . "</a>";
+
+		    $add_description = "";
+		    $desc_edit = "";
+		    
+		    if ($row["description"] != "")
+		    {
+			if ($row["user_id"] == user::uid())
+			    $desc_edit = "<a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_info'>edit</a>";
+			if (isset($_GET["edit_unit_info"]) and user::uid() == $row["user_id"])
+			    $text_desc = "<form method=POST><input type='text' name='add_unit_info' value='".$row["description"]."'><input type='hidden' name='unit_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
+		    }
+		    else
+		    {
+			if ($row["user_id"] == user::uid())
+			{
+			    $add_description = "<a style='float:right;padding-left: 7px;' href='?p=detail&table=units&id=".$row["uid"]."&add_unit_info'>add description</a>";
+			    if (isset($_GET["add_unit_info"]))
+				$text_desc = "<form method=POST><input type='text' name='add_unit_info'><input type='hidden' name='unit_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
+			}
+		    }
+		    
+		    $title = "Unit: <font color='#d8ff00'>" . $title_origin . "</font>   $add_description</td></tr><tr>";
+		    $subtitle = $title . "<td>Posted at <i>" . $row["posted"] . "</i> by <a href='?profile=".$row["user_id"]."'>" . $user_name . "</a>";
 		    $text = "";
+		    if (isset($text_desc))
+			$description = "<tr><td>".$text_desc."</td></tr>";
+		    else
+		    {
+			$description = "";
+			if ($row["description"] != "")
+			    $description = "<tr><td>Description: " . str_replace("\r\n", "<br />", $row["description"]) . $desc_edit . "</td></tr>";
+		    }
 		    break;
 		case "guides":
 		    $imagePath = "images/guide_" . str_replace("\\\\\\", "", $row["guide_type"]) . ".png";
@@ -768,7 +798,7 @@ class content
 			if ($row["user_id"] == user::uid())
 			    $desc_edit = "<a style='float:right;' href='?p=detail&table=replays&id=".$row["uid"]."&edit_replay_info'>edit</a>";
 			if (isset($_GET["edit_replay_info"]) and user::uid() == $row["user_id"])
-			    $text_desc = "<form method=POST><input type='text' name='add_replay_info' value='".$row["description"]."'><input type='hidden' name='replay_id' value='".$row["uid"]."'> <input type='submit' value='submit'></form>";
+			    $text_desc = "<form method=POST><input type='text' name='add_replay_info' value='".$row["description"]."'><input type='hidden' name='replay_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 		    }
 		    else
 		    {
@@ -776,7 +806,7 @@ class content
 			{
 			    $add_description = "<a style='float:right;padding-left: 7px;' href='?p=detail&table=replays&id=".$row["uid"]."&add_replay_info'>add description</a>";
 			    if (isset($_GET["add_replay_info"]))
-				$text_desc = "<form method=POST><input type='text' name='add_replay_info'><input type='hidden' name='replay_id' value='".$row["uid"]."'> <input type='submit' value='submit'></form>";
+				$text_desc = "<form method=POST><input type='text' name='add_replay_info'><input type='hidden' name='replay_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 			}
 		    }
 		    $title = "Replay: <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>   $add_description</td></tr><tr>";
@@ -868,15 +898,39 @@ class content
 	    }
 	    else if($table == "units")
 	    {
-	     	$content .= "<tr><td>Description: " . strip_tags($row["description"]) . "</td></tr>";
+		if (isset($_GET["edit_unit_type"]) and user::uid() == $row["user_id"])
+		{
+		    $content .= "<tr><td><form method=POST><select name='edit_unit_type' id='edit_unit_type'>
+				<option value='structure' ".misc::option_selected("structure",$row["type"]).">Structure</option>
+				<option value='infantry' ".misc::option_selected("infantry",$row["type"]).">Infantry</option>
+				<option value='vehicle' ".misc::option_selected("vehicle",$row["type"]).">Vehicle</option>
+				<option value='air-borne' ".misc::option_selected("air-borne",$row["type"]).">Air-borne</option>
+				<option value='nature' ".misc::option_selected("nature",$row["type"]).">Nature</option>
+				<option value='other' ".misc::option_selected("other",$row["type"]).">Other</option>
+				<input type='hidden' name='unit_id' value='".$row["uid"]."'>
+				<input type='hidden' name='user_id' value='".$row["user_id"]."'>
+				<input type='submit' value='submit'></form>
+				</form></td></tr>
+		    ";
+		}
+		else
+		{
+		    $edit_type = "";
+		    if (user::uid() == $row["user_id"])
+			$edit_type = "<a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_type'>edit</a>";
+		    $content .= "<tr><td>Type: ".$row["type"].$edit_type."</td></tr>";
+		}
+		$content .= $description;
 	     	$content .= "<tr><td><br>Files (click to download):";
-	     	$directory = "users/".$user_name."/units/".$title."/";
+	     	$directory = "users/".$user_name."/units/".$title_origin."/";
 		$shapes = glob($directory . "*.*");
+		$content .= "<table>";
 		foreach($shapes as $shape)
 		{
-		    $content .= "<br><a href='".$shape."'>".basename($shape)."</a>";
+		    if (basename($shape) != "preview.gif")
+			$content .= "<tr><td><a href='".$shape."'>".basename($shape)."</a></td></tr>";
 		}
-		$content .= "</td></tr>";
+		$content .= "</table></td></tr>";
 		if (user::uid() == $row["user_id"])
 		    $content .= "<tr><td><a href='?action=manage_screenshots&table=units&id=".$row["uid"]."'>Manage screenshots</a></td></tr>";
 		//screenshots
@@ -1613,6 +1667,9 @@ class content
 	elseif ($sort_by == "lately_commented")
 	    $order_by = $sort_by;
 	
+	if ($my_content != "")
+	    $my_items = true;
+
 	return array($order_by, $my_items);
     }
 
@@ -1942,7 +1999,7 @@ class objects
 		    $arr = array("title" => str_replace("\\\\\\", "", $row["title"]), "html_content" => str_replace("\\\\\\", "",  str_replace('\r\n', "", $row["html_content"])), "posted" => "<a href='?p=detail&table=guides&id=".$row["uid"]."'>Back to guide's page</a>", "guide_type" => "", "user_id" => user::uid(), "no_additional_info" => "");
 		    echo content::displayItem($arr,"guides",true);
 		    
-		    echo "<form id=\"form_class\" enctype=\"multipart/form-data\" method=\"POST\" action=\"\">
+		    echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
 			    <label>Upload guide:</label>
 			    <br />
 			    <label>Title: <input id='id_guide_title' type='text' value='".str_replace("\\\\\\", "", $row["title"])."' name='edit_guide_title' onkeyup='updateContent(\"id_display_title\",\"id_guide_title\");' onchange='updateContent(\"id_display_title\",\"id_guide_title\");' onkeypress='updateContent(\"id_display_title\",\"id_guide_title\");' /></label>

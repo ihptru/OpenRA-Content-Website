@@ -332,6 +332,8 @@ class header
     {
 	if (isset($_POST['add_map_info']))
 	{
+	    if (user::uid() != $_POST['user_id'])
+		return;
 	    $map_id = $_POST['map_id'];
 	    $query = "UPDATE maps SET additional_desc = ? WHERE uid = ?";
 	    db::executeQuery($query, array(trim($_POST['add_map_info']), $map_id));
@@ -339,10 +341,30 @@ class header
 	}
 	if (isset($_POST['add_replay_info']))
 	{
+	    if (user::uid() != $_POST['user_id'])
+		return;
 	    $replay_id = $_POST['replay_id'];
 	    $query = "UPDATE replays SET description = ? WHERE uid = ?";
 	    db::executeQuery($query, array(trim($_POST['add_replay_info']), $replay_id));
 	    header("Location: /?p=detail&table=replays&id=".$replay_id);
+	}
+	if (isset($_POST['add_unit_info']))
+	{
+	    if (user::uid() != $_POST['user_id'])
+		return;
+	    $unit_id = $_POST['unit_id'];
+	    $query = "UPDATE units SET description = ? WHERE uid = ?";
+	    db::executeQuery($query, array(trim($_POST['add_unit_info']), $unit_id));
+	    header("Location: /?p=detail&table=units&id=".$unit_id);
+	}
+	if (isset($_POST['edit_unit_type']))
+	{
+	    if (user::uid() != $_POST['user_id'])
+		return;
+	    $unit_id = $_POST['unit_id'];
+	    $query = "UPDATE units SET type = ? WHERE uid = ?";
+	    db::executeQuery($query, array(trim($_POST['edit_unit_type']), $unit_id));
+	    header("Location: /?p=detail&table=units&id=".$unit_id);
 	}
     }
     

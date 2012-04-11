@@ -445,7 +445,15 @@ class profile
 	";
 	$username = user::username();
 	$uploaded = upload::upload_unit($username);
-	echo $uploaded;
+	if ($uploaded != "")
+	{
+	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
+	    $query = "SELECT uid FROM units WHERE user_id = ".user::uid()."
+		       ORDER BY posted DESC LIMIT 1
+	    ";
+	    $row = db::nextRowFromQuery(db::executeQuery($query));
+	    echo "<table><tr><th>(<a href='?p=detail&table=units&id=".$row["uid"]."'>check unit's page</a>)</th></tr></table>";
+	}
     }
     
     public static function upload_replay()
