@@ -32,7 +32,7 @@ function date3339($timestamp=0)
 
 header('Content-type: text/xml');
 
-$query = "SELECT * FROM event_log WHERE type = 'add' GROUP BY user_id,table_name,table_id ORDER BY posted DESC LIMIT 25";
+$query = "SELECT * FROM event_log WHERE type = 'add' AND table_name <> 'screenshot' GROUP BY user_id,table_name,table_id ORDER BY posted DESC LIMIT 25";
 
 $result = db::executeQuery($query);
 
