@@ -338,20 +338,6 @@ class pages
 	}
     }
     
-    public static function cur_lang($lang)
-    {
-	if (!isset($_COOKIE['language']))
-	    return "";
-	if ($lang == $_COOKIE['language'])
-	{
-	    return "underline_link";
-	}
-	else
-	{
-	    return "";
-	}
-    }
-    
     public static function allISSet($arr)
     {
 	for($i = 0; $i < count($arr); $i++)

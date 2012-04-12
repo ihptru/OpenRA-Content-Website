@@ -41,6 +41,11 @@ class profile
 	}
 	array_push($data,$to_head);
 	array_push($data,"<img src='".misc::avatar($id)."'>");
+	
+	//pm
+	if ($id != user::uid() and user::online())
+	    array_push($data,"<a href='?p=mail&m=compose&to=".$id."'>Send a PM</a>");
+	
 	if (profile::ifFollow($id)==0)
 	{
 	    array_push($data,"<a href='?follow=".$id."'>Follow user</a>");

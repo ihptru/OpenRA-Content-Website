@@ -450,6 +450,21 @@ a.more-link:hover {
 	background: #4a781d url(../images/button-hover-bg.png) repeat-x;
 }
 
+a.more-link-selected {
+	float: left;
+	margin-top: 25px;
+	padding: 5px 10px;
+	text-decoration: none;
+	text-transform: uppercase;
+	font-size: 10px;
+	font-weight: bold;
+	line-height: 20px;	
+	color: #fff;	
+	display: block;
+	border: 1px solid #2f4c13;
+	background: #4a781d url(../images/button-hover-bg.png) repeat-x;
+}
+
 /* Content */
 #content-wrap {
 	clear: both;

@@ -160,6 +160,8 @@ class user
 		    if (isset($_COOKIE["replay_my_items"]))
 			setcookie("replay_my_items", "", time()-60*60, "/");
 		}
+		if (isset($_COOKIE["msg_unread_only_filter"]))
+		    setcookie("msg_unread_only_filter", "", time()-60*60, "/");
 		
 		//remove from db
 		$query = "DELETE FROM signed_in WHERE user_id = ".user::uid();
@@ -443,6 +445,15 @@ class user
 	$query = "SELECT login FROM users WHERE uid = ".$uid;
 	$row = db::nextRowFromQuery(db::executeQuery($query));
 	return $row["login"];
+    }
+    
+    public static function exists($uid)
+    {
+	$query = "SELECT uid FROM users WHERE uid = ".$uid;
+	$result = db::executeQuery($query);
+	while ($row = db::nextRowFromQuery($result))
+	    return true;
+	return false;
     }
 }
 

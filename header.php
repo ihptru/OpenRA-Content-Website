@@ -14,6 +14,7 @@ class header
 	header::following();
 	header::edit_item_info();
 	header::upload_screenshot();
+	header::pm();
     }
 
     public static function pageTitle()
@@ -253,6 +254,15 @@ class header
 		}
 		header("Location: /?current_grid_page_replays=1".$gets);
 	    }
+	    else if ($_POST["apply_filter_type"] == "msg_filter")
+	    {
+		if (isset($_POST["msg_unread_only_filter"]))
+		    setcookie("msg_unread_only_filter", "1", time()+3600*24*360, "/");
+		else
+		    if (isset($_COOKIE["msg_unread_only_filter"]) and user::online())
+			setcookie("msg_unread_only_filter", "", time()-60*60, "/");
+		header("Location: {$_SERVER['HTTP_REFERER']}");
+	    }
 	    else
 	    {
 		$arg = $_POST["apply_filter_type"];
@@ -373,6 +383,32 @@ class header
 	if(isset($_FILES["screenshot_upload"]["name"]))
 	{
 	    header("Location: {$_SERVER['HTTP_REFERER']}");
+	}
+    }
+    
+    public static function pm()
+    {
+	if (isset($_POST["msg_title"]))
+	{
+	    $title = trim($_POST["msg_title"]);
+	    $to_id = $_POST["to_user_id"];
+	    if (!user::exists($to_id))
+		return;
+	    if (!user::online())
+		return;
+	    if (user::uid() == $to_id)
+		return;
+	    $content = trim(mail::parse_message($_POST["msg_message"]));
+	    if ($content == "")
+		return;
+	    if ($title == "")
+		return;
+	    $query = "INSERT INTO pm
+		    (from_user_id,to_user_id,title,content)
+		    VALUES
+		    (?,?,?,?)";
+	    db::executeQuery($query, array(user::uid(), $to_id, $title, $content));
+	    header("Location: /?p=mail&m=sent");
 	}
     }
 }

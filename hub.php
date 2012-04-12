@@ -10,6 +10,8 @@ include_once "functions.php";
 
 include_once "user.php";
 
+include_once "mail.php";
+
 ############## database class ##################
 include_once("db_mysql.php");
 ################################################

@@ -107,6 +107,7 @@ class content
 	{
 	    echo "<li style='float:right;' id=''><a href='?logout'>logout</a></li>";
 	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='?profile=".user::uid()."'>profile</a></li>";
+	    echo "<li style='float:right;' id='"; echo pages::current('mail', $request); echo"'><a href='?p=mail&m=inbox'>pm</a></li>";
 	}
     }
 
@@ -1322,6 +1323,10 @@ class content
 		}
 		echo content::create_dynamic_list($data,2);
 	    }
+	}
+	elseif ($page == "mail")
+	{
+	    mail::mbox();
 	}
     }
     

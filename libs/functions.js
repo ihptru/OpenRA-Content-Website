@@ -38,3 +38,19 @@ function updateContentWithStrip (object, content, allowed) {
 	text = text.replace(/\n\r?/g, '<br />');
     document.getElementById(object).innerHTML = "<p>"+text+"</p>";
 }
+
+function selectAllcheckboxes(x)
+{
+    for(var i=0,l=x.form.length; i<l; i++)
+    if(x.form[i].type == 'checkbox' && x.form[i].name != 'sAll')
+    x.form[i].checked=x.form[i].checked?false:true
+}
+
+function textCounter(field,cntfield,maxlimit)
+{
+    if (field.value.length > maxlimit) // if too long...trim it!
+    field.value = field.value.substring(0, maxlimit);
+    // otherwise, update 'characters left' counter
+    else
+    cntfield.value = maxlimit - field.value.length;
+}

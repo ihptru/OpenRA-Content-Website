@@ -88,6 +88,7 @@
 			    conversation_id INTEGER NOT NULL DEFAULT -1,
 			    title VARCHAR(200) NOT NULL,
 			    content VARCHAR(5000) NOT NULL,
+			    isread INTEGER NOT NULL DEFAULT 0,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
 	    db::executeQuery($query);
 	    	
