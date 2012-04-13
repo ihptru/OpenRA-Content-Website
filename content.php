@@ -566,6 +566,9 @@ class content
 			    case "guides":
 				$imagePath = "<td><a href='?p=detail&table=guides&id=".$inner_row["uid"]."'><img src='images/guide_" . $inner_row["guide_type"] . ".png'></a></td>";
 				break;
+			    case "replays":
+				$imagePath = "<td><a href='?p=detail&table=replays&id=".$inner_row["uid"]."'><img src='images/replay.png'></a></td>";
+				break;
 			}
 		    }
 		    $text = stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($row["content"]))));
