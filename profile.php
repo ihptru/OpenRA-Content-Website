@@ -355,7 +355,12 @@ class profile
 	    return;
 	}
 	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
-		<label>Choose a map file to upload</label> (.oramap): <input type='file' size='30' name='map_upload' /></label>
+		<label>Choose a map file to upload</label> (.oramap):<br /><br />
+		<span class='file-wrapper'>
+		    <input type='file' name='map_upload' id='enhanced' />
+		    <span class='button'>Choose a file</span>
+		</span><br />
+		</label>
 		<br />
 		<label>Additional info (optional): </label></lable><input type='text' name='additional_desc'><br />
 		<input type='submit' name='submit' value='Upload' />
@@ -437,15 +442,18 @@ class profile
 	    <label>Unit description:<br> </label>
 		<textarea name='unit_description' cols='40' rows='5'></textarea><br>
 	    <label>Choose unit file:</label><br>
-		<input id='my_file_element' size='30' type='file' name='file_0' >
-	";
-		
-	echo "<div id='files_list'></div>
+		<span class='file-wrapper-no-info'>
+		    <input type='file' name='file_0' id='my_file_element' />
+		    <span class='button'>Choose a file</span>
+		</span>
+		<div id='files_list'></div>
 		<script>
 		    var multi_selector = new MultiSelector( document.getElementById( 'files_list' ), 8 );
 		    multi_selector.addElement( document.getElementById( 'my_file_element' ) );
-		</script>
-	    <input type='submit' value='Upload'>
+		</script><br />
+	";
+		
+	echo "<input type='submit' value='Upload'>
 	    </form>
 	";
 	$username = user::username();
@@ -470,7 +478,12 @@ class profile
 	$can_upload = 50 - (int)$row["count"];
 	echo "<h4>You can upload ".(string)$can_upload." more replays!</h4><br /><p><i>version 2012-0315 and newer only supported</i></p>";
 	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
-		<label>Replay (.rep): <input type='file' size='30' name='replay_upload' /></label>
+		<label>Replay (.rep):<br /><br />
+		<span class='file-wrapper'>
+		    <input type='file' name='replay_upload' id='enhanced' />
+		    <span class='button'>Choose a file</span>
+		</span><br />
+		</label>
 		<br />
 		<label>Description: </label></lable><input type='text' name='description'><br />
 		<input type='submit' name='submit' value='submit' />

@@ -10,25 +10,12 @@ class content
 	echo header::pageTitle();
 	echo "</title>";
 
-	echo "<script type='text/javascript'>
-	function confirmDelete(desc)
-	{
-	    var agree=confirm('Are you sure you want to'+desc+'?');
-	    if (agree)
-	    return true ;
-	    else
-	    return false ;
-	}
-	</script>
-	<script src='libs/multifile.js'>
-	    //include multi upload form
-	</script>
-	<script src='libs/functions.js'>
-	    //include other javascript functions
-	</script>
-	";
-	echo "<script type='text/javascript' src='libs/password/jquery.js'></script>
-		  <script type='text/javascript' src='libs/password/mocha.js'></script>";
+	echo "<script type='text/javascript' src='libs/multifile.js'></script>";
+	echo "<script type='text/javascript' src='libs/functions.js'></script>";
+	echo "<script type='text/javascript' src='libs/jquery.js'></script>";
+	echo "<script type='text/javascript' src='libs/enhanced_file_upload.js'></script>";
+	echo "<script type='text/javascript' src='libs/password/mocha.js'></script>";
+
 	echo "<link rel='stylesheet' type='text/css' media='screen' href='css/screen.css' />
 	</head>";
     }
@@ -1623,7 +1610,12 @@ class content
 	    if (db::num_rows($result) < 4)
 	    {
 		echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
-		    <label>Choose an image (jpeg,png,gif): <input type='file' size='30' name='screenshot_upload' /></label>
+		    <label>Choose an image (jpeg,png,gif):<br /><br />
+		    <span class='file-wrapper'>
+			<input type='file' name='screenshot_upload' id='enhanced' />
+			<span class='button'>Choose a file</span>
+		    </span><br />
+		    </label>
 		    <br />
 		    <input type='hidden' name='table_id' value='" . $_GET["id"] . "'>
 		    <input type='hidden' name='table_name' value='" . $_GET["table"] . "'>

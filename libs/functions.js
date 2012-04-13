@@ -54,3 +54,12 @@ function textCounter(field,cntfield,maxlimit)
     else
     cntfield.value = maxlimit - field.value.length;
 }
+
+function confirmDelete(desc)
+{
+    var agree=confirm('Are you sure you want to'+desc+'?');
+    if (agree)
+    return true ;
+    else
+    return false ;
+}

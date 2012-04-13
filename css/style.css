@@ -908,3 +908,70 @@ a.tooltip:hover span{ /*the span will display just on :hover state*/
     border-color: #662B2B #460B0B #360505 #591F1F;
     color: #fff;
     text-align: left}
+
+/* enhacement for file upload */
+.file-wrapper {
+  cursor: pointer;
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+}
+
+.file-wrapper .button {
+ background: #561B1B;
+ -moz-border-radius: 5px;
+ -webkit-border-radius: 5px;
+ border-radius: 5px;
+ cursor: pointer;
+ display: inline-block;
+ font-size: 11px;
+ font-weight: bold;
+ padding: 4px 18px;
+ text-transform: uppercase;
+ color:#fff;
+}
+
+.file-wrapper input {
+ cursor: pointer;
+ height: 100%;
+ position: absolute;
+ right: 0;
+ top: 0;
+ filter: alpha(opacity=1);
+ -moz-opacity: 0.01;
+ opacity: 0.01;
+ font-size: 100px;
+}
+
+.file-wrapper-no-info {
+  cursor: pointer;
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+}
+
+.file-wrapper-no-info .button {
+ background: #561B1B;
+ -moz-border-radius: 5px;
+ -webkit-border-radius: 5px;
+ border-radius: 5px;
+ cursor: pointer;
+ display: inline-block;
+ font-size: 11px;
+ font-weight: bold;
+ padding: 4px 18px;
+ text-transform: uppercase;
+ color:#fff;
+}
+
+.file-wrapper-no-info input {
+ cursor: pointer;
+ height: 100%;
+ position: absolute;
+ right: 0;
+ top: 0;
+ filter: alpha(opacity=1);
+ -moz-opacity: 0.01;
+ opacity: 0.01;
+ font-size: 100px;
+}
