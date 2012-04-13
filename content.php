@@ -107,7 +107,20 @@ class content
 	{
 	    echo "<li style='float:right;' id=''><a href='?logout'>logout</a></li>";
 	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='?profile=".user::uid()."'>profile</a></li>";
-	    echo "<li style='float:right;' id='"; echo pages::current('mail', $request); echo"'><a href='?p=mail&m=inbox'>pm</a></li>";
+	    $pm_title = "";
+	    $pm_notify = "";
+	    $query = "SELECT * FROM pm WHERE to_user_id = ".user::uid()." AND isread = 0";
+	    $res = db::executeQuery($query);
+	    if (db::num_rows($res) > 0)
+	    {
+		if (db::num_rows($res) == 1)
+		    $s = "";
+		else
+		    $s = "s";
+		$pm_title = "title='".db::num_rows($res)." new message".$s."'";
+		$pm_notify = "<span style='padding: 30px 15px 17px 11px;float:right;color:#ff0000;'>".db::num_rows($res)." new message".$s." -></span>";
+	    }
+	    echo "<li style='float:right;' id='"; echo pages::current('mail', $request); echo"'><a href='?p=mail&m=inbox' ".$pm_title.">pm</a></li>".$pm_notify;
 	}
     }
 
