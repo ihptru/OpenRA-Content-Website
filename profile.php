@@ -176,8 +176,11 @@ class profile
 
 	    echo "<table><tr><td><form action='?profile=".user::uid()."&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
 	    echo "<p>";
-	    echo "<label>Change avatar</label><br />";
-	    echo "<input type='file' name='avatar_upload'><br />";
+	    echo "<label>Change avatar</label><br /><br />";
+	    echo "<span class='file-wrapper'>
+		    <input type='file' name='avatar_upload' id='enhanced' />
+		    <span class='button'>Choose a file</span>
+		</span><br />";
 	    echo "<label for='message'>Your occupation</label><br />";
 	    echo "<input type='text' name='occupation' value='".$usr["occupation"]."'><br />";
 	    echo "<label for='message'>Your real name</label><br />";
