@@ -1314,7 +1314,7 @@ class content
 	}
 	elseif ($page == "members")
 	{
-	    $result = db::executeQuery("SELECT * FROM users");
+	    $result = db::executeQuery("SELECT * FROM users ORDER BY register_date ASC");
 	    if (db::num_rows($result) > 0)
 	    {
 		echo "<div class='sidemenu'><ul><li>Members (".db::num_rows($result)."):</li></ul></div>";
