@@ -1317,14 +1317,15 @@ class content
 	    $result = db::executeQuery("SELECT * FROM users");
 	    if (db::num_rows($result) > 0)
 	    {
-		echo "<div class='sidemenu'><ul><li>Members:</li></ul></div>";
+		echo "<div class='sidemenu'><ul><li>Members (".db::num_rows($result)."):</li></ul></div>";
 	    	$data = array();
+		array_push($data,"#","Username","Joined","Message");
 		while ($row = db::nextRowFromQuery($result))
 		{
 		    $avatar = misc::avatar($row["uid"]);
-		    array_push($data,"<a href='?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>");
+		    array_push($data,"<a href='?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>", date("D M j, Y g:i a", mail::convert_timestamp($row["register_date"])), "<a href='?p=mail&m=compose&to=".$row["uid"]."'>Send a PM</a>");
 		}
-		echo content::create_dynamic_list($data,2);
+		echo content::create_dynamic_list($data,4,"members",11,true,true);
 	    }
 	}
 	elseif ($page == "mail")
