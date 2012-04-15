@@ -591,7 +591,7 @@ class misc
     
     public static function check_cookie_enabled()
     {
-	if (isset($_COOKIE["language"]))
+	if (isset($_COOKIE["PHPSESSID"]))
 	{
 	    return true;
 	}

@@ -13,17 +13,17 @@ class user
     // user online?
     public static function online()
     {
-	if (isset($_SESSION['sess_id']))
+	if (isset($_SESSION["sess_id"]))
 	{
 	    $sess_id = $_SESSION["sess_id"];
 	    $user_id = $_SESSION["user_id"];
 
-	    //session is set: record in `signed_in` table must exist
+	    //session is set (logged in): record in `signed_in` table must exist
 	    $query = "SELECT * FROM signed_in WHERE user_id = ".$user_id;
 	    $result = db::executeQuery($query);
 	    if (db::num_rows($result) == 0)
 	    {
-		//tried to fake user's identities
+		// tried to fake user's identities
 		session_destroy();
 		header("Location: {$_SERVER['HTTP_REFERER']}");
 	    }
@@ -35,6 +35,7 @@ class user
 	    else
 	    {
 		// user_id matches but session_id is wrong: probably tried to fake user's identities
+		// or user just 'logged in' in another browser so we break current connection
 		session_destroy();
 		header("Location: {$_SERVER['HTTP_REFERER']}");
 	    }
@@ -48,7 +49,8 @@ class user
 		$result = db::executeQuery($query);
 		if (db::num_rows($result) == 0)
 		{
-		    //cookie is set but hashes do not match: probably faking user's identities
+		    // cookie is set but hashes do not match: probably faking user's identities
+		    // or user is logged in different browser so it has updated db value
 		    return False;
 		}
 		$row = db::nextRowFromQuery($result);
@@ -63,7 +65,7 @@ class user
 		    }
 		    else
 		    {
-			//probably faking user's identities
+			// probably faking user's identities
 			return False;
 		    }
 		}
