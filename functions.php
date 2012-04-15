@@ -95,7 +95,7 @@ class upload
 		return $messages;
 
 	    if (!isset($_POST["unit_name"]) or $_POST["unit_name"] == "")
-		return "Name of unit is not set!";
+		return "1"; // Name of unit is not set!
 	    $dirname = str_replace(" ", "_" , $_POST["unit_name"]);
 	    
 	    $description = "";

@@ -459,8 +459,14 @@ class profile
 	echo "<input type='submit' value='Upload'>
 	    </form>
 	";
+
 	$username = user::username();
 	$uploaded = upload::upload_unit($username);
+	if ($uploaded == "1")
+	{
+	    echo "<table><tr><th>Name of unit is not set!</th></tr></table>";
+	    return;
+	}
 	if ($uploaded != "")
 	{
 	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
