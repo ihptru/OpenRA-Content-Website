@@ -408,6 +408,8 @@ class header
 		    VALUES
 		    (?,?,?,?)";
 	    db::executeQuery($query, array(user::uid(), $to_id, $title, $content));
+	    $email = user::email_by_uid($to_id);
+	    misc::send_mail( $email, 'New PM at OpenRA Content Website', 'You\'ve got a new private message! Your inbox is: http://'.$_SERVER['HTTP_HOST'].'/?p=mail&m=inbox', array( 'From' => 'noreplay@'.$_SERVER['HTTP_HOST'] ) );
 	    header("Location: /?p=mail&m=sent");
 	}
     }

@@ -449,6 +449,13 @@ class user
 	return $row["login"];
     }
     
+    public static function email_by_uid($uid)
+    {
+	$query = "SELECT email FROM users WHERE uid = ".$uid;
+	$row = db::nextRowFromQuery(db::executeQuery($query));
+	return $row["email"];
+    }
+    
     public static function exists($uid)
     {
 	$query = "SELECT uid FROM users WHERE uid = ".$uid;
