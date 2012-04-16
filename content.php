@@ -686,10 +686,10 @@ class content
 			    $add_edit = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&edit_map_info'>edit</a>";
 			if (isset($_GET["edit_map_info"]) and user::uid() == $row["user_id"])
 			{
-			    $text_add = "<form method=POST><input type='text' name='add_map_info' value='".$row["additional_desc"]."'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
+			    $text_add = "<form method=POST><input type='text' name='add_map_info' value='".str_replace("\\\\\\", "", str_replace("'", "`", $row["additional_desc"]))."'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 			}
 			else
-			    $text_add = "Additional info: " . str_replace("\r\n", "<br />", $row["additional_desc"]) . $add_edit;
+			    $text_add = "Additional info: " . str_replace("\\\\\\", "", str_replace("\r\n", "<br />", $row["additional_desc"])) . $add_edit;
 		    }
 		    else
 		    {
@@ -700,7 +700,7 @@ class content
 				$text_add = "<form method=POST><input type='text' name='add_map_info'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 			}
 		    }
-		    $text = str_replace("\r\n", "<br />", $row["description"]) . $add_add_info;
+		    $text = str_replace("\r\n", "<br />", str_replace("\\\\\\", "", $row["description"])) . $add_add_info;
 		    break;
 		case "units":
 		    $title_origin = strip_tags($row["title"]);
@@ -714,7 +714,7 @@ class content
 			if ($row["user_id"] == user::uid())
 			    $desc_edit = "<a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_info'>edit</a>";
 			if (isset($_GET["edit_unit_info"]) and user::uid() == $row["user_id"])
-			    $text_desc = "<form method=POST><input type='text' name='add_unit_info' value='".$row["description"]."'><input type='hidden' name='unit_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
+			    $text_desc = "<form method=POST><input type='text' name='add_unit_info' value='".str_replace("\\\\\\", "", str_replace("'", "`", $row["description"]))."'><input type='hidden' name='unit_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 		    }
 		    else
 		    {
@@ -735,7 +735,7 @@ class content
 		    {
 			$description = "";
 			if ($row["description"] != "")
-			    $description = "<tr><td>Description: " . str_replace("\r\n", "<br />", $row["description"]) . $desc_edit . "</td></tr>";
+			    $description = "<tr><td>Description: " . str_replace("\\\\\\", "", str_replace("\r\n", "<br />", $row["description"])) . $desc_edit . "</td></tr>";
 		    }
 		    break;
 		case "guides":
@@ -802,7 +802,7 @@ class content
 			if ($row["user_id"] == user::uid())
 			    $desc_edit = "<a style='float:right;' href='?p=detail&table=replays&id=".$row["uid"]."&edit_replay_info'>edit</a>";
 			if (isset($_GET["edit_replay_info"]) and user::uid() == $row["user_id"])
-			    $text_desc = "<form method=POST><input type='text' name='add_replay_info' value='".$row["description"]."'><input type='hidden' name='replay_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
+			    $text_desc = "<form method=POST><input type='text' name='add_replay_info' value='".str_replace("'", "`", str_replace("\\\\\\", "", $row["description"]))."'><input type='hidden' name='replay_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 		    }
 		    else
 		    {
@@ -822,7 +822,7 @@ class content
 		    {
 			$description = "";
 			if ($row["description"] != "")
-			    $description = "<tr><td>Description: " . str_replace("\r\n", "<br />", $row["description"]) . $desc_edit . "</td></tr>";
+			    $description = "<tr><td>Description: " . str_replace("\\\\\\", "", str_replace("\r\n", "<br />", $row["description"])) . $desc_edit . "</td></tr>";
 		    }
 		    break;
 	    }
