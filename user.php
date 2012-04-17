@@ -158,6 +158,8 @@ class user
 		}
 		if (isset($_COOKIE["replay_sort_by"]))
 		{
+		    if (isset($_COOKIE["replay_version"]))
+			setcookie("replay_version", "", time()-60*60, "/");
 		    setcookie("replay_sort_by", "", time()-60*60, "/");
 		    if (isset($_COOKIE["replay_my_items"]))
 			setcookie("replay_my_items", "", time()-60*60, "/");

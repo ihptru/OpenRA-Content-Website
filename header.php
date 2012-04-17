@@ -240,6 +240,8 @@ class header
 	    else if ($_POST["apply_filter_type"] == "replay")
 	    {
 		setcookie("replay_sort_by", $_POST["sort"], time()+3600*24*360, "/");
+		if (isset($_POST["replay_version"]))
+		    setcookie("replay_version", $_POST["replay_version"], time()+3600*24*360, "/");
 		if (isset($_POST["replay_my_items"]) and user::online())
 		    setcookie("replay_my_items", "1", time()+3600*24*360, "/");
 		else

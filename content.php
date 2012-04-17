@@ -1407,7 +1407,7 @@ class content
 	    profile::upload_replay();
 	    echo "<br /><br /><div class='sidemenu'><ul><li>Your replays:</li></ul></div>";
 	    
-	    list($order_by, $my_items) = content::replay_filters("no_show_my_content_filter");
+	    list($order_by, $my_items, $version) = content::replay_filters("no_show_my_content_filter");
 	    
 	    $my = "";
 	
@@ -1420,8 +1420,8 @@ class content
 		$ljoin_lc = "LEFT JOIN comments AS c on c.table_id = r.uid";
 	    }
 	    if ($my_items == true)
-		$my = " WHERE r.user_id = ".user::uid()." ";
-	    $query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." ".$my." ORDER BY ".$order_by;
+		$my = " AND r.user_id = ".user::uid()." ";
+	    $query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE ('%".$version."%') ".$my." ORDER BY ".$order_by;
 	    
 	    $result = db::executeQuery($query);
 	    $output = content::create_grid($result,"replays",0,3,4);
@@ -1639,11 +1639,14 @@ class content
 	$my_items = false;
 	$my_checked = "";
 	$sort_by = "latest";
+	$version = "";
 	if (isset($_POST["apply_filter"]))
 	{
 	    $sort_by = $_POST["sort"];
 	    if (isset($_POST["replay_my_items"]))
 		$my_items = true;
+	    if (isset($_POST["replay_version"]))
+		$version = $_POST["replay_version"];
 	}
 	elseif (isset($_COOKIE["replay_sort_by"]))
 	{
@@ -1653,12 +1656,14 @@ class content
 		$my_items = true;
 		$my_checked = "checked";
 	    }
+	    if (isset($_COOKIE["replay_version"]))
+		$version = $_COOKIE["replay_version"];
 	}
 	$checkbox = "";
 	if ($my_content == "" and user::online())
 	    $checkbox = "<input style='float:right; margin-top: 15px; margin-right: 15px;' type='checkbox' name='replay_my_items' ".$my_checked." title='only my content'><label style='float:right; margin-top: 12px; margin-right: 5px;'>only my content</label>";
 	//filters
-	echo "<form name='replay_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th></tr><tr>";
+	echo "<form name='replay_filters' method=POST action=''><table style='width:560px;'><tr><th>sort by:</th><th>version contains:</th></tr><tr>";
 	echo "<td>";
 	echo "<select name='sort' id='sort'>";
 	echo "<option value='latest' ".misc::option_selected("latest",$sort_by).">latest first</option>";
@@ -1668,8 +1673,7 @@ class content
 	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">lately commented</option>";
     	echo "</select><br />";
 	echo "</td>";
-	echo "</select><br />";
-	echo "</td>";
+	echo "<td><input type='text' name='replay_version' value='".$version."'></td>";
 	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
 	    ".$checkbox."
 	    <input type='hidden' name='apply_filter_type' value='replay'>
@@ -1690,7 +1694,7 @@ class content
 	if ($my_content != "")
 	    $my_items = true;
 
-	return array($order_by, $my_items);
+	return array($order_by, $my_items, $version);
     }
 
     public static function guide_unit_filters($arg)
@@ -1980,7 +1984,7 @@ class objects
     {
 	echo "<h3>Replays!</h3>";
 	
-	list($order_by, $my_items) = content::replay_filters();
+	list($order_by, $my_items, $version) = content::replay_filters();
 	    
 	$my = "";
 
@@ -1993,8 +1997,8 @@ class objects
 	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = r.uid";
 	}
 	if ($my_items == true)
-	    $my = " WHERE r.user_id = ".user::uid()." ";
-	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." ".$my." ORDER BY ".$order_by;
+	    $my = " AND r.user_id = ".user::uid()." ";
+	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE ('%".$version."%') ".$my." ORDER BY ".$order_by;
 	
 	$result = db::executeQuery($query);
 	echo content::create_grid($result,"replays",0,3,4);
