@@ -494,9 +494,9 @@ class content
 		    $title = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>";
 		    $imagePath = "<td><a href='?p=detail&table=maps&id=".$row["uid"]."'><img src='" . misc::minimap($row["path"]) . "'></a></td>";
 		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
-		    $text = "Description: ".$row["description"];
+		    $text = "Description: ".str_replace("\\\\\\", "", $row["description"]);
 		    if ($row["additional_desc"] != "")
-			$text .= "<br />Additional info: ".$row["additional_desc"];
+			$text .= "<br />Additional info: ".str_replace("\\\\\\", "", $row["additional_desc"]);
 		    $text .= "<br />Rev: ".ltrim($row["tag"], "r");
 		    break;
 		case "units":
@@ -504,7 +504,7 @@ class content
 		    $title = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>";
 		    $imagePath = "<td><a href='?p=detail&table=units&id=".$row["uid"]."'><img src='" . $row["preview_image"] . "'></a></td>";
 		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
-		    $text = "Description: ".$row["description"];
+		    $text = "Description: ".str_replace("\\\\\\", "", $row["description"]);
 		    break;
 		case "guides":
 		    $title = $row["title"];
@@ -534,12 +534,15 @@ class content
 		    }
 		    if ($players != "")
 			$players = "Players: ".rtrim($players,", ");
-		    $text = "<br />Version: ".$row["version"]."<br />Mods: ".$row["mods"]."<br />Server name: ".$row["server_name"]."<br />".$players;
+		    $desc = "";
+		    if ($row["description"] != "")
+			$desc = "<br />Description: ".str_replace("\\\\\\", "", $row["description"]);
+		    $text = "<br />Version: ".$row["version"]."<br />Mods: ".$row["mods"]."<br />Server name: ".$row["server_name"]."<br />".$players.$desc;
 		    break;
 		case "articles":
 		    $title = $row["title"];
 		    $title = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>";
-		    $imagePath = "";
+		    $imagePath = "<td><a href='?p=detail&table=articles&id=".$row["uid"]."'><img src='images/article.png'></a></td>";
 		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
 		    $text = "";
 		    break;
@@ -568,6 +571,9 @@ class content
 				break;
 			    case "replays":
 				$imagePath = "<td><a href='?p=detail&table=replays&id=".$inner_row["uid"]."'><img src='images/replay.png'></a></td>";
+				break;
+			    case "articles":
+				$imagePath = "<td><a href='?p=detail&table=articles&id=".$inner_row["uid"]."'><img src='images/article.png'></a></td>";
 				break;
 			}
 		    }
