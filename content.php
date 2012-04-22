@@ -383,7 +383,7 @@ class content
 		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
 		    break;
 		case "replays":
-		    $title = $row["title"]."</a> by <a>".user::login_by_uid($row["user_id"]);
+		    $title = $row["title"]." by ".user::login_by_uid($row["user_id"]);
 		    $imagePath = "images/replay.png";
 		    break;
 	    }
