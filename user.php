@@ -2,90 +2,47 @@
 
 class user
 {
-    public static $cookie_hash = "";
-
-    public static function start_cookie_remember()
-    {
-	if (isset($_COOKIE["remember"]))
-	    user::$cookie_hash = $_COOKIE["remember"];
-    }
-
     // user online?
     public static function online()
     {
-	if (isset($_SESSION["sess_id"]))
-	{
-	    $sess_id = $_SESSION["sess_id"];
-	    $user_id = $_SESSION["user_id"];
+	if (!user::check_cookie_enabled())
+	    return False;
 
-	    //session is set (logged in): record in `signed_in` table must exist
-	    $query = "SELECT * FROM signed_in WHERE user_id = ".$user_id;
+	$sess_id = session_id();
+
+	//session is set (logged in): record in `signed_in` table must exist
+	$query = "SELECT * FROM signed_in WHERE sess_hash = '".$sess_id."'";
+	$result = db::executeQuery($query);
+	if (db::num_rows($result) != 0)
+	    return True;	// everything is OK! User is online!
+	// if we are in here, current session ID is different from one in DB (session is expired or login in another browser)
+	// but if session is expired, there could be a `remember me` option set!
+	// so we check it (it's related only to expired session, if login in another browser:
+	//				DB value was changed and it will return False in any case)
+	if(isset($_COOKIE["remember"]))
+	{
+	    $query = "SELECT * FROM signed_in WHERE sess_hash = '".$_COOKIE["remember"]."'";
 	    $result = db::executeQuery($query);
 	    if (db::num_rows($result) == 0)
 	    {
-		// tried to fake user's identities
-		session_destroy();
-		header("Location: {$_SERVER['HTTP_REFERER']}");
+		// cookie is set but hashes do not match: probably faking user's identities
+		// or user is logged in different browser so it has updated db value
+		// then we can clear current cookie var
+		return False;
 	    }
 	    $row = db::nextRowFromQuery($result);
-	    if ($row["sess_hash"] == $sess_id)
-	    {
-		return True;
-	    }
-	    else
-	    {
-		// user_id matches but session_id is wrong: probably tried to fake user's identities
-		// or user just 'logged in' in another browser so we break current connection
-		session_destroy();
-		header("Location: {$_SERVER['HTTP_REFERER']}");
-	    }
-	}
+	    $user_id = $row["user_id"];
 
-	if (misc::check_cookie_enabled())
-	{
-	    if(isset($_COOKIE["remember"]))
-	    {
-		$query = "SELECT * FROM signed_in WHERE sess_hash = '".user::$cookie_hash."'";
-		$result = db::executeQuery($query);
-		if (db::num_rows($result) == 0)
-		{
-		    // cookie is set but hashes do not match: probably faking user's identities
-		    // or user is logged in different browser so it has updated db value
-		    return False;
-		}
-		$row = db::nextRowFromQuery($result);
-		$db_hash = $row["sess_hash"];
-		$user_id = $row["user_id"];
-		if (isset($_SESSION["sess_id"]))
-		{
-		    //user could still have not expired session
-		    if ($_SESSION["sess_id"] == $db_hash)
-		    {
-			return True;
-		    }
-		    else
-		    {
-			// probably faking user's identities
-			return False;
-		    }
-		}
-		else
-		{
-		    //session is not set: expired; but `remember` in COOKIE is set
-		    $current_session_id = session_id();
-		    //update values in db and in cookie
-		    
-		    $query = "UPDATE signed_in SET sess_hash = ? WHERE user_id = ?";
-		    db::executeQuery($query, array($current_session_id, $user_id));
-		    $_SESSION["sess_id"] = $current_session_id;
-		    $_SESSION["user_id"] = $user_id;
-		    //we can not have same hash forever so change it in DB and in COOKIE when user is back after session was expired
-		    setcookie("remember", $current_session_id, time()+3600*24*360, "/");
-		    user::$cookie_hash = $current_session_id;
-		    return True;
-		}
-	    }
+	    $current_session_id = session_id();
+
+	    //update values in db and in cookie since there is such a session ID in DB
+	    $query = "UPDATE signed_in SET sess_hash = ? WHERE user_id = ?";
+	    db::executeQuery($query, array($current_session_id, $user_id));
+	    //we can not have same hash forever so change it in DB and in COOKIE when user is back after session was expired
+	    setcookie("remember", $current_session_id, time()+3600*24*360, "/");
+	    return True;
 	}
+	return False;
     }
 
     // uid of current client
@@ -93,12 +50,12 @@ class user
     {
 	if (user::online())
 	{
-	    return $_SESSION['user_id'];
+	    $query = "SELECT * FROM signed_in WHERE sess_hash = '".session_id()."'";
+	    $result = db::executeQuery($query);
+	    while ($row = db::nextRowFromQuery($result))
+		return $row["user_id"];
 	}
-	else
-	{
-	    return "0";
-	}
+	return "0";
     }
 
     // get username of current client
@@ -106,17 +63,14 @@ class user
     {
 	if (user::online())
 	{
-	    $query = "SELECT login FROM users WHERE uid = " . $_SESSION['user_id'];
+	    $query = "SELECT login FROM users WHERE uid = " . user::uid();
 	    $result = db::executeQuery($query);
 	    while ($db_data = db::fetch_array($result))
 	    {
 		return $db_data['login'];
 	    }
 	}
-	else
-	{
-	    return "";	// if somehow this function is run by some faker which is not logged in
-	}
+	return "";	// if somehow this function is run by some faker which is not logged in
     }
 
     // is always executed to check if user requested logout
@@ -171,9 +125,7 @@ class user
 		$query = "DELETE FROM signed_in WHERE user_id = ".user::uid();
 		db::executeQuery($query);
 		//unset session vars
-		misc::event_log($_SESSION['user_id'], "logout");
-		unset($_SESSION['user_id']);
-		unset($_SESSION['sess_id']);
+		misc::event_log(user::uid(), "logout");
 
 		session_destroy();	//after redirect user will get a new session ID
 		header("Location: /");
@@ -228,14 +180,11 @@ class user
 			db::executeQuery($query, array($sess_hash, $user_id));
 		    }
 		    
-		    $_SESSION['sess_id'] = $sess_hash;	//start session
-		    $_SESSION['user_id'] = $user_id;
-		    
 		    if (isset($_POST["remember"]))
 		    {
 			if ($_POST["remember"] == "yes")
 			{
-			    if (misc::check_cookie_enabled())
+			    if (user::check_cookie_enabled())
 			    {
 				setcookie("remember", $sess_hash, time()+3600*24*360, "/");
 			    }
@@ -464,6 +413,15 @@ class user
 	$result = db::executeQuery($query);
 	while ($row = db::nextRowFromQuery($result))
 	    return true;
+	return false;
+    }
+    
+    public static function check_cookie_enabled()
+    {
+	if (session_id())
+	{
+	    return true;
+	}
 	return false;
     }
 }

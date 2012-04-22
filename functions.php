@@ -583,34 +583,16 @@ class misc
 	{
 	    return True;
 	}
-	else
-	{
-	    return False;
-	}
+	return False;
     }
-    
-    public static function check_cookie_enabled()
-    {
-	if (isset($_COOKIE["PHPSESSID"]))
-	{
-	    return true;
-	}
-	else
-	{
-	    return false;
-	}
-    }
-    
+
     public static function minimap($path)
     {
 	if (file_exists($path . "minimap.bmp"))
 	{
 	    return $path . "minimap.bmp";
 	}
-	else
-	{
-	    return "images/nominimap.png";
-	}
+	return "images/nominimap.png";
     }
     
     public static function option_selected($value, $request)
@@ -619,10 +601,7 @@ class misc
 	{
 	    return "selected='selected'";
 	}
-	else
-	{
-	    return "";
-	}
+	return "";
     }
     
     public static function option_selected_bool($value, $request)
@@ -631,10 +610,7 @@ class misc
 	{
 	    return "true";
 	}
-	else
-	{
-	    return "false";
-	}
+	return "false";
     }
     
     public static function item_title_by_uid($id, $table)
@@ -677,10 +653,7 @@ class misc
 		$pages = "<span id='page_count'><a href='?current_".$type."_page_".$table."=".$i.$gets.$pointer."'>" . $i . "</a></span>";
 	    return $pages;
 	}
-	else
-	{
-	    return "...";
-	}
+	return "...";
     }
     
     public static function current_map_version($current, $id)

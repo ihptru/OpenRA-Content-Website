@@ -26,7 +26,6 @@ if (!db::check())
 
 ###
 # for cookie and db modifications in case of session is destroyed and `remember me` is set
-user::start_cookie_remember();
 user::online();
 
 user::check_logout();
