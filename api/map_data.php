@@ -6,11 +6,17 @@ include_once("../db_mysql.php");
 
 db::connect();
 
+header('Content-Type: application/javascript');
+
 function map_data($result)
 {
     $json_result_array = array();
     while ($row = db::nextRowFromQuery($result))
     {
+	$query = "SELECT * FROM reported WHERE table_name = 'maps' AND table_id = ".$row['uid'];
+	$result = db::executeQuery($query);
+	if (db::num_rows($result) > 0)
+	    break;	// this map is reported
 	$map_result = array();
 	$map_result['id'] = $row['uid'];
 	$map_result['title'] = $row['title'];
@@ -31,9 +37,13 @@ function map_data($result)
 
 function map_link($result)
 {
+    $json_result_array = array();
     while ($row = db::nextRowFromQuery($result))
     {
-	$json_result_array = array();
+	$query = "SELECT * FROM reported WHERE table_name = 'maps' AND table_id = ".$row['uid'];
+	$result = db::executeQuery($query);
+	if (db::num_rows($result) > 0)
+	    break;	// this map is reported
 	$url = array();
 	$path = $row["path"];
 	$name = explode("-",basename($path),3);
@@ -50,10 +60,9 @@ function map_link($result)
 	    echo $data;
 	    return;
 	}
-	print(json_encode($json_result_array));
-	return;
     }
-    echo "-1";
+    print(json_encode($json_result_array));
+    return;
 }
 
 function result($condition, $value)
@@ -89,7 +98,7 @@ function result($condition, $value)
     }
     elseif ($condition == "load")
     {
-	$query = "SELECT path FROM maps WHERE maphash = '".$value."'
+	$query = "SELECT uid,path FROM maps WHERE maphash = '".$value."'
 		    ORDER BY RAND() LIMIT 1
 	";
 	map_link(db::executeQuery($query));
@@ -99,7 +108,7 @@ function result($condition, $value)
     map_data($result);
 }
 
-
+#########################
 
 if (isset($_GET["hash"]))
 {
