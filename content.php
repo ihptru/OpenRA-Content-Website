@@ -1116,19 +1116,20 @@ class content
 
 	    $avatarImg = misc::avatar($author["uid"]);
 		
-	    $content .= "<a name=".$comment_page_id."></a><div class='comment-info'>";			
+	    $content .= "<a name=".$comment_page_id."></a>";
+	    if (misc::comment_owner($comment["user_id"]))
+	    {
+		$content .= "<div style='position:absolute; margin: -14px 0px 0px 541px; border: 0px solid #2C1F18;color:#ff0000;'><a href='?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\" delete comment\")' title='Delete'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a></div>";
+	    }
+	    $content .= "<div class='comment-info'>";
 	    $content .= "<a href='?profile=".$comment["user_id"]."'><img alt='' src='" . $avatarImg . "' style='margin-top:10px; max-width:50' /></a>";
 	    $content .= "<cite>";
 	    $content .= "<a href='?profile=".$comment["user_id"]."'>" . $author["login"] . "</a> Says: <br />";
 	    $content .= "<span class='comment-data'><a href='#".$comment_page_id."' title=''>" . $comment["posted"] . "</a></span>";
 	    $content .= "</cite>";
 	    $content .= "</div>";
-                
+
 	    $content .= "<div class='comment-text'>";
-	    if (misc::comment_owner($comment["user_id"]))
-	    {
-		$content .= "<a style='float: right; margin: -101px -35px 0 0; border: 0px solid #2C1F18;color:#ff0000;' href='?delete_comment=".$comment["uid"]."&user_comment=".user::uid()."&table_name=".$comment["table_name"]."&table_id=".$comment["table_id"]."' onClick='return confirmDelete(\" delete comment\")' title='Delete'><img src='images/delete.png' style='border: 0px solid #261b15; padding: 0px; max-width:50%;' border='0' alt='delete' /></a>";
-	    }
 	    $content .= "<p>" . stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))) . "</p>";
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; // << need correct page
