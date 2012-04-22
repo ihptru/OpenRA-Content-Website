@@ -94,7 +94,40 @@ content::head();
 		    uid AS table_id,
 		    'new_replay' AS type
 		FROM (SELECT * FROM replays ORDER BY posted DESC LIMIT 1) AS treplays
-
+		UNION ALL
+		-- most viewed
+		SELECT
+		    table_name,
+		    uid AS table_id,
+		    'viewed' AS type
+		FROM (   
+		    SELECT
+			uid,
+			'maps' AS table_name,
+			viewed
+		    FROM maps WHERE viewed = (SELECT MAX(viewed) FROM maps ORDER BY RAND() LIMIT 1)
+		    UNION
+		    SELECT
+			uid,
+			'units' AS table_name,
+			viewed
+		    FROM units WHERE viewed = (SELECT MAX(viewed) FROM units ORDER BY RAND() LIMIT 1)
+		    UNION
+		    SELECT
+			uid,
+			'guides' AS table_name,
+			viewed
+		    FROM guides WHERE viewed = (SELECT MAX(viewed) FROM guides ORDER BY RAND() LIMIT 1)
+		    UNION
+		    SELECT
+			uid,
+			'replays' AS table_name,
+			viewed
+		    FROM replays WHERE viewed = (SELECT MAX(viewed) FROM replays ORDER BY RAND() LIMIT 1)
+		    
+		    ORDER BY viewed DESC LIMIT 1
+		) AS tablename
+		    
 		ORDER BY RAND() LIMIT 1
 	    ";
 	    $res = db::executeQuery($query);

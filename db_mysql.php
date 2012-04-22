@@ -109,7 +109,8 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			    tag VARCHAR(10) NOT NULL DEFAULT 'r1',
 			    p_ver INTEGER NOT NULL DEFAULT 0,
-			    n_ver INTEGER NOT NULL DEFAULT 0);";
+			    n_ver INTEGER NOT NULL DEFAULT 0,
+			    viewed INTEGER NOT NULL DEFAULT 0);";
             db::executeQuery($query);
 	    
 	    //todo: date and time of start and duration
@@ -125,7 +126,8 @@
 			    version VARCHAR(80) NOT NULL,
 			    server_name VARCHAR(80) NOT NULL,
 			    maphash VARCHAR(80) NOT NULL,
-			    mods VARCHAR(30) NOT NULL);";
+			    mods VARCHAR(30) NOT NULL,
+			    viewed INTEGER NOT NULL DEFAULT 0);";
 	    db::executeQuery($query);
 	    
 	    $query = "CREATE TABLE IF NOT EXISTS replay_players (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -142,7 +144,8 @@
 			    content VARCHAR(9000) NOT NULL,
 			    image VARCHAR(500) NOT NULL,
 			    user_id INTEGER NOT NULL,
-			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			    viewed INTEGER NOT NULL DEFAULT 0);";
             db::executeQuery($query);
             
             // Used for example: User create's a map that makes huge success. A entry could be made in this table
@@ -163,7 +166,8 @@
 			    preview_image VARCHAR(500) NOT NULL,
 			    type VARCHAR(80) NOT NULL DEFAULT 'other',
 			    user_id INTEGER NOT NULL,
-			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			    viewed INTEGER NOT NULL DEFAULT 0);";
             db::executeQuery($query);
             
             //types: other,mapping,modding,design,coding
@@ -172,7 +176,8 @@
 			    html_content VARCHAR(9000) NOT NULL,
 			    guide_type VARCHAR(500) NOT NULL DEFAULT 'other',
 			    user_id INTEGER NOT NULL,
-			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			    viewed INTEGER NOT NULL DEFAULT 0);";
             db::executeQuery($query);
 
 	    // featured, editor's choice, etc.

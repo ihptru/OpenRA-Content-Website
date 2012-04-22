@@ -678,6 +678,19 @@ class content
 		if ($row_f["count"] > 0)
 		    $favTimes = "favorited ".$row_f["count"]." times";
 	    }
+	    $viewed = 0;
+	    if (isset($row["uid"]))
+	    {
+		$query = "SELECT viewed FROM $table WHERE uid = ".$row["uid"];
+		$view_res = db::executeQuery($query);
+		while ($view_row = db::nextRowFromQuery($view_res))
+		{
+		    $viewed = (int)$view_row["viewed"] + 1;
+		}
+		$query = "UPDATE $table SET viewed = ? WHERE uid = ?";
+		db::executeQuery($query, array($viewed, $row["uid"]));
+	    }
+	    
 	    switch($table)
 	    {
 		case "maps":
@@ -763,7 +776,7 @@ class content
 			}
 		    }
 		    if (!isset($row["no_additional_info"]))
-			$content .= "<p class='post-info'>Posted by <a href='?profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a>" . $edited_by . "</p>";
+			$content .= "<p class='post-info'>Posted by <a href='?profile=".$row["user_id"]."' id='id_display_username'>". $user_name . "</a>" . $edited_by . "<span style='float:right;'>viewed ".$viewed." times</span></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -786,7 +799,7 @@ class content
 		    
 		    $content .= "<div class='post'>";
 		    $content .= "<h2 id='id_display_title'>" . strip_tags($row["title"]) . "</h2>";
-		    $content .= "<p class='post-info'>Posted by <a href='?profile=".$row["user_id"]."'>". $user_name . "</a></p>";
+		    $content .= "<p class='post-info'>Posted by <a href='?profile=".$row["user_id"]."'>". $user_name . "</a><span style='float:right;'>viewed ".$viewed." times</span></p>";
 		    $content .= "<p><div id='id_display_text'>" . $text . "</div></p>";
 		    $content .= "<p class='postmeta'>";
 		    if($reported != "")
@@ -871,6 +884,7 @@ class content
 		$mapfile = explode("-", basename($row["path"]), 3);
 		$mapfile = $mapfile[2] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
+		$content .= "<tr><td>This page is viewed ".$viewed." times</td></tr>";
 	     	$content .= "<tr><td><a href='".$download."'>Download</a></tr></td>";
 		if (user::uid() == $row["user_id"])
 		    $content .= "<tr><td><a href='?action=manage_screenshots&table=maps&id=".$row["uid"]."'>Manage screenshots</a></td></tr>";
@@ -941,6 +955,7 @@ class content
 			$content .= "<tr><td><a href='".$shape."'>".basename($shape)."</a></td></tr>";
 		}
 		$content .= "</table></td></tr>";
+		$content .= "<tr><td>This page is viewed ".$viewed." times</td></tr>";
 		if (user::uid() == $row["user_id"])
 		    $content .= "<tr><td><a href='?action=manage_screenshots&table=units&id=".$row["uid"]."'>Manage screenshots</a></td></tr>";
 		//screenshots
@@ -997,6 +1012,7 @@ class content
 		
 		if (db::num_rows($result) != 0)
 		    $content .= "</table></td></tr>";
+		$content .= "<tr><td>This page is viewed ".$viewed." times</td></tr>";
 		$content .= "<tr><td><a href='".$row["path"]."'>Download</a></tr></td>";
 	    }
 	     
@@ -2051,6 +2067,8 @@ class objects
     
     public static function detail()
     {
+	if(!in_array($_GET['table'], array("maps","units","guides","replays","articles")))
+	    return;
 	$result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
 	while (db::nextRowFromQuery($result))
 	{
