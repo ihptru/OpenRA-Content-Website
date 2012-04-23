@@ -330,7 +330,7 @@ class user
 		    (?,?,?)
 	    ";
 	    db::executeQuery($query, array($_POST['rpass_login'], $_POST['rpass_email'], md5($_POST['rpass_email'])));
-	    misc::send_mail( $_POST['rpass_email'], 'recover password', 'recover password: http://'.$_SERVER['HTTP_HOST'].'/?recover&recover_link='.md5($_POST['rpass_email']), array( 'From' => 'noreplay@'.$_SERVER['HTTP_HOST'] ) );
+	    misc::send_mail( $_POST['rpass_email'], 'Recover Password at OpenRA Content Website', 'recover password: http://'.$_SERVER['HTTP_HOST'].'/?recover&recover_link='.md5($_POST['rpass_email']), array( 'From' => 'noreply@'.$_SERVER['HTTP_HOST'] ) );
 	    echo "Sent an email";
 	    return;
 	}
@@ -348,7 +348,7 @@ class user
 	    {
 		$user = $db_data['login'];
 	    }
-	    misc::send_mail( $_POST['ruser_email'], 'recover username', 'Your username: '.$user, array( 'From' => 'noreplay@'.$_SERVER['HTTP_HOST'] ) );
+	    misc::send_mail( $_POST['ruser_email'], 'Recover Username at OpenRA Content Website', 'Your username: '.$user, array( 'From' => 'noreply@'.$_SERVER['HTTP_HOST'] ) );
 	    echo "Sent an email";
 	    return;
 	}
