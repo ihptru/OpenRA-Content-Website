@@ -228,7 +228,13 @@ class user
 	    content::create_register_form();
 	    return;
 	}
-	
+
+	if (!preg_match('/^([a-zA-Z0-9_]+)$/', $_POST['rlogin']))
+	{
+	    echo "Login can contain only a-z, A-Z, 0-9, _";
+	    return;
+	}
+
 	if ($_POST['rpass'] != $_POST['verpass'])
 	{
 	    echo "Passwords do not match"; 
