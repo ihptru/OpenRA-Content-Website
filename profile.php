@@ -40,7 +40,7 @@ class profile
 	    $to_head = $profile."'s avatar:";
 	}
 	array_push($data,$to_head);
-	array_push($data,"<img src='".misc::avatar($id)."'>");
+	array_push($data,"<img style='display: block;   margin-left: auto;   margin-right: auto;' src='".misc::avatar($id)."'>");
 	
 	//pm
 	if ($id != user::uid() and user::online())
@@ -54,7 +54,7 @@ class profile
 	{
 	    array_push($data,"<a href='?unfollow=".$id."'>Unfollow user</a>");
 	}
-	echo "<p align='right'>" . content::create_dynamic_list($data,1,"dyn",3,true,false) . "</p>";
+	echo "<div style='margin-left:-11px;'>" . content::create_dynamic_list($data,1,"dyn",3,true,false,$width="width:273px;") . "</div>";
 	$query = "SELECT
 		    who,
 		    whom,

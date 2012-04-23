@@ -1206,7 +1206,7 @@ class content
 	return $content;
     }
     
-    public static function create_dynamic_list($data, $columns, $name = "dyn", $maxItemsPerPage = 10, $header = false, $use_pages = true)
+    public static function create_dynamic_list($data, $columns, $name = "dyn", $maxItemsPerPage = 10, $header = false, $use_pages = true, $width="")
     {
     	$content = "";
     	if($data && $columns > 0)
@@ -1223,7 +1223,7 @@ class content
 		$start = ($current-1) * $maxItemsPerPage * $columns;
 		$maxItemsPerPageOrg = $maxItemsPerPage; //original value
 		$maxItemsPerPage *= $columns;
-		$content .= "<a name='".$modifiedName."'></a><table>";
+		$content .= "<a name='".$modifiedName."'></a><table style='".$width."'>";
 		if($header)
 		{
 		    if($start < $columns)
