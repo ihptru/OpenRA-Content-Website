@@ -183,10 +183,9 @@ class content
 		    $end = "ed";
 		}
 		$follow++;
-		if ($follow == 9)
+		if ($follow > 8)
 		{
-		    
-		    $content .= "<br><a href='?action=show_user_follow".$end."&id=".$row["who"]."' style='float:right;margin-right:10px;'>Show all</a>";
+		    $content .= "<br /><br ><a href='?action=show_user_follow".$end."&id=".$row["who"]."' style='float:right;margin-right:10px;margin-top:-15px;'>Show all</a>";
 		    break;
 		}
 		$content .= "<a href='?profile=".$show."' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' height='40' /></a>";
