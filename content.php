@@ -288,7 +288,7 @@ class content
 		    $imagePath =  $row["path"] . "minimap.bmp";
 		    break;
 		case "units":
-		    $title = $row["title"];
+		    $title = str_replace("_", " ", $row["title"]);
 		    $subtitle = "unit posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
 		    $text = str_replace("\r\n", "<br />", $row["description"]);
 		    $imagePath = $row["preview_image"];
@@ -499,7 +499,7 @@ class content
 		    $text .= "<br />Rev: ".ltrim($row["tag"], "r");
 		    break;
 		case "units":
-		    $title = $row["title"];
+		    $title = str_replace("_", " ", $row["title"]);
 		    $title = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>";
 		    $imagePath = "<td><a href='?p=detail&table=units&id=".$row["uid"]."'><img src='" . $row["preview_image"] . "'></a></td>";
 		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
