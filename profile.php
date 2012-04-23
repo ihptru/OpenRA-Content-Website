@@ -358,7 +358,7 @@ class profile
 	    return;
 	}
 	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
-		<label>Choose a map file to upload</label> (.oramap):<br /><br />
+		<label>Choose a <u>map</u> file to upload (<u>.oramap</u>):</label><br /><br />
 		<span class='file-wrapper'>
 		    <input type='file' name='map_upload' id='enhanced' />
 		    <span class='button'>Choose a file</span>
@@ -423,7 +423,7 @@ class profile
 	    return;
     	
     	echo "<form id='form_class' enctype='multipart/form-data' action='' method=POST>
-	    <label>Uploading unit</label><br><br>
+	    <label>Uploading <u>unit</u> (shp, yaml):</label><br><br>
 	    <label>Unit name: </label>
 		<input type='text' name='unit_name'><br>
 	    <label>Unit type:<br></label>
@@ -487,15 +487,14 @@ class profile
 	$can_upload = 50 - (int)$row["count"];
 	echo "<h4>You can upload ".(string)$can_upload." more replays!</h4><br /><p><i>version 2012-0315 and newer only supported</i></p>";
 	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
-		<label>Replay (.rep):<br /><br />
+		<label>Choose a <u>replay</u> file to upload (<u>.rep</u>):</label><br /><br />
 		<span class='file-wrapper'>
 		    <input type='file' name='replay_upload' id='enhanced' />
 		    <span class='button'>Choose a file</span>
 		</span><br />
-		</label>
 		<br />
 		<label>Description: </label></lable><input type='text' name='description'><br />
-		<input type='submit' name='submit' value='submit' />
+		<input type='submit' name='submit' value='Upload' />
 		</form>
 	";
             

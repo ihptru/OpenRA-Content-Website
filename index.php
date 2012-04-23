@@ -160,7 +160,7 @@ content::head();
 		    <?
 			if (user::online())
 			{
-			    echo "<h3>Your content</h3>";
+			    echo "<h3>Your content (upload)</h3>";
 			    echo "<ul>				
 				<li><a href='index.php?action=mymaps&profile=".user::uid()."'>maps</a></li>
 				<li><a href='index.php?action=myunits&profile=".user::uid()."'>units</a></li>
