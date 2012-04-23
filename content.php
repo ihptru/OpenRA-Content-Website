@@ -374,7 +374,7 @@ class content
 		    $imagePath = misc::minimap($row["path"]);
 		    break;
 		case "units":
-		    $title = $row["title"];
+		    $title = str_replace("_", " ", $row["title"]);
 		    $imagePath = $row["preview_image"];
 		    break;
 		case "guides":
@@ -744,7 +744,7 @@ class content
 			}
 		    }
 		    
-		    $title = "Unit: <font color='#d8ff00'>" . $title_origin . "</font>   $add_description</td></tr><tr>";
+		    $title = "Unit: <font color='#d8ff00'>" . str_replace("_", " ", $title_origin) . "</font>   $add_description</td></tr><tr>";
 		    $subtitle = $title . "<td>Posted at <i>" . $row["posted"] . "</i> by <a href='?profile=".$row["user_id"]."'>" . $user_name . "</a>";
 		    $text = "";
 		    if (isset($text_desc))
