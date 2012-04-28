@@ -682,9 +682,12 @@ class misc
 	return mb_send_mail( $email, $subject, $body, $headers_str, $additional_parameters );
     }
     
-    public static function amount_of_items_option($table, $option="")
+    public static function amount_of_items_option($table, $option, $my_items=false)
     {
-	$query = "SELECT * FROM $table ".$option;
+	$my = "";
+	if ($my_items == true)
+	    $my = " AND user_id = ".user::uid();
+	$query = "SELECT * FROM $table ".$option.$my;
 	$result = db::executeQuery($query);
 	return db::num_rows($result);
     }
