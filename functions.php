@@ -681,6 +681,13 @@ class misc
 	// Use mb_send_mail() function instead of mail() so that headers, including subject are properly encoded
 	return mb_send_mail( $email, $subject, $body, $headers_str, $additional_parameters );
     }
+    
+    public static function amount_of_items_option($table, $option="")
+    {
+	$query = "SELECT * FROM $table ".$option;
+	$result = db::executeQuery($query);
+	return db::num_rows($result);
+    }
 }
 
 ?>

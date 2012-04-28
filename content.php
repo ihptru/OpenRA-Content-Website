@@ -1347,7 +1347,7 @@ class content
 		    $avatar = misc::avatar($row["uid"]);
 		    array_push($data,"<a href='?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>", date("D M j, Y g:i a", mail::convert_timestamp($row["register_date"])), "<a href='?p=mail&m=compose&to=".$row["uid"]."'>Send a PM</a>");
 		}
-		echo content::create_dynamic_list($data,4,"members",11,true,true);
+		echo content::create_dynamic_list($data,4,"members",10,true,true);
 	    }
 	}
 	elseif ($page == "mail")
@@ -1755,21 +1755,21 @@ class content
 	if ($arg == "guide")
 	{
 	    echo "<option value='any_type' ".misc::option_selected("any_type",$type).">Any</option>";
-	    echo "<option value='design' ".misc::option_selected("design",$type).">Design (2D/3D)</option>";
-	    echo "<option value='mapping' ".misc::option_selected("mapping",$type).">Mapping</option>";
-	    echo "<option value='modding' ".misc::option_selected("modding",$type).">Modding</option>";
-	    echo "<option value='coding' ".misc::option_selected("nature",$type).">Coding</option>";
-	    echo "<option value='other' ".misc::option_selected("other",$type).">Other</option>";
+	    echo "<option value='design' ".misc::option_selected("design",$type).">Design (2D/3D) (".misc::amount_of_items_option("guides", "WHERE guide_type = 'design'").")</option>";
+	    echo "<option value='mapping' ".misc::option_selected("mapping",$type).">Mapping (".misc::amount_of_items_option("guides", "WHERE guide_type = 'mapping'").")</option>";
+	    echo "<option value='modding' ".misc::option_selected("modding",$type).">Modding (".misc::amount_of_items_option("guides", "WHERE guide_type = 'modding'").")</option>";
+	    echo "<option value='coding' ".misc::option_selected("coding",$type).">Coding (".misc::amount_of_items_option("guides", "WHERE guide_type = 'coding'").")</option>";
+	    echo "<option value='other' ".misc::option_selected("other",$type).">Other (".misc::amount_of_items_option("guides", "WHERE guide_type = 'other'").")</option>";
 	}
 	elseif ($arg == "unit")
 	{	    
 	    echo "<option value='any_type' ".misc::option_selected("any_type",$type).">Any</option>";
-	    echo "<option value='structure' ".misc::option_selected("structure",$type).">Structure</option>";
-	    echo "<option value='infantry' ".misc::option_selected("infantry",$type).">Infantry</option>";
-	    echo "<option value='vehicle' ".misc::option_selected("vehicle",$type).">Vehicle</option>";
-	    echo "<option value='air-borne' ".misc::option_selected("air-borne",$type).">Air-borne</option>";
-	    echo "<option value='nature' ".misc::option_selected("nature",$type).">Nature</option>";
-	    echo "<option value='other' ".misc::option_selected("other",$type).">Other</option>";
+	    echo "<option value='structure' ".misc::option_selected("structure",$type).">Structure (".misc::amount_of_items_option("units", "WHERE type = 'structure'").")</option>";
+	    echo "<option value='infantry' ".misc::option_selected("infantry",$type).">Infantry (".misc::amount_of_items_option("units", "WHERE type = 'infantry'").")</option>";
+	    echo "<option value='vehicle' ".misc::option_selected("vehicle",$type).">Vehicle (".misc::amount_of_items_option("units", "WHERE type = 'vehicle'").")</option>";
+	    echo "<option value='air-borne' ".misc::option_selected("air-borne",$type).">Air-borne (".misc::amount_of_items_option("units", "WHERE type = 'air-borne'").")</option>";
+	    echo "<option value='nature' ".misc::option_selected("nature",$type).">Nature (".misc::amount_of_items_option("units", "WHERE type = 'nature'").")</option>";
+	    echo "<option value='other' ".misc::option_selected("other",$type).">Other (".misc::amount_of_items_option("units", "WHERE type = 'other'").")</option>";
 	}
 	echo "</select><br />";
 	echo "</td>";
@@ -1846,16 +1846,16 @@ class content
 	echo "<td>";
 	echo "<select name='type' id='type'>";
 	echo "<option value='any_type' ".misc::option_selected("any_type",$type).">Any</option>";
-	echo "<option value='conquest' ".misc::option_selected("conquest",$type).">conquest</option>";
-	echo "<option value='koth' ".misc::option_selected("koth",$type).">koth</option>";
-	echo "<option value='minigame' ".misc::option_selected("minigame",$type).">minigame</option>";
+	echo "<option value='conquest' ".misc::option_selected("conquest",$type).">conquest (".misc::amount_of_items_option("maps", "WHERE UPPER(type) = UPPER('conquest') AND n_ver = 0").")</option>";
+	echo "<option value='koth' ".misc::option_selected("koth",$type).">koth (".misc::amount_of_items_option("maps", "WHERE UPPER(type) = UPPER('koth') AND n_ver = 0").")</option>";
+	echo "<option value='minigame' ".misc::option_selected("minigame",$type).">minigame (".misc::amount_of_items_option("maps", "WHERE UPPER(type) = UPPER('minigame') AND n_ver = 0").")</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
 	echo "<select onChange='mod_tileset();' name='mod' id='mod'>";
 	echo "<option value='any_mod' ".misc::option_selected("any_mod",$mod).">Any</option>";
-	echo "<option value='ra' ".misc::option_selected("ra",$mod).">RA</option>";
-	echo "<option value='cnc' ".misc::option_selected("cnc",$mod).">CNC</option>";
+	echo "<option value='ra' ".misc::option_selected("ra",$mod).">RA (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND n_ver = 0").")</option>";
+	echo "<option value='cnc' ".misc::option_selected("cnc",$mod).">CNC (".misc::amount_of_items_option("maps", "WHERE g_mod = 'cnc' AND n_ver = 0").")</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
@@ -1883,17 +1883,17 @@ class content
 		{
 		    document.map_filters.tileset.options.length=0
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('Any','any_tileset',false,".misc::option_selected_bool("any_tileset",$tileset).")
-		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
-		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('snow','snow',false,".misc::option_selected_bool("snow",$tileset).")
-		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('interior','interior',false,".misc::option_selected_bool("interior",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'temperat' AND n_ver = 0").")','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('snow (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'snow' AND n_ver = 0").")','snow',false,".misc::option_selected_bool("snow",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('interior (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'interior' AND n_ver = 0").")','interior',false,".misc::option_selected_bool("interior",$tileset).")
 		}
 		if (chosen_option.value == 'cnc')
 		{
 		    document.map_filters.tileset.options.length=0
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('Any','any_tileset',false,".misc::option_selected_bool("any_tileset",$tileset).")
-		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
-		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('desert','desert',false,".misc::option_selected_bool("desert",$tileset).")
-		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('winter','winter',false,".misc::option_selected_bool("winter",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat (".misc::amount_of_items_option("maps", "WHERE g_mod = 'cnc' AND tileset = 'temperat' AND n_ver = 0").")','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('desert (".misc::amount_of_items_option("maps", "WHERE g_mod = 'cnc' AND tileset = 'desert' AND n_ver = 0").")','desert',false,".misc::option_selected_bool("desert",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('winter (".misc::amount_of_items_option("maps", "WHERE g_mod = 'cnc' AND tileset = 'winter' AND n_ver = 0").")','winter',false,".misc::option_selected_bool("winter",$tileset).")
 		}
 	    }
 	    mod_tileset()
