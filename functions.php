@@ -492,7 +492,8 @@ class misc
 	    db::executeQuery($query, array($item_id));
 	    //remove comments from DB
 	    //remove records from fav_item table related to current item for each user
-	    $tables = array("comments", "fav_item", "featured", "reported");
+	    //remove records in featured and reported tables; remove screenshots for this item
+	    $tables = array("comments", "fav_item", "featured", "reported", "screenshot_group");
 	    foreach($tables as $table)
 	    {
 		$query = "DELETE FROM $table WHERE table_name = ? AND table_id = ?";
