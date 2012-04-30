@@ -245,9 +245,9 @@ class profile
 		echo "<td style='padding: .0em 0em;'><center>".$img."</center></td>";
 	    echo "</tr>";
 	    echo "<tr><td>Gender</td><td>".$gender."</td></tr>";
-	    echo "<tr><td>Occupation</td><td>".$usr["occupation"]."</td></tr>";
-	    echo "<tr><td>Interests</td><td>".$usr["interests"]."</td></tr>";
-	    echo "<tr><td>Real name</td><td>".$usr["real_name"]."</td></tr>";
+	    echo "<tr><td>Occupation</td><td>".str_replace("\\\\\\","",$usr["occupation"])."</td></tr>";
+	    echo "<tr><td>Interests</td><td>".str_replace("\\\\\\","",$usr["interests"])."</td></tr>";
+	    echo "<tr><td>Real name</td><td>".str_replace("\\\\\\","",$usr["real_name"])."</td></tr>";
 	    echo "<tr><td>Favorite faction</td><td><a href='?action=display_faction&faction=".$usr["fav_faction"]."'><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></a></td></tr>";
     		
 	    $query = "SELECT * FROM country WHERE name = '".$usr["country"]."'";
