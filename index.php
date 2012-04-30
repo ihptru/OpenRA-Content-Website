@@ -37,12 +37,76 @@ content::head();
 				)
 			   )
 		UNION ALL
-		-- featured, editors choice, etc from featured table
+		-- editors choice, etc from featured table (type in table must be: editors)
 		SELECT
 		    table_name,
 		    table_id,
 		    type
-		FROM featured
+		FROM (SELECT
+			table_name,
+			table_id,
+			type
+		     FROM featured ORDER BY RAND() LIMIT 1) as editors
+		UNION ALL
+		-- featured ( get all items for last month, find most viewed unit,map,guide,replay(4 items in result), among those 4 most viewed items, find most liked one by users )
+		SELECT
+		    table_name,
+		    table_id,
+		    'featured' AS type
+		FROM (SELECT
+			table_name,
+			table_id
+		      FROM    
+			(
+			    SELECT
+				table_name,
+				table_id,
+				MAX(viewed) AS viewed,
+				(SELECT COUNT(*) FROM fav_item WHERE table_id = max_viewed.table_id and table_name = 'units') AS liked
+			    FROM (SELECT
+				    'units' AS table_name,
+				    uid AS table_id,
+				    viewed
+				  FROM units WHERE TIMESTAMPDIFF(DAY, posted, CURRENT_TIMESTAMP) < 30
+				) AS max_viewed
+			    UNION ALL
+			    SELECT
+				table_name,
+				table_id,
+				MAX(viewed) AS viewed,
+				(SELECT COUNT(*) FROM fav_item WHERE table_id = max_viewed.table_id and table_name = 'maps') AS liked
+			    FROM (SELECT
+				    'maps' AS table_name,
+				    uid AS table_id,
+				    viewed
+				  FROM maps WHERE TIMESTAMPDIFF(DAY, posted, CURRENT_TIMESTAMP) < 30
+				) AS max_viewed
+			    UNION ALL
+			    SELECT
+				table_name,
+				table_id,
+				MAX(viewed) AS viewed,
+				(SELECT COUNT(*) FROM fav_item WHERE table_id = max_viewed.table_id and table_name = 'guides') AS liked
+			    FROM (SELECT
+				    'guides' AS table_name,
+				    uid AS table_id,
+				    viewed
+				  FROM guides WHERE TIMESTAMPDIFF(DAY, posted, CURRENT_TIMESTAMP) < 30
+				) AS max_viewed
+			    UNION ALL
+			    SELECT
+				table_name,
+				table_id,
+				MAX(viewed) AS viewed,
+				(SELECT COUNT(*) FROM fav_item WHERE table_id = max_viewed.table_id and table_name = 'replays') AS liked
+			    FROM (SELECT
+				    'replays' AS table_name,
+				    uid AS table_id,
+				    viewed
+				  FROM replays WHERE TIMESTAMPDIFF(DAY, posted, CURRENT_TIMESTAMP) < 30
+				) AS max_viewed
+			) AS last_items WHERE table_id <> 0 GROUP BY table_id HAVING (MAX(liked)) ORDER BY RAND() LIMIT 1
+		    ) AS result_table
 		UNION ALL
 		-- mostly played maps
 		SELECT
