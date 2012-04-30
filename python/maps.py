@@ -223,7 +223,7 @@ if pre_version != '0':
     tag = records[0][1][0] + str(int(records[0][1][1:]) + 1)
 
 # Move source file to correct place on disk
-mapfile_full_path = WEBSITE_PATH + "users/" + username + "/" + "maps/" + MapMod + "-" + tag + "-" + mapfile.split('.')[0] + "/" + mapfile
+mapfile_full_path = WEBSITE_PATH + "users/" + username + "/" + "maps/" + MapMod + "-" + tag + "-" + ".".join(mapfile.split('.')[0:-1]) + "/" + mapfile
 path = os.path.dirname(mapfile_full_path) + os.sep
 db_path = path.split(WEBSITE_PATH)[1]
 
@@ -292,11 +292,8 @@ cur.close()
 
 if MapMod == "ra":
     print "Generating full size preview..."
-    return_code = subprocess.Popen(['mono', 'mono/src/fullsize_upload/bin/ImageMapGenerator.exe', '-filename="'+mapfile_full_path+'"']).wait()
-    text_file = open(path + "info.txt", "a")
-    text_file.write("\n"+str(return_code))
-    text_file.close()
-    
+    subprocess.Popen(['mono', 'mono/src/fullsize_upload/bin/ImageMapGenerator.exe', '-filename="'+mapfile_full_path+'"'])
+
 print "Generating minimap..."
 
 print "Width: " + str(width);

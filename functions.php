@@ -17,7 +17,7 @@ class upload
 		{
 		    return "Not supported file type";	// that's not a map file
 		}
-		if (strtolower($name[1]) != "oramap")
+		if (strtolower(end($name)) != "oramap")
 		{
 		    return "Not supported file type";	// that's not a map file (map file must have `oramap` extention)
 		}
@@ -146,7 +146,7 @@ class upload
 	    {
 		$messages .= $filename ." - uploaded<br>";
 	    }
-	    if (strtolower($name[1]) == "shp" and $run_shp == false)
+	    if (strtolower(end($name)) == "shp" and $run_shp == false)
 	    {
 		exec("mono mono/src/SHPExtractor/bin/Debug/SHPExtractor.exe  -filename=\"".$target_path."\" -palette=\"".$unit_palette."\"");
 		$run_shp = true;
