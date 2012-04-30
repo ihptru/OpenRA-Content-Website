@@ -1041,27 +1041,46 @@ class content
 		case "add":
 		    if ($row["table_name"] == "screenshot")
 		    {
+			$desc = " added new screenshot which no longer exists";
 			$q = "SELECT * FROM screenshot_group WHERE uid = ".$row["table_id"];
-			$row_sc = db::nextRowFromQuery(db::executeQuery($q));
-			$desc = " added new <a href='".$row_sc["image_path"]."' target=_blank>screenshot</a> for <a href='?p=detail&table=".$row_sc["table_name"]."&id=".$row_sc["table_id"]."'>".rtrim($row_sc["table_name"],"s")."</a>";
+			$res = db::executeQuery($q);
+			if (db::num_rows($res) == 1)
+			{
+			    $row_sc = db::nextRowFromQuery($res);
+			    $desc = " added new <a href='".$row_sc["image_path"]."' target=_blank>screenshot</a> for <a href='?p=detail&table=".$row_sc["table_name"]."&id=".$row_sc["table_id"]."'>".rtrim($row_sc["table_name"],"s")."</a>";
+			}
 		    }
 		    else
+		    {
 			$desc = " added new <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+			if (!misc::item_exists($row["table_id"], $row["table_name"]))
+			    $desc = " added new ".rtrim($row["table_name"],'s')." which no longer exists";
+		    }
 		    break;
 		case "delete_comment":
 		    $desc = " deleted comment on <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    if (!misc::item_exists($row["table_id"], $row["table_name"]))
+			$desc = " deleted comment on ".rtrim($row["table_name"],'s')." which no longer exists";
 		    break;
 		case "report":
 		    $desc = " reported <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    if (!misc::item_exists($row["table_id"], $row["table_name"]))
+			$desc = " reported ".rtrim($row["table_name"],'s')." which no longer exists";
 		    break;
 		case "fav":
 		    $desc = " favorited <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    if (!misc::item_exists($row["table_id"], $row["table_name"]))
+			$desc = " favorited ".rtrim($row["table_name"],'s')." which no longer exists";
 		    break;
 		case "unfav":
 		    $desc = " unfavorited <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    if (!misc::item_exists($row["table_id"], $row["table_name"]))
+			$desc = " unfavorited ".rtrim($row["table_name"],'s')." which no longer exists";
 		    break;
 		case "comment":
 		    $desc = " commented <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    if (!misc::item_exists($row["table_id"], $row["table_name"]))
+			$desc = " commented".rtrim($row["table_name"],'s')." which no longer exists";
 		    break;
 		case "login":
 		    $desc = " logged in";
@@ -1071,6 +1090,8 @@ class content
 		    break;
 		case "edit":
 		    $desc = " edited <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    if (!misc::item_exists($row["table_id"], $row["table_name"]))
+			$desc = " edited ".rtrim($row["table_name"],'s')." which no longer exists";
 		    break;
 		case "follow":
 		    $desc = " started to follow <a href='?&profile=".$row["table_id"]."'>".user::login_by_uid($row["table_id"])."</a>";
