@@ -1,5 +1,5 @@
 <?PHP
-date_default_timezone_set('Europe/Dublin');
+date_default_timezone_set('UTC');
 
 include_once "../settings.php";
 include_once "../functions.php";

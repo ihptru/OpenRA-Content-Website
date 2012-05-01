@@ -1,5 +1,5 @@
 <?PHP
-date_default_timezone_set('Europe/Dublin');
+date_default_timezone_set('UTC');
 
 if ( php_sapi_name() != "cli" )
     exit(1);
