@@ -1258,6 +1258,8 @@ class content
 		}
 		for($i = $start; $i < count($data)+1-$columns && $i < $start+$maxItemsPerPage; $i=$i+$columns)
 		{
+		    if ($current == 2 and $i == $start)
+			continue;
 		    $content .= "<tr>";
 		    for($row = 0; $row < $columns; $row++)
 		    {
