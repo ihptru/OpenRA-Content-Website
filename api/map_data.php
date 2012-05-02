@@ -13,8 +13,8 @@ function map_data($result)
     $json_result_array = array();
     while ($row = db::nextRowFromQuery($result))
     {
-	$query = "SELECT * FROM reported WHERE table_name = 'maps' AND table_id = ".$row['uid'];
-	$result = db::executeQuery($query);
+	$query = "SELECT * FROM reported WHERE table_name = 'maps' AND table_id = :1";
+	$result = db::executeQuery($query, array($row['uid']));
 	if (db::num_rows($result) > 0)
 	    break;	// this map is reported
 	$map_result = array();
@@ -40,8 +40,8 @@ function map_link($result)
     $json_result_array = array();
     while ($row = db::nextRowFromQuery($result))
     {
-	$query = "SELECT * FROM reported WHERE table_name = 'maps' AND table_id = ".$row['uid'];
-	$result = db::executeQuery($query);
+	$query = "SELECT * FROM reported WHERE table_name = 'maps' AND table_id = :1";
+	$result = db::executeQuery($query, array($row['uid']));
 	if (db::num_rows($result) > 0)
 	    break;	// this map is reported
 	$url = array();
@@ -77,34 +77,32 @@ function result($condition, $value)
     }
     if ($condition == "maphash")
     {
-	$query = "SELECT * FROM maps WHERE ".$condition." = '".$value."'
+	$query = "SELECT * FROM maps WHERE maphash = :1
 	    ORDER BY uid LIMIT 1
 	";
+	$result = db::executeQuery($query, array($value));
     }
     elseif ($condition == "title")
     {
 	if (isset($_GET["mod"]))
-	{
 	    $mod = $_GET["mod"];
-	}
 	else
-	{
 	    $mod = "";
-	}
-	$query = "SELECT * FROM maps WHERE lower(".$condition.") LIKE lower('%".$value."%')
-				    AND lower(g_mod) LIKE lower('%".$mod."%')
+	$query = "SELECT * FROM maps WHERE lower(title) LIKE lower(:1)
+				    AND lower(g_mod) LIKE lower(:2)
 	    ORDER BY RAND() LIMIT 1
 	";
+	$result = db::executeQuery($query, array("%".$value."%", "%".$mod."%"));
     }
     elseif ($condition == "load")
     {
-	$query = "SELECT uid,path FROM maps WHERE maphash = '".$value."'
+	$query = "SELECT uid,path FROM maps WHERE maphash = :1
 		    ORDER BY RAND() LIMIT 1
 	";
-	map_link(db::executeQuery($query));
+	$result = db::executeQuery($query, array($value));
+	map_link($result);
 	return;
     }
-    $result = db::executeQuery($query);
     map_data($result);
 }
 

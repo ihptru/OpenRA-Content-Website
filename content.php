@@ -96,8 +96,8 @@ class content
 	    echo "<li style='float:right;' id='"; echo pages::current('profile', $request); echo"'><a href='?profile=".user::uid()."'>profile</a></li>";
 	    $pm_title = "";
 	    $pm_notify = "";
-	    $query = "SELECT * FROM pm WHERE to_user_id = ".user::uid()." AND isread = 0";
-	    $res = db::executeQuery($query);
+	    $query = "SELECT * FROM pm WHERE to_user_id = :1 AND isread = 0";
+	    $res = db::executeQuery($query, array(user::uid()));
 	    if (db::num_rows($res) > 0)
 	    {
 		if (db::num_rows($res) == 1)
@@ -217,7 +217,7 @@ class content
 	    $comments = 0;
 
 	    //Calculates number of comments for that article
-	    $res = db::executeQuery("SELECT COUNT(uid) as count FROM comments WHERE table_name='articles' AND table_id = " . $row["uid"]);
+	    $res = db::executeQuery("SELECT COUNT(uid) as count FROM comments WHERE table_name='articles' AND table_id = :1", array($row["uid"]));
 	    $comment = db::nextRowFromQuery($res);
 		$comments = $comment['count'];
 
@@ -270,13 +270,13 @@ class content
 	    {
 		$table_item = $row["table_name"];
 		$t = $row["type"];
-		$res = db::executeQuery("SELECT * FROM " . $table_item . " WHERE uid = " . $row["table_id"]);
+		$res = db::executeQuery("SELECT * FROM " . $table_item . " WHERE uid = :1", array($row["table_id"]));
 		$row = db::nextRowFromQuery($res);
-		$res = db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]);
+		$res = db::executeQuery("SELECT login FROM users WHERE uid = :1", array($row["user_id"]));
 		$username = db::nextRowFromQuery($res);
 	    }
 	    $comments = "";
-	    $res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = ".$row["uid"]." AND table_name = '".$table_item."'"));
+	    $res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = :1 AND table_name = :2", array($row["uid"], $table_item)));
 	    if ($res_comments != 0)
 		$comments = "<br />".$res_comments." comments";
 	    switch($table_item)
@@ -302,8 +302,8 @@ class content
 		case "replays":
 		    $title = $row["title"];
 		    $subtitle = "replay posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
-		    $query = "SELECT * FROM replay_players WHERE id_replays = ".$row["uid"]." ORDER BY team";
-		    $res_players = db::executeQuery($query);
+		    $query = "SELECT * FROM replay_players WHERE id_replays = :1 ORDER BY team";
+		    $res_players = db::executeQuery($query, array($row["uid"]));
 		    $players = "";
 		    while ($inner_row = db::nextRowFromQuery($res_players))
 		    {
@@ -394,10 +394,10 @@ class content
 		$span_additional_info = "Rev: ".substr($row["tag"],1)."<br />";
 	    else
 		$span_additional_info = "";
-	    $res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = ".$row["uid"]." AND table_name = '".$table."'"));
+	    $res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = :1 AND table_name = :2", array($row["uid"], $table)));
 	    if ($res_comments != 0)
 		$span_additional_info .= $res_comments . " comments<br />";
-	    $res_fav = db::num_rows(db::executeQuery("SELECT uid FROM fav_item WHERE table_id = ".$row["uid"]." AND table_name = '".$table."'"));
+	    $res_fav = db::num_rows(db::executeQuery("SELECT uid FROM fav_item WHERE table_id = :1 AND table_name = :2", array($row["uid"], $table)));
 	    if ($res_fav != 0)
 		$span_additional_info .= $res_fav . " people favorited";
 	    if ($span_additional_info != "")
@@ -482,7 +482,7 @@ class content
 	    $subtitle = "";
 	    $text = "";
 
-	    $usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = " . $row["user_id"]));
+	    $usr = db::nextRowFromQuery(db::executeQuery("SELECT login FROM users WHERE uid = :1", array($row["user_id"])));
 	    $username = $usr["login"];
 
 	    switch($table)
@@ -515,8 +515,8 @@ class content
 		case "replays":
 		    $title = $row["title"];
 		    $title = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'>" . strip_tags($title) . "</a></br>";
-		    $query = "SELECT maphash,path FROM maps WHERE maphash = '".$row["maphash"]."' GROUP BY maphash";
-		    $res = db::executeQuery($query);
+		    $query = "SELECT maphash,path FROM maps WHERE maphash = :1 GROUP BY maphash";
+		    $res = db::executeQuery($query, array($row["maphash"]));
 		    $path = "";
 		    while ($inner_row = db::nextRowFromQuery($res))
 		    {
@@ -524,8 +524,8 @@ class content
 		    }
 		    $imagePath = "<td><img src='" . misc::minimap($path) . "'></td>";
 		    $subtitle = "posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>" . $username . "</a>";
-		    $query = "SELECT * FROM replay_players WHERE id_replays = ".$row["uid"]." ORDER BY team";
-		    $res_players = db::executeQuery($query);
+		    $query = "SELECT * FROM replay_players WHERE id_replays = :1 ORDER BY team";
+		    $res_players = db::executeQuery($query, array($row["uid"]));
 		    $players = "";
 		    while ($inner_row = db::nextRowFromQuery($res_players))
 		    {
@@ -554,7 +554,7 @@ class content
 		case "comments":
 		    $title = "";
 		    $subtitle = "<i>commented on ".$row["posted"]."</i><br />";
-		    $inner_result = db::executeQuery("SELECT * FROM ".$row["table_name"]." WHERE uid = ".$row["table_id"]);
+		    $inner_result = db::executeQuery("SELECT * FROM ".$row["table_name"]." WHERE uid = :1", array($row["table_id"]));
 		    while ($inner_row = db::nextRowFromQuery($inner_result))
 		    {
 			switch($row["table_name"])
@@ -654,7 +654,7 @@ class content
 	    }
 	    else
 	    {
-		if(db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())))
+		if(db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($table, $row["uid"], user::uid()))))
 		{
 		    $reported = "You've already reported this item";
 		}
@@ -668,25 +668,25 @@ class content
 	    if(isset($row["uid"]) && user::online())
 	    {
 		$favIcon = "notFav.png";
-		if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]." AND user_id = " . user::uid())) )
+		if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($table, $row["uid"], user::uid()))) )
 		{
 		    $favIcon = "isFav.png";
 		}
 		$favTimes = "";
-		$row_f = db::nextRowFromQuery(db::executeQuery("SELECT COUNT(*) AS count FROM fav_item WHERE table_name = '".$table."' AND table_id = ".$row["uid"]));
+		$row_f = db::nextRowFromQuery(db::executeQuery("SELECT COUNT(*) AS count FROM fav_item WHERE table_name = :1 AND table_id = :2", array($table, $row["uid"])));
 		if ($row_f["count"] > 0)
 		    $favTimes = "favorited ".$row_f["count"]." times";
 	    }
 	    $viewed = 0;
 	    if (isset($row["uid"]))
 	    {
-		$query = "SELECT viewed FROM $table WHERE uid = ".$row["uid"];
-		$view_res = db::executeQuery($query);
+		$query = "SELECT viewed FROM $table WHERE uid = :1";
+		$view_res = db::executeQuery($query, array($row["uid"]));
 		while ($view_row = db::nextRowFromQuery($view_res))
 		{
 		    $viewed = (int)$view_row["viewed"] + 1;
 		}
-		$query = "UPDATE $table SET viewed = ? WHERE uid = ?";
+		$query = "UPDATE $table SET viewed = :1 WHERE uid = :2";
 		db::executeQuery($query, array($viewed, $row["uid"]));
 	    }
 	    
@@ -767,7 +767,7 @@ class content
 		    $edited_by = "";
 		    if (isset($row["uid"]))
 		    {
-			$res_e = db::executeQuery("SELECT * FROM event_log WHERE table_id = ".$row["uid"]." AND table_name = 'guides' AND type = 'edit'");
+			$res_e = db::executeQuery("SELECT * FROM event_log WHERE table_id = :1 AND table_name = 'guides' AND type = 'edit'", array($row["uid"]));
 			while ($res_e_r = db::nextRowFromQuery($res_e))
 			{
 			    $edited_name = user::login_by_uid($res_e_r["user_id"]);
@@ -874,7 +874,7 @@ class content
 	    {
 		$content .= "<tr><td><table style='padding:auto;margin:auto;'><tr><td>author: ".$row["author"]."</td><td>size: ".$row["width"]."x".$row["height"]."</td><td>tileset: ".$row["tileset"]."</td><td>type: ".$row["type"]."</td></tr></table></td></tr>";
 		$players = "";
-		$res_p = db::executeQuery("SELECT * FROM map_stats WHERE map_hash = '".$row["maphash"]."'");
+		$res_p = db::executeQuery("SELECT * FROM map_stats WHERE map_hash = :1", array($row["maphash"]));
 		while ($res_p_r = db::nextRowFromQuery($res_p))
 		{
 		    $players = "; mostly played with ".round($res_p_r["avg_players"])." players";
@@ -898,8 +898,8 @@ class content
 		$map_version_content = "<table><tr><td>Rev: ".ltrim($row["tag"], "r")."</td>".$vers."</tr></table>";
 		
 		//screenshots
-		$query = "SELECT * FROM screenshot_group WHERE table_name = 'maps' AND table_id = ".$row["uid"]." AND user_id = ".$row["user_id"];
-		$res_sc = db::executeQuery($query);
+		$query = "SELECT * FROM screenshot_group WHERE table_name = 'maps' AND table_id = :1 AND user_id = :2";
+		$res_sc = db::executeQuery($query, array($row["uid"], $row["user_id"]));
 		$data = array();
 		while ($row_sc = db::nextRowFromQuery($res_sc))
 		{
@@ -958,8 +958,8 @@ class content
 		if (user::uid() == $row["user_id"])
 		    $content .= "<tr><td><a href='?action=manage_screenshots&table=units&id=".$row["uid"]."'>Manage screenshots</a></td></tr>";
 		//screenshots
-		$query = "SELECT * FROM screenshot_group WHERE table_name = 'units' AND table_id = ".$row["uid"]." AND user_id = ".$row["user_id"];
-		$res_sc = db::executeQuery($query);
+		$query = "SELECT * FROM screenshot_group WHERE table_name = 'units' AND table_id = :1 AND user_id = :2";
+		$res_sc = db::executeQuery($query, array($row["uid"], $row["user_id"]));
 		$data = array();
 		while ($row_sc = db::nextRowFromQuery($res_sc))
 		{
@@ -986,15 +986,15 @@ class content
 		$content .= "<tr><td>Mods: " . $row["mods"] . "</td></tr>";
 		$content .= "<tr><td>Server name: " . $row["server_name"] . "</td></tr>";
 		
-		$query = "SELECT * FROM maps WHERE maphash = '".$row["maphash"]."' GROUP BY maphash";
-		$result = db::executeQuery($query);
+		$query = "SELECT * FROM maps WHERE maphash = :1 GROUP BY maphash";
+		$result = db::executeQuery($query, array($row["maphash"]));
 		while ($inner_row = db::nextRowFromQuery($result))
 		{
 		    $content .= "<tr><td>Played on map: <a href='?p=detail&table=maps&id=".$inner_row["uid"]."'>" . misc::item_title_by_uid($inner_row["uid"], "maps") . "</a>";
 		    $content .= "<br /><br /><center><a href='?p=detail&table=maps&id=".$inner_row["uid"]."'><img src='".misc::minimap($inner_row["path"])."'></a></center></td></tr>";
 		}
-		$query = "SELECT * FROM replay_players WHERE id_replays = ".$row["uid"]." ORDER BY team";
-		$result = db::executeQuery($query);
+		$query = "SELECT * FROM replay_players WHERE id_replays = :1 ORDER BY team";
+		$result = db::executeQuery($query, array($row["uid"]));
 		
 		if (db::num_rows($result) != 0)
 		    $content .= "<tr><td><table align='center'>";
@@ -1042,8 +1042,8 @@ class content
 		    if ($row["table_name"] == "screenshot")
 		    {
 			$desc = " added new screenshot which no longer exists";
-			$q = "SELECT * FROM screenshot_group WHERE uid = ".$row["table_id"];
-			$res = db::executeQuery($q);
+			$q = "SELECT * FROM screenshot_group WHERE uid = :1";
+			$res = db::executeQuery($q, array($row["table_id"]));
 			if (db::num_rows($res) == 1)
 			{
 			    $row_sc = db::nextRowFromQuery($res);
@@ -1139,7 +1139,7 @@ class content
 
 	    $counter++;
 	    $comment_page_id++;
-	    $res = db::executeQuery("SELECT * FROM users WHERE uid = " . $comment["user_id"]);
+	    $res = db::executeQuery("SELECT * FROM users WHERE uid = :1", array($comment["user_id"]));
 	    $author = db::nextRowFromQuery($res);
 
 	    if($counter > 0)
@@ -1390,6 +1390,7 @@ class content
 	    list($order_by, $request_mod, $type, $request_tileset, $my_items) = content::map_filters("no_show_my_content_filter");
 	    
 	    $my = "";
+	    $filter_array = array("%".$request_mod."%", "%".$type."%", "%".$request_tileset."%");
 	
 	    $field_lc = "";
 	    $ljoin_lc = "";
@@ -1400,10 +1401,13 @@ class content
 		$ljoin_lc = "LEFT JOIN comments AS c on c.table_id = m.uid";
 	    }
 	    if ($my_items == true)
-		$my = " AND m.user_id = ".user::uid()." ";
-	    $query = "SELECT m.*".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE m.g_mod LIKE ('%".$request_mod."%') AND upper(m.type) LIKE upper('%".$type."%') AND m.tileset LIKE ('%".$request_tileset."%') ".$my."GROUP BY m.maphash ORDER BY ".$order_by;
+	    {
+		$my = " AND m.user_id = :4";
+		array_push($filter_array, user::uid());
+	    }
+	    $query = "SELECT m.*".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE m.g_mod LIKE (:1) AND upper(m.type) LIKE upper(:2) AND m.tileset LIKE (:3) ".$my." GROUP BY m.maphash ORDER BY ".$order_by;
 	    
-	    $result = db::executeQuery($query);
+	    $result = db::executeQuery($query, $filter_array);
 	    $output = content::create_grid($result);
 	    if ($output == "")
 	    {
@@ -1417,7 +1421,7 @@ class content
 		return;
 	    profile::upload_guide();
 	    echo "<br /><br /><div class='sidemenu'><ul><li>Your guides:</li></ul></div>";
-	    $result = db::executeQuery( "SELECT * FROM guides WHERE user_id = ".user::uid()." ORDER BY posted DESC" );
+	    $result = db::executeQuery( "SELECT * FROM guides WHERE user_id = :1 ORDER BY posted DESC", array(user::uid()) );
 	    $output = content::create_grid($result, "guides");
 	    if ($output == "")
 	    {
@@ -1431,7 +1435,7 @@ class content
 		return;
 	    profile::upload_unit();
 	    echo "<br /><br /><div class='sidemenu'><ul><li>Your units:</li></ul></div>";
-	    $result = db::executeQuery("SELECT * FROM units WHERE user_id = ".user::uid()." ORDER BY posted DESC");
+	    $result = db::executeQuery("SELECT * FROM units WHERE user_id = :1 ORDER BY posted DESC", array(user::uid()));
 	    $output = content::create_grid($result, "units");
 	    if ($output == "")
 	    {
@@ -1449,6 +1453,7 @@ class content
 	    list($order_by, $my_items, $version) = content::replay_filters("no_show_my_content_filter");
 	    
 	    $my = "";
+	    $filter_array = array("%".$version."%");
 	
 	    $field_lc = "";
 	    $ljoin_lc = "";
@@ -1459,10 +1464,13 @@ class content
 		$ljoin_lc = "LEFT JOIN comments AS c on c.table_id = r.uid";
 	    }
 	    if ($my_items == true)
-		$my = " AND r.user_id = ".user::uid()." ";
-	    $query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE ('%".$version."%') ".$my." ORDER BY ".$order_by;
+	    {
+		$my = " AND r.user_id = :2";
+		array_push($filter_array, user::uid());
+	    }
+	    $query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$my." ORDER BY ".$order_by;
 	    
-	    $result = db::executeQuery($query);
+	    $result = db::executeQuery($query, $filter_array);
 	    $output = content::create_grid($result,"replays",0,3,4);
 	    if ($output == "")
 	    {
@@ -1475,8 +1483,8 @@ class content
 	    if (isset($_GET["table"]) and isset($_GET["id"]))
 	    {
 		$ok = false;
-		$query = "CALL map_versions(".$_GET["id"].")";
-		$result = db::executeQuery($query);
+		$query = "CALL map_versions(:1)";
+		$result = db::executeQuery($query, array($_GET["id"]));
 		while ($row = db::nextRowFromQuery($result))
 		{
 		    $list = $row["list"];
@@ -1484,7 +1492,7 @@ class content
 			return;
 		    $query = "SELECT * FROM maps WHERE uid IN (".$list.")";
 		    $ok = true;
-		    db::next_result();
+		    db::closeCursor($result);
 		}
 		if ($ok == true)
 		{
@@ -1498,7 +1506,7 @@ class content
 	    if (isset($_GET["faction"]))
 	    {
 		$faction = $_GET["faction"];
-		$result = db::executeQuery("SELECT uid,login,avatar FROM users WHERE fav_faction = '".$faction."'");
+		$result = db::executeQuery("SELECT uid,login,avatar FROM users WHERE fav_faction = :1", array($faction));
 		if (db::num_rows($result) > 0)
 		{
 		    $data = array();
@@ -1524,8 +1532,8 @@ class content
 	    {
 		$table = $_GET["table"];
 		$id = $_GET["id"];
-		$query = "SELECT * FROM ".$table." WHERE user_id = ".$id." ORDER BY posted DESC";
-		$result = db::executeQuery($query);
+		$query = "SELECT * FROM ".$table." WHERE user_id = :1 ORDER BY posted DESC";
+		$result = db::executeQuery($query, array($id));
 		echo content::create_list($result, $table, 15, $id);
 	    }
 	}
@@ -1545,8 +1553,8 @@ class content
 		    $name = user::login_by_uid($id);
 		    $who = "<a href='?profile=".$id."'>".$name."</a> follows:";
 		}
-		$query = "SELECT * FROM following WHERE who = ".$id;
-		$result = db::executeQuery($query);
+		$query = "SELECT * FROM following WHERE who = :1";
+		$result = db::executeQuery($query, array($id));
 		if (db::num_rows($result) > 0)
 		{
 		    $data = array();
@@ -1588,8 +1596,8 @@ class content
 		    $name = user::login_by_uid($id);
 		    $who = "<a href='?profile=".$id."'>".$name."</a> is followed by:";
 		}
-		$query = "SELECT * FROM following WHERE whom = ".$id;
-		$result = db::executeQuery($query);
+		$query = "SELECT * FROM following WHERE whom = :1";
+		$result = db::executeQuery($query, array($id));
 		if (db::num_rows($result) > 0)
 		{
 		    $data = array();
@@ -1620,8 +1628,8 @@ class content
 	{
 	    if (isset($_GET["id"]))
 	    {
-		$query = "SELECT n_ver FROM maps WHERE uid = ".$_GET["id"];
-		$result = db::executeQuery($query);
+		$query = "SELECT n_ver FROM maps WHERE uid = :1";
+		$result = db::executeQuery($query, array($_GET["id"]));
 		while ($row = db::nextRowFromQuery($result))
 		{
 		    if ($row["n_ver"] == 0)
@@ -1638,8 +1646,8 @@ class content
 		return;
 	    if (!misc::item_owner($_GET["id"], $_GET["table"], user::uid()))
 		return;
-	    $query = "SELECT * FROM screenshot_group WHERE table_id = ".$_GET["id"]." AND table_name = '".$_GET["table"]."' AND user_id = ".user::uid();
-	    $result = db::executeQuery($query);
+	    $query = "SELECT * FROM screenshot_group WHERE table_id = :1 AND table_name = :2 AND user_id = :3";
+	    $result = db::executeQuery($query, array($_GET["id"], $_GET["table"], user::uid()));
 	    $can_upload = 4 - (int)db::num_rows($result);
 	    if ($can_upload == 0)
 		echo "<h4>You have reached your limit for this ".rtrim($_GET["table"],"s")."!</h4>";
@@ -1957,9 +1965,13 @@ class objects
 {
     public static function maps()
     {
-	echo "<h3>Maps!</h3>";
+	echo "<h3>Maps!";
+	if (user::online())
+	    echo " (<a href='?action=mymaps'>Upload</a>)";
+	echo "</h3>";
 	list($order_by, $request_mod, $type, $request_tileset, $my_items) = content::map_filters();
 	$my = "";
+	$filter_array = array("%".$request_mod."%", "%".$type."%", "%".$request_tileset."%");
 	$n_ver_e = "AND m.n_ver = 0";
 	
 	$field_lc = "";
@@ -1972,18 +1984,25 @@ class objects
 	    $n_ver_e = "";
 	}
 	if ($my_items == true)
-	    $my = " AND m.user_id = ".user::uid()." ";
-	$query = "SELECT m.*".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE m.g_mod LIKE ('%".$request_mod."%') AND upper(m.type) LIKE upper('%".$type."%') AND m.tileset LIKE ('%".$request_tileset."%') ".$n_ver_e." ".$my."GROUP BY m.maphash ORDER BY ".$order_by;
+	{
+	    $my = " AND m.user_id = :4";
+	    array_push($filter_array, user::uid());
+	}
+	$query = "SELECT m.*".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE m.g_mod LIKE (:1) AND upper(m.type) LIKE upper(:2) AND m.tileset LIKE (:3) ".$n_ver_e." ".$my." GROUP BY m.maphash ORDER BY ".$order_by;
 	
-	$result = db::executeQuery($query);
+	$result = db::executeQuery($query, $filter_array);
 	echo "<br />".content::create_grid($result);
     }
     
     public static function units()
     {
-	echo "<h3>Units!</h3>";
+	echo "<h3>Units!";
+	if (user::online())
+	    echo " (<a href='?action=myunits'>Upload</a>)";
+	echo "</h3>";
 	list($order_by, $request_type, $my_items) = content::guide_unit_filters("unit");
 	$my = "";
+	$filter_array = array("%".$request_type."%");
 	
 	$field_lc = "";
 	$ljoin_lc = "";
@@ -1994,16 +2013,23 @@ class objects
 	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = u.uid";
 	}
 	if ($my_items == true)
-	    $my = " AND u.user_id = ".user::uid()." ";
-	$result = db::executeQuery("SELECT u.*".$field_lc." FROM units AS u ".$ljoin_lc." WHERE u.type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
+	{
+	    $my = " AND u.user_id = :2";
+	    array_push($filter_array, user::uid());
+	}
+	$result = db::executeQuery("SELECT u.*".$field_lc." FROM units AS u ".$ljoin_lc." WHERE u.type LIKE (:1) ".$my." ORDER BY ".$order_by, $filter_array);
 	echo content::create_grid($result,"units");
     }
     
     public static function guides()
     {
-	echo "<h3>Guides!</h3>";
+	echo "<h3>Guides!";
+	if (user::online())
+	    echo " (<a href='?action=myguides'>Upload</a>)";
+	echo "</h3>";
 	list($order_by, $request_type, $my_items) = content::guide_unit_filters("guide");
 	$my = "";
+	$filter_array = array("%".$request_type."%");
 	
 	$field_lc = "";
 	$ljoin_lc = "";
@@ -2014,18 +2040,25 @@ class objects
 	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = g.uid";
 	}
 	if ($my_items == true)
-	    $my = " AND g.user_id = ".user::uid()." ";
-	$result = db::executeQuery("SELECT g.*".$field_lc." FROM guides AS g ".$ljoin_lc." WHERE g.guide_type LIKE ('%".$request_type."%') ".$my."ORDER BY ".$order_by);
+	{
+	    $my = " AND g.user_id = :2";
+	    array_push($filter_array, user::uid());
+	}
+	$result = db::executeQuery("SELECT g.*".$field_lc." FROM guides AS g ".$ljoin_lc." WHERE g.guide_type LIKE (:1) ".$my." ORDER BY ".$order_by, $filter_array);
 	echo content::create_grid($result,"guides");
     }
     
     public static function replays()
     {
-	echo "<h3>Replays!</h3>";
+	echo "<h3>Replays!";
+	if (user::online())
+	    echo " (<a href='?action=myreplays'>Upload</a>)";
+	echo "</h3>";
 	
 	list($order_by, $my_items, $version) = content::replay_filters();
 	    
 	$my = "";
+	$filter_array = array("%".$version."%");
 
 	$field_lc = "";
 	$ljoin_lc = "";
@@ -2036,10 +2069,13 @@ class objects
 	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = r.uid";
 	}
 	if ($my_items == true)
-	    $my = " AND r.user_id = ".user::uid()." ";
-	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE ('%".$version."%') ".$my." ORDER BY ".$order_by;
+	{
+	    $my = " AND r.user_id = :2";
+	    array_push($filter_array, user::uid());
+	}
+	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$my." ORDER BY ".$order_by;
 	
-	$result = db::executeQuery($query);
+	$result = db::executeQuery($query, $filter_array);
 	echo content::create_grid($result,"replays",0,3,4);
     }
     
@@ -2055,7 +2091,7 @@ class objects
 	{
 	    if($table == "guides")
 	    {
-		$result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
+		$result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = :1", array($_GET['id']));
 		$row = db::nextRowFromQuery($result);
 		if($row["user_id"] == user::uid())
 		{
@@ -2091,13 +2127,13 @@ class objects
     {
 	if(!in_array($_GET['table'], array("maps","units","guides","replays","articles")))
 	    return;
-	$result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
+	$result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = :1", array($_GET['id']));
 	while (db::nextRowFromQuery($result))
 	{
-	    $result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = " . $_GET['id'] . "");
+	    $result = db::executeQuery("SELECT * FROM " . $_GET['table'] . " WHERE uid = :1", array($_GET['id']));
 	    echo content::displayItem($result, $_GET['table']);
 
-	    $result = db::executeQuery("SELECT * FROM comments WHERE table_name = '" . $_GET['table'] . "' AND table_id = '" . $_GET['id'] . "' ORDER by posted DESC");
+	    $result = db::executeQuery("SELECT * FROM comments WHERE table_name = :1 AND table_id = :2 ORDER by posted DESC", array($_GET['table'], $_GET['id']));
 	    echo content::create_comment_section($result);
 	
 	    echo content::create_comment_respond($_GET['table'],$_GET['id']);
@@ -2127,7 +2163,7 @@ class objects
 	    foreach($searchArray as $value)
 	    {
 		
-		$result = db::executeQuery("SELECT * FROM ".$value." WHERE title LIKE '%".$search."%'");
+		$result = db::executeQuery("SELECT * FROM ".$value." WHERE title LIKE (:1)", array("%".$search."%"));
 		$output = content::create_list($result, $value);
 		if ($output != "")
 		{
@@ -2136,7 +2172,7 @@ class objects
 		}
 	    }
 
-	    $result = db::executeQuery("SELECT * FROM users WHERE login LIKE '%".$search."%'");
+	    $result = db::executeQuery("SELECT * FROM users WHERE login LIKE (:1)", array("%".$search."%"));
 	    if (db::num_rows($result) > 0)
 	    {
 		$content .= "<br><label>users found:</label>";
@@ -2145,7 +2181,7 @@ class objects
 		    array_push($data,"<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>");
 		$content .= content::create_dynamic_list($data,1,"users");
 	    }
-	    $result = db::executeQuery("SELECT * FROM comments WHERE content LIKE '%".$search."%'");
+	    $result = db::executeQuery("SELECT * FROM comments WHERE content LIKE (:1)", array("%".$search."%"));
 	    if (db::num_rows($result) > 0)
 	    {
 		$content .= "<br><label>comments found:</label>";

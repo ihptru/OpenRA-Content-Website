@@ -11,8 +11,8 @@ class user
 	$sess_id = session_id();
 
 	//session is set (logged in): record in `signed_in` table must exist
-	$query = "SELECT * FROM signed_in WHERE sess_hash = '".$sess_id."'";
-	$result = db::executeQuery($query);
+	$query = "SELECT * FROM signed_in WHERE sess_hash = :1";
+	$result = db::executeQuery($query, array($sess_id));
 	if (db::num_rows($result) != 0)
 	    return True;	// everything is OK! User is online!
 	// if we are in here, current session ID is different from one in DB (session is expired or login in another browser)
@@ -21,8 +21,8 @@ class user
 	//				DB value was changed and it will return False in any case)
 	if(isset($_COOKIE["remember"]))
 	{
-	    $query = "SELECT * FROM signed_in WHERE sess_hash = '".$_COOKIE["remember"]."'";
-	    $result = db::executeQuery($query);
+	    $query = "SELECT * FROM signed_in WHERE sess_hash = :1";
+	    $result = db::executeQuery($query, array($_COOKIE["remember"]));
 	    if (db::num_rows($result) == 0)
 	    {
 		// cookie is set but hashes do not match: probably faking user's identities
@@ -36,7 +36,7 @@ class user
 	    $current_session_id = session_id();
 
 	    //update values in db and in cookie since there is such a session ID in DB
-	    $query = "UPDATE signed_in SET sess_hash = ? WHERE user_id = ?";
+	    $query = "UPDATE signed_in SET sess_hash = :1 WHERE user_id = :2";
 	    db::executeQuery($query, array($current_session_id, $user_id));
 	    //we can not have same hash forever so change it in DB and in COOKIE when user is back after session was expired
 	    setcookie("remember", $current_session_id, time()+3600*24*360, "/");
@@ -50,8 +50,8 @@ class user
     {
 	if (user::online())
 	{
-	    $query = "SELECT * FROM signed_in WHERE sess_hash = '".session_id()."'";
-	    $result = db::executeQuery($query);
+	    $query = "SELECT * FROM signed_in WHERE sess_hash = :1";
+	    $result = db::executeQuery($query, array(session_id()));
 	    while ($row = db::nextRowFromQuery($result))
 		return $row["user_id"];
 	}
@@ -63,9 +63,9 @@ class user
     {
 	if (user::online())
 	{
-	    $query = "SELECT login FROM users WHERE uid = " . user::uid();
-	    $result = db::executeQuery($query);
-	    while ($db_data = db::fetch_array($result))
+	    $query = "SELECT login FROM users WHERE uid = :1";
+	    $result = db::executeQuery($query, array(user::uid()));
+	    while ($db_data = db::nextRowFromQuery($result))
 	    {
 		return $db_data['login'];
 	    }
@@ -122,8 +122,8 @@ class user
 		    setcookie("msg_unread_only_filter", "", time()-60*60, "/");
 		
 		//remove from db
-		$query = "DELETE FROM signed_in WHERE user_id = ".user::uid();
-		db::executeQuery($query);
+		$query = "DELETE FROM signed_in WHERE user_id = :1";
+		db::executeQuery($query, array(user::uid()));
 		//unset session vars
 		misc::event_log(user::uid(), "logout");
 
@@ -147,13 +147,13 @@ class user
 		$login = $_POST['login'];
 		$pass = md5($_POST['pass']);
 		$db_pass = '';
-		$query = "SELECT uid,pass FROM users WHERE login = '".$login."'";
-		$result = db::executeQuery($query);
+		$query = "SELECT uid,pass FROM users WHERE login = :1";
+		$result = db::executeQuery($query, array($login));
 		if (db::num_rows($result) == 0)
 		{
 		    return;
 		}
-		while ($db_data = db::fetch_array($result))
+		while ($db_data = db::nextRowFromQuery($result))
 		{
 		    $db_pass = $db_data['pass'];
 		    $user_id = $db_data['uid'];
@@ -161,22 +161,22 @@ class user
 		if( $pass == $db_pass )		//hashes match
 		{
 		    $sess_hash = session_id();
-		    $query = "SELECT * FROM signed_in WHERE user_id = ".$user_id;
-		    $result = db::executeQuery($query);
+		    $query = "SELECT * FROM signed_in WHERE user_id = :1";
+		    $result = db::executeQuery($query, array($user_id));
 		    if (db::num_rows($result) == 0)
 		    {
 			$query = "INSERT INTO signed_in
 				(user_id, sess_hash)
 				VALUES
-				(?,?)
+				(:1,:2)
 			";
 			db::executeQuery($query, array($user_id, $sess_hash));
 		    }
 		    else
 		    {
 			$query = "UPDATE signed_in
-				    SET sess_hash = ?
-				    WHERE user_id = ?";
+				    SET sess_hash = :1
+				    WHERE user_id = :2";
 			db::executeQuery($query, array($sess_hash, $user_id));
 		    }
 		    
@@ -241,15 +241,15 @@ class user
 	    return;
 	}
 	
-	$query = "SELECT email FROM users WHERE email = '".$_POST['email']."'";
-	if (db::num_rows(db::executeQuery($query)) != 0)
+	$query = "SELECT email FROM users WHERE email = :1";
+	if (db::num_rows(db::executeQuery($query, array($_POST['email']))) != 0)
 	{
 	    echo "someone already uses this email";
 	    return;
 	}
 	
-	$query = "SELECT login FROM users WHERE login = '".$_POST['rlogin']."'";
-	if (db::num_rows(db::executeQuery($query)) != 0)
+	$query = "SELECT login FROM users WHERE login = :1";
+	if (db::num_rows(db::executeQuery($query, array($_POST['rlogin']))) != 0)
 	{
 	    echo "Account with this username already exists";
 	    return;
@@ -264,7 +264,7 @@ class user
 	$query = "INSERT INTO users
 		(email,pass,login)
 		VALUES
-		(?,?,?)
+		(:1,:2,:3)
 	;";
 	$result = db::executeQuery($query, array($_POST['email'], md5($_POST['rpass']), $_POST['rlogin']));
 	if ($result)
@@ -312,14 +312,14 @@ class user
 
 	if (isset($_POST['rpass_login']) && isset($_POST['rpass_email']))
 	{
-	    $query = "SELECT login,email FROM users WHERE login = '".$_POST['rpass_login']."' AND email = '".$_POST['rpass_email']."'";
-	    if (db::num_rows(db::executeQuery($query)) == 0)
+	    $query = "SELECT login,email FROM users WHERE login = :1 AND email = :2";
+	    if (db::num_rows(db::executeQuery($query,array($_POST['rpass_login'], $_POST['rpass_email']))) == 0)
 	    {
 		echo "User with such data not found";
 		return;
 	    }
-	    $query = "SELECT login FROM recover WHERE login = '".$_POST['rpass_login']."'";
-	    if (db::num_rows(db::executeQuery($query)) != 0)
+	    $query = "SELECT login FROM recover WHERE login = :1";
+	    if (db::num_rows(db::executeQuery($query, array($_POST['rpass_login']))) != 0)
 	    {
 		echo "You've already requested password update";
 		return;
@@ -327,7 +327,7 @@ class user
 	    $query = "INSERT INTO recover
 		    (login,email,hash)
 		    VALUES
-		    (?,?,?)
+		    (:1,:2,:3)
 	    ";
 	    db::executeQuery($query, array($_POST['rpass_login'], $_POST['rpass_email'], md5($_POST['rpass_email'])));
 	    misc::send_mail( $_POST['rpass_email'], 'Recover Password at OpenRA Content Website', 'recover password: http://'.$_SERVER['HTTP_HOST'].'/?recover&recover_link='.md5($_POST['rpass_email']), array( 'From' => 'noreply@'.$_SERVER['HTTP_HOST'] ) );
@@ -336,15 +336,15 @@ class user
 	}
 	elseif (isset($_POST['ruser_pass']) && isset($_POST['ruser_email']))
 	{
-	    $query = "SELECT pass,email FROM users WHERE pass = '".md5($_POST['ruser_pass'])."' AND email = '".$_POST['ruser_email']."'";
-	    if (db::num_rows(db::executeQuery($query)) == 0)
+	    $query = "SELECT pass,email FROM users WHERE pass = :1 AND email = :2";
+	    if (db::num_rows(db::executeQuery($query, array(md5($_POST['ruser_pass']), $_POST['ruser_email']))) == 0)
 	    {
 		echo "User with such data not found";
 		return;
 	    }
-	    $query = "SELECT login FROM users WHERE pass = '".md5($_POST['ruser_pass'])."' AND email = '".$_POST['ruser_email']."'";
-	    $result = db::executeQuery($query);
-	    while ($db_data = db::fetch_array($result))
+	    $query = "SELECT login FROM users WHERE pass = :1 AND email = :2";
+	    $result = db::executeQuery($query, array(md5($_POST['ruser_pass']), $_POST['ruser_email']));
+	    while ($db_data = db::nextRowFromQuery($result))
 	    {
 		$user = $db_data['login'];
 	    }
@@ -356,15 +356,15 @@ class user
 	if (isset($_GET['recover_link']))
 	{
 	    $hash = $_GET['recover_link'];
-	    $query = "SELECT hash FROM recover WHERE hash = '".$hash."'";
-	    if (db::num_rows(db::executeQuery($query)) == 0)
+	    $query = "SELECT hash FROM recover WHERE hash = :1";
+	    if (db::num_rows(db::executeQuery($query, array($hash))) == 0)
 	    {
 		echo "Nothing to activate";
 		return;
 	    }
-	    $query = "SELECT login FROM recover WHERE hash = '".$hash."'";
-	    $result = db::executeQuery($query);
-	    while ($db_data = db::fetch_array($result))
+	    $query = "SELECT login FROM recover WHERE hash = :1";
+	    $result = db::executeQuery($query, array($hash));
+	    while ($db_data = db::nextRowFromQuery($result))
 	    {
 		$user = $db_data['login'];
 	    }
@@ -382,10 +382,10 @@ class user
 		{
 		    $password = md5($_POST['rpass_new']);
 		    $query = "UPDATE users
-				SET pass = ?
-				WHERE login = ?";
+				SET pass = :1
+				WHERE login = :2";
 		    db::executeQuery($query, array($password, $user));
-		    $query = "DELETE FROM recover WHERE login = ?";
+		    $query = "DELETE FROM recover WHERE login = :1";
 		    db::executeQuery($query, array($user));
 		    echo "Password updated";
 		    echo "<script>location.href='http://".$_SERVER["HTTP_HOST"]."/'</script>";
@@ -401,22 +401,22 @@ class user
     
     public static function login_by_uid($uid)
     {
-	$query = "SELECT login FROM users WHERE uid = ".$uid;
-	$row = db::nextRowFromQuery(db::executeQuery($query));
+	$query = "SELECT login FROM users WHERE uid = :1";
+	$row = db::nextRowFromQuery(db::executeQuery($query, array($uid)));
 	return $row["login"];
     }
     
     public static function email_by_uid($uid)
     {
-	$query = "SELECT email FROM users WHERE uid = ".$uid;
-	$row = db::nextRowFromQuery(db::executeQuery($query));
+	$query = "SELECT email FROM users WHERE uid = :1";
+	$row = db::nextRowFromQuery(db::executeQuery($query, array($uid)));
 	return $row["email"];
     }
     
     public static function exists($uid)
     {
-	$query = "SELECT uid FROM users WHERE uid = ".$uid;
-	$result = db::executeQuery($query);
+	$query = "SELECT uid FROM users WHERE uid = :1";
+	$result = db::executeQuery($query, array($uid));
 	while ($row = db::nextRowFromQuery($result))
 	    return true;
 	return false;

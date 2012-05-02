@@ -16,8 +16,8 @@ header( 'Content-type: text/plain' );
 
 function check_login($login, $pass)
 {
-    $query = "SELECT login,pass FROM users WHERE login = '".addslashes($login)."' AND pass = '".addslashes($pass)."'";
-    $result = db::executeQuery($query);
+    $query = "SELECT login,pass FROM users WHERE login = :1 AND pass = :2";
+    $result = db::executeQuery($query, array($login, $pass));
     while (db::nextRowFromQuery($result))
     {
 	return "0";
@@ -39,8 +39,8 @@ if(isset($_FILES["map_upload"]["name"]))
 	$res = check_login($_POST["login"], $_POST["pass"]);
 	if ($res == "0")
 	{
-	    $query = "SELECT uid FROM users WHERE login = '".addslashes($_POST["login"])."' AND pass = '".addslashes($_POST["pass"])."'";
-	    $result = db::executeQuery($query);
+	    $query = "SELECT uid FROM users WHERE login = :1 AND pass = :2";
+	    $result = db::executeQuery($query, array($_POST["login"], $_POST["pass"]));
 	    $user_id = "";
 	    while ($row = db::nextRowFromQuery($result))
 	    {
@@ -73,8 +73,8 @@ if (isset($_GET["list"]) and isset($_GET["vlogin"]) and isset($_GET["vpass"]))
     $res = check_login($_GET["vlogin"], $_GET["vpass"]);
     if ($res == "0")
     {
-	$query = "SELECT uid FROM users WHERE login = '".addslashes($_GET["vlogin"])."' AND pass = '".addslashes($_GET["vpass"])."'";
-	$result = db::executeQuery($query);
+	$query = "SELECT uid FROM users WHERE login = :1 AND pass = :2";
+	$result = db::executeQuery($query, array($_GET["vlogin"], $_GET["vpass"]));
 	$user_id = "";
 	while ($row = db::nextRowFromQuery($result))
 	{
@@ -86,8 +86,8 @@ if (isset($_GET["list"]) and isset($_GET["vlogin"]) and isset($_GET["vpass"]))
 	    exit();
 	}
 	
-	$query = "SELECT * FROM maps WHERE user_id = ".$user_id." AND n_ver = 0";
-	$result = db::executeQuery($query);
+	$query = "SELECT * FROM maps WHERE user_id = :1 AND n_ver = 0";
+	$result = db::executeQuery($query, array($user_id));
 	$json_result_array = array();
 	while ($row = db::nextRowFromQuery($result))
 	{

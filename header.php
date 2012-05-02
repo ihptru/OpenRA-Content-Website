@@ -21,9 +21,7 @@ class header
     {
 	$title = "OpenRA - Resources";
 	if (count($_GET) == 0)
-	{
 	    return $title;
-	}
 	else
 	{
 	    if (isset($_GET["action"]))
@@ -98,11 +96,11 @@ class header
 		{
 		    $table = $_GET['table'];
 		    $id = $_GET['id'];
-		    $query = "SELECT uid FROM $table WHERE uid = $id";
-		    $result = db::executeQuery($query);
+		    $query = "SELECT uid FROM $table WHERE uid = :1";
+		    $result = db::executeQuery($query, array($id));
 		    while (db::nextRowFromQuery($result))
 		    {
-			db::executeQuery( "INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES (?,?,?,?,?)", array("", $_POST['message'], user::uid(), $_GET['id'], $_GET['table']) );
+			db::executeQuery( "INSERT INTO comments (title, content, user_id, table_id, table_name) VALUES (:1,:2,:3,:4,:5)", array("", $_POST['message'], user::uid(), $_GET['id'], $_GET['table']) );
 			misc::event_log(user::uid(), "comment", $_GET['table'], $_GET['id']);
 			misc::increase_experience(5);
 			header("Location: {$_SERVER['HTTP_REFERER']}");
@@ -134,9 +132,9 @@ class header
 		if (trim($_POST['upload_guide_text']) != "" && trim($_POST['upload_guide_title']) != "" && trim($_POST['upload_guide_type'] != ""))
 		{
 		    $text = nl2br($_POST['upload_guide_text']);
-		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES (?,?,?,?)", array($_POST['upload_guide_title'], $text, $_POST['upload_guide_type'], user::uid()));
+		    db::executeQuery("INSERT INTO guides (title, html_content, guide_type, user_id) VALUES (:1,:2,:3,:4)", array($_POST['upload_guide_title'], $text, $_POST['upload_guide_type'], user::uid()));
 		    misc::increase_experience(50);
-		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM guides WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
+		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM guides WHERE user_id = :1 ORDER BY posted DESC LIMIT 1", array(user::uid())));
 		    misc::event_log(user::uid(), "add", "guides", $row["uid"]);
 		    header("Location: ?p=detail&table=guides&id=".$row["uid"]);
 		}
@@ -153,9 +151,9 @@ class header
 		if (trim($_POST['edit_guide_text']) != "" && trim($_POST['edit_guide_title']) != "" && trim($_POST['edit_guide_type'] != "") && trim($_POST['edit_guide_uid'] != ""))
 		{
 		    $text = nl2br($_POST['edit_guide_text']);
-		    db::executeQuery("UPDATE guides SET title = ? WHERE uid = ?", array($_POST['edit_guide_title'], $_POST['edit_guide_uid']));
-		    db::executeQuery("UPDATE guides SET html_content = ? WHERE uid = ?", array(str_replace('\r\n', "<br />", $text), $_POST['edit_guide_uid']));
-		    db::executeQuery("UPDATE guides SET guide_type = ? WHERE uid = ?", array($_POST['edit_guide_type'], $_POST['edit_guide_uid']));
+		    db::executeQuery("UPDATE guides SET title = :1 WHERE uid = :2", array($_POST['edit_guide_title'], $_POST['edit_guide_uid']));
+		    db::executeQuery("UPDATE guides SET html_content = :1 WHERE uid = :2", array(str_replace('\r\n', "<br />", $text), $_POST['edit_guide_uid']));
+		    db::executeQuery("UPDATE guides SET guide_type = :1 WHERE uid = :2", array($_POST['edit_guide_type'], $_POST['edit_guide_uid']));
 		    misc::event_log(user::uid(), "edit", "guides", $_POST['edit_guide_uid']);
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
@@ -171,23 +169,23 @@ class header
 	    {
 		if(isset($_GET["fav"]))
 		{
-		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
+		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($_GET["table"], $_GET["id"], user::uid()))) )
 		    {
-			db::executeQuery("DELETE FROM fav_item WHERE table_name = ? AND table_id = ? AND user_id = ?", array($_GET["table"], $_GET["id"], user::uid()));
+			db::executeQuery("DELETE FROM fav_item WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($_GET["table"], $_GET["id"], user::uid()));
 			misc::event_log(user::uid(), "unfav", $_GET["table"], $_GET["id"]);
 		    }
 		    else
 		    {
-			db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (?,?,?)", array(user::uid(), $_GET["table"], $_GET["id"]));
+			db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (:1,:2,:3)", array(user::uid(), $_GET["table"], $_GET["id"]));
 			misc::event_log(user::uid(), "fav", $_GET["table"], $_GET["id"]);
 		    }
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
 		else if(isset($_GET["report"]))
 		{
-		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = '".$_GET["table"]."' AND table_id = ".$_GET["id"]." AND user_id = " . user::uid())) )
+		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($_GET["table"], $_GET["id"], user::uid()))) )
 		    { } else {
-			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id) VALUES (?,?,?)", array($_GET["table"], $_GET["id"], user::uid()));
+			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id) VALUES (:1,:2,:3)", array($_GET["table"], $_GET["id"], user::uid()));
 			misc::event_log(user::uid(), "report", $_GET["table"], $_GET["id"]);
 		    }
 		}
@@ -294,21 +292,21 @@ class header
 	    $id = $_GET["follow"];
 	    if (user::online())
 	    {
-		$query = "SELECT * FROM following WHERE who = ".user::uid()." and whom = ".$id;
-		$result = db::executeQuery($query);
+		$query = "SELECT * FROM following WHERE who = :1 and whom = :2";
+		$result = db::executeQuery($query, array(user::uid(), $id));
 		while (db::nextRowFromQuery($result))
 		{
 		    return;
 		}
 		//check if users exists
-		$query = "SELECT uid FROM users WHERE uid = ".$id;
-		$result = db::executeQuery($query);
+		$query = "SELECT uid FROM users WHERE uid = :1";
+		$result = db::executeQuery($query, array($id));
 		while (db::nextRowFromQuery($result))
 		{
 		    $query = "INSERT INTO following
 				(who,whom)
 			    VALUES
-			    (?,?)
+			    (:1,:2)
 		    ";
 		    db::executeQuery($query, array(user::uid(), $id));
 		    misc::event_log(user::uid(), "follow", "", $id);
@@ -321,16 +319,16 @@ class header
 	    $id = $_GET["unfollow"];
 	    if (user::online())
 	    {
-		$query = "SELECT * FROM following WHERE who = ".user::uid()." AND whom = ".$id;
-		$result = db::executeQuery($query);
+		$query = "SELECT * FROM following WHERE who = :1 AND whom = :2";
+		$result = db::executeQuery($query, array(user::uid(), $id));
 		while (db::nextRowFromQuery($result))
 		{
 		    //check if users exists
-		    $query = "SELECT uid FROM users WHERE uid = ".$id;
-		    $result = db::executeQuery($query);
+		    $query = "SELECT uid FROM users WHERE uid = :1";
+		    $result = db::executeQuery($query, array($id));
 		    while (db::nextRowFromQuery($result))
 		    {
-			$query = "DELETE FROM following WHERE who = ? AND whom = ?";
+			$query = "DELETE FROM following WHERE who = :1 AND whom = :2";
 			db::executeQuery($query, array(user::uid(), $id));
 			misc::event_log(user::uid(), "unfollow", "", $id);
 			header("Location: {$_SERVER['HTTP_REFERER']}");
@@ -347,7 +345,7 @@ class header
 	    if (user::uid() != $_POST['user_id'])
 		return;
 	    $map_id = $_POST['map_id'];
-	    $query = "UPDATE maps SET additional_desc = ? WHERE uid = ?";
+	    $query = "UPDATE maps SET additional_desc = :1 WHERE uid = :2";
 	    db::executeQuery($query, array(trim($_POST['add_map_info']), $map_id));
 	    header("Location: /?p=detail&table=maps&id=".$map_id);
 	}
@@ -356,7 +354,7 @@ class header
 	    if (user::uid() != $_POST['user_id'])
 		return;
 	    $replay_id = $_POST['replay_id'];
-	    $query = "UPDATE replays SET description = ? WHERE uid = ?";
+	    $query = "UPDATE replays SET description = :1 WHERE uid = :2";
 	    db::executeQuery($query, array(trim($_POST['add_replay_info']), $replay_id));
 	    header("Location: /?p=detail&table=replays&id=".$replay_id);
 	}
@@ -365,7 +363,7 @@ class header
 	    if (user::uid() != $_POST['user_id'])
 		return;
 	    $unit_id = $_POST['unit_id'];
-	    $query = "UPDATE units SET description = ? WHERE uid = ?";
+	    $query = "UPDATE units SET description = :1 WHERE uid = :2";
 	    db::executeQuery($query, array(trim($_POST['add_unit_info']), $unit_id));
 	    header("Location: /?p=detail&table=units&id=".$unit_id);
 	}
@@ -374,7 +372,7 @@ class header
 	    if (user::uid() != $_POST['user_id'])
 		return;
 	    $unit_id = $_POST['unit_id'];
-	    $query = "UPDATE units SET type = ? WHERE uid = ?";
+	    $query = "UPDATE units SET type = :1 WHERE uid = :2";
 	    db::executeQuery($query, array(trim($_POST['edit_unit_type']), $unit_id));
 	    header("Location: /?p=detail&table=units&id=".$unit_id);
 	}
@@ -408,7 +406,7 @@ class header
 	    $query = "INSERT INTO pm
 		    (from_user_id,to_user_id,title,content)
 		    VALUES
-		    (?,?,?,?)";
+		    (:1,:2,:3,:4)";
 	    db::executeQuery($query, array(user::uid(), $to_id, $title, $content));
 	    $email = user::email_by_uid($to_id);
 	    misc::send_mail( $email, 'New PM at OpenRA Content Website', 'You\'ve got a new private message! Your inbox is: http://'.$_SERVER['HTTP_HOST'].'/?p=mail&m=inbox', array( 'From' => 'noreply@'.$_SERVER['HTTP_HOST'] ) );

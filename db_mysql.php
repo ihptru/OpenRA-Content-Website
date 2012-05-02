@@ -7,11 +7,14 @@
 	// connect to database
         public static function connect()
         {
-            db::$con = mysqli_connect(DB_HOST,DB_USERNAME,DB_PASSWORD, DB_DATABASE);
-            if(!db::$con)
-            {
-                die("Could not connect: " . mysqli_connect_error());
-            }
+	    try
+	    {
+		db::$con = new PDO("mysql:host=".DB_HOST.";dbname=".DB_DATABASE, DB_USERNAME, DB_PASSWORD);
+	    }
+	    catch(PDOException $e)
+	    {
+		echo $e->getMessage();
+	    }
         }
 
 	// check if we are connected to database
@@ -23,21 +26,14 @@
 	// gets query SELECT result and returns 1 row per 1 loop iteration
         public static function nextRowFromQuery($result)
         {
-            return mysqli_fetch_assoc($result);
+            return $result->fetch(PDO::FETCH_ASSOC);
         }
 
-	// next result
-	public static function next_result()
+	// close Cursor
+	public static function closeCursor($result)
 	{
-	    return mysqli_next_result(db::$con);
+	    $result->closeCursor();
 	}
-
-	// get table name from executed query
-        public static function getTableNameFrom($result)
-        {
-            $finfo = mysqli_fetch_field_direct($result, 0);
-	    return $finfo->table;
-        }
 
 	// is for cron
         public static function clearOldRecords()
@@ -271,7 +267,7 @@
 		    {
 			$name = $value;
 			$title = str_replace("-"," ",substr($value,0,strlen($value)-4));
-			db::executeQuery("INSERT INTO country (name, title) VALUES (?,?)", array($name, $title));
+			db::executeQuery("INSERT INTO country (name, title) VALUES (:1,:2)", array($name, $title));
 		    }
 	    }
 	    
@@ -321,46 +317,33 @@
         {
 	    if (count($values)==0)
 	    {
-		$result = mysqli_query(db::$con, $q);
+		$result = db::$con->prepare($q);
+		$result->execute();
 	    }
 	    else
 	    {
-		$t = "";
-		$prepare = mysqli_prepare(db::$con, $q);
+		$result = db::$con->prepare($q);
+		$i = 1;
 		foreach ($values as $key => $value)
 		{
-		    $type = gettype($value);
-		    if ($type == "string")
-			$t = $t."s";
-		    elseif ($type == "integer")
-			$t = $t."i";
-		    elseif ($type == "double")
-			$t = $t."d";
-		    $values[$key] = mysqli_real_escape_string(db::$con, $values[$key]);
+		    $result->bindValue(':'.$i, $value, PDO::PARAM_STR);
+		    $i++;
 		}
-		array_unshift($values, $t);
-		array_unshift($values, $prepare);
-		call_user_func_array("mysqli_stmt_bind_param", &$values);
-		$result = mysqli_stmt_execute($prepare);
+		$result->execute();
 	    }
             if (!$result)
 	    {
-		$message  = "Invalid query: " . mysqli_error(db::$con) . "\n";
-		$message .= "Whole query: " . $q;
-		die($message);
+		$arr = $result->errorInfo();
+		print_r($arr);
+		die();
 	    }
             return $result;
         }
 
-        public static function fetch_array($result)
-        {
-	    return mysqli_fetch_array($result, MYSQLI_ASSOC);
-	}
-
 	// amount of rows from SELECT result
 	public static function num_rows($result)
 	{
-	    return mysqli_num_rows($result);
+	    return $result->rowCount();
 	}
 
 	// private function to check if table exists in database - unless: execute setup() function
@@ -396,7 +379,6 @@
 
         public static function disconnect()
         {
-            mysqli_close(db::$con);
             db::$con = null;
         }
     }

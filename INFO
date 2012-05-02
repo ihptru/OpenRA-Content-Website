@@ -15,3 +15,4 @@ images/screenshots/	:	0777
 # requires:
 #          python2
 #          mono (tested with mono-2.10.6)
+#	   php5-pdo_mysql

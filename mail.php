@@ -23,8 +23,8 @@ class mail
 		{
 		    $msg_id = -1;
 		    $msg_id = $_GET["w"];
-		    $query = "SELECT * FROM pm WHERE uid = ".$msg_id;
-		    $msg_result = db::executeQuery($query);
+		    $query = "SELECT * FROM pm WHERE uid = :1";
+		    $msg_result = db::executeQuery($query, array($msg_id));
 		    while ($row_msg = db::nextRowFromQuery($msg_result))
 		    {
 			if ($row_msg["to_user_id"] != user::uid())
@@ -40,7 +40,7 @@ class mail
 			{
 			    $query = "UPDATE pm
 				SET isread = 1
-				WHERE uid = ?";
+				WHERE uid = :1";
 			    db::executeQuery($query, array($msg_id));
 			}
 		    }
@@ -67,8 +67,8 @@ class mail
 		echo "<a name='messages'></a><table style='min-width: 590px; margin-left: -10px; margin-top: 0; vertical-align: top;'><tr>";
 		echo "<th style='text-align:center;min-width:200px;'>Subject</th><th style='text-align:center;'>Author</th><th style='text-align:center;'>Sent</th><th style='width:15px;text-align:center;'>Mark</th></tr>";
 		echo "<form method=POST>";
-		$query = "SELECT * FROM pm WHERE to_user_id = ".user::uid()." ".$filters." ORDER BY posted DESC";
-		$result = db::executeQuery($query);
+		$query = "SELECT * FROM pm WHERE to_user_id = :1 ".$filters." ORDER BY posted DESC";
+		$result = db::executeQuery($query, array(user::uid()));
 		$num_rows = db::num_rows($result);
 		$i = 0;
 		while ($row = db::nextRowFromQuery($result))
@@ -124,27 +124,27 @@ class mail
 			{
 			    if (isset($_POST["delete_msg"]))
 			    {
-				$query = "DELETE FROM pm WHERE uid = ?";
+				$query = "DELETE FROM pm WHERE uid = :1";
 				db::executeQuery($query, array($value));
-				db::executeQuery("DELETE FROM reported WHERE table_name = 'pm' AND table_id = ?", array($value));
+				db::executeQuery("DELETE FROM reported WHERE table_name = 'pm' AND table_id = :1", array($value));
 				$any_action = true;
 			    }
 			    else if (isset($_POST["setasread_msg"]))
 			    {
-				$query = "UPDATE pm SET isread = 1 WHERE uid = ?";
+				$query = "UPDATE pm SET isread = 1 WHERE uid = :1";
 				db::executeQuery($query, array($value));
 				$any_action = true;
 			    }
 			    else if (isset($_POST["report_msg"]))
 			    {
-				$query = "SELECT * FROM reported WHERE table_name = 'pm' AND table_id = ".$value;
-				$res = db::executeQuery($query);
+				$query = "SELECT * FROM reported WHERE table_name = 'pm' AND table_id = :1";
+				$res = db::executeQuery($query, array($value));
 				if (db::num_rows($res) == 0)
 				{
 				    $query = "INSERT INTO reported
 					    (table_name,table_id,user_id)
 					    VALUES
-					    (?,?,?)
+					    (:1,:2,:3)
 				    ";
 				    db::executeQuery($query, array("pm", $value, user::uid()));
 				    $any_action = true;
@@ -161,8 +161,8 @@ class mail
 		{
 		    $msg_id = -1;
 		    $msg_id = $_GET["w"];
-		    $query = "SELECT * FROM pm WHERE uid = ".$msg_id;
-		    $msg_result = db::executeQuery($query);
+		    $query = "SELECT * FROM pm WHERE uid = :1";
+		    $msg_result = db::executeQuery($query, array($msg_id));
 		    while ($row_msg = db::nextRowFromQuery($msg_result))
 		    {
 			if ($row_msg["from_user_id"] != user::uid())
@@ -179,8 +179,8 @@ class mail
 		}
 		echo "<table style='min-width: 590px; margin-left: -10px; margin-top: 0; vertical-align: top;'><tr>";
 		echo "<th style='text-align:center;min-width:200px;'>Subject</th><th style='text-align:center;'>Recipient</th><th style='text-align:center;'>Sent</th></tr>";
-		$query = "SELECT * FROM pm WHERE from_user_id = ".user::uid()." ORDER BY posted DESC";
-		$result = db::executeQuery($query);
+		$query = "SELECT * FROM pm WHERE from_user_id = :1 ORDER BY posted DESC";
+		$result = db::executeQuery($query, array(user::uid()));
 		while ($row = db::nextRowFromQuery($result))
 		{
 		    $read = "";
@@ -213,8 +213,8 @@ class mail
 		{
 		    if (trim($_POST["username"]) == "")
 			break;
-		    $query = "SELECT uid,login FROM users WHERE login LIKE ('%".$_POST["username"]."%')";
-		    $res = db::executeQuery($query);
+		    $query = "SELECT uid,login FROM users WHERE login LIKE (:1)";
+		    $res = db::executeQuery($query, array("%".$_POST["username"]."%"));
 		    if (db::num_rows($res) > 0)
 			echo "<table><tr><td><b>Choose user:</b></td></tr>";
 		    while ($row_user = db::nextRowFromQuery($res))
@@ -232,8 +232,8 @@ class mail
 		    if (trim($_POST["title"]) == "")
 			break;
 		    $title = $_POST["title"];
-		    $query = "SELECT * FROM pm WHERE UPPER(title) LIKE UPPER('%".$title."%') AND ( from_user_id = ".user::uid()." OR to_user_id = ".user::uid()." )";
-		    $res = db::executeQuery($query);
+		    $query = "SELECT * FROM pm WHERE UPPER(title) LIKE UPPER(:1) AND ( from_user_id = :2 OR to_user_id = :3 )";
+		    $res = db::executeQuery($query, array("%".$title."%", user::uid(), user::uid()));
 		    if (db::num_rows($res) > 0)
 			echo "<table><tr><td><b>Found messages:</b></td></tr>";
 		    while ($row_msg = db::nextRowFromQuery($res))
@@ -292,7 +292,6 @@ class mail
 	}
 	return false;
     }
-
 }
 
 ?>

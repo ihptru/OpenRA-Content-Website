@@ -50,22 +50,18 @@ class upload
 		if ($return_code == 0)
 		{
 		    misc::increase_experience(10);
-		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid,maphash FROM maps WHERE user_id = ".$user_id." ORDER BY posted DESC LIMIT 1"));
+		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid,maphash FROM maps WHERE user_id = :1 ORDER BY posted DESC LIMIT 1", array($user_id)));
 		    misc::event_log(user::uid(), "add", "maps", $row["uid"]);
 		    if (isset($_POST["additional_desc"]))
-			db::executeQuery("UPDATE maps SET additional_desc = ? WHERE user_id = ? AND maphash = ?", array($_POST["additional_desc"], $user_id, trim($row["maphash"])));
+			db::executeQuery("UPDATE maps SET additional_desc = :1 WHERE user_id = :2 AND maphash = :3", array($_POST["additional_desc"], $user_id, trim($row["maphash"])));
 		}
 		return code_match($return_code);
 	    }
 	    else
-	    {
 		return "";
-	    }
 	}
 	else
-	{
 	    return "";	// file is not choosen
-	}
     }
     
     public static function upload_unit($username)
@@ -75,11 +71,11 @@ class upload
 	    $query = "INSERT INTO units
 		(title,description,preview_image,user_id,type)
 		VALUES
-		(?,?,?,?,?)
+		(:1,:2,:3,:4,:5)
 		";
 	    db::executeQuery($query, array($dirname, $description, "users/".user::username()."/units/".$dirname."/preview.gif", user::uid(), $type));
 	    misc::increase_experience(50);
-	    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM units WHERE user_id = ".user::uid()." ORDER BY posted DESC LIMIT 1"));
+	    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM units WHERE user_id = :1 ORDER BY posted DESC LIMIT 1", array(user::uid())));
 	    misc::event_log(user::uid(), "add", "units", $row["uid"]);
 	}
 	$unit_palette = "temperat.pal"; //Needed for shp extractor
@@ -175,8 +171,8 @@ class upload
 		{
 		    return "Not supported file type";	// that's not a replay file (replay file must have `rep` extention)
 		}
-		$query = "SELECT COUNT(*) AS count FROM replays WHERE user_id = ".$user_id;
-		$row = db::nextRowFromQuery(db::executeQuery($query));
+		$query = "SELECT COUNT(*) AS count FROM replays WHERE user_id = :1";
+		$row = db::nextRowFromQuery(db::executeQuery($query, array($user_id)));
 		if ($row["count"] > 50)
 		{
 		    return "You have reached your limit!"; // can't upload more then 50 replays
@@ -202,22 +198,18 @@ class upload
 		if ($return_code == 0)
 		{
 		    misc::increase_experience(10);
-		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM replays WHERE user_id = ".$user_id." ORDER BY posted DESC LIMIT 1"));
+		    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM replays WHERE user_id = :1 ORDER BY posted DESC LIMIT 1", array($user_id)));
 		    misc::event_log(user::uid(), "add", "replays", $row["uid"]);
 		    if (isset($_POST["description"]))
-			db::executeQuery("UPDATE replays SET description = ? WHERE user_id = ? AND uid = ?", array($_POST["description"], $user_id, $row["uid"]));
+			db::executeQuery("UPDATE replays SET description = :1 WHERE user_id = :2 AND uid = :3", array($_POST["description"], $user_id, $row["uid"]));
 		}
 		return code_match($return_code);
 	    }
 	    else
-	    {
 		return "";
-	    }
 	}
 	else
-	{
 	    return "";	// file is not choosen
-	}
     }
     
     public static function screenshot()
@@ -231,8 +223,8 @@ class upload
 	    $id = $_POST["table_id"];
 	    $table = $_POST["table_name"];
 	    
-	    $query = "SELECT * FROM screenshot_group WHERE table_name = '".$table."' AND table_id = ".$id." AND user_id = ".user::uid();
-	    $res = db::executeQuery($query);
+	    $query = "SELECT * FROM screenshot_group WHERE table_name = :1 AND table_id = :2 AND user_id = :3";
+	    $res = db::executeQuery($query, array($table, $id, user::uid()));
 	    if (db::num_rows($res) >= 4)
 		return "";
 	    $filename = $_FILES["screenshot_upload"]["name"];
@@ -246,11 +238,11 @@ class upload
 	    move_uploaded_file($source, $path);
 	    $query = "INSERT INTO screenshot_group
 		    (table_id,table_name,user_id,image_path)
-		    VALUES (?,?,?,?)
+		    VALUES (:1,:2,:3,:4)
 	    ";
 	    db::executeQuery($query, array($id,$table,user::uid(),$path));
-	    $query = "SELECT uid FROM screenshot_group WHERE table_id = ".$id." AND table_name = '".$table."' AND user_id = ".user::uid()." ORDER BY posted DESC";
-	    $row_sc = db::nextRowFromQuery(db::executeQuery($query));
+	    $query = "SELECT uid FROM screenshot_group WHERE table_id = :1 AND table_name = :2 AND user_id = :3 ORDER BY posted DESC";
+	    $row_sc = db::nextRowFromQuery(db::executeQuery($query, array($id, $table, user::uid())));
 	    misc::event_log(user::uid(), "add", "screenshot", $row_sc["uid"]);
 	}
 	return "";
@@ -273,7 +265,7 @@ class upload
 	    move_uploaded_file($source, "users/".user::username()."/avatar_original.jpg");
 	    misc::imageresize("users/".user::username()."/avatar.jpg","users/".user::username()."/avatar_original.jpg",200,400,100, $type);
 	    unlink("users/".user::username()."/avatar_original.jpg");
-	    $query = "UPDATE users SET avatar = ? WHERE uid = ?";
+	    $query = "UPDATE users SET avatar = :1 WHERE uid = :2";
 	    db::executeQuery($query, array("Some", user::uid()));
 	    return "done";
 	}
@@ -329,13 +321,9 @@ class pages
     public static function current($page, $request)
     {
 	if ($page == $request)
-	{
 	    return "current";
-	}
 	else
-	{
 	    return "";
-	}
     }
     
     public static function allISSet($arr)
@@ -361,8 +349,8 @@ class misc
 {
     public static function avatar($user_id)
     {
-	$query = "SELECT avatar,login FROM users WHERE uid = ".$user_id;
-	$ava = db::nextRowFromQuery(db::executeQuery($query));
+	$query = "SELECT avatar,login FROM users WHERE uid = :1";
+	$ava = db::nextRowFromQuery(db::executeQuery($query, array($user_id)));
 	if ($ava["avatar"] == "None")
 	{
 	    return "images/noavatar.png";
@@ -389,7 +377,7 @@ class misc
     {
 	if ( $user == user::uid() )
 	{
-	    $query = "DELETE FROM comments WHERE uid = ?";
+	    $query = "DELETE FROM comments WHERE uid = :1";
 	    db::executeQuery($query, array($id));
 	}
     }
@@ -403,9 +391,9 @@ class misc
 	    {
 		$p_ver = 0;
 		$n_ver = 0;
-		$query = "SELECT path,p_ver,n_ver FROM maps WHERE uid = ".$item_id;
-		$result = db::executeQuery($query);
-		while ($db_data = db::fetch_array($result))
+		$query = "SELECT path,p_ver,n_ver FROM maps WHERE uid = :1";
+		$result = db::executeQuery($query, array($item_id));
+		while ($db_data = db::nextRowFromQuery($result))
 		{
 		    $p_ver = $db_data["p_ver"];
 		    $n_ver = $db_data["n_ver"];
@@ -419,13 +407,13 @@ class misc
 		rmdir($path);
 		
 		$query = "UPDATE maps
-			    SET n_ver = ?
-			    WHERE uid = ?
+			    SET n_ver = :1
+			    WHERE uid = :2
 		";
 		db::executeQuery($query, array($n_ver, $p_ver));
 		$query = "UPDATE maps
-			    SET p_ver = ?
-			    WHERE uid = ?
+			    SET p_ver = :1
+			    WHERE uid = :2
 		";
 		db::executeQuery($query, array($p_ver, $n_ver));
 		misc::decrease_experience(10);
@@ -433,15 +421,15 @@ class misc
 	    
 	    if ($table_name == "units")
 	    {
-		$query = "SELECT title FROM units WHERE uid = ".$item_id;
-		$result = db::executeQuery($query);
-		while ($db_data = db::fetch_array($result))
+		$query = "SELECT title FROM units WHERE uid = :1";
+		$result = db::executeQuery($query, array($item_id));
+		while ($db_data = db::nextRowFromQuery($result))
 		{
 		    $title = $db_data['title'];
 		}
-		$query = "SELECT login FROM users WHERE uid = ".$user_id;
-		$result = db::executeQuery($query);
-		while ($db_data = db::fetch_array($result))
+		$query = "SELECT login FROM users WHERE uid = :1";
+		$result = db::executeQuery($query, array($user_id));
+		while ($db_data = db::nextRowFromQuery($result))
 		{
 		    $username = $db_data['login'];
 		}
@@ -457,24 +445,24 @@ class misc
 	    
 	    if ($table_name == "replays")
 	    {
-		$query = "SELECT path FROM replays WHERE uid = ".$item_id;
-		$result = db::executeQuery($query);
-		while ($db_data = db::fetch_array($result))
+		$query = "SELECT path FROM replays WHERE uid = :1";
+		$result = db::executeQuery($query, array($item_id));
+		while ($db_data = db::nextRowFromQuery($result))
 		{
 		    $path = WEBSITE_PATH . $db_data['path'];
 		}
 		unlink($path);
-		$query = "DELETE FROM replay_players WHERE id_replays = ?";
+		$query = "DELETE FROM replay_players WHERE id_replays = :1";
 		db::executeQuery($query, array($item_id));
 		misc::decrease_experience(10);
 	    }
 	    
 	    if ($table_name == "screenshot_group")
 	    {
-		$query = "SELECT image_path FROM screenshot_group WHERE uid = ".$item_id;
-		$result = db::executeQuery($query);
+		$query = "SELECT image_path FROM screenshot_group WHERE uid = :1";
+		$result = db::executeQuery($query, array($item_id));
 		$path = False;
-		while ($db_data = db::fetch_array($result))
+		while ($db_data = db::nextRowFromQuery($result))
 		{
 		    $path = WEBSITE_PATH . $db_data['image_path'];
 		}
@@ -488,7 +476,7 @@ class misc
 		misc::decrease_experience(50);
 
 	    //remove item from DB
-	    $query = "DELETE FROM $table_name WHERE uid = ?";
+	    $query = "DELETE FROM $table_name WHERE uid = :1";
 	    db::executeQuery($query, array($item_id));
 	    //remove comments from DB
 	    //remove records from fav_item table related to current item for each user
@@ -496,7 +484,7 @@ class misc
 	    $tables = array("comments", "fav_item", "featured", "reported", "screenshot_group");
 	    foreach($tables as $table)
 	    {
-		$query = "DELETE FROM $table WHERE table_name = ? AND table_id = ?";
+		$query = "DELETE FROM $table WHERE table_name = :1 AND table_id = :2";
 		db::executeQuery($query, array($table_name, $item_id));
 	    }
 	}
@@ -550,19 +538,19 @@ class misc
 
     public static function increase_experience($points)
     {
-	$query = "SELECT experience FROM users WHERE uid = ".user::uid();
-	$value = db::nextRowFromQuery(db::executeQuery($query));
+	$query = "SELECT experience FROM users WHERE uid = :1";
+	$value = db::nextRowFromQuery(db::executeQuery($query, array(user::uid())));
 	$value = $value["experience"] + $points;
-	$query = "UPDATE users SET experience = ? WHERE uid = ?";
+	$query = "UPDATE users SET experience = :1 WHERE uid = :2";
 	db::executeQuery($query, array($value, user::uid()));
     }
     
     public static function decrease_experience($points)
     {
-	$query = "SELECT experience FROM users WHERE uid = ".user::uid();
-	$value = db::nextRowFromQuery(db::executeQuery($query));
+	$query = "SELECT experience FROM users WHERE uid = :1";
+	$value = db::nextRowFromQuery(db::executeQuery($query, array(user::uid())));
 	$value = $value["experience"] - $points;
-	$query = "UPDATE users SET experience = ? WHERE uid = ?";
+	$query = "UPDATE users SET experience = :1 WHERE uid = :2";
 	db::executeQuery($query, array($value, user::uid()));
     }
     
@@ -573,7 +561,7 @@ class misc
 	$query = "INSERT INTO event_log
 		(user_id, type, table_name, table_id)
 		VALUES
-		(?,?,?,?)
+		(:1,:2,:3,:4)
 	";
 	db::executeQuery($query, array($user_id, $type, $table_name, $table_id));
     }
@@ -616,8 +604,8 @@ class misc
     
     public static function item_title_by_uid($id, $table)
     {
-	$query = "SELECT title FROM $table WHERE uid = $id";
-	$result = db::executeQuery($query);
+	$query = "SELECT title FROM $table WHERE uid = :1";
+	$result = db::executeQuery($query, array($id));
 	while ($row = db::nextRowFromQuery($result))
 	    return $row["title"];
 	return "";
@@ -625,8 +613,8 @@ class misc
     
     public static function item_exists($id, $table)
     {
-	$query = "SELECT uid FROM $table WHERE uid = $id";
-	$result = db::executeQuery($query);
+	$query = "SELECT uid FROM $table WHERE uid = :1";
+	$result = db::executeQuery($query, array($id));
 	while ($row = db::nextRowFromQuery($result))
 	    return True;
 	return False;
@@ -634,8 +622,8 @@ class misc
     
     public static function item_owner($id, $table, $user_id)
     {
-	$query = "SELECT user_id FROM $table WHERE uid = $id";
-	$result = db::executeQuery($query);
+	$query = "SELECT user_id FROM $table WHERE uid = :1";
+	$result = db::executeQuery($query, array($id));
 	while ($row = db::nextRowFromQuery($result))
 	{
 	    if ($row["user_id"] == $user_id)
@@ -686,10 +674,14 @@ class misc
     public static function amount_of_items_option($table, $option, $my_items=false)
     {
 	$my = "";
+	$my_array = array();
 	if ($my_items == true)
-	    $my = " AND user_id = ".user::uid();
+	{
+	    $my = " AND user_id = :1";
+	    $my_array = array(user::uid());
+	}
 	$query = "SELECT * FROM $table ".$option.$my;
-	$result = db::executeQuery($query);
+	$result = db::executeQuery($query, $my_array);
 	return db::num_rows($result);
     }
 }

@@ -59,7 +59,7 @@ while($row = db::nextRowFromQuery($result))
     $content .= "<link>http://content.open-ra.org/?p=detail&amp;table=".$row['table_name']."&amp;id=".$row['table_id']."</link>";
     $content .= "<description>";
     $desc = "";
-    $res_info = db::executeQuery("SELECT * FROM ".$row['table_name']." WHERE uid = ".$row['table_id']);
+    $res_info = db::executeQuery("SELECT * FROM ".$row['table_name']." WHERE uid = :1", array($row['table_id']));
     while ($row_info = db::nextRowFromQuery($res_info))
     {
 	switch($row['table_name'])
@@ -84,8 +84,8 @@ while($row = db::nextRowFromQuery($result))
 		$desc .= $row_info['description']."&lt;br />Type: ".$row_info['type'];
 		break;
 	    case "replays":
-		$query = "SELECT * FROM replay_players WHERE id_replays = ".$row_info["uid"]." ORDER BY team";
-		$res_players = db::executeQuery($query);
+		$query = "SELECT * FROM replay_players WHERE id_replays = :1 ORDER BY team";
+		$res_players = db::executeQuery($query, array($row_info["uid"]));
 		$players = "";
 		while ($inner_row = db::nextRowFromQuery($res_players))
 		{

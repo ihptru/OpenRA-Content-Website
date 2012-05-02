@@ -9,8 +9,8 @@ class profile
 	//1	unfollow
 	if ($profile != user::uid())
 	{
-	    $query = "SELECT * FROM following WHERE who = ".user::uid()." AND whom = ".$profile;
-	    $result = db::executeQuery($query);
+	    $query = "SELECT * FROM following WHERE who = :1 AND whom = :2";
+	    $result = db::executeQuery($query, array(user::uid(), $profile));
 	    while (db::nextRowFromQuery($result))
 	    {
 		if (user::online())
@@ -59,8 +59,8 @@ class profile
 		    who,
 		    whom,
 		    'following' AS table_name
-		  FROM following WHERE who = ".$id;
-	$result = db::executeQuery($query);
+		  FROM following WHERE who = :1";
+	$result = db::executeQuery($query, array($id));
 	if (db::num_rows($result) > 0)
 	{
 	    if ( $profile == "You" )
@@ -86,8 +86,8 @@ class profile
 		    who,
 		    whom,
 		    'following' AS table_name
-		  FROM following WHERE whom = ".$id;
-	$result = db::executeQuery($query);
+		  FROM following WHERE whom = :1";
+	$result = db::executeQuery($query, array($id));
 	if (db::num_rows($result) > 0)
 	{
 	    if ( $profile == "You" )
@@ -118,8 +118,8 @@ class profile
     	if($self == -1)
     		$self = user::uid();
     	
-    	$query = "SELECT * FROM users WHERE uid = " . $self;
-    	$result = db::executeQuery($query);
+    	$query = "SELECT * FROM users WHERE uid = :1";
+    	$result = db::executeQuery($query, array($self));
     	$usr = db::nextRowFromQuery($result);
     	
     	$gender = "";
@@ -144,34 +144,34 @@ class profile
 	    }
 
 	    if(isset($_POST["occupation"])) {
-		db::executeQuery("UPDATE users SET occupation = ? WHERE uid = ?", array($_POST["occupation"], user::uid()));
+		db::executeQuery("UPDATE users SET occupation = :1 WHERE uid = :2", array($_POST["occupation"], user::uid()));
 		$didUpdate = true;
 	    }
 	    if(isset($_POST["real_name"])) {
-		db::executeQuery("UPDATE users SET real_name = ? WHERE uid = ?", array($_POST["real_name"], user::uid()));
+		db::executeQuery("UPDATE users SET real_name = :1 WHERE uid = :2", array($_POST["real_name"], user::uid()));
 		$didUpdate = true;
 	    }
 	    if(isset($_POST["gender"])) {
-		db::executeQuery("UPDATE users SET gender = ? WHERE uid = ?", array($_POST["gender"], user::uid()));
+		db::executeQuery("UPDATE users SET gender = :1 WHERE uid = :2", array($_POST["gender"], user::uid()));
 		$didUpdate = true;
 	    }
 	    if(isset($_POST["fav_faction"])) {
-		db::executeQuery("UPDATE users SET fav_faction = ? WHERE uid = ?", array($_POST["fav_faction"], user::uid()));
+		db::executeQuery("UPDATE users SET fav_faction = :1 WHERE uid = :2", array($_POST["fav_faction"], user::uid()));
 		$didUpdate = true;
 	    }
 	    if(isset($_POST["interests"])) {
-		db::executeQuery("UPDATE users SET interests = ? WHERE uid = ?", array($_POST["interests"], user::uid()));
+		db::executeQuery("UPDATE users SET interests = :1 WHERE uid = :2", array($_POST["interests"], user::uid()));
 		$didUpdate = true;
 	    }
 	    if(isset($_POST["country"])) {
-		db::executeQuery("UPDATE users SET country = ? WHERE uid = ?", array($_POST["country"], user::uid()));
+		db::executeQuery("UPDATE users SET country = :1 WHERE uid = :2", array($_POST["country"], user::uid()));
 		$didUpdate = true;
 	    }
 
 	    if($didUpdate)
 		echo "<u>profile updated!</u><br />";
-	    $query = "SELECT * FROM users WHERE uid = " . user::uid();
-	    $result = db::executeQuery($query);
+	    $query = "SELECT * FROM users WHERE uid = :1";
+	    $result = db::executeQuery($query, array(user::uid()));
 	    $usr = db::nextRowFromQuery($result);
 
 	    echo "<table><tr><td><form action='?profile=".user::uid()."&edit=on' method='post' enctype=\"multipart/form-data\" id='commentform'>";
@@ -226,13 +226,9 @@ class profile
     	else
     	{
 	    if (user::online() and $usr["uid"] == user::uid())
-	    {
 		$whos = "Your";
-	    }
 	    else
-	    {
 		$whos = $usr["login"]."'s";
-	    }
 	    //Display common info
 	    echo "<table>";
 	    echo "<tr><td><h1>".$whos." profile</h1></td>";
@@ -250,8 +246,8 @@ class profile
 	    echo "<tr><td>Real name</td><td>".str_replace("\\\\\\","",$usr["real_name"])."</td></tr>";
 	    echo "<tr><td>Favorite faction</td><td><a href='?action=display_faction&faction=".$usr["fav_faction"]."'><img style='border: 0px solid #261b15; padding: 0px;' src='images/flag-".$usr["fav_faction"].".png'></a></td></tr>";
     		
-	    $query = "SELECT * FROM country WHERE name = '".$usr["country"]."'";
-	    $result = db::executeQuery($query);
+	    $query = "SELECT * FROM country WHERE name = :1";
+	    $result = db::executeQuery($query, array($usr["country"]));
 	    if($country = db::nextRowFromQuery($result))
 		echo "<tr><td>Country</td><td>".$country["title"]."</td></tr>";
 	    else
@@ -267,7 +263,7 @@ class profile
 
 	    //Display latest favorited items
 	    
-	    $result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = " . $_GET["profile"] . " ORDER BY posted DESC");
+	    $result = db::executeQuery("SELECT * FROM fav_item WHERE user_id = :1 ORDER BY posted DESC", array($_GET["profile"]));
 	    if (db::num_rows($result) > 0)
 	    {
 		$data = array();
@@ -297,16 +293,16 @@ class profile
 	    }
 
 	    $result = db::executeQuery("
-		SELECT 'Total number of <u>maps</u>' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = " . $usr["uid"] . "
+		SELECT 'Total number of <u>maps</u>' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = :1
 		UNION
-		SELECT 'Total number of <u>units</u>' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = ". $usr["uid"] . "
+		SELECT 'Total number of <u>units</u>' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = :2
 		UNION
-		SELECT 'Total number of <u>guides</u>' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = ". $usr["uid"] . "
+		SELECT 'Total number of <u>guides</u>' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = :3
 		UNION
-		SELECT 'Total number of <u>replays</u>' as item, count(*) AS amount, 'replays' AS table_name FROM replays WHERE user_id = ".$usr["uid"] . "
+		SELECT 'Total number of <u>replays</u>' as item, count(*) AS amount, 'replays' AS table_name FROM replays WHERE user_id = :4
 		UNION
-		SELECT 'Total number of <u>comments</u>' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = ". $usr["uid"] . "
-	    ");
+		SELECT 'Total number of <u>comments</u>' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = :5
+	    ", array($usr["uid"], $usr["uid"], $usr["uid"], $usr["uid"], $usr["uid"]));
 	    if (db::num_rows($result) > 0) {
 		$data = array();
 		array_push($data,$whos." progress:","");
@@ -325,8 +321,8 @@ class profile
 	    }
 	    if (user::online() and $self == user::uid())
 	    {
-		$query = "SELECT * FROM following WHERE who = ".user::uid();
-		$result = db::executeQuery($query);
+		$query = "SELECT * FROM following WHERE who = :1";
+		$result = db::executeQuery($query, array(user::uid()));
 		$data = array();
 		while ($row = db::nextRowFromQuery($result))
 		{
@@ -335,12 +331,16 @@ class profile
 		if (count($data) >= 1)
 		{
 		    $queries = array();
+		    $res_values = array();
+		    $res_i = 1;
 		    foreach ($data as $value)
 		    {
-			array_push($queries, "SELECT * FROM event_log WHERE user_id = ".$value);
+			array_push($queries, "SELECT * FROM event_log WHERE user_id = :".$res_i);
+			array_push($res_values, $value);
+			$res_i++;
 		    }
 		    $query = implode(" UNION ", $queries) . " ORDER BY posted DESC";
-		    $result = db::executeQuery($query);
+		    $result = db::executeQuery($query, $res_values);
 		    if (db::num_rows($result) > 0)
 		    {
 			echo content::displayEvents($result);
@@ -377,10 +377,10 @@ class profile
 	    if ($uploaded == "0")
 	    {
 		echo "<table><tr><th>Map is successfully uploaded</th></tr></table>";
-		$query = "SELECT uid,path FROM maps WHERE user_id = ".user::uid()."
+		$query = "SELECT uid,path FROM maps WHERE user_id = :1
 			    ORDER BY posted DESC LIMIT 1
 		";
-		$row = db::nextRowFromQuery(db::executeQuery($query));
+		$row = db::nextRowFromQuery(db::executeQuery($query, array(user::uid())));
 		$imagePath = misc::minimap($row["path"]);
 		echo "<p><a href='/?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
 		return;
@@ -470,10 +470,10 @@ class profile
 	if ($uploaded != "")
 	{
 	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
-	    $query = "SELECT uid FROM units WHERE user_id = ".user::uid()."
+	    $query = "SELECT uid FROM units WHERE user_id = :1
 		       ORDER BY posted DESC LIMIT 1
 	    ";
-	    $row = db::nextRowFromQuery(db::executeQuery($query));
+	    $row = db::nextRowFromQuery(db::executeQuery($query, array(user::uid())));
 	    echo "<table><tr><th>(<a href='?p=detail&table=units&id=".$row["uid"]."'>check unit's page</a>)</th></tr></table>";
 	}
     }
@@ -482,8 +482,8 @@ class profile
     {
 	if (!user::online()) { return; }
 
-	$query = "SELECT COUNT(*) AS count FROM replays WHERE user_id = ".user::uid();
-	$row = db::nextRowFromQuery(db::executeQuery($query));
+	$query = "SELECT COUNT(*) AS count FROM replays WHERE user_id = :1";
+	$row = db::nextRowFromQuery(db::executeQuery($query, array(user::uid())));
 	$can_upload = 50 - (int)$row["count"];
 	echo "<h4>You can upload ".(string)$can_upload." more replays!</h4><br /><p><i>version 2012-0315 and newer only supported</i></p>";
 	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
@@ -504,17 +504,16 @@ class profile
 	{
 	    if ($uploaded == "0")
 	    {
-		$query = "SELECT uid FROM replays WHERE user_id = ".user::uid()."
+		$query = "SELECT uid FROM replays WHERE user_id = :1
 			    ORDER BY posted DESC LIMIT 1
 		";
-		$row = db::nextRowFromQuery(db::executeQuery($query));
+		$row = db::nextRowFromQuery(db::executeQuery($query, array(user::uid())));
 		echo "<table><tr><th>Successfully uploaded! (<a href='?p=detail&table=replays&id=".$row["uid"]."'>check replay's page</a>)</th></tr></table>";
 		return;
 	    }
 	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
 	}
     }
-
 }
 
 ?>

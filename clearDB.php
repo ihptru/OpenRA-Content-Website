@@ -4,8 +4,6 @@ date_default_timezone_set('UTC');
 if ( php_sapi_name() != "cli" )
     exit(1);
 
-include_once "settings.php";
-
 include_once("db_mysql.php");
 
 db::connect();
