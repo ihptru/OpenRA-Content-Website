@@ -15,6 +15,7 @@ class header
 	header::edit_item_info();
 	header::upload_screenshot();
 	header::pm();
+	header::upload_redirect();
     }
 
     public static function pageTitle()
@@ -411,6 +412,21 @@ class header
 	    $email = user::email_by_uid($to_id);
 	    misc::send_mail( $email, 'New PM at OpenRA Content Website', 'You\'ve got a new private message! Your inbox is: http://'.$_SERVER['HTTP_HOST'].'/?p=mail&m=inbox', array( 'From' => 'noreply@'.$_SERVER['HTTP_HOST'] ) );
 	    header("Location: /?p=mail&m=sent");
+	}
+    }
+    
+    public static function upload_redirect()
+    {
+	if (isset($_POST["upload_redirect"]))
+	{
+	    if ($_POST["type"] == "maps")
+		header("Location: /?action=mymaps");
+	    else if ($_POST["type"] == "units")
+		header("Location: /?action=myunits");
+	    else if ($_POST["type"] == "guides")
+		header("Location: /?action=myguides");
+	    else if ($_POST["type"] == "replays")
+		header("Location: /?action=myreplays");
 	}
     }
 }

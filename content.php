@@ -1724,7 +1724,13 @@ class content
 	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
 	    ".$checkbox."
 	    <input type='hidden' name='apply_filter_type' value='replay'>
-	    </div></form><br><br>
+	    </div></form>
+	";
+	if (user::online() and $my_content == "")
+	    echo "<form method=POST action='' style='margin-bottom:-25px;margin-left:22px;'>
+	    <input type=submit value='Upload replay...' name='upload_redirect'>
+	    <input type=hidden name='type' value='replays'>
+	    </form><br />
 	";
 	// order by
 	if ($sort_by == "latest")
@@ -1807,7 +1813,13 @@ class content
 	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
 	    ".$checkbox."
 	    <input type='hidden' name='apply_filter_type' value='".$arg."'>
-	    </div></form><br><br>
+	    </div></form>
+	";
+	if (user::online())
+	    echo "<form method=POST action='' style='margin-bottom:-25px;margin-left:22px;'>
+	    <input type=submit value='Upload ".$arg."...' name='upload_redirect'>
+	    <input type=hidden name='type' value='".$arg."s'>
+	    </form><br />
 	";
 	// order by
 	if ($sort_by == "latest")
@@ -1901,6 +1913,12 @@ class content
 	    <input type='hidden' name='apply_filter_type' value='map'>
 	    </div></form>
 	";
+	if (user::online() and $my_content == "")
+	    echo "<form method=POST action='' style='margin-bottom:-25px;margin-left:22px;'>
+	    <input type=submit value='Upload map...' name='upload_redirect'>
+	    <input type=hidden name='type' value='maps'>
+	    </form>
+	";
 	
 	//next JS script is for generating Tileset list on fly depending on selected mod
 	echo "<script type='text/javascript'>
@@ -1965,10 +1983,7 @@ class objects
 {
     public static function maps()
     {
-	echo "<h3>Maps!";
-	if (user::online())
-	    echo " (<a href='?action=mymaps'>Upload</a>)";
-	echo "</h3>";
+	echo "<h3>Maps!</h3>";
 	list($order_by, $request_mod, $type, $request_tileset, $my_items) = content::map_filters();
 	$my = "";
 	$filter_array = array("%".$request_mod."%", "%".$type."%", "%".$request_tileset."%");
@@ -1996,10 +2011,7 @@ class objects
     
     public static function units()
     {
-	echo "<h3>Units!";
-	if (user::online())
-	    echo " (<a href='?action=myunits'>Upload</a>)";
-	echo "</h3>";
+	echo "<h3>Units!</h3>";
 	list($order_by, $request_type, $my_items) = content::guide_unit_filters("unit");
 	$my = "";
 	$filter_array = array("%".$request_type."%");
@@ -2023,10 +2035,7 @@ class objects
     
     public static function guides()
     {
-	echo "<h3>Guides!";
-	if (user::online())
-	    echo " (<a href='?action=myguides'>Upload</a>)";
-	echo "</h3>";
+	echo "<h3>Guides!</h3>";
 	list($order_by, $request_type, $my_items) = content::guide_unit_filters("guide");
 	$my = "";
 	$filter_array = array("%".$request_type."%");
@@ -2050,10 +2059,7 @@ class objects
     
     public static function replays()
     {
-	echo "<h3>Replays!";
-	if (user::online())
-	    echo " (<a href='?action=myreplays'>Upload</a>)";
-	echo "</h3>";
+	echo "<h3>Replays!</h3>";
 	
 	list($order_by, $my_items, $version) = content::replay_filters();
 	    

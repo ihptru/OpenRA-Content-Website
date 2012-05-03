@@ -144,17 +144,6 @@
 			    viewed INTEGER NOT NULL DEFAULT 0);";
             db::executeQuery($query);
             
-            // Used for example: User create's a map that makes huge success. A entry could be made in this table
-            // it should show a trophy on his profile with some info. (Maybe could be auto generated some how)
-	    // edit: probably when user achives a high experience level with minimun of item reports?
-            $query = "CREATE TABLE IF NOT EXISTS trophy (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-			    title VARCHAR(80) NOT NULL,
-			    content VARCHAR(9000) NOT NULL,
-			    image VARCHAR(500) NOT NULL,
-			    user_id INTEGER NOT NULL,
-			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-            db::executeQuery($query);
-
 	    //units (modding)
             $query = "CREATE TABLE IF NOT EXISTS units (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    title VARCHAR(80) NOT NULL,
@@ -184,13 +173,6 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
-            $query = "CREATE TABLE IF NOT EXISTS rated (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-			    table_name VARCHAR(80) NOT NULL,
-			    table_id INTEGER NOT NULL,
-			    rating INTEGER NOT NULL default 0,
-			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-            db::executeQuery($query);
-	    
 	    //report `bad` item
 	    $query = "CREATE TABLE IF NOT EXISTS reported (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    table_name VARCHAR(80) NOT NULL,
@@ -367,7 +349,7 @@
         public static function check()
         {
             $allSystemsGo = true;
-	    $tables = array("reported","rated","trophy","users","maps","articles","units","guides","featured","comments","recover","screenshot_group","country","fav_item","signed_in","event_log","following","map_stats","pm");
+	    $tables = array("reported","users","maps","articles","units","guides","featured","comments","recover","screenshot_group","country","fav_item","signed_in","event_log","following","map_stats","pm");
 	    
 	    foreach ($tables as $table)
 	    {
