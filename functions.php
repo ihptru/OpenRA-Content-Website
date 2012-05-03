@@ -310,7 +310,7 @@ class pages
 	if (count($_GET) == 0)
 	{
 	    echo "<h3>Recent Articles</h3>";
-	    $result = db::executeQuery("SELECT * FROM articles");
+	    $result = db::executeQuery("SELECT * FROM articles ORDER BY posted DESC");
 	    echo content::createArticleItems($result);
 
 	    return;
