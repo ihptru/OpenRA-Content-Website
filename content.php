@@ -1244,6 +1244,8 @@ class content
 		$start = ($current-1) * $maxItemsPerPage * $columns;
 		$maxItemsPerPageOrg = $maxItemsPerPage; //original value
 		$maxItemsPerPage *= $columns;
+		if ($header)
+		    $start = $start + $columns;
 		$content .= "<a name='".$modifiedName."'></a><table style='".$width."'>";
 		if($header)
 		{
@@ -1258,8 +1260,6 @@ class content
 		}
 		for($i = $start; $i < count($data)+1-$columns && $i < $start+$maxItemsPerPage; $i=$i+$columns)
 		{
-		    if ($current == 2 and $i == $start)
-			continue;
 		    $content .= "<tr>";
 		    for($row = 0; $row < $columns; $row++)
 		    {
@@ -1268,6 +1268,8 @@ class content
 		    $content .= "</tr>";
 		}
 		$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
+		if ($header)
+		    $nrOfPages = floor(($total-0.01) / ($maxItemsPerPage+$columns)) + 1;
 		$content .= "</table>";
 		$gets = "";
 		$pages = "<table><tr><td>";
