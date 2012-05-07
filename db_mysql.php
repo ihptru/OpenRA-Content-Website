@@ -226,7 +226,8 @@
 	    //follow user
 	    $query = "CREATE TABLE IF NOT EXISTS following (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    who INTEGER NOT NULL,
-			    whom INTEGER NOT NULL);
+			    whom INTEGER NOT NULL,
+			    date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);
 	    ";
 	    db::executeQuery($query);
 

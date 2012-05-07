@@ -326,18 +326,21 @@ class profile
 		$data = array();
 		while ($row = db::nextRowFromQuery($result))
 		{
-		    array_push($data, $row["whom"]);
+		    $data[$row["whom"]] = $row["date_time"];
 		}
 		if (count($data) >= 1)
 		{
 		    $queries = array();
 		    $res_values = array();
 		    $res_i = 1;
-		    foreach ($data as $value)
+		    foreach ($data as $key => $value)
 		    {
-			array_push($queries, "SELECT * FROM event_log WHERE user_id = :".$res_i);
+			$val = $res_i;
+			$val_d = $res_i + 1;
+			array_push($queries, "SELECT * FROM event_log WHERE user_id = :".$val." AND posted > :".$val_d);
+			array_push($res_values, $key);
 			array_push($res_values, $value);
-			$res_i++;
+			$res_i += 2;
 		    }
 		    $query = implode(" UNION ", $queries) . " ORDER BY posted DESC";
 		    $result = db::executeQuery($query, $res_values);
