@@ -65,8 +65,8 @@ class content
     public static function login_form()
     {
 	echo "<form method='POST' action=''>
-	    Login: <input type='text' name='login'>
-	    Password: <input type='password' name='pass'>
+	    Login: <input type='text' name='login' size='16px'>
+	    Password: <input type='password' name='pass' size='16px'>
 	    <input style='position:absolute; right: -25px; top: 15px;' type='checkbox' name='remember' value='yes' checked title='remember me'>
 	    <input type='submit' value='sign in'>
 	    <br>
