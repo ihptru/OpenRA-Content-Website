@@ -441,6 +441,8 @@ class profile
 	    <label>Palette:</label>
 		<select name='unit_palette'>
 		<option value='temperat.pal'>Temperat</option>
+		<option value='cnc_palet.pal'>CNC palet</option>
+		<option value='d2k.pal'>D2K</option>
 		<option value='egopal.pal'>Egopal</option>
 		<option value='interior.pal'>Interior</option>
 		<option value='snow.pal'>Snow</option>
