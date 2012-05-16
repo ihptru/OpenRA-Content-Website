@@ -1,0 +1,115 @@
+Metadata:
+	Title: C&C
+	Description: OpenRA Reimagining of the classic game
+	Version: release-20120315
+	Author: The OpenRA Developers
+
+Folders:
+	.
+	./mods/cnc
+	./mods/cnc/bits
+	./mods/cnc/uibits
+	~^/Content/cnc
+
+Packages:
+	overrides.mix
+	bluetib.mix
+	speech.mix
+	conquer.mix
+	sounds.mix
+	tempicnh.mix
+	temperat.mix
+	winter.mix
+	desert.mix
+	~movies-gdi.mix
+	~movies-nod.mix
+	~movies.mix
+	~scores.mix
+	~transit.mix
+
+Rules:
+	mods/cnc/rules/defaults.yaml
+	mods/cnc/rules/system.yaml
+	mods/cnc/rules/structures.yaml
+	mods/cnc/rules/infantry.yaml
+	mods/cnc/rules/vehicles.yaml
+	mods/cnc/rules/trees.yaml
+	mods/cnc/rules/civilian.yaml
+	mods/cnc/rules/civilian-desert.yaml
+	mods/cnc/rules/tech.yaml
+	mods/cnc/rules/ships.yaml
+	mods/cnc/rules/aircraft.yaml
+	mods/cnc/rules/husks.yaml
+
+Sequences:
+	mods/cnc/sequences/structures.yaml
+	mods/cnc/sequences/vehicles.yaml
+	mods/cnc/sequences/infantry.yaml
+	mods/cnc/sequences/map.yaml
+	mods/cnc/sequences/misc.yaml
+	# Low priority sequences that break the batch when used
+	mods/cnc/sequences/civilian.yaml
+	mods/cnc/sequences/campaign.yaml
+Cursors:
+	mods/cnc/cursors.yaml
+
+Chrome:
+	mods/cnc/chrome.yaml
+	
+Assemblies:
+	mods/cnc/OpenRA.Mods.RA.dll
+	mods/cnc/OpenRA.Mods.Cnc.dll
+
+LoadScreen: CncLoadScreen
+	InstallerMenuWidget: INSTALL_PANEL
+	InstallerBackgroundWidget: INSTALL_BACKGROUND
+	TestFile: conquer.mix
+	PackageURL: http://open-ra.org/get-dependency.php?file=cnc-packages
+
+Weapons:
+	mods/cnc/weapons.yaml
+
+Movies:
+	mods/cnc/movies-gdi.yaml
+	mods/cnc/movies-nod.yaml
+	
+Voices:
+	mods/cnc/voices.yaml
+
+Music:
+	mods/cnc/music.yaml
+
+TileSets:
+	mods/cnc/tilesets/desert.yaml
+	mods/cnc/tilesets/winter.yaml
+	mods/cnc/tilesets/temperat.yaml
+
+ServerTraits:
+	LobbyCommands
+	MasterServerPinger
+
+ChromeMetrics:
+	mods/cnc/metrics.yaml
+
+Fonts:
+	Regular:
+		Font:FreeSans.ttf
+		Size:14
+	Bold:
+		Font:FreeSansBold.ttf
+		Size:14
+	Title:
+		Font:titles.ttf
+		Size:48
+	MediumBold:
+		Font:FreeSansBold.ttf
+		Size:18
+	BigBold:
+		Font:FreeSansBold.ttf
+		Size:24
+	Tiny:
+		Font:FreeSans.ttf
+		Size:10
+	TinyBold:
+		Font:FreeSansBold.ttf
+		Size:10

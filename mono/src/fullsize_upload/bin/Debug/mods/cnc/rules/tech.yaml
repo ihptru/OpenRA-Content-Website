@@ -1,0 +1,86 @@
+# Oil Derrick
+V19:
+	Inherits: ^TechBuilding
+	CashTrickler:
+	Building:
+		Footprint: x
+		Dimensions: 1,1
+	Tooltip:
+		Name: Oil Derrick
+	LeavesHusk: 
+		HuskActor: V19.Husk
+
+V19.Husk:
+	Inherits: ^CivBuildingHusk
+	WithFire:
+	Building:
+		Footprint: x
+		Dimensions: 1,1
+	Tooltip:
+		Name: Oil Derrick (Destroyed)
+
+# Hospital
+HOSP:
+	Inherits: ^TechBuilding
+	Building:
+		Footprint: xx xx
+		Dimensions: 2,2
+	Tooltip:
+		Name: Hospital
+	-Capturable:
+	LeavesHusk: 
+		HuskActor: HOSP.Husk
+
+HOSP.Husk:
+	Inherits: ^CivBuildingHusk
+	Building:
+		Footprint: xx xx
+		Dimensions: 2,2
+	Tooltip:
+		Name: Hospital (Destroyed)
+
+# Bio Lab
+BIO:
+	Inherits: ^TechBuilding
+	Building:
+		Footprint: xx xx
+		Dimensions: 2,2
+	Tooltip:
+		Name: Biological Lab
+	Exit@1:
+		SpawnOffset: 0,-10
+		ExitCell: 0,-1
+	Production:
+		Produces: Biolab
+	ProductionQueue:
+		Type: Biolab
+		Group: Infantry
+		BuildSpeed: .4
+		LowPowerSlowdown: 3
+		QueuedAudio: bldging1.aud
+		ReadyAudio: unitredy.aud
+		OnHoldAudio: onhold1.aud
+		CancelledAudio: cancel1.aud
+	ProductionBar:
+	RallyPoint:
+		RallyPoint: -1,-1
+	LeavesHusk: 
+		HuskActor: BIO.Husk
+
+BIO.Husk:
+	Inherits: ^CivBuildingHusk
+	Building:
+		Footprint: xx xx
+		Dimensions: 2,2
+	Tooltip:
+		Name: Biological Lab (Destroyed)
+
+# Prison / Tech Center
+MISS:
+	Inherits: ^CivBuilding
+	RenderBuilding:
+	Building:
+		Footprint: xxx xxx
+		Dimensions: 3,2
+	Tooltip:
+		Name: Tech Center
