@@ -194,6 +194,9 @@ input, select, textarea {
 	font: 11px 'Lucida Grande', Verdana, Helvetica, Sans-Serif;
 	color: #925D3A;
 }
+option {
+	background-color: #1E150D;
+}
 input:focus, select:focus, textarea:focus {
 	background-color: #934A00;
 	border: 1px solid #BF6000;

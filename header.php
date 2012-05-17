@@ -68,7 +68,10 @@ class header
 		if (isset($_GET["edit"]))
 		    return $title . " - Edit";
 		if ($_GET["p"] == "detail" and isset($_GET["id"]) and isset($_GET["table"]))
-		    return $title . " - " . ucfirst(rtrim($_GET["table"],"s")) . " - " . misc::item_title_by_uid($_GET["id"], $_GET["table"]);
+		    if ($_GET["table"] == "units")
+			return $title . " - " . ucfirst(rtrim($_GET["table"],"s")) . " - " . str_replace("_", " ", misc::item_title_by_uid($_GET["id"], $_GET["table"]));
+		    else
+			return $title . " - " . ucfirst(rtrim($_GET["table"],"s")) . " - " . misc::item_title_by_uid($_GET["id"], $_GET["table"]);
 		if ($_GET["p"] == "profile" and !user::online())
 		    return "OpenRA - Resources";
 		return $title;
