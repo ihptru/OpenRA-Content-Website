@@ -13,9 +13,16 @@ function map_data($result)
     $json_result_array = array();
     while ($row = db::nextRowFromQuery($result))
     {
+	$query = "SELECT COUNT(*) AS user FROM users";
+	$res = db::executeQuery($query);
+	$amount = db::nextRowFromQuery($res);
+	$rest = 1;
+	$arg = ($amount['user']-$amount['user']%20)/20;
+	if ($arg > 1) { $rest = $arg; }
+
 	$query = "SELECT * FROM reported WHERE table_name = 'maps' AND table_id = :1";
 	$result = db::executeQuery($query, array($row['uid']));
-	if (db::num_rows($result) > 0)
+	if (db::num_rows($result) >= $rest)
 	    break;	// this map is reported
 	$map_result = array();
 	$map_result['id'] = $row['uid'];
