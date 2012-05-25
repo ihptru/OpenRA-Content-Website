@@ -124,6 +124,15 @@ class mail
 			{
 			    if (isset($_POST["delete_msg"]))
 			    {
+				$q = "SELECT * FROM pm WHERE uid = :1";
+				$res_d = db::executeQuery($q, array($value));
+				$row_d = db::nextRowFromQuery($res_d);
+				$q = "INSERT INTO pm_trash
+					(from_user_id,to_user_id,title,content,isread,posted)
+					VALUES
+					(:1,:2,:3,:4,:5,:6);
+				";
+				db::executeQuery($q, array($row_d["from_user_id"], $row_d["to_user_id"], $row_d["title"], $row_d["content"], $row_d["isread"], $row_d["posted"]));
 				$query = "DELETE FROM pm WHERE uid = :1";
 				db::executeQuery($query, array($value));
 				db::executeQuery("DELETE FROM reported WHERE table_name = 'pm' AND table_id = :1", array($value));
@@ -179,8 +188,8 @@ class mail
 		}
 		echo "<table style='min-width: 590px; margin-left: -10px; margin-top: 0; vertical-align: top;'><tr>";
 		echo "<th style='text-align:center;min-width:200px;'>Subject</th><th style='text-align:center;'>Recipient</th><th style='text-align:center;'>Sent</th></tr>";
-		$query = "SELECT * FROM pm WHERE from_user_id = :1 ORDER BY posted DESC";
-		$result = db::executeQuery($query, array(user::uid()));
+		$query = "SELECT * FROM pm WHERE from_user_id = :1 UNION SELECT * FROM pm_trash WHERE from_user_id = :2 ORDER BY posted DESC";
+		$result = db::executeQuery($query, array(user::uid(), user::uid()));
 		while ($row = db::nextRowFromQuery($result))
 		{
 		    $read = "";
@@ -232,8 +241,10 @@ class mail
 		    if (trim($_POST["title"]) == "")
 			break;
 		    $title = $_POST["title"];
-		    $query = "SELECT * FROM pm WHERE UPPER(title) LIKE UPPER(:1) AND ( from_user_id = :2 OR to_user_id = :3 )";
-		    $res = db::executeQuery($query, array("%".$title."%", user::uid(), user::uid()));
+		    $query = "SELECT * FROM pm WHERE UPPER(title) LIKE UPPER(:1) AND ( from_user_id = :2 OR to_user_id = :3 )
+				UNION
+				SELECT * FROM pm_trash WHERE UPPER(title) LIKE UPPER(:4) AND from_user_id = :5";
+		    $res = db::executeQuery($query, array("%".$title."%", user::uid(), user::uid(), "%".$title."%", user::uid()));
 		    if (db::num_rows($res) > 0)
 			echo "<table><tr><td><b>Found messages:</b></td></tr>";
 		    while ($row_msg = db::nextRowFromQuery($res))
@@ -262,10 +273,8 @@ class mail
     public static function current_menu($menu)
     {
 	if (isset($_GET["m"]))
-	{
 	    if ($menu == $_GET["m"])
 		return "more-link-selected";
-	}
 	return "more-link";
     }
     
@@ -283,13 +292,9 @@ class mail
     {
 	
 	if (isset($_POST["msg_unread_only_filter"]))
-	{
 	    return true;
-	}
 	elseif (isset($_COOKIE["msg_unread_only_filter"]))
-	{
 	    return true;
-	}
 	return false;
     }
 }

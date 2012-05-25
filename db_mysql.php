@@ -81,11 +81,19 @@
 	    $query = "CREATE TABLE IF NOT EXISTS pm (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			    from_user_id INTEGER NOT NULL,
 			    to_user_id INTEGER NOT NULL,
-			    conversation_id INTEGER NOT NULL DEFAULT -1,
 			    title VARCHAR(200) NOT NULL,
 			    content VARCHAR(5000) NOT NULL,
 			    isread INTEGER NOT NULL DEFAULT 0,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+	    db::executeQuery($query);
+	    
+	    $query = "CREATE TABLE IF NOT EXISTS pm_trash (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			    from_user_id INTEGER NOT NULL,
+			    to_user_id INTEGER NOT NULL,
+			    title VARCHAR(200) NOT NULL,
+			    content VARCHAR(5000) NOT NULL,
+			    isread INTEGER NOT NULL DEFAULT 0,
+			    posted TIMESTAMP NOT NULL);";
 	    db::executeQuery($query);
 	    	
             $query = "CREATE TABLE IF NOT EXISTS maps (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
