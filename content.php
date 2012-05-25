@@ -696,7 +696,7 @@ class content
 		else
 		{
 		    if(user::online())
-			$reported = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."&report' onClick='return confirmDelete(\" report this ".rtrim($table,"s")."\")'>Report this ".rtrim($table,"s")."</a>";
+			$reported = "<a href='?p=detail&table=".$table."&id=".$row["uid"]."' onClick='return confirmReport(\" report this ".rtrim($table,"s")."\")'>Report this ".rtrim($table,"s")."</a>";
 		}
 	    }
 	    $favIcon = "";

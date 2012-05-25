@@ -185,11 +185,13 @@ class header
 		    }
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
-		else if(isset($_GET["report"]))
+		else if(isset($_POST["report_reason"]))
 		{
 		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($_GET["table"], $_GET["id"], user::uid()))) )
-		    { } else {
-			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id) VALUES (:1,:2,:3)", array($_GET["table"], $_GET["id"], user::uid()));
+		    { }
+		    else
+		    {
+			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id, reason) VALUES (:1,:2,:3,:4)", array($_GET["table"], $_GET["id"], user::uid(), $_POST["report_reason"]));
 			misc::event_log(user::uid(), "report", $_GET["table"], $_GET["id"]);
 		    }
 		}

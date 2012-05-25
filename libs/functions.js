@@ -63,3 +63,15 @@ function confirmDelete(desc)
     else
     return false ;
 }
+
+function confirmReport(desc)
+{
+    var agree=prompt('To'+desc+', enter a reason:','');
+    if (agree != null && agree != '')
+    {
+	post_to_url('',{'report_reason':agree},'post');
+	return true ;
+    }
+    else
+    return false ;
+}

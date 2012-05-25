@@ -178,6 +178,7 @@
 			    table_name VARCHAR(80) NOT NULL,
 			    table_id INTEGER NOT NULL,
 			    user_id INTEGER NOT NULL,
+			    reason VARCHAR(80) NOT NULL,
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             db::executeQuery($query);
             
