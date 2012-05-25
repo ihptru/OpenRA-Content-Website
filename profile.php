@@ -293,16 +293,18 @@ class profile
 	    }
 
 	    $result = db::executeQuery("
-		SELECT 'Total number of <u>maps</u>' as item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = :1
+		SELECT 'Total number of <u>maps</u>' AS item, count(*) AS amount, 'maps' AS table_name FROM maps WHERE user_id = :1
 		UNION
-		SELECT 'Total number of <u>units</u>' as item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = :2
+		SELECT 'Total number of <u>units</u>' AS item, count(*) AS amount, 'units' AS table_name FROM units WHERE user_id = :2
 		UNION
-		SELECT 'Total number of <u>guides</u>' as item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = :3
+		SELECT 'Total number of <u>guides</u>' AS item, count(*) AS amount, 'guides' AS table_name FROM guides WHERE user_id = :3
 		UNION
-		SELECT 'Total number of <u>replays</u>' as item, count(*) AS amount, 'replays' AS table_name FROM replays WHERE user_id = :4
+		SELECT 'Total number of <u>replays</u>' AS item, count(*) AS amount, 'replays' AS table_name FROM replays WHERE user_id = :4
 		UNION
-		SELECT 'Total number of <u>comments</u>' as item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = :5
-	    ", array($usr["uid"], $usr["uid"], $usr["uid"], $usr["uid"], $usr["uid"]));
+		SELECT 'Total number of <u>comments</u>' AS item, count(*) AS amount, 'comments' AS table_name FROM comments WHERE user_id = :5
+		UNION
+		SELECT 'Total nubmber of <u>reports</u>' AS item, count(*) AS amount, 'reported' AS table_name FROM reported WHERE user_id = :6
+	    ", array($usr["uid"], $usr["uid"], $usr["uid"], $usr["uid"], $usr["uid"], $usr["uid"]));
 	    if (db::num_rows($result) > 0) {
 		$data = array();
 		array_push($data,$whos." progress:","");

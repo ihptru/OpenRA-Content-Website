@@ -171,28 +171,40 @@ class header
 	{
 	    if (user::online())
 	    {
+		$table = $_GET["table"];
+		$id = $_GET["id"];
 		if(isset($_GET["fav"]))
 		{
-		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($_GET["table"], $_GET["id"], user::uid()))) )
+		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM fav_item WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($table, $id, user::uid()))) )
 		    {
-			db::executeQuery("DELETE FROM fav_item WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($_GET["table"], $_GET["id"], user::uid()));
-			misc::event_log(user::uid(), "unfav", $_GET["table"], $_GET["id"]);
+			db::executeQuery("DELETE FROM fav_item WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($table, $id, user::uid()));
+			misc::event_log(user::uid(), "unfav", $table, $id);
 		    }
 		    else
 		    {
-			db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (:1,:2,:3)", array(user::uid(), $_GET["table"], $_GET["id"]));
-			misc::event_log(user::uid(), "fav", $_GET["table"], $_GET["id"]);
+			db::executeQuery("INSERT INTO fav_item (user_id,table_name,table_id) VALUES (:1,:2,:3)", array(user::uid(), $table, $id));
+			misc::event_log(user::uid(), "fav", $table, $id);
 		    }
 		    header("Location: {$_SERVER['HTTP_REFERER']}");
 		}
 		else if(isset($_POST["report_reason"]))
 		{
-		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($_GET["table"], $_GET["id"], user::uid()))) )
+		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($table, $id, user::uid()))) )
 		    { }
 		    else
 		    {
-			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id, reason) VALUES (:1,:2,:3,:4)", array($_GET["table"], $_GET["id"], user::uid(), $_POST["report_reason"]));
-			misc::event_log(user::uid(), "report", $_GET["table"], $_GET["id"]);
+			db::executeQuery("INSERT INTO reported (table_name, table_id, user_id, reason) VALUES (:1,:2,:3,:4)", array($table, $id, user::uid(), $_POST["report_reason"]));
+			misc::event_log(user::uid(), "report", $table, $id);
+		    }
+		}
+		else if(isset($_GET["cancelReport"]))
+		{
+		    if( db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($table, $id, user::uid()))) )
+		    {
+			$query = "DELETE FROM reported WHERE table_name = :1 AND table_id = :2 AND user_id = :3";
+			db::executeQuery($query, array($table, $id, user::uid()));
+			misc::event_log(user::uid(), "unreport", $table, $id);
+			header("Location: /?p=detail&table=$table&id=$id");
 		    }
 		}
 	    }

@@ -612,6 +612,33 @@ class content
 		    }
 		    $text = stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($row["content"]))));
 		    break;
+		case "reported":
+		    $title = "";
+		    $subtitle = "<i>reported on ".$row["posted"]."</i><br />";
+		    $inner_result = db::executeQuery("SELECT * FROM ".$row["table_name"]." WHERE uid = :1", array($row["table_id"]));
+		    while ($inner_row = db::nextRowFromQuery($inner_result))
+		    {
+			switch($row["table_name"])
+			{
+			    case "maps":
+				$imagePath = "<td><a href='?p=detail&table=maps&id=".$inner_row["uid"]."'><img src='" . misc::minimap($inner_row["path"]) . "' style='max-width:60px;'></a></td>";
+				break;
+			    case "units":
+				$imagePath = "<td><a href='?p=detail&table=units&id=".$inner_row["uid"]."'><img src='" . $inner_row["preview_image"] . "'></a></td>";
+				break;
+			    case "guides":
+				$imagePath = "<td><a href='?p=detail&table=guides&id=".$inner_row["uid"]."'><img src='images/guide_" . $inner_row["guide_type"] . ".png'></a></td>";
+				break;
+			    case "replays":
+				$imagePath = "<td><a href='?p=detail&table=replays&id=".$inner_row["uid"]."'><img src='images/replay.png'></a></td>";
+				break;
+			    case "articles":
+				$imagePath = "<td><a href='?p=detail&table=articles&id=".$inner_row["uid"]."'><img src='images/article.png'></a></td>";
+				break;
+			}
+		    }
+		    $text = "";
+		    break;
 	    }
 	    
 	    //TODO: Text should truncate if too large
@@ -690,7 +717,7 @@ class content
 	    {
 		if(db::nextRowFromQuery(db::executeQuery("SELECT * FROM reported WHERE table_name = :1 AND table_id = :2 AND user_id = :3", array($table, $row["uid"], user::uid()))))
 		{
-		    $reported = "You've already reported this item";
+		    $reported = "You've already reported this item (<a href='?p=detail&table=".$table."&id=".$row["uid"]."&cancelReport'>cancel</a>)";
 		}
 		else
 		{
@@ -1102,6 +1129,11 @@ class content
 		    $desc = " reported <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    if (!misc::item_exists($row["table_id"], $row["table_name"]))
 			$desc = " reported ".rtrim($row["table_name"],'s')." which no longer exists";
+		    break;
+		case "unreport":
+		    $desc = " canceled a report on <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
+		    if (!misc::item_exists($row["table_id"], $row["table_name"]))
+			$desc = " canceled a report on ".rtrim($row["table_name"],'s')." which no longer exists";
 		    break;
 		case "fav":
 		    $desc = " favorited <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
