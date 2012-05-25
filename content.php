@@ -16,6 +16,41 @@ class content
 	echo "<script type='text/javascript' src='libs/enhanced_file_upload.js'></script>";
 	echo "<script type='text/javascript' src='libs/password/mocha.js'></script>";
 
+	echo "<script language='javascript' src='libs/popup/jquery.js'></script>";
+	echo "<script language='javascript' src='libs/popup/modal.popup.js'></script>";
+	echo "<script language='javascript'>
+	    $(document).ready(function() {
+		//This method initialises the modal popup
+		$('.modal').click(function() {
+		    
+		    //Change these values to style your modal popup
+		    var align = 'center';			//Valid values; left, right, center
+		    var top = 140; 				//Use an integer (in pixels)
+		    var width = 620; 			//Use an integer (in pixels)
+		    var padding = 10;			//Use an integer (in pixels)
+		    var backgroundColor = '#554433';	//Use any hex code
+		    var source = document.getElementById('popup_path').value; 	//Refer to any page on your server, external pages are not valid e.g. http://www.google.co.uk
+		    var borderColor = '#333333'; 		//Use any hex code
+		    var borderWeight = 4; 			//Use an integer (in pixels)
+		    var borderRadius = 5; 			//Use an integer (in pixels)
+		    var fadeOutTime = 300; 			//Use any integer, 0 = no fade
+		    var disableColor = '#666666'; 		//Use any hex code
+		    var disableOpacity = 40; 		//Valid range 0-100
+		    var loadingImage = 'libs/popup/loading.gif';	//Use relative path from this page
+		    var TextColor = '#FFFFFF'
+		
+		    modalPopup(align, top, width, padding, disableColor, disableOpacity, backgroundColor, borderColor, borderWeight, borderRadius, fadeOutTime, source, loadingImage, TextColor);
+		});
+		
+		//This method hides the popup when the escape key is pressed
+		$(document).keyup(function(e) {
+			if (e.keyCode == 27) {
+				closePopup(fadeOutTime);
+			}
+		});
+	    });
+	</script>";
+
 	echo "<link rel='stylesheet' type='text/css' media='screen' href='css/screen.css' />
 	</head>";
     }
@@ -884,7 +919,9 @@ class content
 		$mapfile = $mapfile[2] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
 		$content .= "<tr><td>This page is viewed ".$viewed." times</td></tr>";
-	     	$content .= "<tr><td><a href='".$download."'>Download</a></tr></td>";
+		$content .= "<form id='modal_form'><input type=hidden id='popup_path' value='".$row["path"]."map.yaml'></form>";
+		$content .= "<tr><td><table style='padding:0px;margin:0px;'><tr><td><a href='".$download."'>Download</a> (".round(filesize($download)/1024,2)." KiB)</a></td><td><a class='modal' href='javascript:void(0);'>Print YAML</a></td></tr></table></td></tr>";
+		
 		if (user::uid() == $row["user_id"])
 		    $content .= "<tr><td><a href='?action=manage_screenshots&table=maps&id=".$row["uid"]."'>Manage screenshots</a></td></tr>";
 		
@@ -951,7 +988,7 @@ class content
 		foreach($shapes as $shape)
 		{
 		    if (basename($shape) != "preview.gif")
-			$content .= "<tr><td><a href='".$shape."'>".basename($shape)."</a></td></tr>";
+			$content .= "<tr><td><a href='".$shape."'>".basename($shape)."</a> (".round(filesize($shape)/1024,2)." KiB)</td></tr>";
 		}
 		$content .= "</table></td></tr>";
 		$content .= "<tr><td>This page is viewed ".$viewed." times</td></tr>";
@@ -1012,7 +1049,7 @@ class content
 		if (db::num_rows($result) != 0)
 		    $content .= "</table></td></tr>";
 		$content .= "<tr><td>This page is viewed ".$viewed." times</td></tr>";
-		$content .= "<tr><td><a href='".$row["path"]."'>Download</a></tr></td>";
+		$content .= "<tr><td><a href='".$row["path"]."'>Download</a> (".round(filesize($row["path"])/1048576,2)." MiB)</tr></td>";
 	    }
 	     
 	    if ($delete != "")

@@ -248,6 +248,11 @@ lines = [MapTitle+"\n",MapMod+"\n",MapAuthor+"\n",MapTileset+"\n",MapType+"\n",M
 text_file.writelines(lines)
 text_file.close()
 
+#Push map.yaml on disk
+yaml_f = open(path + "map.yaml", "w")
+yaml_f.write(raw_yamlData)
+yaml_f.close()
+
 #Put record into database
 try:
     print "Putting record into database..."
