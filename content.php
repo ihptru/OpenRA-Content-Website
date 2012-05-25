@@ -268,11 +268,10 @@ class content
 		$content .= "<div class='fix'></div>";
 	    }
 
-	    if(strlen($imagePath) > 0)
-		$content .= "<a title='' href='index.php'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
-                
     	$content .= "<div class='blk-top'>";
         $content .= "<h4><a href='?p=detail&table=articles&id=".$row["uid"]."'>" . $title . "</a></h4>";
+	if(strlen($imagePath) > 0)
+	    $content .= "<a href='?p=detail&table=articles&id=".$row["uid"]."'><img src='" . $imagePath . "' class='thumbnail' alt='img' width='240px' height='100px'/></a>";
         $content .= "<p><span class='datetime'>" . $date . "</span><a href='?p=detail&table=articles&id=".$row["uid"]."' class='comment'>" . $comments . " Comments</a></p>";
         $content .= "</div>";
                 

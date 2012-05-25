@@ -66,10 +66,11 @@ function confirmDelete(desc)
 
 function confirmReport(desc)
 {
-    var agree=prompt('To'+desc+', enter a reason:','');
-    if (agree != null && agree != '')
+    var agree = prompt('To'+desc+', enter a reason:','');
+    if (agree != null && agree != '' && agree != false)
     {
-	post_to_url('',{'report_reason':agree},'post');
+	var params = {'report_reason':agree};
+	post_to_url('',params,'POST');
 	return true ;
     }
     else
