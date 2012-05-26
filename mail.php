@@ -128,11 +128,11 @@ class mail
 				$res_d = db::executeQuery($q, array($value));
 				$row_d = db::nextRowFromQuery($res_d);
 				$q = "INSERT INTO pm_trash
-					(from_user_id,to_user_id,title,content,isread,posted)
+					(uid,from_user_id,to_user_id,title,content,isread,posted)
 					VALUES
-					(:1,:2,:3,:4,:5,:6);
+					(:1,:2,:3,:4,:5,:6,:7);
 				";
-				db::executeQuery($q, array($row_d["from_user_id"], $row_d["to_user_id"], $row_d["title"], $row_d["content"], $row_d["isread"], $row_d["posted"]));
+				db::executeQuery($q, array($row_d["uid"], $row_d["from_user_id"], $row_d["to_user_id"], $row_d["title"], $row_d["content"], $row_d["isread"], $row_d["posted"]));
 				$query = "DELETE FROM pm WHERE uid = :1";
 				db::executeQuery($query, array($value));
 				db::executeQuery("DELETE FROM reported WHERE table_name = 'pm' AND table_id = :1", array($value));
@@ -172,6 +172,11 @@ class mail
 		    $msg_id = $_GET["w"];
 		    $query = "SELECT * FROM pm WHERE uid = :1";
 		    $msg_result = db::executeQuery($query, array($msg_id));
+		    if (db::num_rows($msg_result) == 0)
+		    {
+			$query = "SELECT * FROM pm_trash WHERE uid = :1";
+			$msg_result = db::executeQuery($query, array($msg_id));
+		    }
 		    while ($row_msg = db::nextRowFromQuery($msg_result))
 		    {
 			if ($row_msg["from_user_id"] != user::uid())

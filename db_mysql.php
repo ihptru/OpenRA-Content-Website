@@ -87,7 +87,7 @@
 			    posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
 	    db::executeQuery($query);
 	    
-	    $query = "CREATE TABLE IF NOT EXISTS pm_trash (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	    $query = "CREATE TABLE IF NOT EXISTS pm_trash (uid INTEGER NOT NULL,
 			    from_user_id INTEGER NOT NULL,
 			    to_user_id INTEGER NOT NULL,
 			    title VARCHAR(200) NOT NULL,
