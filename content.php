@@ -1006,6 +1006,23 @@ class content
 			$edit_type = "<a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_type'>edit</a>";
 		    $content .= "<tr><td>Type: ".$row["type"].$edit_type."</td></tr>";
 		}
+		$palette = "";
+		if ($row["palette"] != "")
+		{
+		    $palette = "Temperat";
+		    if ($row["palette"] == "Tiberian_Dawn.act")
+			$palette = "C&C TD";
+		    else if ($row["palette"] == "d2k.pal")
+			$palette = "D2K";
+		    else if ($row["palette"] == "egopal.pal")
+			$palette = "Egopal";
+		    else if ($row["palette"] == "interior.pal")
+			$palette = "Interior";
+		    else if ($row["palette"] == "snow.pal")
+			$palette = "Snow";
+		}
+		if ($palette != "")
+		    $content .= "<td>Palette: ".$palette."</td>";
 		$content .= $description;
 	     	$content .= "<tr><td><br>Files (click to download):";
 	     	$directory = "users/".$user_name."/units/".$title_origin."/";

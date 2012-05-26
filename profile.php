@@ -428,31 +428,40 @@ class profile
 	    return;
     	
     	echo "<form id='form_class' enctype='multipart/form-data' action='' method=POST>
-	    <label>Uploading <u>unit</u> (shp, yaml):</label><br><br>
-	    <label>Unit name: </label>
-		<input type='text' name='unit_name'><br>
-	    <label>Unit type:<br></label>
-		<select name='unit_type'>
+	    <table><tr><td></td><td><label>Uploading <u>unit</u> (shp, yaml, aud):</label></td></tr>
+	    <tr><td><label>Unit name: </label></td>
+		<td><input type='text' name='unit_name'></td></tr>
+	    <tr><td><label>Unit type:<br></label></td>
+		<td><select name='unit_type'>
 		<option value='structure'>Structure</option>
 		<option value='infantry'>Infantry</option>
 		<option value='vehicle'>Vehicle</option>
 		<option value='air-borne'>Air-borne</option>
 		<option value='nature'>Nature</option>
 		<option value='other'>Other</option>
-		</select><br>
-	    <label>Palette:</label>
-		<select name='unit_palette'>
+		</select></td></tr>
+	    <tr><td><label>Palette:</label></td>
+		<td><select name='unit_palette'>
 		<option value='temperat.pal'>Temperat</option>
-		<option value='cnc_palet.pal'>CNC palet</option>
+		<option value='Tiberian_Dawn.act'>C&C: TD</option>
 		<option value='d2k.pal'>D2K</option>
 		<option value='egopal.pal'>Egopal</option>
 		<option value='interior.pal'>Interior</option>
 		<option value='snow.pal'>Snow</option>
-		</select><br>
-	    <label>Unit description:<br> </label>
-		<textarea name='unit_description' cols='40' rows='5'></textarea><br>
-	    <label>Choose unit file:</label><br>
-		<span class='file-wrapper-no-info'>
+		</select></td></tr>
+	    <tr><td><label>Unit description:<br> </label></td>
+		<td style='margin-top:0; vertical-align:top;'><textarea name='unit_description' cols='40' rows='5'></textarea></td></tr>
+	    <tr><td><input type='submit' value='Upload'></td>
+		<td><label>Choose unit file:</label><br />
+		
+		<input id='my_file_element' size='30' type='file' name='file_0' >
+		<div id='files_list'></div>
+		<script>
+		    var multi_selector = new MultiSelector( document.getElementById( 'files_list' ), 30 );
+		    multi_selector.addElement( document.getElementById( 'my_file_element' ) );
+		</script>
+		
+		<!--<span class='file-wrapper-no-info'>
 		    <input type='file' name='file_0' id='my_file_element' />
 		    <span class='button'>Choose a file</span>
 		</span>
@@ -460,10 +469,8 @@ class profile
 		<script>
 		    var multi_selector = new MultiSelector( document.getElementById( 'files_list' ), 8 );
 		    multi_selector.addElement( document.getElementById( 'my_file_element' ) );
-		</script><br />
-	";
-		
-	echo "<input type='submit' value='Upload'>
+		</script> -->
+		</td></tr></table>
 	    </form>
 	";
 

@@ -66,14 +66,14 @@ class upload
     
     public static function upload_unit($username)
     {
-	function insert_unit($dirname,$description,$type)
+	function insert_unit($dirname,$description,$type,$unit_palette)
 	{
 	    $query = "INSERT INTO units
-		(title,description,preview_image,user_id,type)
+		(title,description,preview_image,user_id,type,palette)
 		VALUES
-		(:1,:2,:3,:4,:5)
+		(:1,:2,:3,:4,:5,:6)
 		";
-	    db::executeQuery($query, array($dirname, $description, "users/".user::username()."/units/".$dirname."/preview.gif", user::uid(), $type));
+	    db::executeQuery($query, array($dirname, $description, "users/".user::username()."/units/".$dirname."/preview.gif", user::uid(), $type, $unit_palette));
 	    misc::increase_experience(50);
 	    $row = db::nextRowFromQuery(db::executeQuery("SELECT uid FROM units WHERE user_id = :1 ORDER BY posted DESC LIMIT 1", array(user::uid())));
 	    misc::event_log(user::uid(), "add", "units", $row["uid"]);
@@ -107,7 +107,7 @@ class upload
 	    $name = explode(".", $filename);	//array
 
 	    $accepted_types = array("application/octet-stream","application/x-qgis");
-	    $accepted_exts = array("shp","yaml");
+	    $accepted_exts = array("shp","yaml","aud");
 	    if(!in_array($type, $accepted_types) or !in_array(strtolower($name[1]), $accepted_exts))
 	    {
 		$messages .= $filename . " - upload fail: not supported file type<br>";
@@ -124,7 +124,7 @@ class upload
 		else
 		{
 		    mkdir($path);
-		    insert_unit($dirname, $description, $unit_type);
+		    insert_unit($dirname, $description, $unit_type, $unit_palette);
 		}
 	    }
 	    else
@@ -133,7 +133,7 @@ class upload
 		if (!is_dir($path))
 		{
 		    mkdir($path);
-		    insert_unit($dirname, $description, $unit_type);
+		    insert_unit($dirname, $description, $unit_type, $unit_palette);
 		}
 	    }
 	    
