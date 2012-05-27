@@ -684,6 +684,57 @@ class misc
 	$result = db::executeQuery($query, $my_array);
 	return db::num_rows($result);
     }
+    
+    /* creates a compressed zip file */
+    public static function create_zip($dir, $destination="", $overwrite=false)
+    {
+	//if the zip file already exists and overwrite is false, return false
+	if(file_exists($destination) && !$overwrite) { return false; }
+	//vars
+	$valid_files = array();
+	//if files were passed in...
+	if (is_dir($dir))
+	{
+	    foreach (scandir($dir) as $item)
+	    {
+		if ($item == '.' || $item == '..') continue;
+		//make sure the file exists
+		if(file_exists($dir."/".$item))
+		{
+		    $valid_files[] = $dir."/".$item;
+		}
+	    }
+	}
+	$dirname = basename($dir);
+	//if we have good files...
+	if(count($valid_files))
+	{
+	    //create the archive
+	    $zip = new ZipArchive();
+	    if($zip->open($destination,$overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true)
+	    {
+		return false;
+	    }
+	    $zip->addEmptyDir($dirname);
+	    //add the files
+	    foreach($valid_files as $file)
+	    {
+		$zip->addFile($file,$dirname."/".basename($file));
+	    }
+	    //debug
+	    //echo 'The zip archive contains ',$zip->numFiles,' files with a status of ',$zip->status;
+
+	    //close the zip -- done!
+	    $zip->close();
+    
+	    //check to make sure the file exists
+	    return file_exists($destination);
+	}
+	else
+	{
+	    return false;
+	}
+    }
 }
 
 ?>

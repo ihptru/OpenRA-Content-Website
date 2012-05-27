@@ -484,11 +484,12 @@ class profile
 	if ($uploaded != "")
 	{
 	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
-	    $query = "SELECT uid FROM units WHERE user_id = :1
+	    $query = "SELECT uid,preview_image FROM units WHERE user_id = :1
 		       ORDER BY posted DESC LIMIT 1
 	    ";
 	    $row = db::nextRowFromQuery(db::executeQuery($query, array(user::uid())));
 	    echo "<table><tr><th>(<a href='?p=detail&table=units&id=".$row["uid"]."'>check unit's page</a>)</th></tr></table>";
+	    misc::create_zip(dirname(WEBSITE_PATH.$row["preview_image"]), dirname(WEBSITE_PATH.$row["preview_image"])."/".basename(dirname(WEBSITE_PATH.$row["preview_image"])).".zip");
 	}
     }
     

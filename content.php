@@ -1030,11 +1030,13 @@ class content
 		$content .= "<table>";
 		foreach($shapes as $shape)
 		{
-		    if (basename($shape) != "preview.gif")
+		    if (basename($shape) != "preview.gif" and basename($shape) != $title_origin.".zip")
 			$content .= "<tr><td><a href='".$shape."'>".basename($shape)."</a> (".round(filesize($shape)/1024,2)." KiB)</td></tr>";
 		}
 		$content .= "</table></td></tr>";
 		$content .= "<tr><td>This page is viewed ".$viewed." times</td></tr>";
+		if (file_exists($directory.$title_origin.".zip"))
+		    $content .= "<tr><td><a href='".$directory.$title_origin.".zip"."'>Download a full pack as ZIP</a></td></tr>";
 		if (user::uid() == $row["user_id"])
 		    $content .= "<tr><td><a href='?action=manage_screenshots&table=units&id=".$row["uid"]."'>Manage screenshots</a></td></tr>";
 		//screenshots
