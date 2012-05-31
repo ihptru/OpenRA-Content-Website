@@ -297,7 +297,7 @@ cur.close()
 
 if MapMod == "ra":
     print "Generating full size preview..."
-    subprocess.Popen(['mono', 'mono/src/fullsize_upload/bin/ImageMapGenerator.exe', '-filename="'+mapfile_full_path+'"'])
+    os.system('mono '+WEBSITE_PATH+'mono/ImageMapGenerator/bin/Debug/ImageMapGenerator.exe -filename="'+mapfile_full_path+'"')
 
 print "Generating minimap..."
 

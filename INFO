@@ -14,11 +14,11 @@ python/bmp.py		:	0777
 # requires:
 #          python2
 #          python-mysqldb lib
-#          mono (tested with mono-2.10.6 and 2.6.7)
+#          mono (2.10.6)
 #          libmono-corlib1.0-cil
 #          libgdiplus
 #          pdo-mysql binding for php5
 #          OpenRA Engine (or at least OpenRA.Utility)
 #          python2 module: PIL (Python Imaging Library)
 
-webserver user must have .openra directory in it's home and have owner rights to it
+webserver user must have .openra directory in it's home and have owner rights to it (for OpenRA.Utility)

@@ -755,7 +755,9 @@ class content
 	    {
 		case "maps":
 		    $title = strtoupper($row["g_mod"])." map: <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>";
-		    $imagePath = misc::minimap($row["path"]);
+		    $imagePath = "<img src='".misc::minimap($row["path"])."'>";
+		    if (misc::fullPreviewExists($row["path"]))
+			$imagePath = "<a href='".$row["path"]."fullPreview.bmp' target=_blank>".$imagePath."</a>";
 		    $subtitle = $title . " posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $add_add_info = "";
 		    if ($row["additional_desc"] != "")
@@ -783,7 +785,7 @@ class content
 		    break;
 		case "units":
 		    $title_origin = strip_tags($row["title"]);
-		    $imagePath = $row["preview_image"];
+		    $imagePath = "<img src='".$row["preview_image"]."'>";
 
 		    $add_description = "";
 		    $desc_edit = "";
@@ -818,7 +820,7 @@ class content
 		    }
 		    break;
 		case "guides":
-		    $imagePath = "images/guide_" . str_replace("\\\\\\", "", $row["guide_type"]) . ".png";
+		    $imagePath = "<img src='images/guide_".str_replace("\\\\\\", "", $row["guide_type"]).".png'>";
 		    $allow = "<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>";
 		    $text = strip_tags(str_replace("\\\\\\", "", "<p>". str_replace('\r\n', "", $row["html_content"])."</p>"), $allow);
 		    
@@ -853,7 +855,7 @@ class content
 		    return $content;
 		    break;
 		case "articles":
-		    $imagePath = $row["image"];
+		    $imagePath = "<img src='".$row["image"]."'>";
 		    $allow = "<table><tr><td><th></th><img><a><b><i><u><p><br><ul><li><ol><dl><dd><dt>";
 		    $text = strip_tags(str_replace("\\\\\\", "", "<p>". str_replace('\r\n', "", $row["content"])."</p>"), $allow);
 		    
@@ -910,7 +912,7 @@ class content
  
 	    if($imagePath != "")
 	    {
-		$content .= "<tr><td><center><img src='".$imagePath."'></center></td></tr>";
+		$content .= "<tr><td><center>".$imagePath."</center></td></tr>";
 	    }
 	     
 	    $content .= "<tr><td>" . $subtitle;

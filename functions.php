@@ -569,36 +569,35 @@ class misc
     public static function amount_rows($result, $value)
     {
 	if (db::num_rows($result) > $value)
-	{
 	    return True;
-	}
 	return False;
     }
 
     public static function minimap($path)
     {
 	if (file_exists($path . "minimap.bmp"))
-	{
 	    return $path . "minimap.bmp";
-	}
 	return "images/nominimap.png";
+    }
+    
+    public static function fullPreviewExists($path)
+    {
+	if (file_exists($path . "fullPreview.bmp"))
+	    return True;
+	return False;
     }
     
     public static function option_selected($value, $request)
     {
 	if ($value == $request)
-	{
 	    return "selected='selected'";
-	}
 	return "";
     }
     
     public static function option_selected_bool($value, $request)
     {
 	if ($value == $request)
-	{
 	    return "true";
-	}
 	return "false";
     }
     
