@@ -117,7 +117,7 @@ function pageloader(page_request, containerid, loadingImage){
 function imageloader(url, containerid, loadingImage) {
 	
 	document.getElementById(containerid).innerHTML = '<div align="center"><img src="' + loadingImage + '" border="0" /></div>';
-	document.getElementById(containerid).innerHTML='<div align="center"><img src="' + url + '" border=0></div>';
+	document.getElementById(containerid).innerHTML='<div style="text-align:center;"><a href="' + url + '" target=_blank><img src="' + url + '" border=0 width="630px"></a></div>';
 }
 
 function blockPage() {

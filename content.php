@@ -41,6 +41,26 @@ class content
 		
 		    modalPopup(align, top, width, padding, disableColor, disableOpacity, backgroundColor, borderColor, borderWeight, borderRadius, fadeOutTime, source, loadingImage, TextColor);
 		});
+		$('.modal_preview').click(function() {
+		    
+		    //Change these values to style your modal popup
+		    var align = 'center';			//Valid values; left, right, center
+		    var top = 125; 				//Use an integer (in pixels)
+		    var width = 680; 			//Use an integer (in pixels)
+		    var padding = 10;			//Use an integer (in pixels)
+		    var backgroundColor = '#554433';	//Use any hex code
+		    var source = document.getElementById('popup_preview').value; 	//Refer to any page on your server, external pages are not valid e.g. http://www.google.co.uk
+		    var borderColor = '#333333'; 		//Use any hex code
+		    var borderWeight = 4; 			//Use an integer (in pixels)
+		    var borderRadius = 5; 			//Use an integer (in pixels)
+		    var fadeOutTime = 300; 			//Use any integer, 0 = no fade
+		    var disableColor = '#666666'; 		//Use any hex code
+		    var disableOpacity = 40; 		//Valid range 0-100
+		    var loadingImage = 'libs/popup/loading.gif';	//Use relative path from this page
+		    var TextColor = '#FFFFFF'
+		
+		    modalPopup(align, top, width, padding, disableColor, disableOpacity, backgroundColor, borderColor, borderWeight, borderRadius, fadeOutTime, source, loadingImage, TextColor);
+		});
 		
 		//This method hides the popup when the escape key is pressed
 		$(document).keyup(function(e) {
@@ -755,9 +775,13 @@ class content
 	    {
 		case "maps":
 		    $title = strtoupper($row["g_mod"])." map: <font color='#d8ff00'>" . strip_tags($row["title"]) . "</font>";
-		    $imagePath = "<img src='".misc::minimap($row["path"])."'>";
 		    if (misc::fullPreviewExists($row["path"]))
-			$imagePath = "<a href='".$row["path"]."fullPreview.bmp' target=_blank>".$imagePath."</a>";
+		    {
+			$imagePath = "<form id='modal_preview'><input type=hidden id='popup_preview' value='".$row["path"]."fullPreview.bmp'></form>";
+			$imagePath .= "<a class='modal_preview' href='javascript:void(0);'><img src='".misc::minimap($row["path"])."'></a>";
+		    }
+		    else
+			$imagePath = "<img src='".misc::minimap($row["path"])."'>";
 		    $subtitle = $title . " posted at <i>".$row["posted"]."</i> by <a href='?profile=".$row["user_id"]."'>". $user_name . "</a>";
 		    $add_add_info = "";
 		    if ($row["additional_desc"] != "")
