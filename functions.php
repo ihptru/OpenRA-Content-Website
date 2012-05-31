@@ -475,6 +475,19 @@ class misc
 	    if ($table_name == "guides")
 		misc::decrease_experience(50);
 
+	    //remove screenshots for item if there are any
+	    if (in_array($table_name, array("maps","units")))
+	    {
+		$query = "SELECT * FROM screenshot_group WHERE table_id = :1 AND table_name = :2 AND user_id = :3 AND image_path NOT LIKE ('%/fullPreview%')";
+		$result_screen = db::executeQuery($query, array($item_id, $table_name, $user_id));
+		while ($row_screen = db::nextRowFromQuery($result_screen))
+		{
+		    unlink(WEBSITE_PATH . $row_screen["image_path"]);
+		}
+		$query = "DELETE FROM screenshot_group WHERE table_id = :1 AND table_name = :2 AND user_id = :3";
+		db::executeQuery($query, array($item_id, $table_name, $user_id));
+	    }
+
 	    //remove item from DB
 	    $query = "DELETE FROM $table_name WHERE uid = :1";
 	    db::executeQuery($query, array($item_id));

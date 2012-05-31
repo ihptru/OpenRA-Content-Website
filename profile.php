@@ -382,10 +382,19 @@ class profile
 	    if ($uploaded == "0")
 	    {
 		echo "<table><tr><th>Map is successfully uploaded</th></tr></table>";
-		$query = "SELECT uid,path FROM maps WHERE user_id = :1
+		$query = "SELECT * FROM maps WHERE user_id = :1
 			    ORDER BY posted DESC LIMIT 1
 		";
 		$row = db::nextRowFromQuery(db::executeQuery($query, array(user::uid())));
+		if (misc::fullPreviewExists($row["path"]))
+		{
+		    $q = "INSERT INTO screenshot_group
+			    (table_id,table_name,user_id,image_path)
+			    VALUES
+			    (:1,:2,:3,:4);
+		    ";
+		    db::executeQuery($q, array($row["uid"], "maps", user::uid(), $row["path"]."fullPreview.bmp"));
+		}
 		$imagePath = misc::minimap($row["path"]);
 		echo "<p><a href='/?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
 		return;

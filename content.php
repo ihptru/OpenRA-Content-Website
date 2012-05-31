@@ -987,7 +987,7 @@ class content
 		$map_version_content = "<table><tr><td>Rev: ".ltrim($row["tag"], "r")."</td>".$vers."</tr></table>";
 		
 		//screenshots
-		$query = "SELECT * FROM screenshot_group WHERE table_name = 'maps' AND table_id = :1 AND user_id = :2";
+		$query = "SELECT * FROM screenshot_group WHERE table_name = 'maps' AND table_id = :1 AND user_id = :2 AND image_path NOT LIKE ('%/fullPreview%')";
 		$res_sc = db::executeQuery($query, array($row["uid"], $row["user_id"]));
 		$data = array();
 		while ($row_sc = db::nextRowFromQuery($res_sc))
@@ -1761,7 +1761,7 @@ class content
 		return;
 	    if (!misc::item_owner($_GET["id"], $_GET["table"], user::uid()))
 		return;
-	    $query = "SELECT * FROM screenshot_group WHERE table_id = :1 AND table_name = :2 AND user_id = :3";
+	    $query = "SELECT * FROM screenshot_group WHERE table_id = :1 AND table_name = :2 AND user_id = :3 AND image_path NOT LIKE ('%/fullPreview%')";
 	    $result = db::executeQuery($query, array($_GET["id"], $_GET["table"], user::uid()));
 	    $can_upload = 4 - (int)db::num_rows($result);
 	    if ($can_upload == 0)
