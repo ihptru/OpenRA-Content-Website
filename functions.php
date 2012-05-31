@@ -144,7 +144,7 @@ class upload
 	    }
 	    if (strtolower(end($name)) == "shp" and $run_shp == false)
 	    {
-		exec("mono mono/src/SHPExtractor/bin/Debug/SHPExtractor.exe  -filename=\"".$target_path."\" -palette=\"".$unit_palette."\"");
+		exec("python python/shpextractor.py  -s ".$target_path." -p ".$unit_palette, $output, $return_code);
 		$run_shp = true;
 	    }
 	    $count++;
