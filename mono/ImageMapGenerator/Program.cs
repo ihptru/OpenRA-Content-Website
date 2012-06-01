@@ -321,10 +321,6 @@ namespace ImageMapGenerator
 				for (var i = 0; i < ChunkSize; i++)
 					for (var j = 0; j < ChunkSize; j++)
 					{
-                        if (v * ChunkSize + j >= 128)
-                            continue;
-                        if (u * ChunkSize + i >= 128)
-                            continue;
 
                         var tr = map.MapTiles.Value[u * ChunkSize + i, v * ChunkSize + j];
                         var tile = tileset.Templates[tr.type].Data;
