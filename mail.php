@@ -36,6 +36,7 @@ class mail
 			echo "<tr><td>To:</td><td><a href='?profile=".$row_msg["to_user_id"]."'>".user::login_by_uid($row_msg["to_user_id"])."</a></td></tr>";
 			echo "</table>";
 			echo "<table><tr><td>".str_replace("\\", "", str_replace('\r\n', "<br />", $row_msg["content"]))."</td></tr></table>";
+			echo "<p><a href='?p=mail&m=compose&to=".$row_msg["from_user_id"]."&title=RE:%20".$row_msg["title"]."' class='more-link-selected'>Reply</a></p>";
 			if ($row_msg["isread"] == 0)
 			{
 			    $query = "UPDATE pm
@@ -215,9 +216,13 @@ class mail
 		    break;
 		if ($to_id == user::uid())
 		    break;
+
+		$title = "";
+		if (isset($_GET["title"]))
+		    $title = $_GET["title"];
 		echo "<table style='margin-left: -10px;'><form method=POST action='' name='compose'>";
 		echo "<tr><td><b>To:</b></td><td><a href='?profile=".$to_id."'>".user::login_by_uid($to_id)."</a></td></tr>";
-		echo "<tr><td><b>Subject:</b></td><td><input type='text' size='40' name='msg_title'></td></tr>";
+		echo "<tr><td><b>Subject:</b></td><td><input type='text' size='40' name='msg_title' value='".$title."'></td></tr>";
 		echo "<tr><td style='margin-top:0; vertical-align:top;'><b>Message body:</b><br />Enter your message here, it may contain no more than 5000 characters.</td><td><textarea id='message' wrap='physical' name='msg_message' rows='10' cols='20' tabindex='4' onKeyDown='textCounter(document.compose.msg_message,document.compose.remLen,5000)' onKeyUp='textCounter(document.compose.msg_message,document.compose.remLen,5000)'></textarea><br /><input readonly type='text' name='remLen' size='4' maxlength='4' value='5000'> characters left<br /><input type=submit value=Submit></td></tr>";
 		echo "<input type=hidden name='to_user_id' value='".$to_id."'></form></table>";
 		break;
