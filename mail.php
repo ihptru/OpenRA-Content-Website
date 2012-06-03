@@ -37,13 +37,6 @@ class mail
 			echo "</table>";
 			echo "<table><tr><td>".str_replace("\\", "", str_replace('\r\n', "<br />", $row_msg["content"]))."</td></tr></table>";
 			echo "<p><a href='?p=mail&m=compose&to=".$row_msg["from_user_id"]."&title=RE:%20".$row_msg["title"]."' class='more-link-selected'>Reply</a></p>";
-			if ($row_msg["isread"] == 0)
-			{
-			    $query = "UPDATE pm
-				SET isread = 1
-				WHERE uid = :1";
-			    db::executeQuery($query, array($msg_id));
-			}
 		    }
 		    break;
 		}

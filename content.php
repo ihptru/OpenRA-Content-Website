@@ -81,7 +81,7 @@ class content
 	    <div id='header'>
 		<a name='top'></a>
 		<h1 id='logo-text'><a href='/' title=''>OpenRA - Resources</a></h1>
-		<p id='slogan'>Brings your content</p>
+		<p id='slogan'>Advanced Communications Center</p>
 		<p id='rss-feed'><a href='libs/feed.php' class='feed'>News Feed</a></p>
 		<div id='nav'>
 		<ul>

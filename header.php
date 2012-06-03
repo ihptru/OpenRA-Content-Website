@@ -430,6 +430,27 @@ class header
 	    misc::send_mail( $email, 'New PM at OpenRA Content Website', 'You\'ve got a new private message! Your inbox is: http://'.$_SERVER['HTTP_HOST'].'/?p=mail&m=inbox', array( 'From' => 'noreply@'.$_SERVER['HTTP_HOST'] ) );
 	    header("Location: /?p=mail&m=sent");
 	}
+	else if (isset($_GET["p"]) and isset($_GET["m"]) and isset($_GET["w"]))
+	{
+	    if ($_GET["p"] == "mail" and $_GET["m"] == "inbox")
+	    {
+		$msg_id = $_GET["w"];
+		$query = "SELECT * FROM pm WHERE uid = :1";
+		$msg_result = db::executeQuery($query, array($msg_id));
+		while ($row_msg = db::nextRowFromQuery($msg_result))
+		{
+		    if ($row_msg["to_user_id"] != user::uid())
+			break;
+		    if ($row_msg["isread"] == 0)
+		    {
+			$query = "UPDATE pm
+			    SET isread = 1
+			    WHERE uid = :1";
+			db::executeQuery($query, array($msg_id));
+		    }
+		}
+	    }
+	}
     }
     
     public static function upload_redirect()
