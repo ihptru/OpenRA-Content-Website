@@ -241,6 +241,13 @@ class upload
 		    VALUES (:1,:2,:3,:4)
 	    ";
 	    db::executeQuery($query, array($id,$table,user::uid(),$path));
+	    
+	    //create thumbnail
+	    $type = image_type_to_mime_type(exif_imagetype($path));
+	    $new_name = explode(".", $path);
+	    $new_name = $new_name[0] . "_thumbnail." . $new_name[1];
+	    misc::imageresize($new_name,$path,300,300,100, $type);
+	    
 	    $query = "SELECT uid FROM screenshot_group WHERE table_id = :1 AND table_name = :2 AND user_id = :3 ORDER BY posted DESC";
 	    $row_sc = db::nextRowFromQuery(db::executeQuery($query, array($id, $table, user::uid())));
 	    misc::event_log(user::uid(), "add", "screenshot", $row_sc["uid"]);
@@ -464,11 +471,16 @@ class misc
 		$path = False;
 		while ($db_data = db::nextRowFromQuery($result))
 		{
-		    $path = WEBSITE_PATH . $db_data['image_path'];
+		    $path = $db_data['image_path'];
 		}
 		if ($path)
 		{
-		    unlink($path);
+		    $dir = dirname($path) . "/";
+		    $name = basename($path);
+		    $thumb = explode(".", $name);
+		    $thumb = $dir . $thumb[0] . "_thumbnail." . $thumb[1];
+		    unlink(WEBSITE_PATH . $path);
+		    unlink(WEBSITE_PATH . $thumb);
 		}
 	    }
 	    
@@ -482,7 +494,12 @@ class misc
 		$result_screen = db::executeQuery($query, array($item_id, $table_name, $user_id));
 		while ($row_screen = db::nextRowFromQuery($result_screen))
 		{
+		    $dir = dirname($row_screen["image_path"]) . "/";
+		    $name = basename($row_screen["image_path"]);
+		    $thumb = explode(".", $name);
+		    $thumb = $dir . $thumb[0] . "_thumbnail." . $thumb[1];
 		    unlink(WEBSITE_PATH . $row_screen["image_path"]);
+		    unlink(WEBSITE_PATH . $thumb);
 		}
 		$query = "DELETE FROM screenshot_group WHERE table_id = :1 AND table_name = :2 AND user_id = :3";
 		db::executeQuery($query, array($item_id, $table_name, $user_id));

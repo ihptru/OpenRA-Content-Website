@@ -266,10 +266,15 @@ class content
 	    switch($table)
 	    {
 		case "screenshot_group":
-		    $imagePath = $row["image"];
+		    $imagePath_orig = $row["image"];
+		    $dir = dirname($imagePath_orig)."/";
+		    $name = basename($imagePath_orig);
+		    $new_name = explode(".", $name);
+		    $new_name = $new_name[0] . "_thumbnail." . $new_name[1];
+		    $imagePath = $dir.$new_name;
 		    break;
 	    }
-	    $content .= "<li><a href='".$imagePath."' class='highslide' onclick='return hs.expand(this, config1 )'><img src='" . $imagePath . "' alt='' width='90' border='0'/></a></li>";
+	    $content .= "<li><a href='".$imagePath_orig."' class='highslide' onclick='return hs.expand(this, config1 )'><img src='" . $imagePath . "' alt='' style='max-width:90px;max-height:90px;' border='0'/></a></li>";
 	}
 	$content .= "</ul><div style='clear:both'></div></div>";
 	return $content;

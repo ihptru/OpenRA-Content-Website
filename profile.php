@@ -394,6 +394,9 @@ class profile
 			    (:1,:2,:3,:4);
 		    ";
 		    db::executeQuery($q, array($row["uid"], "maps", user::uid(), $row["path"]."fullPreview.bmp"));
+		    
+		    $type = image_type_to_mime_type(exif_imagetype($row["path"]."fullPreview.bmp"));
+		    misc::imageresize($row["path"]."fullPreview_thumbnail.bmp",$row["path"]."fullPreview.bmp",300,300,100, $type);
 		}
 		$imagePath = misc::minimap($row["path"]);
 		echo "<p><a href='/?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
