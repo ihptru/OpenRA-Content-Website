@@ -4,11 +4,15 @@ users/		:		0777
 images/screenshots/	:	0777
 python/bmp.py		:	0777
 
-#cron:
-10	1	* * *	username	php /path/to/site/clearDB.php
-
 ###
 # set webserver to allow override by .htaccess
+
+# set webserver user as owner for files:
+	.htaccess
+	users/.htaccess
+
+#cron:
+10	1	* * *	username	php /path/to/site/clearDB.php
 
 ###
 # requires:

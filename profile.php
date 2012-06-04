@@ -75,7 +75,7 @@ class profile
 		      <li>
 			 ".$to_head;
 	    echo "<p style='margin-left:-15px;' class='thumbs'>";
-	    echo content::createImageGallery($result,"follow");
+	    echo content::createSimpleGallery($result,"follow");
 	    echo "</p>";
 	    echo "</li>
 		  </ul><br />";
@@ -102,7 +102,7 @@ class profile
 		  <li>
 		      ".$to_head;
 	    echo "<p style='margin-left:-15px;' class='thumbs'>";
-	    echo content::createImageGallery($result,"followed");
+	    echo content::createSimpleGallery($result,"followed");
 	    echo "</p>";
 	    echo "</li>
 	      </ul><br />";

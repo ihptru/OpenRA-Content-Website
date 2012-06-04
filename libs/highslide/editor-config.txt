@@ -1,0 +1,3 @@
+Use this URL to reset the Editor to your settings:
+
+http://highslide.com/editor/?config=%7B%22preset%22%3A+%22gallery-horizontal-strip%22,+%22applyDimming%22%3A+true,+%22dimmingOpacity%22%3A+0.75,+%22hideThumbOnExpand%22%3A+false,+%22alignment%22%3A+%22center%22,+%22marginBottom%22%3A+105,+%22enableGallery%22%3A+true,+%22controlsPreset%22%3A+%22text-controls%22,+%22controlsRelativeTo%22%3A+%22viewport%22,+%22controlsOpacity%22%3A+1,+%22controlsOffsetY%22%3A+-60,+%22controlsHideOnMouseOut%22%3A+false,+%22buttonMove%22%3A+false,+%22numberPosition%22%3A+%22caption%22,+%22fixedControls%22%3A+false,+%22slideshowRepeat%22%3A+true%7D

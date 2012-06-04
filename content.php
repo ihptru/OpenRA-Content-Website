@@ -70,6 +70,13 @@ class content
 		});
 	    });
 	</script>";
+	echo "<script type='text/javascript' src='libs/highslide/highslide-with-gallery.js'></script>
+	    <script type='text/javascript' src='libs/highslide/highslide.config.js' charset='utf-8'></script>
+	    <link rel='stylesheet' type='text/css' href='libs/highslide/highslide.css' />
+	    <!--[if lt IE 7]>
+	    <link rel='stylesheet' type='text/css' href='libs/highslide/highslide-ie6.css' />
+	    <![endif]-->
+	";
 
 	echo "<link rel='stylesheet' type='text/css' media='screen' href='css/screen.css' />
 	</head>";
@@ -189,15 +196,13 @@ class content
 	";
     }
 
-    //Create image gallery items based on result
-    public static function createImageGallery($result, $condition="")
+    public static function createSimpleGallery($result, $condition="")
     {
 	$follow = 0;
 	$content = "";
 	while ($row = db::nextRowFromQuery($result))
 	{
 	    $imagePath = "";
-
 	    $table = $row["table_name"];
 	    switch($table)
 	    {
@@ -213,13 +218,9 @@ class content
 		    break;
 		case "following":
 		    if ($condition == "follow")
-		    {
-			$imagePath = misc::avatar($row["whom"]);
-		    }
+		    	$imagePath = misc::avatar($row["whom"]);
 		    elseif ($condition == "followed")
-		    {
 			$imagePath = misc::avatar($row["who"]);
-		    }
 		    break;
 		case "screenshot_group":
 		    $imagePath = $row["image"];
@@ -243,17 +244,34 @@ class content
 		    $content .= "<br /><br ><a href='?action=show_user_follow".$end."&id=".$row["who"]."' style='float:right;margin-right:10px;margin-top:-15px;'>Show all</a>";
 		    break;
 		}
-		$content .= "<a href='?profile=".$show."' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' height='40' /></a>";
+		$content .= "<a href='?profile=".$show."' title='".user::login_by_uid($show)."'><img src='" . $imagePath . "' width='40' /></a>";
 	    }
 	    else if ($table == "screenshot_group")
-	    {
-		$content .= "<a href='".$imagePath."' target=_blank><img src='" . $imagePath . "' width='40' height='40' /></a>";
-	    }
+		$content .= "<a href='".$imagePath."' ' target=_blank><img src='" . $imagePath . "' width='40' height='40' /></a>";
 	    else
-	    {
 		$content .= "<a href='?p=detail&table=".$table."&id=".$row["uid"]."'><img src='" . $imagePath . "' width='40' height='40' /></a>";
-	    }
 	}
+	return $content;
+    }
+
+    //Create image gallery items based on result
+    public static function createImageGallery($result, $condition="")
+    {
+	$content = "<div class='highslide-gallery' style='margin-left: 30px;'><ul>";
+	while ($row = db::nextRowFromQuery($result))
+	{
+	    $imagePath = "";
+
+	    $table = $row["table_name"];
+	    switch($table)
+	    {
+		case "screenshot_group":
+		    $imagePath = $row["image"];
+		    break;
+	    }
+	    $content .= "<li><a href='".$imagePath."' class='highslide' onclick='return hs.expand(this, config1 )'><img src='" . $imagePath . "' alt='' width='90' border='0'/></a></li>";
+	}
+	$content .= "</ul><div style='clear:both'></div></div>";
 	return $content;
     }
     
@@ -690,6 +708,8 @@ class content
 	return $content;
     }
     
+    public static $thereis_screenshot = false;
+    
     public static function displayItem($result, $table, $resultNotQuery = false)
     {
     	$content = "";
@@ -987,26 +1007,11 @@ class content
 		$map_version_content = "<table><tr><td>Rev: ".ltrim($row["tag"], "r")."</td>".$vers."</tr></table>";
 		
 		//screenshots
-		$query = "SELECT * FROM screenshot_group WHERE table_name = 'maps' AND table_id = :1 AND user_id = :2 AND image_path NOT LIKE ('%/fullPreview%')";
+		$query = "SELECT image_path AS image, 'screenshot_group' AS table_name FROM screenshot_group WHERE table_name = 'maps' AND table_id = :1 AND user_id = :2 AND image_path NOT LIKE ('%/fullPreview%')";
 		$res_sc = db::executeQuery($query, array($row["uid"], $row["user_id"]));
-		$data = array();
-		while ($row_sc = db::nextRowFromQuery($res_sc))
-		{
-		    array_push($data,"<a href='".$row_sc["image_path"]."' target=_blank><img style='max-width:150px;' src='".$row_sc["image_path"]."'></a>");
-		}
-		if (count($data) > 0)
-		{
-		    $screenshots = "<table><tr>";
-		    $i_sc = 0;
-		    foreach ($data as $value)
-		    {
-			$i_sc++;
-			if ($i_sc == 3)
-			    $screenshots .= "</tr><tr>";
-			$screenshots .= "<td>".$value."</td>";
-		    }
-		    $screenshots .= "</tr></table>";
-		}
+		if (db::num_rows($res_sc) > 0)
+		    content::$thereis_screenshot = true;
+		$screenshots = content::createImageGallery($res_sc);
 	    }
 	    else if($table == "units")
 	    {
@@ -1066,26 +1071,11 @@ class content
 		if (user::uid() == $row["user_id"])
 		    $content .= "<tr><td><a href='?action=manage_screenshots&table=units&id=".$row["uid"]."'>Manage screenshots</a></td></tr>";
 		//screenshots
-		$query = "SELECT * FROM screenshot_group WHERE table_name = 'units' AND table_id = :1 AND user_id = :2";
+		$query = "SELECT image_path AS image, 'screenshot_group' AS table_name FROM screenshot_group WHERE table_name = 'units' AND table_id = :1 AND user_id = :2";
 		$res_sc = db::executeQuery($query, array($row["uid"], $row["user_id"]));
-		$data = array();
-		while ($row_sc = db::nextRowFromQuery($res_sc))
-		{
-		    array_push($data,"<a href='".$row_sc["image_path"]."' target=_blank><img style='max-width:150px;' src='".$row_sc["image_path"]."'></a>");
-		}
-		if (count($data) > 0)
-		{
-		    $screenshots = "<table><tr>";
-		    $i_sc = 0;
-		    foreach ($data as $value)
-		    {
-			$i_sc++;
-			if ($i_sc == 3)
-			    $screenshots .= "</tr><tr>";
-			$screenshots .= "<td>".$value."</td>";
-		    }
-		    $screenshots .= "</tr></table>";
-		}
+		if (db::num_rows($res_sc) > 0)
+		    content::$thereis_screenshot = true;
+		$screenshots = content::createImageGallery($res_sc);
 	    }
 	    else if ($table == "replays")
 	    {
@@ -1491,6 +1481,10 @@ class content
 	elseif ($page == "mail")
 	{
 	    mail::mbox();
+	}
+	elseif ($page == "gallery")
+	{
+	    objects::gallery();
 	}
     }
     
@@ -2324,6 +2318,22 @@ class objects
 	    }
 	    echo $content;
     	}
+    }
+    
+    public static function gallery()
+    {
+	$query = "SELECT 
+		    uid,
+		    image_path AS image,
+		    'screenshot_group' AS table_name
+		FROM screenshot_group
+		ORDER BY RAND()";
+	$result = db::executeQuery($query);
+	if (db::num_rows($result) > 0)
+	{
+	    echo "<h3>Gallery</h3>";
+	    echo content::createImageGallery($result);
+	}
     }
 }
 

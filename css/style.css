@@ -61,7 +61,7 @@ p, dl { margin: 10px 20px; }
 /* images */
 img {
 	background-color: #150e0b;
-   border: 1px solid #261b15;
+	border: 1px solid #261b15;
 	padding: 8px;	
 }
 img.float-right {	margin: 5px 0px 10px 10px; }
@@ -255,7 +255,7 @@ input.button {
 #header #login_form {
 	position: absolute;
 	right: 0px; top: 4px;
-	z-index: 99999;
+	z-index: 1;
 	margin: 1px 2px 1px 10px; 
 	padding: 7px 0px 5px 20px; 
 }
@@ -264,7 +264,7 @@ input.button {
 #header #rss-feed {
 	position: absolute;
 	right: 5px; top: 130px;			
-	z-index: 99999; 
+	z-index: 1; 
 }
 #header #rss-feed a.feed {
 	padding: 0 0 0 30px;
@@ -357,7 +357,7 @@ input.button {
 #header form#quick-search {
 	position: absolute;
 	top: 95px; right: 15px;
-	z-index: 999999;
+	z-index: 1;
 	padding: 0; margin: 0;
 	border: none;
 	width: 222px; height: 32px;
@@ -413,7 +413,7 @@ input.button {
 	height: 98px;
 	top: -1px;
 	right: -2px;
-	z-index: 99999;
+	z-index: 1;
 }
 
 #featured h2 {

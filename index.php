@@ -267,14 +267,26 @@ content::head();
 				    image_path AS image,
 				    'screenshot_group' AS table_name
 				  FROM screenshot_group
-				  ORDER BY RAND() LIMIT 12";
+				  ORDER BY RAND() LIMIT 8";
 			$result = db::executeQuery($query);
 			if (db::num_rows($result) > 0)
 			{
-			    echo "<h3>Gallery</h3>";
-			    echo "<p style='margin-left:5px;' class='thumbs'>";
-			    echo content::createImageGallery($result);
-			    echo "</p>";
+			    // 1 loop iteration
+			    while (1==1)
+			    {
+				// force actions: do not show gallery to not interference with more important content for ImageGallery
+				if (isset($_GET["p"]))
+				    if ($_GET["p"] == "detail")
+				    {
+					if (($_GET["table"] == "maps" or $_GET["table"] == "units") and content::$thereis_screenshot==true)
+					    break;
+				    }
+				    else if ($_GET["p"] == "gallery")
+					break;
+				echo "<h3>Gallery  <a href='?p=gallery' title='show all images'>&gt;&gt;&gt;</a></h3>";
+				echo content::createImageGallery($result);
+				break;
+			    }
 			}
 			
 			?>
