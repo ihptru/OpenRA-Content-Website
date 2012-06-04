@@ -1,4 +1,5 @@
 users/*
+!users/.htaccess
 !.gitignore
 .DS_Store
 log
