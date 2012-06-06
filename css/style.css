@@ -572,6 +572,20 @@ a.more-link-selected {
 	color: #f0e8e8;
 }
 
+.gallery {
+	font-size: 11px;
+	line-height: 20px;
+	text-transform: uppercase;
+}
+.gallery a:link,
+.gallery a:visited {
+	font-weight: bold;
+	color: #F1E3D8;
+}
+.gallery a:hover {
+	color: #fff;
+}
+
 /* sidemenu */
 .sidemenu ul {
 	margin: 10px 8px 8px 8px; padding: 0;

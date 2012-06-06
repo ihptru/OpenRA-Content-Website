@@ -283,8 +283,9 @@ content::head();
 				    }
 				    else if ($_GET["p"] == "gallery")
 					break;
-				echo "<h3>Gallery  <a href='?p=gallery' title='show all images'>&gt;&gt;&gt;</a></h3>";
+				echo "<h3>Gallery</h3>";
 				echo content::createImageGallery($result);
+				echo "<div class='gallery'><a href='?p=gallery' style='float:right;margin-right:40px;'>Show all</a></div>";
 				break;
 			    }
 			}

@@ -2097,7 +2097,6 @@ class objects
 {
     public static function maps()
     {
-	echo "<h3>Maps!</h3>";
 	list($order_by, $request_mod, $type, $request_tileset, $my_items) = content::map_filters();
 	$my = "";
 	$filter_array = array("%".$request_mod."%", "%".$type."%", "%".$request_tileset."%");
@@ -2125,7 +2124,6 @@ class objects
     
     public static function units()
     {
-	echo "<h3>Units!</h3>";
 	list($order_by, $request_type, $my_items) = content::guide_unit_filters("unit");
 	$my = "";
 	$filter_array = array("%".$request_type."%");
@@ -2149,7 +2147,6 @@ class objects
     
     public static function guides()
     {
-	echo "<h3>Guides!</h3>";
 	list($order_by, $request_type, $my_items) = content::guide_unit_filters("guide");
 	$my = "";
 	$filter_array = array("%".$request_type."%");
@@ -2173,8 +2170,6 @@ class objects
     
     public static function replays()
     {
-	echo "<h3>Replays!</h3>";
-	
 	list($order_by, $my_items, $version) = content::replay_filters();
 	    
 	$my = "";
