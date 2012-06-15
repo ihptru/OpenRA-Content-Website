@@ -1006,6 +1006,16 @@ class content
 		    $vers = "<td>This is the only version</td>";
 		else
 		    $vers = "<td><a href='?action=versions&table=maps&id=".$row["uid"]."'>Check other versions</a></td>";
+		if ($row["n_ver"] != 0)
+		{
+		    $q = "CALL map_versions(:1)";
+		    $row_n_ver = db::nextRowFromQuery(db::executeQuery($q, array($row["uid"])));
+		    $list = explode(",", $row_n_ver["list"]);
+		    $list = end($list);
+		    $q = "SELECT uid FROM maps WHERE uid = :1";
+		    $row_n_ver_map = db::nextRowFromQuery(db::executeQuery($q, array($list)));
+		    $vers .= "<td><a href='?p=detail&table=maps&id=".$row_n_ver_map["uid"]."'>Show latest</a></td>";
+		}
 		if ($row["user_id"] == user::uid())
 		    if ($row["n_ver"] == 0)
 			$vers .= "<td><a href='?action=new_version&id=".$row["uid"]."'>Upload new version</a></td>";
