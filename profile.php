@@ -363,15 +363,16 @@ class profile
 	    return;
 	}
 	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
-		<label>Choose a <u>map</u> file to upload (<u>.oramap</u>):</label><br /><br />
-		<span class='file-wrapper'>
+		<table><tr><td></td><td><label>Choose a <u>map</u> file to upload (<u>.oramap</u>):</label></td></tr>
+		<tr><td><span class='file-wrapper'>
 		    <input type='file' name='map_upload' id='enhanced' />
 		    <span class='button'>Choose a file</span>
 		</span><br />
-		</label>
-		<br />
-		<label>Additional info (optional): </label></lable><input type='text' name='additional_desc'><br />
-		<input type='submit' name='submit' value='Upload' />
+		</td></tr>
+		<tr><td><label>Additional info (optional)</label></td><td><input type='text' name='additional_desc'></td></tr>
+		<tr><td><input type='submit' name='submit' value='Upload' /></td></tr>
+		</table>
+		<br /><span style='font-size:10px;'>* All content you upload is free to download for anyone.</span>
 		</form>
 	";
             
@@ -483,6 +484,7 @@ class profile
 		    multi_selector.addElement( document.getElementById( 'my_file_element' ) );
 		</script> -->
 		</td></tr></table>
+		<br /><span style='font-size:10px;'>* All content you upload is free to download for anyone.</span>
 	    </form>
 	";
 
@@ -514,17 +516,19 @@ class profile
 	$can_upload = 50 - (int)$row["count"];
 	echo "<h4>You can upload ".(string)$can_upload." more replays!</h4><br /><p><i>version 2012-0315 and newer only supported</i></p>";
 	echo "<form id='form_class' enctype='multipart/form-data' method='POST' action=''>
-		<label>Choose a <u>replay</u> file to upload (<u>.rep</u>):</label><br /><br />
-		<span class='file-wrapper'>
+		<table><tr>
+		<td></td><td><label>Choose a <u>replay</u> file to upload (<u>.rep</u>):</label></td></tr>
+		<tr><td><span class='file-wrapper'>
 		    <input type='file' name='replay_upload' id='enhanced' />
 		    <span class='button'>Choose a file</span>
-		</span><br />
-		<br />
-		<label>Description: </label></lable><input type='text' name='description'><br />
-		<input type='submit' name='submit' value='Upload' />
+		</span></td></tr>
+		<tr><td><label>Description (optional)</label></td><td><input type='text' name='description'></td></tr>
+		<tr><td><input type='submit' name='submit' value='Upload' /></td></tr>
+		</table>
+		<br /><span style='font-size:10px;'>* All content you upload is free to download for anyone.</span>
 		</form>
 	";
-            
+
 	$username = user::username();
 	$uploaded = upload::upload_replay($username, user::uid());
 	if ($uploaded != "")
