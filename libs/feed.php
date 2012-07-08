@@ -65,16 +65,16 @@ while($row = db::nextRowFromQuery($result))
 	switch($row['table_name'])
 	{
 	    case "maps":
-		$add_info = $row_info['additional_desc'];
+		$add_info = str_replace("'","`",$row_info['additional_desc']);
 		if ($add_info != '')
 		    $add_info = $add_info."&lt;br />";
-		$description = $row_info['description'];
+		$description = str_replace("'","`",$row_info['description']);
 		if ($description != '')
-		    $description = $row_info['description']."&lt;br />";
+		    $description = $description."&lt;br />";
 		$desc .= $description.$add_info."Mod: ".strtoupper($row_info['g_mod'])."&lt;br />Rev: ".ltrim($row_info["tag"], "r");
 		break;
 	    case "guides":
-		$text = $row_info['html_content'];
+		$text = str_replace("'","`",$row_info['html_content']);
 		if (strlen($text) > 500)
 		    $text = substr($text,0,500);
 		$text = str_replace("\\\\\\", "", str_replace("\\r\\n", "", $text));
