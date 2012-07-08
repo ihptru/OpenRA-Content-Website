@@ -1488,7 +1488,10 @@ class content
 		while ($row = db::nextRowFromQuery($result))
 		{
 		    $avatar = misc::avatar($row["uid"]);
-		    array_push($data,"<a href='?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>", date("D M j, Y g:i a", mail::convert_timestamp($row["register_date"])), "<a href='?p=mail&m=compose&to=".$row["uid"]."'>Send a PM</a>");
+		    $sendpm = "<a href='?p=mail&m=compose&to=".$row["uid"]."'>Send a PM</a>";
+		    if ($row["uid"] == user::uid())
+			$sendpm = "It's you!";
+		    array_push($data,"<a href='?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>", date("D M j, Y g:i a", mail::convert_timestamp($row["register_date"])), $sendpm);
 		}
 		echo content::create_dynamic_list($data,4,"members",10,true,true);
 	    }
