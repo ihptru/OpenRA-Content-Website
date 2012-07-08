@@ -37,6 +37,10 @@ class mail
 			echo "</table>";
 			echo "<table><tr><td>".str_replace("\\", "", str_replace('\r\n', "<br />", $row_msg["content"]))."</td></tr></table>";
 			echo "<p><a href='?p=mail&m=compose&to=".$row_msg["from_user_id"]."&title=RE:%20".$row_msg["title"]."' class='more-link-selected'>Reply</a></p>";
+			$q = "SELECT * FROM reported WHERE table_name = 'pm' AND table_id = :1 AND user_id = :2";
+			$rep_result = db::executeQuery($q, array($row_msg["uid"], user::uid()));
+			while ($row_rep = db::nextRowFromQuery($rep_result))
+			    echo "<p><a href='?unreport_msg&table_id=".$row_msg["uid"]."&user_id=".user::uid()."' class='more-link-selected'>Cancel Report</a></p>";
 		    }
 		    break;
 		}
