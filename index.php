@@ -303,6 +303,16 @@ content::head();
 </div>
 
 <!-- footer -->
+<?php
+    $q = "SELECT uid,login,register_date FROM users ORDER BY uid DESC LIMIT 1";
+    $res = db::executeQuery($q);
+    while ($row = db::nextRowFromQuery($res))
+    {
+	$register_date = explode(" ", $row["register_date"]);
+	echo "New user: <a href='?profile=".$row["uid"]."' style='color:#ff0000;'>".$row["login"]."</a> (".$register_date[0].")";
+    }
+?>
+
 <div id="footer">	
 
     <!-- footer-outer -->	
