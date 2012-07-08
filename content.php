@@ -678,6 +678,9 @@ class content
 			    case "articles":
 				$imagePath = "<td><a href='?p=detail&table=articles&id=".$inner_row["uid"]."'><img src='images/article.png'></a></td>";
 				break;
+			    case "pm":
+				$imagePath = "<td><a href='?p=mail&m=inbox&w=".$inner_row["uid"]."'><img src='images/pm.gif'></a></td>";
+				break;
 			}
 		    }
 		    $text = "";
