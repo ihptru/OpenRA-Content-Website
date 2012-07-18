@@ -2031,6 +2031,7 @@ class content
 	echo "<option value='any_mod' ".misc::option_selected("any_mod",$mod).">Any</option>";
 	echo "<option value='ra' ".misc::option_selected("ra",$mod).">RA (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND n_ver = 0", $my_items).")</option>";
 	echo "<option value='cnc' ".misc::option_selected("cnc",$mod).">CNC (".misc::amount_of_items_option("maps", "WHERE g_mod = 'cnc' AND n_ver = 0", $my_items).")</option>";
+	echo "<option value='d2k' ".misc::option_selected("d2k",$mod).">D2K (".misc::amount_of_items_option("maps", "WHERE g_mod = 'd2k' AND n_ver = 0", $my_items).")</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";

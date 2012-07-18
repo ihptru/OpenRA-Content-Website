@@ -174,10 +174,10 @@ if MapMod == "cnc":
         formatOK = 1
     if MapTileset == "winter":
         formatOK = 1
-if MapMod == "":
-    if MapTileset == "snow":
+if MapMod == "d2k":
+    if MapTileset == "arrakis":
         formatOK = 1
-        MapMod = "ra"
+if MapMod == "":
     if MapTileset == "interior":
         formatOK = 1
         MapMod = "ra"
@@ -193,6 +193,15 @@ if MapMod == "":
         else:
             MapMod = "cnc"
         formatOK = 1
+    if MapTileset == "snow":
+        if "gdi" not in MapDefaultRace and "nod" not in MapDefaultRace:
+            MapMod = "ra"
+        else:
+            MapMod = "cnc"
+        formatOK = 1
+    if MapTileset == "arrakis":
+        formatOK = 1
+        MapMod = "d2k"
 
 if formatOK == 0:
     print "Error: Unknown mod"

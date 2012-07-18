@@ -198,6 +198,9 @@ class profile
 	    echo "<option value='allies' ".misc::option_selected("allies",$usr["fav_faction"]).">Allies</option>";
 	    echo "<option value='nod' ".misc::option_selected("nod",$usr["fav_faction"]).">NOD</option>";
 	    echo "<option value='gdi' ".misc::option_selected("gdi",$usr["fav_faction"]).">GDI</option>";
+	    echo "<option value='atreides' ".misc::option_selected("atreides",$usr["fav_faction"]).">Atreides</option>";
+	    echo "<option value='harkonnen' ".misc::option_selected("harkonnen",$usr["fav_faction"]).">Harkonnen</option>";
+	    echo "<option value='ordos' ".misc::option_selected("ordos",$usr["fav_faction"]).">Ordos</option>";
 
 	    echo "</select><br />";
 	    
