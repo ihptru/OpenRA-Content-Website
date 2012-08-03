@@ -108,14 +108,6 @@ content::head();
 			) AS last_items WHERE table_id <> 0 GROUP BY table_id HAVING (MAX(liked)) ORDER BY RAND() LIMIT 1
 		    ) AS result_table
 		UNION ALL
-		-- mostly played maps
-		SELECT
-		    'maps' AS table_name,
-		    uid AS table_id,
-		    'played' AS type
-		FROM maps
-		    WHERE maphash = (SELECT map_hash FROM map_stats HAVING MAX(amount_games))
-		UNION ALL
 		-- most discussed
 		SELECT
 		    table_name,

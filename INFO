@@ -18,7 +18,7 @@ python/bmp.py		:	0777
 # requires:
 #          python2
 #          python-mysqldb lib
-#          mono (2.10.6)
+#          mono (2.10.6) (for full size preview)
 #          libmono-corlib1.0-cil
 #          libgdiplus
 #          pdo-mysql binding for php5
