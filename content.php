@@ -988,13 +988,7 @@ class content
 	    if($table == "maps")
 	    {
 		$content .= "<tr><td><table style='padding:auto;margin:auto;'><tr><td>author: ".$row["author"]."</td><td>size: ".$row["width"]."x".$row["height"]."</td><td>tileset: ".$row["tileset"]."</td><td>type: ".$row["type"]."</td></tr></table></td></tr>";
-		$players = "";
-		$res_p = db::executeQuery("SELECT * FROM map_stats WHERE map_hash = :1", array($row["maphash"]));
-		while ($res_p_r = db::nextRowFromQuery($res_p))
-		{
-		    $players = "; mostly played with ".round($res_p_r["avg_players"])." players";
-		}
-		$content .= "<tr><td>".$row["players"]." players map".$players."</td></tr>";
+		$content .= "<tr><td>".$row["players"]." players map</td></tr>";
 		$mapfile = explode("-", basename($row["path"]), 3);
 		$mapfile = $mapfile[2] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
@@ -1493,7 +1487,7 @@ class content
 		    $avatar = misc::avatar($row["uid"]);
 		    $sendpm = "<a href='?p=mail&m=compose&to=".$row["uid"]."'>Send a PM</a>";
 		    if ($row["uid"] == user::uid())
-			$sendpm = "It's you!";
+			$sendpm = "This is you!";
 		    array_push($data,"<a href='?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>", date("D M j, Y g:i a", mail::convert_timestamp($row["register_date"])), $sendpm);
 		}
 		echo content::create_dynamic_list($data,4,"members",10,true,true);
