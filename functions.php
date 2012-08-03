@@ -21,7 +21,7 @@ class upload
 		{
 		    return "Not supported file type";	// that's not a map file (map file must have `oramap` extention)
 		}
-		exec("python python/maps.py -s " . str_replace(" ", "\ ", $source) . " -i " . $user_id . " -u " . $username . " -t " . str_replace(" ", "\ ", $filename) . " -p " . $pre_version, $output, $return_code);
+		exec("python python/minimap.py -s " . str_replace(" ", "\ ", $source) . " -i " . $user_id . " -u " . $username . " -t " . str_replace(" ", "\ ", $filename) . " -p " . $pre_version, $output, $return_code);
 		function code_match($code)
 		{
 		    $codes = array(

@@ -9,11 +9,11 @@ class mail
 	if (!isset($_GET["m"]))
 	    return;
 	echo "<div style='margin-top:-33px;margin-left:-29px;'>";
-	echo "<p><a href='?p=mail&m=inbox' class='".mail::current_menu("inbox")."' style='width: 82px; text-align:center;'>Inbox</a></p>";
+	echo "<p><a href='?p=mail&m=inbox' class='".mail::current_menu("inbox")."' style='margin-left:-1px; width: 106px; text-align:center;'>Inbox</a></p>";
 	echo "<p><a href='?p=mail&m=sent' class='".mail::current_menu("sent")."'>Sent messages</a></p>";
 	echo "<p><a href='?p=mail&m=compose' class='".mail::current_menu("compose")."'>Compose message</a></p>";
 	echo "<p><a href='?p=mail&m=find_member' class='".mail::current_menu("find_member")."'>Find a member</a></p>";
-	echo "<p><a href='?p=mail&m=find_message' class='".mail::current_menu("find_message")."'>Find a message</a></p>";
+	echo "<p><a href='?p=mail&m=find_message' class='".mail::current_menu("find_message")."' style='width:auto;'>Find a message</a></p>";
 	echo "</div>";
 	
 	switch($_GET["m"])
