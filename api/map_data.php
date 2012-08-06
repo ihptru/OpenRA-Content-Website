@@ -23,7 +23,20 @@ function map_data($result)
 	$query = "SELECT * FROM reported WHERE table_name = 'maps' AND table_id = :1";
 	$result = db::executeQuery($query, array($row['uid']));
 	if (db::num_rows($result) >= $rest)
-	    break;	// this map is reported
+	    break;	// this map is reported (by required amount of users)
+	$ok = true;
+	while ($row_reported = db::nextRowFromQuery($result))
+	{
+	    $q = "SELECT permission FROM users WHERE uid = :1";
+	    $result_perm = db::executeQuery($q, array($row_reported["user_id"]));
+	    while ($row_perm = db::nextRowFromQuery($result_perm))
+	    {
+		if ($row_perm["permission"] == "1")
+		    $ok = false;	// it's admin
+	    }
+	}
+	if (!$ok)
+	    break;
 	$map_result = array();
 	$map_result['id'] = $row['uid'];
 	$map_result['title'] = $row['title'];
