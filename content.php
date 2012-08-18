@@ -2010,6 +2010,7 @@ class content
 	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">title</option>";
 	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">title in reverse order</option>";
 	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">lately commented</option>";
+	echo "<option value='players' ".misc::option_selected("players",$sort_by).">players</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
@@ -2086,6 +2087,8 @@ class content
 	    $order_by = "title DESC";
 	elseif ($sort_by == "lately_commented")
 	    $order_by = $sort_by;
+	elseif ($sort_by == "players")
+	    $order_by = "players DESC";
 	//mod
 	if ($mod == "any_mod")
 	    $request_mod = "";
