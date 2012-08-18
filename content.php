@@ -1384,7 +1384,7 @@ class content
 		}
 		$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
 		if ($header)
-		    $nrOfPages = floor(($total-0.01) / ($maxItemsPerPage+$columns)) + 1;
+		    $nrOfPages = floor(($total-1-0.01) / $maxItemsPerPage) + 1;
 		$content .= "</table>";
 		$gets = "";
 		$pages = "<table><tr><td>";
