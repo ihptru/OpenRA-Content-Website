@@ -1195,7 +1195,7 @@ class content
 		case "comment":
 		    $desc = " commented <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    if (!misc::item_exists($row["table_id"], $row["table_name"]))
-			$desc = " commented".rtrim($row["table_name"],'s')." which no longer exists";
+			$desc = " commented ".rtrim($row["table_name"],'s')." which no longer exists";
 		    break;
 		case "login":
 		    $desc = " logged in";
