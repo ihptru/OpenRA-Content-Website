@@ -234,14 +234,36 @@ input.button {
 }
 #header h1#logo-text { margin: 0; padding: 0; }
 #header h1#logo-text a {
-	position: absolute; 	
+	position: absolute;
 	/* change the values of top and left to adjust the position */
 	top: 68px; left: 30px;	
 	margin: 0; padding: 0 5px 0 0;
-	font: bold 48px 'Trebuchet MS', 'Helvetica Neue', Arial, Sans-Serif;  
+	font: bold 48px 'Trebuchet MS', 'Helvetica Neue', Arial, Sans-Serif;
 	letter-spacing: -3px;
-	text-decoration: none;	
-	color: #fff;		
+	text-decoration: none;
+	color: #fff;
+}
+#header p#ingame {
+	position:absolute;
+	top:61px; left: 470px;
+	margin:0; padding: 0px 10px 0px 10px;
+	font: 16px Orbitron, Sans-Serif;
+	letter-spacing: 2px;
+	text-decoration: none;
+	color: #999;
+	border: 0;
+	background: #000;
+	text-align:center;
+}
+#header p#ingame_head {
+	position:absolute;
+	top:41px; left: 499px;
+	margin:0;padding: 0;
+	font: 13 'Helvetica Neue', Sans-Serif;
+	letter-spacing: 2px;
+	text-decoration:none;
+	color: #999;
+	background: transparent;
 }
 #header p#slogan {
 	position: absolute;

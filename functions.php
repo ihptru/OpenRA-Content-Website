@@ -764,6 +764,30 @@ class misc
 	    return false;
 	}
     }
+    
+    public static function ingame_players()
+    {
+	$ra = 0;
+	$cnc = 0;
+	$d2k = 0;
+	
+	$string = file_get_contents("http://master.open-ra.org/list_json.php");
+	$json = json_decode($string, true);
+	$json_len = count($json);
+	
+	for ($i=0;$i<$json_len;$i++)
+	{
+	    $mod = explode("@",$json[$i]["mods"]);
+	    
+	    if (strtolower($mod[0]) == "ra")
+		$ra = $ra + (int)$json[$i]["players"];
+	    else if (strtolower($mod[0]) == "cnc")
+		$cnc = $cnc + (int)$json[$i]["players"];
+	    else if (strtolower($mod[0]) == "d2k")
+		$d2k = $d2k + (int)$json[$i]["players"];
+	}
+	return array($ra,$cnc,$d2k);
+    }
 }
 
 ?>

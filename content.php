@@ -84,10 +84,11 @@ class content
 		
     public static function body_head()
     {
+	list($ra,$cnc,$d2k) = misc::ingame_players();
 	echo "
 	    <div id='header'>
 		<a name='top'></a>
-		<h1 id='logo-text'><a href='/' title=''>OpenRA - Resources</a></h1>
+		<h1 id='logo-text'><a href='/' title=''>OpenRA - Resources</a></h1><p id='ingame_head'>PLAYERS ONLINE</p><p id='ingame'><table style='margin-top:-1px;margin-bottom: -1px;font: 10px Orbitron;'><tr><td><img src='images/flag-soviet.png' style='border: 0px solid #261b15; padding: 1px 0 1px 0;' border=0 /></td><td>RA</td><td>".$ra."</td></tr><tr><td><img src='images/flag-gdi.png' style='border: 0px solid #261b15; padding: 1px 0 1px 0;' border=0 /></td><td>CNC</td><td>".$cnc."</td></tr><tr><td><img src='images/flag-atreides.png' style='border: 0px solid #261b15; padding: 0 0 1px 0; width: 30px; height:15px;' border=0 /></td><td>D2k</td><td>".$d2k."</td></tr></table></p>
 		<p id='slogan'>Advanced Communications Center</p>
 		<p id='rss-feed'><a href='libs/feed.php' class='feed'>News Feed</a></p>
 		<div id='nav'>
