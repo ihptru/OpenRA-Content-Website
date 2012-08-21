@@ -168,7 +168,7 @@ class content
 		else
 		    $s = "s";
 		$pm_title = "title='".db::num_rows($res)." new message".$s."'";
-		$pm_notify = "<span style='padding: 30px 15px 17px 11px;float:right;color:#ff0000;'>".db::num_rows($res)." new message".$s." -></span>";
+		$pm_notify = "<span style='padding: 23px 0px 17px 11px;float:right;color:#ff0000;'>".db::num_rows($res)." new message".$s." -></span>";
 	    }
 	    echo "<li style='float:right;' id='"; echo pages::current('mail', $request); echo"'><a href='?p=mail&m=inbox' ".$pm_title.">pm</a></li>".$pm_notify;
 	}
