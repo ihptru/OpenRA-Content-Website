@@ -55,6 +55,7 @@ class upload
 		    if (isset($_POST["additional_desc"]))
 			db::executeQuery("UPDATE maps SET additional_desc = :1 WHERE user_id = :2 AND maphash = :3", array($_POST["additional_desc"], $user_id, trim($row["maphash"])));
 		}
+		//print_r($output); //logging on
 		return code_match($return_code);
 	    }
 	    else
