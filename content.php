@@ -989,6 +989,7 @@ class content
 	    if($table == "maps")
 	    {
 		$content .= "<tr><td><table style='padding:auto;margin:auto;'><tr><td>author: ".$row["author"]."</td><td>size: ".$row["width"]."x".$row["height"]."</td><td>tileset: ".$row["tileset"]."</td><td>type: ".$row["type"]."</td></tr></table></td></tr>";
+		$content .= "<tr><td>Hash: ".$row["maphash"]."</td></tr>";
 		$content .= "<tr><td>".$row["players"]." players map</td></tr>";
 		$mapfile = explode("-", basename($row["path"]), 3);
 		$mapfile = $mapfile[2] . ".oramap";
