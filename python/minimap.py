@@ -211,8 +211,8 @@ except:
     exit(7)
 cur.close()
 
+print "Generating full size preview..."
 if MapMod == "ra":
-    print "Generating full size preview..."
     os.system('mono '+WEBSITE_PATH+'mono/ImageMapGenerator/bin/Debug/ImageMapGenerator.exe -filename="'+mapfile_full_path+'"')
 
 print("Map's hash: "+hash)
