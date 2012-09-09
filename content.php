@@ -659,6 +659,7 @@ class content
 		case "reported":
 		    $title = "";
 		    $subtitle = "<i>reported on ".$row["posted"]."</i><br />";
+		    $text = "Reason: ".$row["reason"];
 		    $inner_result = db::executeQuery("SELECT * FROM ".$row["table_name"]." WHERE uid = :1", array($row["table_id"]));
 		    while ($inner_row = db::nextRowFromQuery($inner_result))
 		    {
@@ -684,7 +685,6 @@ class content
 				break;
 			}
 		    }
-		    $text = "";
 		    break;
 	    }
 	    
