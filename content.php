@@ -1283,7 +1283,7 @@ class content
 	    $content .= "</div>";
 
 	    $content .= "<div class='comment-text'>";
-	    $content .= "<p>" . stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))) . "</p>";
+	    $content .= "<p>" . preg_replace("#(https?|ftp)://\S+[^\s.,> )\];'\"!?]#", '<a href="\\0" target=_blank>\\0</a>', stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"]))))) . "</p>";
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; // << need correct page
 	    $content .= "</div>";
