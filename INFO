@@ -10,6 +10,9 @@ python/bmp.py		:	0777
 # set webserver user as owner for files:
 	.htaccess
 	users/.htaccess
+# mod_rewrite rule on apache server (for map's api):
+	RewriteEngine on
+	RewriteRule ^map/(.*)$ api/map_data.php?load=$1&direct
 
 #cron:
 10	1	* * *	username	php /path/to/site/clearDB.php

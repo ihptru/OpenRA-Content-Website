@@ -80,8 +80,10 @@ function map_link($result)
 	    echo $data;
 	    return;
 	}
+	print(json_encode($json_result_array));
+	return;
     }
-    print(json_encode($json_result_array));
+    header("HTTP/1.1 404 Not Found");
     return;
 }
 
