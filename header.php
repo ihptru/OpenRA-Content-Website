@@ -451,6 +451,16 @@ class header
 		}
 	    }
 	}
+	else if (isset($_GET["unreport_msg"]) and isset($_GET["table_id"]) and isset($_GET["user_id"]))
+	{
+	    if (user::uid() == $_GET["user_id"])
+	    {
+		$id = $_GET["table_id"];
+		$q = "DELETE FROM reported WHERE table_name = 'pm' AND table_id = :1";
+		db::executeQuery($q, array($id));
+		header("Location: /?p=mail&m=inbox&w=$id");
+	    }
+	}
     }
     
     public static function upload_redirect()

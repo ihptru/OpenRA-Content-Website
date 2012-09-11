@@ -84,10 +84,11 @@ class content
 		
     public static function body_head()
     {
+	list($ra,$cnc,$d2k) = misc::ingame_players();
 	echo "
 	    <div id='header'>
 		<a name='top'></a>
-		<h1 id='logo-text'><a href='/' title=''>OpenRA - Resources</a></h1>
+		<h1 id='logo-text'><a href='/' title=''>OpenRA - Resources</a></h1><p id='ingame_head'>PLAYERS ONLINE</p><p id='ingame'><table style='margin-top:-1px;margin-bottom: -1px;font: 10px Orbitron;'><tr><td><img src='images/flag-soviet.png' style='border: 0px solid #261b15; padding: 1px 0 1px 0;' border=0 /></td><td>RA</td><td>".$ra."</td></tr><tr><td><img src='images/flag-gdi.png' style='border: 0px solid #261b15; padding: 1px 0 1px 0;' border=0 /></td><td>CNC</td><td>".$cnc."</td></tr><tr><td><img src='images/flag-atreides.png' style='border: 0px solid #261b15; padding: 0 0 1px 0; width: 30px; height:15px;' border=0 /></td><td>D2k</td><td>".$d2k."</td></tr></table></p>
 		<p id='slogan'>Advanced Communications Center</p>
 		<p id='rss-feed'><a href='libs/feed.php' class='feed'>News Feed</a></p>
 		<div id='nav'>
@@ -167,7 +168,7 @@ class content
 		else
 		    $s = "s";
 		$pm_title = "title='".db::num_rows($res)." new message".$s."'";
-		$pm_notify = "<span style='padding: 30px 15px 17px 11px;float:right;color:#ff0000;'>".db::num_rows($res)." new message".$s." -></span>";
+		$pm_notify = "<span style='padding: 23px 0px 17px 11px;float:right;color:#ff0000;'>".db::num_rows($res)." new message".$s." -></span>";
 	    }
 	    echo "<li style='float:right;' id='"; echo pages::current('mail', $request); echo"'><a href='?p=mail&m=inbox' ".$pm_title.">pm</a></li>".$pm_notify;
 	}
@@ -658,6 +659,7 @@ class content
 		case "reported":
 		    $title = "";
 		    $subtitle = "<i>reported on ".$row["posted"]."</i><br />";
+		    $text = "Reason: ".$row["reason"];
 		    $inner_result = db::executeQuery("SELECT * FROM ".$row["table_name"]." WHERE uid = :1", array($row["table_id"]));
 		    while ($inner_row = db::nextRowFromQuery($inner_result))
 		    {
@@ -678,9 +680,11 @@ class content
 			    case "articles":
 				$imagePath = "<td><a href='?p=detail&table=articles&id=".$inner_row["uid"]."'><img src='images/article.png'></a></td>";
 				break;
+			    case "pm":
+				$imagePath = "<td><a href='?p=mail&m=inbox&w=".$inner_row["uid"]."'><img src='images/pm.gif'></a></td>";
+				break;
 			}
 		    }
-		    $text = "";
 		    break;
 	    }
 	    
@@ -985,13 +989,8 @@ class content
 	    if($table == "maps")
 	    {
 		$content .= "<tr><td><table style='padding:auto;margin:auto;'><tr><td>author: ".$row["author"]."</td><td>size: ".$row["width"]."x".$row["height"]."</td><td>tileset: ".$row["tileset"]."</td><td>type: ".$row["type"]."</td></tr></table></td></tr>";
-		$players = "";
-		$res_p = db::executeQuery("SELECT * FROM map_stats WHERE map_hash = :1", array($row["maphash"]));
-		while ($res_p_r = db::nextRowFromQuery($res_p))
-		{
-		    $players = "; mostly played with ".round($res_p_r["avg_players"])." players";
-		}
-		$content .= "<tr><td>".$row["players"]." players map".$players."</td></tr>";
+		$content .= "<tr><td>Hash: ".$row["maphash"]."</td></tr>";
+		$content .= "<tr><td>".$row["players"]." players map</td></tr>";
 		$mapfile = explode("-", basename($row["path"]), 3);
 		$mapfile = $mapfile[2] . ".oramap";
 	     	$download = $row["path"] . $mapfile;
@@ -1198,7 +1197,7 @@ class content
 		case "comment":
 		    $desc = " commented <a href='?p=detail&table=".$row["table_name"]."&id=".$row["table_id"]."'>".rtrim($row["table_name"],'s')."</a>";
 		    if (!misc::item_exists($row["table_id"], $row["table_name"]))
-			$desc = " commented".rtrim($row["table_name"],'s')." which no longer exists";
+			$desc = " commented ".rtrim($row["table_name"],'s')." which no longer exists";
 		    break;
 		case "login":
 		    $desc = " logged in";
@@ -1284,7 +1283,7 @@ class content
 	    $content .= "</div>";
 
 	    $content .= "<div class='comment-text'>";
-	    $content .= "<p>" . stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"])))) . "</p>";
+	    $content .= "<p>" . preg_replace("#(https?|ftp)://\S+[^\s.,> )\];'\"!?]#", '<a href="\\0" target=_blank>\\0</a>', stripslashes(stripslashes(str_replace('\r\n', "<br />", strip_tags($comment["content"]))))) . "</p>";
 	    $content .= "<div class='reply'>";
 	    //$content .= "<a rel='nofollow' class='comment-reply-link' href='index.html'>Reply</a>"; // << need correct page
 	    $content .= "</div>";
@@ -1387,7 +1386,7 @@ class content
 		}
 		$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
 		if ($header)
-		    $nrOfPages = floor(($total-0.01) / ($maxItemsPerPage+$columns)) + 1;
+		    $nrOfPages = floor(($total-1-0.01) / $maxItemsPerPage) + 1;
 		$content .= "</table>";
 		$gets = "";
 		$pages = "<table><tr><td>";
@@ -1418,7 +1417,7 @@ class content
     {
 	$content = '<div id="footer-outer" class="clear"><div id="footer-wrap">';
 	$content .= '<div id="footer-bottom">';
-	$content .= '<div style="float:left;"><img src="favicon.ico" style="position:absolute;width:16px;padding:0;margin:0;border:0;"/><strong><a style="padding-left:20px;" href="http://open-ra.org" target="_blank">OpenRA Official Website <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></strong> |<a href="http://logs.open-ra.org" target="_blank">IRC logs/stats <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://www.sleipnirstuff.com/forum/viewforum.php?f=80" target="_blank">Forums <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="https://github.com/Holloweye/OpenRA-Content-Website/issues" target="_blank">This site\'s issue tracker <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></div>';
+	$content .= '<div style="float:left;"><img src="favicon.ico" style="position:absolute;width:16px;padding:0;margin:0;border:0;"/><strong><a style="padding-left:20px;" href="http://open-ra.org" target="_blank">OpenRA Official Website <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></strong> |<a href="http://logs.open-ra.org" target="_blank">IRC logs/stats <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://www.sleipnirstuff.com/forum/viewforum.php?f=80" target="_blank">Forums <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="https://github.com/ihptru/OpenRA-Content-Website/issues" target="_blank">This site\'s issue tracker <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></div>';
 	$content .= '<strong><a href="?p=members">Members</a></strong> |';
 	$content .= '<a href="/">Home</a> |';
 	$content .= '<strong><a href="#top" class="back-to-top">Back to Top</a></strong>';
@@ -1488,7 +1487,10 @@ class content
 		while ($row = db::nextRowFromQuery($result))
 		{
 		    $avatar = misc::avatar($row["uid"]);
-		    array_push($data,"<a href='?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>", date("D M j, Y g:i a", mail::convert_timestamp($row["register_date"])), "<a href='?p=mail&m=compose&to=".$row["uid"]."'>Send a PM</a>");
+		    $sendpm = "<a href='?p=mail&m=compose&to=".$row["uid"]."'>Send a PM</a>";
+		    if ($row["uid"] == user::uid())
+			$sendpm = "This is you!";
+		    array_push($data,"<a href='?profile=".$row["uid"]."'><img src='".$avatar."' style='max-width:50px;'></a>","<a href='?profile=".$row["uid"]."'>".$row["login"]."</a>", date("D M j, Y g:i a", mail::convert_timestamp($row["register_date"])), $sendpm);
 		}
 		echo content::create_dynamic_list($data,4,"members",10,true,true);
 	    }
@@ -2010,6 +2012,7 @@ class content
 	echo "<option value='alpha' ".misc::option_selected("alpha",$sort_by).">title</option>";
 	echo "<option value='alpha_reverse' ".misc::option_selected("alpha_reverse",$sort_by).">title in reverse order</option>";
 	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">lately commented</option>";
+	echo "<option value='players' ".misc::option_selected("players",$sort_by).">players</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
@@ -2025,6 +2028,7 @@ class content
 	echo "<option value='any_mod' ".misc::option_selected("any_mod",$mod).">Any</option>";
 	echo "<option value='ra' ".misc::option_selected("ra",$mod).">RA (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND n_ver = 0", $my_items).")</option>";
 	echo "<option value='cnc' ".misc::option_selected("cnc",$mod).">CNC (".misc::amount_of_items_option("maps", "WHERE g_mod = 'cnc' AND n_ver = 0", $my_items).")</option>";
+	echo "<option value='d2k' ".misc::option_selected("d2k",$mod).">D2K (".misc::amount_of_items_option("maps", "WHERE g_mod = 'd2k' AND n_ver = 0", $my_items).")</option>";
     	echo "</select><br />";
 	echo "</td>";
 	echo "<td>";
@@ -2085,6 +2089,8 @@ class content
 	    $order_by = "title DESC";
 	elseif ($sort_by == "lately_commented")
 	    $order_by = $sort_by;
+	elseif ($sort_by == "players")
+	    $order_by = "players DESC";
 	//mod
 	if ($mod == "any_mod")
 	    $request_mod = "";

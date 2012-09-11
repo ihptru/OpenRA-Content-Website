@@ -54,7 +54,7 @@ while($row = db::nextRowFromQuery($result))
     $content .= "<item>";
     $content .= "<guid isPermaLink='false'>http://content.open-ra.org/?p=detail&amp;table=".$row['table_name']."&amp;id=".$row['table_id']."</guid>";
     $content .= "<title>";
-    $content .= "New ".ucfirst(rtrim($row["table_name"],'s')).": ".misc::item_title_by_uid($row['table_id'], $row['table_name']);
+    $content .= "New ".ucfirst(rtrim($row["table_name"],'s')).": ".str_replace("&","&amp;",misc::item_title_by_uid($row['table_id'], $row['table_name']));
     $content .= "</title>";
     $content .= "<link>http://content.open-ra.org/?p=detail&amp;table=".$row['table_name']."&amp;id=".$row['table_id']."</link>";
     $content .= "<description>";
@@ -65,23 +65,23 @@ while($row = db::nextRowFromQuery($result))
 	switch($row['table_name'])
 	{
 	    case "maps":
-		$add_info = $row_info['additional_desc'];
+		$add_info = str_replace("&","&amp;",str_replace("'","`",$row_info['additional_desc']));
 		if ($add_info != '')
 		    $add_info = $add_info."&lt;br />";
-		$description = $row_info['description'];
+		$description = str_replace("&","&amp;",str_replace("'","`",$row_info['description']));
 		if ($description != '')
-		    $description = $row_info['description']."&lt;br />";
+		    $description = $description."&lt;br />";
 		$desc .= $description.$add_info."Mod: ".strtoupper($row_info['g_mod'])."&lt;br />Rev: ".ltrim($row_info["tag"], "r");
 		break;
 	    case "guides":
-		$text = $row_info['html_content'];
+		$text = str_replace("&","&amp;",str_replace("'","`",$row_info['html_content']));
 		if (strlen($text) > 500)
 		    $text = substr($text,0,500);
 		$text = str_replace("\\\\\\", "", str_replace("\\r\\n", "", $text));
 		$desc .= $text."&lt;br />Type: ".$row_info['guide_type'];
 		break;
 	    case "units":
-		$desc .= $row_info['description']."&lt;br />Type: ".$row_info['type'];
+		$desc .= str_replace("&","&amp;",$row_info['description'])."&lt;br />Type: ".$row_info['type'];
 		break;
 	    case "replays":
 		$query = "SELECT * FROM replay_players WHERE id_replays = :1 ORDER BY team";
@@ -89,11 +89,11 @@ while($row = db::nextRowFromQuery($result))
 		$players = "";
 		while ($inner_row = db::nextRowFromQuery($res_players))
 		{
-		    $players .= $inner_row["name"] . ", ";
+		    $players .= str_replace("&","&amp;",$inner_row["name"]) . ", ";
 		}
 		if ($players != "")
 		    $players = "Players: ".rtrim($players,", ");
-		$desc .= "Version: ".$row_info["version"]."&lt;br />Mods: ".$row_info["mods"]."&lt;br />Server name: ".$row_info["server_name"]."&lt;br />".$players;
+		$desc .= "Version: ".$row_info["version"]."&lt;br />Mods: ".$row_info["mods"]."&lt;br />Server name: ".str_replace("&","&amp;",$row_info["server_name"])."&lt;br />".$players;
 		break;
 	}
     }
