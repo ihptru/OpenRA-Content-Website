@@ -108,14 +108,6 @@ content::head();
 			) AS last_items WHERE table_id <> 0 GROUP BY table_id HAVING (MAX(liked)) ORDER BY RAND() LIMIT 1
 		    ) AS result_table
 		UNION ALL
-		-- mostly played maps
-		SELECT
-		    'maps' AS table_name,
-		    uid AS table_id,
-		    'played' AS type
-		FROM maps
-		    WHERE maphash = (SELECT map_hash FROM map_stats HAVING MAX(amount_games))
-		UNION ALL
 		-- most discussed
 		SELECT
 		    table_name,
@@ -303,6 +295,16 @@ content::head();
 </div>
 
 <!-- footer -->
+<?php
+    $q = "SELECT uid,login,register_date FROM users ORDER BY uid DESC LIMIT 1";
+    $res = db::executeQuery($q);
+    while ($row = db::nextRowFromQuery($res))
+    {
+	$register_date = explode(" ", $row["register_date"]);
+	echo "New user: <a href='?profile=".$row["uid"]."' style='color:#ff0000;'>".$row["login"]."</a> (".$register_date[0].")";
+    }
+?>
+
 <div id="footer">	
 
     <!-- footer-outer -->	

@@ -21,7 +21,7 @@ class upload
 		{
 		    return "Not supported file type";	// that's not a map file (map file must have `oramap` extention)
 		}
-		exec("python python/maps.py -s " . str_replace(" ", "\ ", $source) . " -i " . $user_id . " -u " . $username . " -t " . str_replace(" ", "\ ", $filename) . " -p " . $pre_version, $output, $return_code);
+		exec("python python/minimap.py -s " . str_replace(" ", "\ ", $source) . " -i " . $user_id . " -u " . $username . " -t " . str_replace(" ", "\ ", $filename) . " -p " . $pre_version, $output, $return_code);
 		function code_match($code)
 		{
 		    $codes = array(
@@ -55,6 +55,7 @@ class upload
 		    if (isset($_POST["additional_desc"]))
 			db::executeQuery("UPDATE maps SET additional_desc = :1 WHERE user_id = :2 AND maphash = :3", array($_POST["additional_desc"], $user_id, trim($row["maphash"])));
 		}
+		//print_r($output); //logging on
 		return code_match($return_code);
 	    }
 	    else
@@ -763,6 +764,30 @@ class misc
 	{
 	    return false;
 	}
+    }
+    
+    public static function ingame_players()
+    {
+	$ra = 0;
+	$cnc = 0;
+	$d2k = 0;
+	
+	$string = file_get_contents("http://master.open-ra.org/list_json.php");
+	$json = json_decode($string, true);
+	$json_len = count($json);
+	
+	for ($i=0;$i<$json_len;$i++)
+	{
+	    $mod = explode("@",$json[$i]["mods"]);
+	    
+	    if (strtolower($mod[0]) == "ra")
+		$ra = $ra + (int)$json[$i]["players"];
+	    else if (strtolower($mod[0]) == "cnc")
+		$cnc = $cnc + (int)$json[$i]["players"];
+	    else if (strtolower($mod[0]) == "d2k")
+		$d2k = $d2k + (int)$json[$i]["players"];
+	}
+	return array($ra,$cnc,$d2k);
     }
 }
 

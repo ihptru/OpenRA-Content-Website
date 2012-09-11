@@ -9,11 +9,11 @@ class mail
 	if (!isset($_GET["m"]))
 	    return;
 	echo "<div style='margin-top:-33px;margin-left:-29px;'>";
-	echo "<p><a href='?p=mail&m=inbox' class='".mail::current_menu("inbox")."' style='width: 82px; text-align:center;'>Inbox</a></p>";
+	echo "<p><a href='?p=mail&m=inbox' class='".mail::current_menu("inbox")."' style='margin-left:-1px; width: 106px; text-align:center;'>Inbox</a></p>";
 	echo "<p><a href='?p=mail&m=sent' class='".mail::current_menu("sent")."'>Sent messages</a></p>";
 	echo "<p><a href='?p=mail&m=compose' class='".mail::current_menu("compose")."'>Compose message</a></p>";
 	echo "<p><a href='?p=mail&m=find_member' class='".mail::current_menu("find_member")."'>Find a member</a></p>";
-	echo "<p><a href='?p=mail&m=find_message' class='".mail::current_menu("find_message")."'>Find a message</a></p>";
+	echo "<p><a href='?p=mail&m=find_message' class='".mail::current_menu("find_message")."' style='width:auto;'>Find a message</a></p>";
 	echo "</div>";
 	
 	switch($_GET["m"])
@@ -37,6 +37,10 @@ class mail
 			echo "</table>";
 			echo "<table><tr><td>".str_replace("\\", "", str_replace('\r\n', "<br />", $row_msg["content"]))."</td></tr></table>";
 			echo "<p><a href='?p=mail&m=compose&to=".$row_msg["from_user_id"]."&title=RE:%20".$row_msg["title"]."' class='more-link-selected'>Reply</a></p>";
+			$q = "SELECT * FROM reported WHERE table_name = 'pm' AND table_id = :1 AND user_id = :2";
+			$rep_result = db::executeQuery($q, array($row_msg["uid"], user::uid()));
+			while ($row_rep = db::nextRowFromQuery($rep_result))
+			    echo "<p><a href='?unreport_msg&table_id=".$row_msg["uid"]."&user_id=".user::uid()."' class='more-link-selected'>Cancel Report</a></p>";
 		    }
 		    break;
 		}

@@ -1,3 +1,5 @@
+edit "settings.php" and "python/config.py"
+
 permissions:
 
 users/		:		0777
@@ -10,6 +12,9 @@ python/bmp.py		:	0777
 # set webserver user as owner for files:
 	.htaccess
 	users/.htaccess
+# virtualhost: mod_rewrite rule on apache server (for map's api):
+	RewriteEngine on
+	RewriteRule ^map/(.*)$ api/map_data.php?load=$1&direct
 
 #cron:
 10	1	* * *	username	php /path/to/site/clearDB.php
@@ -18,11 +23,12 @@ python/bmp.py		:	0777
 # requires:
 #          python2
 #          python-mysqldb lib
-#          mono (2.10.6)
+#          mono (2.10.6) (for full size preview)
 #          libmono-corlib1.0-cil
 #          libgdiplus
 #          pdo-mysql binding for php5
 #          OpenRA Engine (or at least OpenRA.Utility)
 #          python2 module: PIL (Python Imaging Library)
+#          php5-gd (image library)
 
 webserver user must have .openra directory in it's home and have owner rights to it (for OpenRA.Utility)
