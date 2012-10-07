@@ -256,11 +256,31 @@ class content
     }
 
     //Create image gallery items based on result
-    public static function createImageGallery($result, $condition="")
+    public static function createImageGallery($result, $condition="", $opt="gallery", $current_id=0, $columns=5, $rows=5)
     {
+	$counter = 0;
+	$columns--;
+	$maxItemsPerPage = ($columns+1) * $rows;
+	$pointer = "#".$opt;
+	$content = "<a name='".$opt."'></a><table>";
+	$total = db::num_rows($result);
+	$i = 0;
+	if(isset($_GET["current_grid_page_".$opt]))
+	    $current = $_GET["current_grid_page_".$opt];
+	else
+	    $current = 1;
+	if (db::num_rows($result) == 0)
+	    return "";
 	$content = "<div class='highslide-gallery' style='margin-left: 30px;'><ul>";
 	while ($row = db::nextRowFromQuery($result))
 	{
+	    if( !($i >= ($current-1) * $maxItemsPerPage && $i < $current * $maxItemsPerPage ) )
+	    {
+		$i++;
+		continue;
+	    }
+	    $i++;
+	    
 	    $imagePath = "";
 
 	    $table = $row["table_name"];
@@ -278,6 +298,28 @@ class content
 	    $content .= "<li><a href='".$imagePath_orig."' class='highslide' onclick='return hs.expand(this, config1 )'><img src='" . $imagePath . "' alt='' style='max-width:90px;max-height:90px;' border='0'/></a></li>";
 	}
 	$content .= "</ul><div style='clear:both'></div></div>";
+	//Print pages
+	$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
+	$pages = "<table><tr><td>";
+	
+	$gets = "";
+	$keys = array_keys($_GET);
+	foreach($keys as $key)
+	{
+	    if($key != "current_grid_page_".$opt)
+		$gets .= "&" . $key . "=" . $_GET[$key];
+	}
+	for($i = 1; $i < $nrOfPages+1; $i++)
+	{
+	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $opt, "grid", $pointer);
+	}
+	$pages .= "</td></tr></table>";
+	if ($nrOfPages == 1)
+	{ $pages = ""; }
+
+	$content .= "</table>";
+	$pages = preg_replace("/(\.\.\.)+/", " ... ", $pages);
+	$content .= $pages;
 	return $content;
     }
     
@@ -2343,7 +2385,7 @@ class objects
 		    image_path AS image,
 		    'screenshot_group' AS table_name
 		FROM screenshot_group
-		ORDER BY RAND()";
+		ORDER BY posted";
 	$result = db::executeQuery($query);
 	if (db::num_rows($result) > 0)
 	{
