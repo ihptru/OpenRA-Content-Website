@@ -291,7 +291,10 @@ class content
 		    $dir = dirname($imagePath_orig)."/";
 		    $name = basename($imagePath_orig);
 		    $new_name = explode(".", $name);
-		    $new_name = $new_name[0] . "_thumbnail." . $new_name[1];
+		    if ($new_name[0] == "fullPreview")
+			$new_name = "minimap.bmp";
+		    else
+			$new_name = $new_name[0] . "_thumbnail." . $new_name[1];
 		    $imagePath = $dir.$new_name;
 		    break;
 	    }
