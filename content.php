@@ -2338,8 +2338,10 @@ class objects
 	    $searchArray = array("maps","guides","articles","units");
 	    foreach($searchArray as $value)
 	    {
-		
-		$result = db::executeQuery("SELECT * FROM ".$value." WHERE title LIKE (:1)", array("%".$search."%"));
+		$st = "";
+		if ($value == "maps")
+		    $st = " OR maphash = TRIM(BOTH '%' FROM :1)";
+		$result = db::executeQuery("SELECT * FROM ".$value." WHERE title LIKE (:1)".$st, array("%".$search."%"));
 		$output = content::create_list($result, $value);
 		if ($output != "")
 		{
