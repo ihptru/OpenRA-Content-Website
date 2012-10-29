@@ -523,7 +523,7 @@ class profile
 		    <span class='button'>Choose a file</span>
 		</span></td></tr>
 		<tr><td><label>Description (optional)</label></td><td><input type='text' name='description'></td></tr>
-		<tr><td><input type='submit' name='submit' value='Upload' /></td></tr>
+		<tr><td><input type='submit' name='submit' value='Upload' /></td><td><label>Tournament replay?</label>  <input name='replay_tournament' type='checkbox'></td></tr>
 		</table>
 		<br /><span style='font-size:10px;'>* All content you upload is free to download for anyone.</span>
 		</form>
@@ -539,6 +539,12 @@ class profile
 			    ORDER BY posted DESC LIMIT 1
 		";
 		$row = db::nextRowFromQuery(db::executeQuery($query, array(user::uid())));
+		
+		if (isset($_POST["replay_tournament"]))
+		{
+			$query = "UPDATE replays SET tournament = 1 WHERE uid = :1";
+			db::executeQuery($query, array($row["uid"]));
+		}
 		echo "<table><tr><th>Successfully uploaded! (<a href='?p=detail&table=replays&id=".$row["uid"]."'>check replay's page</a>)</th></tr></table>";
 		return;
 	    }

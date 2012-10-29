@@ -862,7 +862,7 @@ class content
 		    {
 			$add_edit = "";
 			if ($row["user_id"] == user::uid())
-			    $add_edit = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&edit_map_info'>edit</a>";
+			    $add_edit = "  <a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&edit_map_info'>edit</a>";
 			if (isset($_GET["edit_map_info"]) and user::uid() == $row["user_id"])
 			{
 			    $text_add = "<form method=POST><input type='text' name='add_map_info' value='".str_replace("\\\\\\", "", str_replace("'", "`", $row["additional_desc"]))."'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
@@ -891,7 +891,7 @@ class content
 		    if ($row["description"] != "")
 		    {
 			if ($row["user_id"] == user::uid())
-			    $desc_edit = "<a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_info'>edit</a>";
+			    $desc_edit = "  <a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_info'>edit</a>";
 			if (isset($_GET["edit_unit_info"]) and user::uid() == $row["user_id"])
 			    $text_desc = "<form method=POST><input type='text' name='add_unit_info' value='".str_replace("\\\\\\", "", str_replace("'", "`", $row["description"]))."'><input type='hidden' name='unit_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 		    }
@@ -979,7 +979,7 @@ class content
 		    if ($row["description"] != "")
 		    {
 			if ($row["user_id"] == user::uid())
-			    $desc_edit = "<a style='float:right;' href='?p=detail&table=replays&id=".$row["uid"]."&edit_replay_info'>edit</a>";
+			    $desc_edit = "  <a style='float:right;' href='?p=detail&table=replays&id=".$row["uid"]."&edit_replay_info'>edit</a>";
 			if (isset($_GET["edit_replay_info"]) and user::uid() == $row["user_id"])
 			    $text_desc = "<form method=POST><input type='text' name='add_replay_info' value='".str_replace("'", "`", str_replace("\\\\\\", "", $row["description"]))."'><input type='hidden' name='replay_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 		    }
@@ -1093,7 +1093,7 @@ class content
 		{
 		    $edit_type = "";
 		    if (user::uid() == $row["user_id"])
-			$edit_type = "<a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_type'>edit</a>";
+			$edit_type = "  <a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_type'>edit</a>";
 		    $content .= "<tr><td>Type: ".$row["type"].$edit_type."</td></tr>";
 		}
 		$palette = "";
@@ -1139,6 +1139,8 @@ class content
 	    else if ($table == "replays")
 	    {
 		$content .= $description;
+		if ($row["tournament"] == 1)
+		    $content .= "<tr><td>Tournament replay!</td></tr>";
 		$content .= "<tr><td>Version: " . $row["version"] . "</td></tr>";
 		$content .= "<tr><td>Mods: " . $row["mods"] . "</td></tr>";
 		$content .= "<tr><td>Server name: " . $row["server_name"] . "</td></tr>";
@@ -1462,7 +1464,7 @@ class content
     {
 	$content = '<div id="footer-outer" class="clear"><div id="footer-wrap">';
 	$content .= '<div id="footer-bottom">';
-	$content .= '<div style="float:left;"><img src="favicon.ico" style="position:absolute;width:16px;padding:0;margin:0;border:0;"/><strong><a style="padding-left:20px;" href="http://open-ra.org" target="_blank">OpenRA Official Website <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></strong> |<a href="http://logs.open-ra.org" target="_blank">IRC logs/stats <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://www.sleipnirstuff.com/forum/viewforum.php?f=80" target="_blank">Forums <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="https://github.com/ihptru/OpenRA-Content-Website/issues" target="_blank">This site\'s issue tracker <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></div>';
+	$content .= '<div style="float:left;"><img src="favicon.ico" style="position:absolute;width:16px;padding:0;margin:0;border:0;"/><strong><a style="padding-left:20px;" href="http://open-ra.org" target="_blank">OpenRA Official Website <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></strong> |<a href="http://logs.ihptru.net" target="_blank">IRC logs/stats <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://content.open-ra.org/?p=stats" target="_blank">Statistics <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://www.sleipnirstuff.com/forum/viewforum.php?f=80" target="_blank">Forums <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="https://github.com/ihptru/OpenRA-Content-Website/issues" target="_blank">This site\'s issue tracker <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></div>';
 	$content .= '<strong><a href="?p=members">Members</a></strong> |';
 	$content .= '<a href="/">Home</a> |';
 	$content .= '<strong><a href="#top" class="back-to-top">Back to Top</a></strong>';
@@ -1621,7 +1623,7 @@ class content
 	    profile::upload_replay();
 	    echo "<br /><br /><div class='sidemenu'><ul><li>Your replays:</li></ul></div>";
 	    
-	    list($order_by, $my_items, $version) = content::replay_filters("no_show_my_content_filter");
+	    list($order_by, $my_items, $version, $tournament) = content::replay_filters("no_show_my_content_filter");
 	    
 	    $my = "";
 	    $filter_array = array("%".$version."%");
@@ -1639,7 +1641,11 @@ class content
 		$my = " AND r.user_id = :2";
 		array_push($filter_array, user::uid());
 	    }
-	    $query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$my." ORDER BY ".$order_by;
+	    if ($tournament == 1)
+		$tr = " AND tournament = 1 ";
+	    else
+		$tr = "";
+	    $query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$tr." ".$my." ORDER BY ".$order_by;
 	    
 	    $result = db::executeQuery($query, $filter_array);
 	    $output = content::create_grid($result,"replays",0,3,4);
@@ -1858,6 +1864,7 @@ class content
 	$my_checked = "";
 	$sort_by = "latest";
 	$version = "";
+	$tournament = "";
 	if (isset($_POST["apply_filter"]))
 	{
 	    $sort_by = $_POST["sort"];
@@ -1865,6 +1872,8 @@ class content
 		$my_items = true;
 	    if (isset($_POST["replay_version"]))
 		$version = $_POST["replay_version"];
+	    if (isset($_POST["replay_tournament"]))
+		$tournament = "checked";
 	}
 	elseif (isset($_COOKIE["replay_sort_by"]))
 	{
@@ -1876,6 +1885,8 @@ class content
 	    }
 	    if (isset($_COOKIE["replay_version"]))
 		$version = $_COOKIE["replay_version"];
+	    if (isset($_COOKIE["replay_tournament"]))
+		$tournament = "checked";
 	}
 	$checkbox = "";
 	if ($my_content == "" and user::online())
@@ -1891,7 +1902,7 @@ class content
 	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">lately commented</option>";
     	echo "</select><br />";
 	echo "</td>";
-	echo "<td><input type='text' name='replay_version' value='".$version."'></td>";
+	echo "<td><input type='text' name='replay_version' value='".$version."'><input type='checkbox' name='replay_tournament' value='".$tournament."' ".$tournament." style='float:right;margin-top:14px;' title='tournament replay?'></td>";
 	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
 	    ".$checkbox."
 	    <input type='hidden' name='apply_filter_type' value='replay'>
@@ -1917,8 +1928,9 @@ class content
 	
 	if ($my_content != "")
 	    $my_items = true;
-
-	return array($order_by, $my_items, $version);
+	if ($tournament == "checked")
+	    $tournament = 1;
+	return array($order_by, $my_items, $version, $tournament);
     }
 
     public static function guide_unit_filters($arg)
@@ -2231,7 +2243,7 @@ class objects
     
     public static function replays()
     {
-	list($order_by, $my_items, $version) = content::replay_filters();
+	list($order_by, $my_items, $version, $tournament) = content::replay_filters();
 	    
 	$my = "";
 	$filter_array = array("%".$version."%");
@@ -2249,7 +2261,11 @@ class objects
 	    $my = " AND r.user_id = :2";
 	    array_push($filter_array, user::uid());
 	}
-	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$my." ORDER BY ".$order_by;
+	if ($tournament == 1)
+	    $tr = " AND tournament = 1";
+	else
+	    $tr = "";
+	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$tr." ".$my." ORDER BY ".$order_by;
 	
 	$result = db::executeQuery($query, $filter_array);
 	echo content::create_grid($result,"replays",0,3,4);

@@ -301,7 +301,7 @@ content::head();
     while ($row = db::nextRowFromQuery($res))
     {
 	$register_date = explode(" ", $row["register_date"]);
-	echo "New user: <a href='?profile=".$row["uid"]."' style='color:#ff0000;'>".$row["login"]."</a> (".$register_date[0].")";
+	echo "New user: <a href='?profile=".$row["uid"]."' style='color:#0cd20c;'>".$row["login"]."</a> (".$register_date[0].")";
     }
 ?>
 
