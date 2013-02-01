@@ -2122,6 +2122,7 @@ class content
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'temperat' AND n_ver = 0", $my_items).")','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('snow (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'snow' AND n_ver = 0", $my_items).")','snow',false,".misc::option_selected_bool("snow",$tileset).")
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('interior (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'interior' AND n_ver = 0", $my_items).")','interior',false,".misc::option_selected_bool("interior",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('desert (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'desert' AND n_ver = 0", $my_items).")','desert',false,".misc::option_selected_bool("desert",$tileset).")
 		}
 		if (chosen_option.value == 'cnc')
 		{
