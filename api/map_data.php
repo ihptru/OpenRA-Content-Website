@@ -7,6 +7,7 @@ include_once("../db_mysql.php");
 db::connect();
 
 header('Content-Type: application/javascript');
+header('Access-Control-Allow-Origin: *');
 
 function map_data($result)
 {
