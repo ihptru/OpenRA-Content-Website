@@ -131,7 +131,8 @@
 			    server_name VARCHAR(80) NOT NULL,
 			    maphash VARCHAR(80) NOT NULL,
 			    mods VARCHAR(30) NOT NULL,
-			    viewed INTEGER NOT NULL DEFAULT 0);";
+			    viewed INTEGER NOT NULL DEFAULT 0,
+			    tournament INTEGER NOT NULL DEFAULT 0);";
 	    db::executeQuery($query);
 	    
 	    $query = "CREATE TABLE IF NOT EXISTS replay_players (uid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,

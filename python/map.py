@@ -184,8 +184,11 @@ class map:
                 formatOK = 1
                 self.MapMod = "ra"
             if self.MapTileset == "desert":
+                if "gdi" not in self.MapDefaultRace and "nod" not in self.MapDefaultRace:
+                    self.MapMod = "ra"
+                else:
+                    self.MapMod = "cnc"
                 formatOK = 1
-                self.MapMod = "cnc"
             if self.MapTileset == "winter":
                 formatOK = 1
                 self.MapMod = "cnc"

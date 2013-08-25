@@ -398,9 +398,6 @@ class profile
 			    (:1,:2,:3,:4);
 		    ";
 		    db::executeQuery($q, array($row["uid"], "maps", user::uid(), $row["path"]."fullPreview.bmp"));
-		    
-		    $type = image_type_to_mime_type(exif_imagetype($row["path"]."fullPreview.bmp"));
-		    misc::imageresize($row["path"]."fullPreview_thumbnail.bmp",$row["path"]."fullPreview.bmp",300,300,100, $type);
 		}
 		$imagePath = misc::minimap($row["path"]);
 		echo "<p><a href='/?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
@@ -526,7 +523,7 @@ class profile
 		    <span class='button'>Choose a file</span>
 		</span></td></tr>
 		<tr><td><label>Description (optional)</label></td><td><input type='text' name='description'></td></tr>
-		<tr><td><input type='submit' name='submit' value='Upload' /></td></tr>
+		<tr><td><input type='submit' name='submit' value='Upload' /></td><td><label>Tournament replay?</label>  <input name='replay_tournament' type='checkbox'></td></tr>
 		</table>
 		<br /><span style='font-size:10px;'>* All content you upload is free to download for anyone.</span>
 		</form>
@@ -542,6 +539,12 @@ class profile
 			    ORDER BY posted DESC LIMIT 1
 		";
 		$row = db::nextRowFromQuery(db::executeQuery($query, array(user::uid())));
+		
+		if (isset($_POST["replay_tournament"]))
+		{
+			$query = "UPDATE replays SET tournament = 1 WHERE uid = :1";
+			db::executeQuery($query, array($row["uid"]));
+		}
 		echo "<table><tr><th>Successfully uploaded! (<a href='?p=detail&table=replays&id=".$row["uid"]."'>check replay's page</a>)</th></tr></table>";
 		return;
 	    }

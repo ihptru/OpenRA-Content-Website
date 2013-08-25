@@ -8,7 +8,7 @@ class upload
 	{
 	    if (is_uploaded_file($_FILES["map_upload"]["tmp_name"]))
 	    {
-		$filename = $_FILES["map_upload"]["name"];
+		$filename = str_replace("'","",$_FILES["map_upload"]["name"]);
 		$source = $_FILES["map_upload"]["tmp_name"];
 		$type = $_FILES["map_upload"]["type"];
 		$name = explode(".", $filename);

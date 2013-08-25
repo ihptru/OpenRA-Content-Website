@@ -117,6 +117,8 @@ class user
 		    setcookie("replay_sort_by", "", time()-60*60, "/");
 		    if (isset($_COOKIE["replay_my_items"]))
 			setcookie("replay_my_items", "", time()-60*60, "/");
+		    if (isset($_COOKIE["replay_tournament"]))
+			setcookie("replay_tournament", "", time()-60*60, "/");
 		}
 		if (isset($_COOKIE["msg_unread_only_filter"]))
 		    setcookie("msg_unread_only_filter", "", time()-60*60, "/");

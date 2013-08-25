@@ -256,11 +256,31 @@ class content
     }
 
     //Create image gallery items based on result
-    public static function createImageGallery($result, $condition="")
+    public static function createImageGallery($result, $condition="", $opt="gallery", $current_id=0, $columns=5, $rows=5)
     {
+	$counter = 0;
+	$columns--;
+	$maxItemsPerPage = ($columns+1) * $rows;
+	$pointer = "#".$opt;
+	$content = "<a name='".$opt."'></a><table>";
+	$total = db::num_rows($result);
+	$i = 0;
+	if(isset($_GET["current_grid_page_".$opt]))
+	    $current = $_GET["current_grid_page_".$opt];
+	else
+	    $current = 1;
+	if (db::num_rows($result) == 0)
+	    return "";
 	$content = "<div class='highslide-gallery' style='margin-left: 30px;'><ul>";
 	while ($row = db::nextRowFromQuery($result))
 	{
+	    if( !($i >= ($current-1) * $maxItemsPerPage && $i < $current * $maxItemsPerPage ) )
+	    {
+		$i++;
+		continue;
+	    }
+	    $i++;
+	    
 	    $imagePath = "";
 
 	    $table = $row["table_name"];
@@ -271,13 +291,38 @@ class content
 		    $dir = dirname($imagePath_orig)."/";
 		    $name = basename($imagePath_orig);
 		    $new_name = explode(".", $name);
-		    $new_name = $new_name[0] . "_thumbnail." . $new_name[1];
+		    if ($new_name[0] == "fullPreview")
+			$new_name = "minimap.bmp";
+		    else
+			$new_name = $new_name[0] . "_thumbnail." . $new_name[1];
 		    $imagePath = $dir.$new_name;
 		    break;
 	    }
 	    $content .= "<li><a href='".$imagePath_orig."' class='highslide' onclick='return hs.expand(this, config1 )'><img src='" . $imagePath . "' alt='' style='max-width:90px;max-height:90px;' border='0'/></a></li>";
 	}
 	$content .= "</ul><div style='clear:both'></div></div>";
+	//Print pages
+	$nrOfPages = floor(($total-0.01) / $maxItemsPerPage) + 1;
+	$pages = "<table><tr><td>";
+	
+	$gets = "";
+	$keys = array_keys($_GET);
+	foreach($keys as $key)
+	{
+	    if($key != "current_grid_page_".$opt)
+		$gets .= "&" . $key . "=" . $_GET[$key];
+	}
+	for($i = 1; $i < $nrOfPages+1; $i++)
+	{
+	    $pages .= misc::paging($nrOfPages, $i, $current, $gets, $opt, "grid", $pointer);
+	}
+	$pages .= "</td></tr></table>";
+	if ($nrOfPages == 1)
+	{ $pages = ""; }
+
+	$content .= "</table>";
+	$pages = preg_replace("/(\.\.\.)+/", " ... ", $pages);
+	$content .= $pages;
 	return $content;
     }
     
@@ -817,7 +862,7 @@ class content
 		    {
 			$add_edit = "";
 			if ($row["user_id"] == user::uid())
-			    $add_edit = "<a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&edit_map_info'>edit</a>";
+			    $add_edit = "  <a style='float:right;' href='?p=detail&table=maps&id=".$row["uid"]."&edit_map_info'>edit</a>";
 			if (isset($_GET["edit_map_info"]) and user::uid() == $row["user_id"])
 			{
 			    $text_add = "<form method=POST><input type='text' name='add_map_info' value='".str_replace("\\\\\\", "", str_replace("'", "`", $row["additional_desc"]))."'><input type='hidden' name='map_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
@@ -846,7 +891,7 @@ class content
 		    if ($row["description"] != "")
 		    {
 			if ($row["user_id"] == user::uid())
-			    $desc_edit = "<a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_info'>edit</a>";
+			    $desc_edit = "  <a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_info'>edit</a>";
 			if (isset($_GET["edit_unit_info"]) and user::uid() == $row["user_id"])
 			    $text_desc = "<form method=POST><input type='text' name='add_unit_info' value='".str_replace("\\\\\\", "", str_replace("'", "`", $row["description"]))."'><input type='hidden' name='unit_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 		    }
@@ -934,7 +979,7 @@ class content
 		    if ($row["description"] != "")
 		    {
 			if ($row["user_id"] == user::uid())
-			    $desc_edit = "<a style='float:right;' href='?p=detail&table=replays&id=".$row["uid"]."&edit_replay_info'>edit</a>";
+			    $desc_edit = "  <a style='float:right;' href='?p=detail&table=replays&id=".$row["uid"]."&edit_replay_info'>edit</a>";
 			if (isset($_GET["edit_replay_info"]) and user::uid() == $row["user_id"])
 			    $text_desc = "<form method=POST><input type='text' name='add_replay_info' value='".str_replace("'", "`", str_replace("\\\\\\", "", $row["description"]))."'><input type='hidden' name='replay_id' value='".$row["uid"]."'> <input type='submit' value='submit'><input type='hidden' name='user_id' value='".$row["user_id"]."'></form>";
 		    }
@@ -1048,7 +1093,7 @@ class content
 		{
 		    $edit_type = "";
 		    if (user::uid() == $row["user_id"])
-			$edit_type = "<a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_type'>edit</a>";
+			$edit_type = "  <a style='float:right;' href='?p=detail&table=units&id=".$row["uid"]."&edit_unit_type'>edit</a>";
 		    $content .= "<tr><td>Type: ".$row["type"].$edit_type."</td></tr>";
 		}
 		$palette = "";
@@ -1094,6 +1139,8 @@ class content
 	    else if ($table == "replays")
 	    {
 		$content .= $description;
+		if ($row["tournament"] == 1)
+		    $content .= "<tr><td>Tournament replay!</td></tr>";
 		$content .= "<tr><td>Version: " . $row["version"] . "</td></tr>";
 		$content .= "<tr><td>Mods: " . $row["mods"] . "</td></tr>";
 		$content .= "<tr><td>Server name: " . $row["server_name"] . "</td></tr>";
@@ -1417,7 +1464,7 @@ class content
     {
 	$content = '<div id="footer-outer" class="clear"><div id="footer-wrap">';
 	$content .= '<div id="footer-bottom">';
-	$content .= '<div style="float:left;"><img src="favicon.ico" style="position:absolute;width:16px;padding:0;margin:0;border:0;"/><strong><a style="padding-left:20px;" href="http://open-ra.org" target="_blank">OpenRA Official Website <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></strong> |<a href="http://logs.open-ra.org" target="_blank">IRC logs/stats <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://www.sleipnirstuff.com/forum/viewforum.php?f=80" target="_blank">Forums <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="https://github.com/ihptru/OpenRA-Content-Website/issues" target="_blank">This site\'s issue tracker <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></div>';
+	$content .= '<div style="float:left;"><img src="favicon.ico" style="position:absolute;width:16px;padding:0;margin:0;border:0;"/><strong><a style="padding-left:20px;" href="http://open-ra.org" target="_blank">OpenRA Official Website <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></strong> |<a href="http://logs.ihptru.net" target="_blank">IRC logs/stats <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://content.open-ra.org/?p=stats" target="_blank">Statistics <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="http://www.sleipnirstuff.com/forum/viewforum.php?f=80" target="_blank">Forums <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a> |<a href="https://github.com/ihptru/OpenRA-Content-Website/issues" target="_blank">This site\'s issue tracker <img src="images/new_tab_n.gif" style="padding:0;margin:0;border:0;" /></a></div>';
 	$content .= '<strong><a href="?p=members">Members</a></strong> |';
 	$content .= '<a href="/">Home</a> |';
 	$content .= '<strong><a href="#top" class="back-to-top">Back to Top</a></strong>';
@@ -1576,7 +1623,7 @@ class content
 	    profile::upload_replay();
 	    echo "<br /><br /><div class='sidemenu'><ul><li>Your replays:</li></ul></div>";
 	    
-	    list($order_by, $my_items, $version) = content::replay_filters("no_show_my_content_filter");
+	    list($order_by, $my_items, $version, $tournament) = content::replay_filters("no_show_my_content_filter");
 	    
 	    $my = "";
 	    $filter_array = array("%".$version."%");
@@ -1594,7 +1641,11 @@ class content
 		$my = " AND r.user_id = :2";
 		array_push($filter_array, user::uid());
 	    }
-	    $query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$my." ORDER BY ".$order_by;
+	    if ($tournament == 1)
+		$tr = " AND tournament = 1 ";
+	    else
+		$tr = "";
+	    $query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$tr." ".$my." ORDER BY ".$order_by;
 	    
 	    $result = db::executeQuery($query, $filter_array);
 	    $output = content::create_grid($result,"replays",0,3,4);
@@ -1813,6 +1864,7 @@ class content
 	$my_checked = "";
 	$sort_by = "latest";
 	$version = "";
+	$tournament = "";
 	if (isset($_POST["apply_filter"]))
 	{
 	    $sort_by = $_POST["sort"];
@@ -1820,6 +1872,8 @@ class content
 		$my_items = true;
 	    if (isset($_POST["replay_version"]))
 		$version = $_POST["replay_version"];
+	    if (isset($_POST["replay_tournament"]))
+		$tournament = "checked";
 	}
 	elseif (isset($_COOKIE["replay_sort_by"]))
 	{
@@ -1831,6 +1885,8 @@ class content
 	    }
 	    if (isset($_COOKIE["replay_version"]))
 		$version = $_COOKIE["replay_version"];
+	    if (isset($_COOKIE["replay_tournament"]))
+		$tournament = "checked";
 	}
 	$checkbox = "";
 	if ($my_content == "" and user::online())
@@ -1846,7 +1902,7 @@ class content
 	echo "<option value='lately_commented' ".misc::option_selected("lately_commented",$sort_by).">lately commented</option>";
     	echo "</select><br />";
 	echo "</td>";
-	echo "<td><input type='text' name='replay_version' value='".$version."'></td>";
+	echo "<td><input type='text' name='replay_version' value='".$version."'><input type='checkbox' name='replay_tournament' value='".$tournament."' ".$tournament." style='float:right;margin-top:14px;' title='tournament replay?'></td>";
 	echo "</tr></table><div style='width:578px;'><input style='float:right;' type='submit' name='apply_filter' value='Apply filters'>
 	    ".$checkbox."
 	    <input type='hidden' name='apply_filter_type' value='replay'>
@@ -1872,8 +1928,9 @@ class content
 	
 	if ($my_content != "")
 	    $my_items = true;
-
-	return array($order_by, $my_items, $version);
+	if ($tournament == "checked")
+	    $tournament = 1;
+	return array($order_by, $my_items, $version, $tournament);
     }
 
     public static function guide_unit_filters($arg)
@@ -2065,6 +2122,7 @@ class content
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('temperat (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'temperat' AND n_ver = 0", $my_items).")','temperat',false,".misc::option_selected_bool("temperat",$tileset).")
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('snow (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'snow' AND n_ver = 0", $my_items).")','snow',false,".misc::option_selected_bool("snow",$tileset).")
 		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('interior (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'interior' AND n_ver = 0", $my_items).")','interior',false,".misc::option_selected_bool("interior",$tileset).")
+		    document.map_filters.tileset.options[document.map_filters.tileset.options.length] = new Option('desert (".misc::amount_of_items_option("maps", "WHERE g_mod = 'ra' AND tileset = 'desert' AND n_ver = 0", $my_items).")','desert',false,".misc::option_selected_bool("desert",$tileset).")
 		}
 		if (chosen_option.value == 'cnc')
 		{
@@ -2186,7 +2244,7 @@ class objects
     
     public static function replays()
     {
-	list($order_by, $my_items, $version) = content::replay_filters();
+	list($order_by, $my_items, $version, $tournament) = content::replay_filters();
 	    
 	$my = "";
 	$filter_array = array("%".$version."%");
@@ -2204,7 +2262,11 @@ class objects
 	    $my = " AND r.user_id = :2";
 	    array_push($filter_array, user::uid());
 	}
-	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$my." ORDER BY ".$order_by;
+	if ($tournament == 1)
+	    $tr = " AND tournament = 1";
+	else
+	    $tr = "";
+	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$tr." ".$my." ORDER BY ".$order_by;
 	
 	$result = db::executeQuery($query, $filter_array);
 	echo content::create_grid($result,"replays",0,3,4);
@@ -2293,8 +2355,10 @@ class objects
 	    $searchArray = array("maps","guides","articles","units");
 	    foreach($searchArray as $value)
 	    {
-		
-		$result = db::executeQuery("SELECT * FROM ".$value." WHERE title LIKE (:1)", array("%".$search."%"));
+		$st = "";
+		if ($value == "maps")
+		    $st = " OR maphash = TRIM(BOTH '%' FROM :1)";
+		$result = db::executeQuery("SELECT * FROM ".$value." WHERE title LIKE (:1)".$st, array("%".$search."%"));
 		$output = content::create_list($result, $value);
 		if ($output != "")
 		{
@@ -2343,7 +2407,7 @@ class objects
 		    image_path AS image,
 		    'screenshot_group' AS table_name
 		FROM screenshot_group
-		ORDER BY RAND()";
+		ORDER BY posted";
 	$result = db::executeQuery($query);
 	if (db::num_rows($result) > 0)
 	{
