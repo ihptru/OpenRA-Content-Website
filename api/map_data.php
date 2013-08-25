@@ -7,6 +7,7 @@ include_once("../db_mysql.php");
 db::connect();
 
 header('Content-Type: application/javascript');
+header('Access-Control-Allow-Origin: *');
 
 function map_data($result)
 {
@@ -72,7 +73,7 @@ function map_link($result)
 	if (isset($_GET["direct"]))
 	{
 	    $mimetype = "application/octet-stream";
-	    $data = file_get_contents($url["url"]);
+	    $data = file_get_contents(str_replace(" ", "%20", $url["url"]));
 	    $size = strlen($data);
 	    header("Content-Disposition: attachment; filename = ".$name[2].".oramap");
 	    header("Content-Length: $size");

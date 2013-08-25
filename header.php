@@ -263,6 +263,11 @@ class header
 		else
 		    if (isset($_COOKIE["replay_my_items"]) and user::online())
 			setcookie("replay_my_items", "", time()-60*60, "/");
+		if (isset($_POST["replay_tournament"]))
+		    setcookie("replay_tournament", "checked", time()+3600*24*360, "/");
+		else
+		    if (isset($_COOKIE["replay_tournament"]))
+			setcookie("replay_tournament", "", time()-60*60, "/");
 		$keys = array_keys($_GET);
 		$gets = "";
 		foreach($keys as $key)
