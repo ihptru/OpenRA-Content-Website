@@ -222,5 +222,9 @@ print("Map's hash: "+hash)
 
 mapToBMP(map1).saveFile(path + "minimap.bmp");
 print("minimap is saved: "+path+"minimap.bmp")
+
+if MapPlayers == 0:
+    exit(10) # everything is ok but inform user that his map has zero playable slots
+
 exit(0)
 
