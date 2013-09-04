@@ -798,11 +798,18 @@ class content
 	    
 	    $reported = "";
 	    $edit = "";
+	    $my_item = false;
+	    $my = "";
 	    if ($row["user_id"] == user::uid())
+	    {
+		$my_item = true;
+		$my = " my ";
+	    }
+	    if ($my_item or user::permission() == "1")
 	    {
 		if(isset($row["uid"]))
 		{
-		    $delete = "Delete " . rtrim($table,"s");
+		    $delete = "Delete " . $my . rtrim($table,"s");
 		    $delete = "<a href='?del_item=".$row["uid"]."&del_item_table=".$table."&del_item_user=".$row["user_id"]."' onClick='return confirmDelete(\" delete this ".rtrim($table,"s")."\")'>".$delete."</a>";
 		    $edit = " | <a href='?p=edit_item&table=".$table."&id=".$row["uid"]."'>Edit</a>";
 		}
