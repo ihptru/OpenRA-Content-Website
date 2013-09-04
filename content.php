@@ -2189,7 +2189,7 @@ class objects
 	{
 	    $order_by = "comment_posted DESC";
 	    $field_lc = ", c.posted AS comment_posted";
-	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = m.uid";
+	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = m.uid AND c.table_name = \"maps\"";
 	    $n_ver_e = "";
 	}
 	if ($my_items == true)
@@ -2215,14 +2215,14 @@ class objects
 	{
 	    $order_by = "comment_posted DESC";
 	    $field_lc = ", c.posted AS comment_posted";
-	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = u.uid";
+	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = u.uid AND c.table_name = \"units\"";
 	}
 	if ($my_items == true)
 	{
 	    $my = " AND u.user_id = :2";
 	    array_push($filter_array, user::uid());
 	}
-	$result = db::executeQuery("SELECT u.*".$field_lc." FROM units AS u ".$ljoin_lc." WHERE u.type LIKE (:1) ".$my." ORDER BY ".$order_by, $filter_array);
+	$result = db::executeQuery("SELECT u.*".$field_lc." FROM units AS u ".$ljoin_lc." WHERE u.type LIKE (:1) ".$my." GROUP BY u.uid ORDER BY ".$order_by, $filter_array);
 	echo content::create_grid($result,"units");
     }
     
@@ -2238,14 +2238,14 @@ class objects
 	{
 	    $order_by = "comment_posted DESC";
 	    $field_lc = ", c.posted AS comment_posted";
-	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = g.uid";
+	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = g.uid AND c.table_name = \"guides\"";
 	}
 	if ($my_items == true)
 	{
 	    $my = " AND g.user_id = :2";
 	    array_push($filter_array, user::uid());
 	}
-	$result = db::executeQuery("SELECT g.*".$field_lc." FROM guides AS g ".$ljoin_lc." WHERE g.guide_type LIKE (:1) ".$my." ORDER BY ".$order_by, $filter_array);
+	$result = db::executeQuery("SELECT g.*".$field_lc." FROM guides AS g ".$ljoin_lc." WHERE g.guide_type LIKE (:1) ".$my." GROUP BY g.uid ORDER BY ".$order_by, $filter_array);
 	echo content::create_grid($result,"guides");
     }
     
@@ -2262,7 +2262,7 @@ class objects
 	{
 	    $order_by = "comment_posted DESC";
 	    $field_lc = ", c.posted AS comment_posted";
-	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = r.uid";
+	    $ljoin_lc = "LEFT JOIN comments AS c on c.table_id = r.uid AND c.table_name = \"replays\"";
 	}
 	if ($my_items == true)
 	{
@@ -2273,7 +2273,7 @@ class objects
 	    $tr = " AND tournament = 1";
 	else
 	    $tr = "";
-	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$tr." ".$my." ORDER BY ".$order_by;
+	$query = "SELECT r.*".$field_lc." FROM replays AS r ".$ljoin_lc." WHERE version LIKE (:1) ".$tr." ".$my." GROUP BY r.uid ORDER BY ".$order_by;
 	
 	$result = db::executeQuery($query, $filter_array);
 	echo content::create_grid($result,"replays",0,3,4);
