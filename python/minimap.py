@@ -101,6 +101,9 @@ for  i in range(len(optlist)):
 
 map1 = map(source)
 
+if map1.UseAsShellmap == 1:
+    exit(9) # shellmap is not allowed
+
 # getting hash
 concat_bytes = map1.raw_yamlData + map1.bin
 h = hashlib.sha1()

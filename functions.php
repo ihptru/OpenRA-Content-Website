@@ -34,6 +34,7 @@ class upload
 			'6' => "Could not upload the map",
 			'7' => "Database error, try again later",
 			'8' => "You already have a map with the same hash",
+			'9' => "Uploading Shellmap is NOT allowed! If you count this map playable, please set 'UseAsShellmap: False' in Yaml file",
 		    );
 		    return $codes[$code];
 		}
@@ -47,6 +48,7 @@ class upload
 		// 6  -  Could not upload map
 		// 7  -  Database error
 		// 8  -  User already uploaded such a map
+		// 9  -  It's a shellmap which is not allowed
 		if ($return_code == 0)
 		{
 		    misc::increase_experience(10);
