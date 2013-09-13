@@ -378,85 +378,82 @@ class content
     }
 
     //Creates featured items based on result
-    public static function createFeaturedItems($result, $table = "featured")
+    public static function createFeaturedItems($data_array, $table = "featured")
     {
-	//types: featured, people, editors
+	//types: featured, peoples, editors, discussed, viewed, new_map, new_unit, new_guide, new_replay
 	$content = "";
-	while ($row = db::nextRowFromQuery($result))
+	$title = "";
+	$subtitle = "";
+	$text = "";
+	$imagePath = "";
+	$t = "";
+	if($table == "featured")
 	{
-	    $title = "";
-	    $subtitle = "";
-	    $text = "";
-	    $imagePath = "";
-	    $t = "";
-	    if($table == "featured")
-	    {
-		$table_item = $row["table_name"];
-		$t = $row["type"];
-		$res = db::executeQuery("SELECT * FROM " . $table_item . " WHERE uid = :1", array($row["table_id"]));
-		$row = db::nextRowFromQuery($res);
-		$res = db::executeQuery("SELECT login FROM users WHERE uid = :1", array($row["user_id"]));
-		$username = db::nextRowFromQuery($res);
-	    }
-	    $comments = "";
-	    $res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = :1 AND table_name = :2", array($row["uid"], $table_item)));
-	    if ($res_comments != 0)
-		$comments = "<br />".$res_comments." comments";
-	    switch($table_item)
-	    {
-		case "maps":
-		    $title = $row["title"];
-		    $subtitle = "map posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
-		    $text = str_replace("\r\n", "<br />", $row["description"]);
-		    $imagePath =  $row["path"] . "minimap.bmp";
-		    break;
-		case "units":
-		    $title = str_replace("_", " ", $row["title"]);
-		    $subtitle = "unit posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
-		    $text = str_replace("\r\n", "<br />", $row["description"]);
-		    $imagePath = $row["preview_image"];
-		    break;
-		case "guides":
-		    $title = $row["title"];
-		    $subtitle = "guide posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
-		    $text = "";
-		    $imagePath = "images/guide_" . $row["guide_type"] . ".png";
-		    break;
-		case "replays":
-		    $title = $row["title"];
-		    $subtitle = "replay posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
-		    $query = "SELECT * FROM replay_players WHERE id_replays = :1 ORDER BY team";
-		    $res_players = db::executeQuery($query, array($row["uid"]));
-		    $players = "";
-		    while ($inner_row = db::nextRowFromQuery($res_players))
-		    {
-			$players .= $inner_row["name"] . ", ";
-		    }
-		    if ($players != "")
+	    $table_item = $data_array["table_name"];
+	    $t = $data_array["type"];
+	    $res = db::executeQuery("SELECT * FROM " . $table_item . " WHERE uid = :1", array($data_array["table_id"]));
+	    $row = db::nextRowFromQuery($res);
+	    $res = db::executeQuery("SELECT login FROM users WHERE uid = :1", array($row["user_id"]));
+	    $username = db::nextRowFromQuery($res);
+	}
+	$comments = "";
+	$res_comments = db::num_rows(db::executeQuery("SELECT uid FROM comments WHERE table_id = :1 AND table_name = :2", array($row["uid"], $table_item)));
+	if ($res_comments != 0)
+	    $comments = "<br />".$res_comments." comments";
+	switch($table_item)
+	{
+	    case "maps":
+		$title = $row["title"];
+		$subtitle = "map posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
+		$text = str_replace("\r\n", "<br />", $row["description"]);
+		$imagePath =  $row["path"] . "minimap.bmp";
+		break;
+	    case "units":
+		$title = str_replace("_", " ", $row["title"]);
+		$subtitle = "unit posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
+		$text = str_replace("\r\n", "<br />", $row["description"]);
+		$imagePath = $row["preview_image"];
+		break;
+	    case "guides":
+		$title = $row["title"];
+		$subtitle = "guide posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
+		$text = "";
+		$imagePath = "images/guide_" . $row["guide_type"] . ".png";
+		break;
+	    case "replays":
+		$title = $row["title"];
+		$subtitle = "replay posted at ".$row["posted"]." by <a href='?profile=".$row["user_id"]."'>" . $username["login"] . "</a>" . $comments;
+		$query = "SELECT * FROM replay_players WHERE id_replays = :1 ORDER BY team";
+		$res_players = db::executeQuery($query, array($row["uid"]));
+		$players = "";
+		while ($inner_row = db::nextRowFromQuery($res_players))
+		{
+		    $players .= $inner_row["name"] . ", ";
+		}
+		if ($players != "")
 		    $players = "Players: ".rtrim($players,", ");
-		    $text = "Version: ".$row["version"]."<br />Mods: ".$row["mods"]."<br />Server name: ".$row["server_name"]."<br />".$players;
-		    $imagePath = "images/replay.png";
-		    break;
-	    }
+		$text = "Version: ".$row["version"]."<br />Mods: ".$row["mods"]."<br />Server name: ".$row["server_name"]."<br />".$players;
+		$imagePath = "images/replay.png";
+		break;
+	}
 	    
-	    $content .= "<div id='featured-block' class='clear'>";
-	    $content .= "<div id='featured-ribbon' style='background: url(../images/".$t."-ribbon.png) no-repeat;'></div>";
+	$content .= "<div id='featured-block' class='clear'>";
+	$content .= "<div id='featured-ribbon' style='background: url(../images/".$t."-ribbon.png) no-repeat;'></div>";
 
-	    if(strlen($imagePath) > 0)
-	    {
-		$content .= "<div class='image-block'>";
-		$content .= "<a href='?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' title=''><img src='" . $imagePath . "' alt='featured' style='max-height:350px;max-width:250px;'/></a>";
-		$content .= "</div>";
-	    }
-
-	    $content .= "<div class='text-block'>";
-	    $content .= "<h2>" . strip_tags($title) . "</h2>";
-	    $content .= "<p class='post-info'>" . $subtitle . "</p>";
-	    $content .= "<p>" . strip_tags($text, "<br>") . "</p>";
-	    $content .= "<p><a href='?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' class='more-link'>Read More</a></p>";
-	    $content .= "</div>";
+	if(strlen($imagePath) > 0)
+	{
+	    $content .= "<div class='image-block'>";
+	    $content .= "<a href='?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' title=''><img src='" . $imagePath . "' alt='featured' style='max-height:350px;max-width:250px;'/></a>";
 	    $content .= "</div>";
 	}
+
+	$content .= "<div class='text-block'>";
+	$content .= "<h2>" . strip_tags($title) . "</h2>";
+	$content .= "<p class='post-info'>" . $subtitle . "</p>";
+	$content .= "<p>" . strip_tags($text, "<br>") . "</p>";
+	$content .= "<p><a href='?p=detail&id=" . $row["uid"] . "&table=" . $table_item . "' class='more-link'>Read More</a></p>";
+	$content .= "</div>";
+	$content .= "</div>";
 
 	return $content;
     }
