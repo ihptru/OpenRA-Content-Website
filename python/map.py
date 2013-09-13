@@ -49,6 +49,7 @@ class map:
         self.MapDesc = ""
         self.MapPlayers = 0
         self.MapDefaultRace = []
+        self.UseAsShellmap = 0
         self.MapValidFormat = 1
         self.Left = 0
         self.Right = 0
@@ -142,6 +143,10 @@ class map:
                     self.MapPlayers += 1
             if line.strip()[0:5] == "Race:":
                 self.MapDefaultRace.append(line.strip()[6:].lower())
+            if line.strip()[0:13] == "UseAsShellmap":
+                state = line.split(':')[1]
+                if state.strip().lower() in ['true', 'on', 'yes', 'y']:
+                    self.UseAsShellmap = 1
         
         #Take map bounds
         self.MapBounds = self.strFixer(self.MapBounds)

@@ -383,7 +383,7 @@ class profile
 	$uploaded = upload::upload_oramap($username, $prev_version_id, user::uid());
 	if ($uploaded != "")
 	{
-	    if ($uploaded == "0")
+	    if ($uploaded == "0" or $uploaded == "10")
 	    {
 		echo "<table><tr><th>Map is successfully uploaded</th></tr></table>";
 		$query = "SELECT * FROM maps WHERE user_id = :1
@@ -401,6 +401,7 @@ class profile
 		}
 		$imagePath = misc::minimap($row["path"]);
 		echo "<p><a href='/?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
+		echo "<table><tr><th>Attention! Your map has '0' playable slots!</th></tr></table>";
 		return;
 	    }
 	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
