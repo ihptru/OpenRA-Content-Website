@@ -101,6 +101,9 @@ for  i in range(len(optlist)):
 
 map1 = map(source)
 
+if map1.UseAsShellmap == 1:
+    exit(9) # shellmap is not allowed
+
 # getting hash
 concat_bytes = map1.raw_yamlData + map1.bin
 h = hashlib.sha1()
@@ -219,5 +222,9 @@ print("Map's hash: "+hash)
 
 mapToBMP(map1).saveFile(path + "minimap.bmp");
 print("minimap is saved: "+path+"minimap.bmp")
+
+if MapPlayers == 0:
+    exit(10) # everything is ok but inform user that his map has zero playable slots
+
 exit(0)
 

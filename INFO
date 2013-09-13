@@ -17,7 +17,8 @@ python/bmp.py		:	0777
 	RewriteRule ^map/(.*)$ api/map_data.php?load=$1&direct
 
 #cron:
-10	1	* * *	username	php /path/to/site/clearDB.php
+10	1	* * *	username	cd /PATH/TO/SITE/scripts/; php clearDB.php
+5	*	* * *	username	cd /PATH/TO/SITE/scripts/; php featured.php
 
 ###
 # requires:

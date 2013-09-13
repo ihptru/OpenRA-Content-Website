@@ -3,3 +3,4 @@ users/*
 !.gitignore
 .DS_Store
 log
+*.temp

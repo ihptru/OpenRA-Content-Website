@@ -73,6 +73,20 @@ class user
 	return "";	// if somehow this function is run by some faker which is not logged in
     }
 
+    // get permission level of current client
+    public static function permission()
+    {
+	if (user::online())
+	{
+	    $query = "SELECT permission FROM users WHERE uid = :1";
+	    $result = db::executeQuery($query, array(user::uid()));
+	    while ($db_data = db::nextRowFromQuery($result))
+	    {
+		return $db_data['permission'];
+	    }
+	}
+    }
+
     // is always executed to check if user requested logout
     public static function check_logout()
     {
