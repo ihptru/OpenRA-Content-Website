@@ -214,10 +214,6 @@ except:
     exit(7)
 cur.close()
 
-print "Generating full size preview..."
-if MapMod == "ra":
-    os.system('mono '+WEBSITE_PATH+'mono/ImageMapGenerator/bin/Debug/ImageMapGenerator.exe -filename="'+mapfile_full_path+'"')
-
 print("Map's hash: "+hash)
 
 mapToBMP(map1).saveFile(path + "minimap.bmp");
