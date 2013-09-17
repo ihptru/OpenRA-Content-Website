@@ -149,7 +149,7 @@ class upload
 	    }
 	    if (strtolower(end($name)) == "shp" and $run_shp == false)
 	    {
-		exec("python python/shpextractor.py  -s ".$target_path." -p ".$unit_palette, $output, $return_code);
+		exec("python python/shpextractor.py  -s ".str_replace(" ", "\ ", $target_path)." -p ".$unit_palette, $output, $return_code);
 		$run_shp = true;
 	    }
 	    $count++;
