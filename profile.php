@@ -401,7 +401,8 @@ class profile
 		}
 		$imagePath = misc::minimap($row["path"]);
 		echo "<p><a href='/?p=detail&table=maps&id=".$row["uid"]."'><img src='".$imagePath."'></a></p>";
-		echo "<table><tr><th>Attention! Your map has '0' playable slots!</th></tr></table>";
+		if ($uploaded == "10")
+		    echo "<table><tr><th>Attention! Your map has '0' playable slots!</th></tr></table>";
 		return;
 	    }
 	    echo "<table><tr><th>".$uploaded."</th></tr></table>";
