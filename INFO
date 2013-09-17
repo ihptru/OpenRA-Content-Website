@@ -6,7 +6,9 @@ users/		:		0777
 images/screenshots/	:	0777
 python/bmp.py		:	0777
 
-###
+# if "users/" already contains data:
+chown -R webserveruser:webservergroup users/*
+
 # set webserver to allow override by .htaccess
 
 # set webserver user as owner for files:
