@@ -396,7 +396,7 @@ class misc
     
     public static function delete_item($item_id, $table_name, $user_id)
     {
-	if ($user_id == user::uid())
+	if ($user_id == user::uid() or user::permission() == "1")
 	{	    
 	    //remove map directory and it's content from disk
 	    if ($table_name == "maps")
