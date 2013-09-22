@@ -9,6 +9,9 @@ class upload
 	    if (is_uploaded_file($_FILES["map_upload"]["tmp_name"]))
 	    {
 		$filename = str_replace("'","",$_FILES["map_upload"]["name"]);
+		$filename = str_replace(" ", "\ ", $filename);
+		$filename = str_replace("(", "_", $filename);
+		$filename = str_replace(")", "_", $filename);
 		$source = $_FILES["map_upload"]["tmp_name"];
 		$type = $_FILES["map_upload"]["type"];
 		$name = explode(".", $filename);
@@ -21,7 +24,7 @@ class upload
 		{
 		    return "Not supported file type";	// that's not a map file (map file must have `oramap` extention)
 		}
-		exec("python python/minimap.py -s " . str_replace(" ", "\ ", $source) . " -i " . $user_id . " -u " . $username . " -t " . str_replace(" ", "\ ", $filename) . " -p " . $pre_version, $output, $return_code);
+		exec("python python/minimap.py -s " . str_replace(" ", "\ ", $source) . " -i " . $user_id . " -u " . $username . " -t " . $filename . " -p " . $pre_version, $output, $return_code);
 		function code_match($code)
 		{
 		    $codes = array(
