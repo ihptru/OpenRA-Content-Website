@@ -108,7 +108,7 @@ id_replay_players = records[0][0]
 clients = Data.split('GlobalSettings')[-2].split('Client@', 1)[1]
 
 client_names = re.findall('\tName: (.*)', clients)
-client_colorramps = re.findall('\tColorRamp: (.*)', clients)
+client_colorramps = re.findall('\tColor: (.*)', clients)
 client_countries = re.findall('\tCountry: (.*)', clients)
 client_teams = re.findall('\tTeam: (.*)', clients)
 print("got client data")
