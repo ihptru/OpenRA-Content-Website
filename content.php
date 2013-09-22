@@ -574,13 +574,16 @@ class content
 	$total = db::num_rows($result);
 	$pointer = "#".$table;
 	$content = "<a name='".$table."'></a><table>";
+	$rev = "";
+	if ($table == "maps")
+	    $rev = "only last revision is displayed";
 	if ($u_id != -1)
 	{
 	    if ($u_id == user::uid())
 		if ($table == "fav_item")
 		    $content .= "<th></th><th>Your latest favorited items (".$num_rows.")</th>";
 		else
-		    $content .= "<th>Your ".$table." (".$num_rows.")</th><th></th>";
+		    $content .= "<th>Your ".$table." (".$num_rows.")</th><th>".$rev."</th>";
 	    else
 		if ($table == "fav_item")
 		    $content .= "<th></th><th>".user::login_by_uid($u_id)."'s latest favorited items (".$num_rows.")</th>";
@@ -1582,7 +1585,7 @@ class content
 		$my = " AND m.user_id = :4";
 		array_push($filter_array, user::uid());
 	    }
-	    $query = "SELECT m.*".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE m.g_mod LIKE (:1) AND upper(m.type) LIKE upper(:2) AND m.tileset LIKE (:3) ".$my." GROUP BY m.maphash ORDER BY ".$order_by;
+	    $query = "SELECT m.*".$field_lc." FROM maps AS m ".$ljoin_lc." WHERE m.g_mod LIKE (:1) AND upper(m.type) LIKE upper(:2) AND m.tileset LIKE (:3) AND n_ver = 0 ".$my." GROUP BY m.maphash ORDER BY ".$order_by;
 	    
 	    $result = db::executeQuery($query, $filter_array);
 	    $output = content::create_grid($result);
@@ -1712,8 +1715,11 @@ class content
 	    if (isset($_GET["table"]) and isset($_GET["id"]))
 	    {
 		$table = $_GET["table"];
+		$rev = "";
+		if ($table == "maps")
+		    $rev = " AND n_ver = 0 ";
 		$id = $_GET["id"];
-		$query = "SELECT * FROM ".$table." WHERE user_id = :1 ORDER BY posted DESC";
+		$query = "SELECT * FROM ".$table." WHERE user_id = :1 ".$rev." ORDER BY posted DESC";
 		$result = db::executeQuery($query, array($id));
 		echo content::create_list($result, $table, 15, $id);
 	    }
