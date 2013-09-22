@@ -181,6 +181,8 @@ class map:
                 formatOK = 1
             if self.MapTileset == "winter":
                 formatOK = 1
+            if self.MapTileset == "snow":
+                formatOK = 1
         if self.MapMod == "d2k":
             if self.MapTileset == "arrakis":
                 formatOK = 1
