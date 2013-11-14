@@ -143,8 +143,16 @@ td#map_grid a {
     display: block;
     text-decoration: none;
     width: 100%;
+	max-width:161px;
     height: 100%;
     text-align:center;
+	-ms-word-break: break-all;
+	word-break: break-all;
+	// Non standard for webkit
+	word-break: break-word;
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	hyphens: auto;
 }
 td#map_grid_current {
     background-color: #934A00;
