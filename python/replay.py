@@ -38,7 +38,7 @@ replay_path = WEBSITE_PATH + "users/" + username + "/replays/" + replay_file
 shutil.move(source, replay_path)    #File was uploaded into tmp dir and must be moved into right place
 print("uploaded file")
 
-Data = open(replay_path).read(1000000)
+Data = open(replay_path).read(3000000)
 print("opened replay file")
 
 # getting hash
