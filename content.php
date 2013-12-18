@@ -1127,7 +1127,7 @@ class content
 		$content .= "<table>";
 		foreach($shapes as $shape)
 		{
-		    if (basename($shape) != "preview.gif" and basename($shape) != $title_origin.".zip")
+		    if (basename($shape) != "preview.gif" and basename($shape) != $title_origin.".zip" substr(basename($shape), -strlen(".png")) !== ".png" )
 			$content .= "<tr><td><a href='".$shape."'>".basename($shape)."</a> (".round(filesize($shape)/1024,2)." KiB)</td></tr>";
 		}
 		$content .= "</table></td></tr>";
