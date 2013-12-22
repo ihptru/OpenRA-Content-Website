@@ -174,6 +174,8 @@ class map:
                 formatOK = 1
             if self.MapTileset == "interior":
                 formatOK = 1
+            if self.MapTileset == "desert":
+                formatOK = 1
         if self.MapMod == "cnc":
             if self.MapTileset == "desert":
                 formatOK = 1
