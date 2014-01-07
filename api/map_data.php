@@ -62,7 +62,7 @@ function map_link($result)
 	    $mimetype = "application/octet-stream";
 	    $data = file_get_contents(str_replace(" ", "%20", $url["url"]));
 	    $size = strlen($data);
-	    header("Content-Disposition: attachment; filename = ".$name[2].".oramap");
+	    header("Content-Disposition: attachment; filename = ".$name[2]."-".$name[1][1].".oramap");
 	    header("Content-Length: $size");
 	    header("Content-Type: $mimetype");
 	    echo $data;
